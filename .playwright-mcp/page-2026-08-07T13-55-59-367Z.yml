@@ -1,0 +1,134 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - heading "Fluorometer emission spectra" [level=1] [ref=e3]
+    - generic [ref=e4]: 11 series · 3 sweeps · flurometer
+  - generic [ref=e5]:
+    - complementary [ref=e6]:
+      - generic [ref=e7]:
+        - heading "Emission sweep" [level=2] [ref=e8]
+        - combobox [ref=e10]:
+          - option "all sweeps (3)" [selected]
+          - option "Ex 350.5 / Em 365–450 nm (1)"
+          - option "Ex 485 / Em 380–700 nm (1)"
+          - option "Ex 485 / Em 500–600 nm (9)"
+      - generic [ref=e11]:
+        - heading "Processing" [level=2] [ref=e12]
+        - generic [ref=e13] [cursor=pointer]:
+          - checkbox "subtract blank" [ref=e14]
+          - text: subtract blank
+        - generic [ref=e15] [cursor=pointer]:
+          - checkbox "mark λ max" [ref=e16]
+          - text: mark λ
+          - subscript [ref=e17]: max
+        - generic [ref=e18]:
+          - generic [ref=e19]: normalise
+          - combobox [ref=e20]:
+            - option "raw signal" [selected]
+            - option "peak = 1"
+            - option "area = 1"
+        - generic [ref=e21]:
+          - generic [ref=e22]: y‑axis
+          - combobox [ref=e23]:
+            - option "linear" [selected]
+            - option "log"
+        - generic [ref=e24]:
+          - generic [ref=e25]: smooth
+          - slider [ref=e26]: "1"
+          - generic [ref=e27]: "off"
+      - generic [ref=e28]:
+        - heading [level=2] [ref=e29]:
+          - text: Run
+          - button "all" [ref=e30] [cursor=pointer]
+        - generic [ref=e31]:
+          - generic [ref=e32] [cursor=pointer]:
+            - checkbox "260802_WTsfGFPdiluation1 6" [checked] [ref=e33]
+            - text: 260802_WTsfGFPdiluation1
+            - generic [ref=e34]: "6"
+          - generic [ref=e35] [cursor=pointer]:
+            - checkbox "260805_nTETsfGFPdiluation 5" [checked] [ref=e36]
+            - text: 260805_nTETsfGFPdiluation
+            - generic [ref=e37]: "5"
+      - generic [ref=e38]:
+        - heading [level=2] [ref=e39]:
+          - text: Construct
+          - button "all" [ref=e40] [cursor=pointer]
+        - generic [ref=e41]:
+          - generic [ref=e42] [cursor=pointer]:
+            - checkbox "nTET sfGFP 5" [checked] [ref=e43]
+            - text: nTET sfGFP
+            - generic [ref=e44]: "5"
+          - generic [ref=e45] [cursor=pointer]:
+            - checkbox "WT sfGFP 6" [checked] [ref=e46]
+            - text: WT sfGFP
+            - generic [ref=e47]: "6"
+      - generic [ref=e48]:
+        - heading [level=2] [ref=e49]:
+          - text: Sample
+          - button "all" [ref=e50] [cursor=pointer]
+        - generic [ref=e51]:
+          - generic [ref=e52] [cursor=pointer]:
+            - checkbox "blank 1" [checked] [ref=e53]
+            - text: blank
+            - generic [ref=e54]: "1"
+          - generic [ref=e55] [cursor=pointer]:
+            - checkbox "calibration 1" [checked] [ref=e56]
+            - text: calibration
+            - generic [ref=e57]: "1"
+          - generic [ref=e58] [cursor=pointer]:
+            - checkbox "0.05 1" [checked] [ref=e59]
+            - text: "0.05"
+            - generic [ref=e60]: "1"
+          - generic [ref=e61] [cursor=pointer]:
+            - checkbox "0.2 1" [checked] [ref=e62]
+            - text: "0.2"
+            - generic [ref=e63]: "1"
+          - generic [ref=e64] [cursor=pointer]:
+            - checkbox "0.4 4" [checked] [ref=e65]
+            - text: "0.4"
+            - generic [ref=e66]: "4"
+          - generic [ref=e67] [cursor=pointer]:
+            - checkbox "4 3" [checked] [ref=e68]
+            - text: "4"
+            - generic [ref=e69]: "3"
+      - generic [ref=e70]:
+        - heading [level=2] [ref=e71]:
+          - text: Replicate
+          - button "all" [ref=e72] [cursor=pointer]
+        - generic [ref=e73]:
+          - generic [ref=e74] [cursor=pointer]:
+            - checkbox "– 6" [checked] [ref=e75]
+            - text: –
+            - generic [ref=e76]: "6"
+          - generic [ref=e77] [cursor=pointer]:
+            - checkbox "1 3" [checked] [ref=e78]
+            - text: "1"
+            - generic [ref=e79]: "3"
+          - generic [ref=e80] [cursor=pointer]:
+            - checkbox "2 2" [checked] [ref=e81]
+            - text: "2"
+            - generic [ref=e82]: "2"
+      - generic [ref=e83]:
+        - heading "Export" [level=2] [ref=e84]
+        - generic [ref=e85]:
+          - button "PNG" [ref=e86] [cursor=pointer]
+          - button "CSV" [ref=e87] [cursor=pointer]
+          - button "reset view" [ref=e88] [cursor=pointer]
+    - main [ref=e89]:
+      - generic [ref=e92]:
+        - generic "260802_WTsfGFPdiluation1/tabulated/calibration_Ex350_5_Em365-450_5.csv (declared Em 365–450.5)" [ref=e93] [cursor=pointer]: 2026-08-02 · calibration [Ex 350.5 / Em 365–450]
+        - generic "260802_WTsfGFPdiluation1/tabulated/blank_Ex485_Em500-600.csv (declared Em 500–600)" [ref=e95] [cursor=pointer]: 2026-08-02 · blank [Ex 485 / Em 500–600]
+        - generic "260802_WTsfGFPdiluation1/tabulated/0_05_Ex485_Em500-600.csv (declared Em 500–600)" [ref=e97] [cursor=pointer]: 2026-08-02 · 0.05 [Ex 485 / Em 500–600]
+        - generic "260802_WTsfGFPdiluation1/tabulated/0_2_Ex485_Em500-600.csv (declared Em 500–600)" [ref=e99] [cursor=pointer]: 2026-08-02 · 0.2 [Ex 485 / Em 500–600]
+        - generic "260802_WTsfGFPdiluation1/tabulated/0_4_Ex485_Em500-600.csv (declared Em 500–600)" [ref=e101] [cursor=pointer]: 2026-08-02 · 0.4 [Ex 485 / Em 500–600]
+        - generic "260802_WTsfGFPdiluation1/tabulated/4_0_Ex485_Em500-600.csv (declared Em 500–600)" [ref=e103] [cursor=pointer]: 2026-08-02 · 4 [Ex 485 / Em 500–600]
+        - generic "260805_nTETsfGFPdiluation/0_4_Ex485_Em380-700_1tetGFP.csv (declared Em 380–700)" [ref=e105] [cursor=pointer]: 2026-08-05 · 0.4 · rep 1 [Ex 485 / Em 380–700]
+        - generic "260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_1tetGFP.csv (declared Em 500–600)" [ref=e107] [cursor=pointer]: 2026-08-05 · 0.4 · rep 1 [Ex 485 / Em 500–600]
+        - generic "260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_2tetGFP.csv (declared Em 500–600)" [ref=e109] [cursor=pointer]: 2026-08-05 · 0.4 · rep 2 [Ex 485 / Em 500–600]
+        - generic "260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_1tetGFP.csv (declared Em 500–600)" [ref=e111] [cursor=pointer]: 2026-08-05 · 4 · rep 1 [Ex 485 / Em 500–600]
+        - generic "260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_2tetGFP.csv (declared Em 500–600)" [ref=e113] [cursor=pointer]: 2026-08-05 · 4 · rep 2 [Ex 485 / Em 500–600]
+      - generic [ref=e115]: 11 of 11 series shown — drag to zoom · shift-click a legend entry to solo it
+      - generic [ref=e116]:
+        - text: Import notes
+        - list [ref=e117]:
+          - listitem [ref=e118]: "duplicate: 260805_nTETsfGFPdiluation/massexptest/Data.csv == 260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_2tetGFP.csv -> dropped 260805_nTETsfGFPdiluation/massexptest/Data.csv"
+          - listitem [ref=e119]: "duplicate: 260805_nTETsfGFPdiluation/s.csv == 260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_1tetGFP.csv -> dropped 260805_nTETsfGFPdiluation/s.csv"

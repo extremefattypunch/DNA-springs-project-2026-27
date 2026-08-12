@@ -1,0 +1,719 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fluorometer emission spectra</title>
+<style>
+  :root {
+    --bg:#ffffff; --panel:#f7f8fa; --line:#dfe3e8; --ink:#1c2530;
+    --muted:#63707f; --accent:#2563eb;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font:13px/1.45 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  header {
+    padding:14px 20px; border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+  }
+  header h1 { margin:0; font-size:16px; font-weight:650; letter-spacing:-0.01em; }
+  header .sub { color:var(--muted); font-size:12px; }
+  .wrap { display:flex; align-items:stretch; min-height:calc(100vh - 52px); }
+  aside {
+    width:280px; flex:0 0 280px; padding:16px; background:var(--panel);
+    border-right:1px solid var(--line); overflow-y:auto;
+    max-height:calc(100vh - 52px);
+  }
+  main { flex:1 1 auto; padding:16px 20px 24px; min-width:0; }
+  .grp { margin-bottom:18px; }
+  .grp > h2 {
+    margin:0 0 7px; font-size:10.5px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--muted);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .grp > h2 button {
+    font-size:10px; text-transform:none; letter-spacing:0; padding:1px 6px;
+    border:1px solid var(--line); background:#fff; border-radius:4px;
+    color:var(--muted); cursor:pointer;
+  }
+  .grp > h2 button:hover { color:var(--accent); border-color:var(--accent); }
+  label.chk {
+    display:flex; align-items:center; gap:7px; padding:2.5px 0;
+    cursor:pointer; user-select:none;
+  }
+  label.chk:hover { color:var(--accent); }
+  label.chk input { margin:0; accent-color:var(--accent); flex:0 0 auto; }
+  label.chk .cnt { margin-left:auto; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+  select, input[type=range] { width:100%; }
+  select {
+    padding:5px 7px; border:1px solid var(--line); border-radius:5px;
+    background:#fff; color:var(--ink); font:inherit; font-size:12.5px;
+  }
+  .row { display:flex; gap:8px; align-items:center; margin-top:6px; }
+  .row > span { color:var(--muted); font-size:11.5px; white-space:nowrap; }
+  .btn {
+    padding:5px 10px; border:1px solid var(--line); background:#fff;
+    border-radius:5px; font:inherit; font-size:12px; cursor:pointer; color:var(--ink);
+  }
+  .btn:hover { border-color:var(--accent); color:var(--accent); }
+  #plotbox { position:relative; }
+  canvas { display:block; width:100%; touch-action:none; cursor:crosshair; }
+  #tip {
+    position:absolute; pointer-events:none; display:none; z-index:5;
+    background:rgba(255,255,255,.97); border:1px solid var(--line);
+    border-radius:6px; padding:7px 9px; font-size:11.5px; max-width:290px;
+    box-shadow:0 4px 14px rgba(0,0,0,.10);
+  }
+  #tip b { display:block; margin-bottom:4px; font-variant-numeric:tabular-nums; }
+  #tip .r { display:flex; gap:6px; align-items:center; white-space:nowrap;
+            font-variant-numeric:tabular-nums; }
+  #tip .r i { width:9px; height:2.5px; border-radius:2px; flex:0 0 auto; }
+  #tip .r em { font-style:normal; color:var(--muted); overflow:hidden;
+               text-overflow:ellipsis; }
+  #tip .r span { margin-left:auto; font-weight:600; }
+  #legend {
+    margin-top:12px; display:flex; flex-wrap:wrap; gap:3px 16px;
+    border-top:1px solid var(--line); padding-top:11px;
+  }
+  #legend .it {
+    display:flex; align-items:center; gap:7px; cursor:pointer;
+    padding:2px 4px; border-radius:4px; font-size:12px;
+  }
+  #legend .it:hover { background:var(--panel); }
+  #legend .it.off { opacity:.34; }
+  #legend .it .sw { width:20px; height:0; border-top-width:2.5px; flex:0 0 auto; }
+  #status { margin-top:10px; color:var(--muted); font-size:11.5px; }
+  #notes {
+    margin-top:14px; padding:9px 11px; background:#fffbeb;
+    border:1px solid #fde68a; border-radius:6px; font-size:11.5px; color:#78350f;
+  }
+  #notes ul { margin:5px 0 0; padding-left:17px; }
+  @media (max-width:860px) {
+    .wrap { flex-direction:column; }
+    aside { width:auto; flex:none; max-height:none; border-right:0;
+            border-bottom:1px solid var(--line); }
+  }
+</style>
+
+<header>
+  <h1>Fluorometer emission spectra</h1>
+  <span class="sub" id="subtitle"></span>
+</header>
+
+<div class="wrap">
+<aside>
+  <div class="grp">
+    <h2>Emission sweep</h2>
+    <div id="f_sweep"></div>
+  </div>
+
+  <div class="grp">
+    <h2>Processing</h2>
+    <label class="chk"><input type="checkbox" id="o_blank"> subtract blank</label>
+    <label class="chk"><input type="checkbox" id="o_peaks"> mark &lambda;<sub>max</sub></label>
+    <div class="row"><span>normalise</span>
+      <select id="o_norm">
+        <option value="none">raw signal</option>
+        <option value="peak">peak = 1</option>
+        <option value="area">area = 1</option>
+      </select>
+    </div>
+    <div class="row"><span>y&#8209;axis</span>
+      <select id="o_scale">
+        <option value="linear">linear</option>
+        <option value="log">log</option>
+      </select>
+    </div>
+    <div class="row"><span>smooth</span>
+      <input type="range" id="o_smooth" min="1" max="21" step="2" value="1">
+      <span id="o_smooth_v" style="min-width:3.2em;text-align:right">off</span>
+    </div>
+  </div>
+
+  <div class="grp"><h2>Run <button data-all="run">all</button></h2><div id="f_run"></div></div>
+  <div class="grp"><h2>Construct <button data-all="construct">all</button></h2><div id="f_construct"></div></div>
+  <div class="grp"><h2>Sample <button data-all="sample">all</button></h2><div id="f_sample"></div></div>
+  <div class="grp" id="g_replicate"><h2>Replicate <button data-all="replicate">all</button></h2><div id="f_replicate"></div></div>
+  <div class="grp" id="g_channel"><h2>Channel <button data-all="channel">all</button></h2><div id="f_channel"></div></div>
+
+  <div class="grp">
+    <h2>Export</h2>
+    <div class="row">
+      <button class="btn" id="b_png">PNG</button>
+      <button class="btn" id="b_csv">CSV</button>
+      <button class="btn" id="b_reset">reset view</button>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <div id="plotbox"><canvas id="cv"></canvas><div id="tip"></div></div>
+  <div id="legend"></div>
+  <div id="status"></div>
+  <div id="notes" hidden></div>
+</main>
+</div>
+
+<script>
+"use strict";
+const PAYLOAD = {"series":[{"id":"260802_WTsfGFPdiluation1/tabulated/calibration_Ex350_5_Em365-450_5.csv::S1","label":"2026-08-02 \u00b7 calibration","path":"260802_WTsfGFPdiluation1/tabulated/calibration_Ex350_5_Em365-450_5.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"calibration","sample_raw":"calibration","sample_value":null,"role":"calibration","replicate":null,"channel":"S1","ex":350.5,"declared_em":"365\u2013450.5","sweep":"Ex 350.5 / Em 365\u2013450","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":365.0,"dx":1.0,"n":86,"y":[14180.0,12640.0,13110.0,12970.0,12410.0,11470.0,12230.0,12900.0,11900.0,11410.0,11690.0,10610.0,11010.0,9800.0,10190.0,10250.0,9990.0,10340.0,10580.0,13120.0,16880.0,23490.0,35070.0,49160.0,71500.0,96380.0,127540.0,158920.0,187740.0,221210.0,238120.0,257280.0,258920.0,252440.0,239440.0,218550.0,189980.0,164370.0,133640.0,106440.0,80150.0,56530.0,41290.0,28200.0,21500.0,16710.0,13370.0,11980.0,10770.0,10290.0,9550.0,8930.0,8950.0,8100.0,8070.0,7880.0,8100.0,7280.0,8080.0,7520.0,7600.0,7790.0,7630.0,7970.0,7840.0,7420.0,7680.0,7420.0,7200.0,7480.0,7510.0,7260.0,8100.0,7100.0,6790.0,7280.0,7360.0,7010.0,6700.0,6830.0,6770.0,6860.0,7040.0,6870.0,6820.0,7010.0]},{"id":"260802_WTsfGFPdiluation1/tabulated/blank_Ex485_Em500-600.csv::S1","label":"2026-08-02 \u00b7 blank","path":"260802_WTsfGFPdiluation1/tabulated/blank_Ex485_Em500-600.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"blank","sample_raw":"blank","sample_value":null,"role":"blank","replicate":null,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[230.0,200.0,470.0,240.0,380.0,300.0,270.0,360.0,260.0,290.0,300.0,240.0,300.0,400.0,260.0,210.0,310.0,250.0,260.0,160.0,280.0,430.0,270.0,300.0,410.0,390.0,360.0,280.0,270.0,310.0,300.0,320.0,280.0,240.0,240.0,280.0,240.0,220.0,220.0,330.0,280.0,280.0,280.0,290.0,290.0,360.0,280.0,290.0,390.0,420.0,330.0,210.0,250.0,330.0,340.0,390.0,240.0,250.0,230.0,280.0,340.0,310.0,260.0,320.0,250.0,340.0,290.0,320.0,330.0,160.0,400.0,300.0,350.0,220.0,240.0,240.0,270.0,360.0,360.0,390.0,360.0,430.0,280.0,290.0,300.0,300.0,370.0,240.0,280.0,210.0,260.0,260.0,240.0,240.0,180.0,180.0,230.0,250.0,320.0,350.0,220.0]},{"id":"260802_WTsfGFPdiluation1/tabulated/0_05_Ex485_Em500-600.csv::S1","label":"2026-08-02 \u00b7 0.05","path":"260802_WTsfGFPdiluation1/tabulated/0_05_Ex485_Em500-600.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"0.05","sample_raw":"0_05","sample_value":0.05,"role":"sample","replicate":null,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[360.0,320.0,400.0,510.0,440.0,470.0,470.0,380.0,460.0,570.0,430.0,450.0,420.0,320.0,510.0,370.0,510.0,510.0,510.0,450.0,400.0,420.0,410.0,360.0,370.0,430.0,380.0,420.0,510.0,430.0,360.0,360.0,480.0,340.0,360.0,290.0,350.0,350.0,410.0,270.0,290.0,330.0,350.0,280.0,330.0,370.0,290.0,320.0,360.0,380.0,320.0,350.0,430.0,280.0,280.0,350.0,350.0,350.0,360.0,340.0,330.0,370.0,350.0,390.0,290.0,210.0,330.0,320.0,370.0,370.0,340.0,400.0,280.0,350.0,320.0,480.0,340.0,300.0,250.0,320.0,340.0,300.0,270.0,230.0,390.0,350.0,270.0,290.0,260.0,290.0,300.0,280.0,340.0,390.0,270.0,400.0,290.0,340.0,380.0,250.0,420.0]},{"id":"260802_WTsfGFPdiluation1/tabulated/0_2_Ex485_Em500-600.csv::S1","label":"2026-08-02 \u00b7 0.2","path":"260802_WTsfGFPdiluation1/tabulated/0_2_Ex485_Em500-600.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"0.2","sample_raw":"0_2","sample_value":0.2,"role":"sample","replicate":null,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[640.0,590.0,680.0,690.0,830.0,650.0,670.0,830.0,700.0,870.0,810.0,790.0,780.0,710.0,800.0,790.0,740.0,830.0,590.0,790.0,470.0,550.0,580.0,590.0,440.0,490.0,620.0,690.0,500.0,520.0,520.0,480.0,460.0,470.0,460.0,450.0,500.0,540.0,510.0,550.0,460.0,460.0,420.0,300.0,550.0,440.0,510.0,430.0,320.0,420.0,420.0,420.0,420.0,390.0,440.0,240.0,440.0,340.0,290.0,360.0,320.0,360.0,390.0,330.0,240.0,310.0,430.0,320.0,400.0,400.0,300.0,360.0,220.0,400.0,350.0,290.0,340.0,290.0,390.0,280.0,290.0,440.0,430.0,470.0,320.0,290.0,430.0,400.0,390.0,280.0,350.0,390.0,410.0,290.0,330.0,360.0,250.0,330.0,320.0,300.0,390.0]},{"id":"260802_WTsfGFPdiluation1/tabulated/0_4_Ex485_Em500-600.csv::S1","label":"2026-08-02 \u00b7 0.4","path":"260802_WTsfGFPdiluation1/tabulated/0_4_Ex485_Em500-600.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"0.4","sample_raw":"0_4","sample_value":0.4,"role":"sample","replicate":null,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[9420.0,10510.0,10830.0,11580.0,11650.0,12510.0,12620.0,12820.0,12420.0,12520.0,13350.0,12020.0,12340.0,11900.0,10880.0,10530.0,10130.0,9990.0,9200.0,8910.0,7880.0,7680.0,7000.0,7050.0,6700.0,5730.0,6330.0,6000.0,5620.0,5490.0,5150.0,5010.0,5220.0,4580.0,4490.0,4220.0,4410.0,4260.0,3780.0,3660.0,3780.0,3670.0,3660.0,3760.0,3440.0,3390.0,2950.0,3190.0,2970.0,2920.0,2600.0,2540.0,2400.0,2230.0,2340.0,2180.0,2260.0,2150.0,1920.0,1680.0,1830.0,1640.0,1540.0,1260.0,1430.0,1280.0,1270.0,1210.0,1320.0,1200.0,1320.0,990.0,940.0,850.0,900.0,940.0,840.0,730.0,800.0,740.0,740.0,770.0,700.0,750.0,630.0,780.0,680.0,640.0,730.0,440.0,690.0,540.0,630.0,520.0,630.0,590.0,630.0,540.0,410.0,510.0,570.0]},{"id":"260802_WTsfGFPdiluation1/tabulated/4_0_Ex485_Em500-600.csv::S1","label":"2026-08-02 \u00b7 4.0","path":"260802_WTsfGFPdiluation1/tabulated/4_0_Ex485_Em500-600.csv","run":"260802_WTsfGFPdiluation1","run_date":"2026-08-02","subdir":"tabulated","construct":"WT sfGFP","sample":"4.0","sample_raw":"4_0","sample_value":4.0,"role":"sample","replicate":null,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[110420.0,117310.0,123520.0,130880.0,136830.0,142580.0,143500.0,150500.0,153140.0,153050.0,151970.0,149520.0,148560.0,144200.0,139500.0,133990.0,127620.0,118480.0,117160.0,106530.0,100230.0,96200.0,91600.0,85340.0,82920.0,75440.0,71820.0,69520.0,67350.0,65040.0,60110.0,59180.0,56790.0,53580.0,51640.0,50350.0,49670.0,48390.0,45840.0,43890.0,44240.0,42500.0,40680.0,40570.0,39180.0,37020.0,35630.0,35570.0,33280.0,32210.0,30830.0,29360.0,28320.0,26520.0,25190.0,24350.0,21570.0,21110.0,19710.0,18990.0,17540.0,17070.0,16000.0,15890.0,14410.0,13580.0,13610.0,12870.0,11940.0,11320.0,10720.0,9720.0,9670.0,9270.0,9000.0,8260.0,8240.0,7920.0,7130.0,7020.0,6370.0,6090.0,6400.0,5750.0,5630.0,5610.0,4890.0,4920.0,4590.0,4530.0,3950.0,3970.0,3950.0,3740.0,3690.0,3450.0,3200.0,3140.0,3160.0,2880.0,2450.0]},{"id":"260805_nTETsfGFPdiluation/0_4_Ex485_Em380-700_1tetGFP.csv::S1","label":"2026-08-05 \u00b7 0.4 \u00b7 rep 1","path":"260805_nTETsfGFPdiluation/0_4_Ex485_Em380-700_1tetGFP.csv","run":"260805_nTETsfGFPdiluation","run_date":"2026-08-05","subdir":"","construct":"nTET sfGFP","sample":"0.4","sample_raw":"0_4","sample_value":0.4,"role":"sample","replicate":1,"channel":"S1","ex":485.0,"declared_em":"380\u2013700","sweep":"Ex 485 / Em 380\u2013700","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":380.0,"dx":1.0,"n":321,"y":[230.0,260.0,310.0,280.0,220.0,320.0,300.0,270.0,230.0,210.0,350.0,160.0,310.0,250.0,230.0,300.0,380.0,170.0,340.0,310.0,310.0,350.0,220.0,210.0,260.0,200.0,330.0,180.0,260.0,260.0,180.0,240.0,240.0,260.0,200.0,200.0,310.0,350.0,310.0,340.0,240.0,220.0,220.0,220.0,170.0,330.0,280.0,230.0,320.0,210.0,240.0,280.0,260.0,240.0,240.0,270.0,270.0,250.0,280.0,310.0,240.0,250.0,240.0,300.0,240.0,270.0,310.0,310.0,310.0,370.0,270.0,220.0,290.0,300.0,380.0,170.0,300.0,280.0,200.0,200.0,270.0,200.0,250.0,300.0,250.0,300.0,230.0,280.0,310.0,300.0,280.0,250.0,300.0,340.0,300.0,350.0,300.0,520.0,380.0,430.0,530.0,420.0,610.0,2280.0,15600.0,17220.0,4530.0,920.0,920.0,950.0,1070.0,1140.0,1410.0,1420.0,1600.0,1820.0,2110.0,2010.0,2230.0,2440.0,2640.0,2300.0,2660.0,3070.0,3010.0,3120.0,3420.0,3060.0,3230.0,3090.0,2910.0,2910.0,3030.0,2750.0,3010.0,2560.0,2450.0,2400.0,2180.0,1770.0,1710.0,1840.0,1810.0,1580.0,1690.0,1540.0,1530.0,1370.0,1530.0,1200.0,1330.0,1300.0,1420.0,1120.0,960.0,1210.0,1410.0,1120.0,1130.0,1030.0,1050.0,1180.0,920.0,980.0,930.0,840.0,770.0,960.0,740.0,600.0,900.0,730.0,690.0,570.0,790.0,580.0,740.0,580.0,760.0,750.0,600.0,510.0,420.0,450.0,520.0,490.0,430.0,440.0,520.0,450.0,330.0,590.0,340.0,430.0,390.0,320.0,290.0,350.0,450.0,470.0,430.0,370.0,420.0,430.0,250.0,320.0,300.0,330.0,330.0,390.0,300.0,370.0,350.0,320.0,340.0,310.0,300.0,400.0,200.0,370.0,310.0,300.0,170.0,270.0,300.0,220.0,220.0,330.0,270.0,210.0,260.0,340.0,300.0,310.0,160.0,180.0,280.0,320.0,240.0,230.0,320.0,320.0,360.0,300.0,320.0,350.0,220.0,260.0,270.0,230.0,200.0,260.0,260.0,230.0,220.0,290.0,200.0,260.0,220.0,210.0,320.0,410.0,300.0,210.0,260.0,200.0,320.0,210.0,250.0,170.0,290.0,260.0,210.0,280.0,240.0,250.0,300.0,250.0,350.0,270.0,350.0,160.0,350.0,240.0,330.0,170.0,220.0,290.0,280.0,270.0,390.0,300.0,270.0,310.0,270.0,220.0,250.0,240.0,290.0,310.0,390.0,220.0,270.0,250.0,260.0,140.0,200.0,200.0,240.0,240.0,200.0,240.0,220.0,300.0,260.0,290.0,210.0,170.0,240.0,230.0,180.0]},{"id":"260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_1tetGFP.csv::S1","label":"2026-08-05 \u00b7 0.4 \u00b7 rep 1","path":"260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_1tetGFP.csv","run":"260805_nTETsfGFPdiluation","run_date":"2026-08-05","subdir":"","construct":"nTET sfGFP","sample":"0.4","sample_raw":"0_4","sample_value":0.4,"role":"sample","replicate":1,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[2480.0,2740.0,2890.0,2970.0,3370.0,3190.0,3010.0,3190.0,3170.0,3370.0,3050.0,3070.0,2920.0,2760.0,2810.0,2950.0,2440.0,2510.0,2050.0,2120.0,2120.0,1710.0,1940.0,1450.0,1700.0,1620.0,1580.0,1450.0,1610.0,1470.0,1450.0,1460.0,1410.0,1140.0,1260.0,1120.0,1150.0,1130.0,1200.0,1150.0,960.0,920.0,1010.0,1040.0,990.0,910.0,900.0,950.0,950.0,950.0,1030.0,860.0,790.0,690.0,570.0,600.0,680.0,650.0,660.0,560.0,560.0,690.0,650.0,570.0,500.0,410.0,380.0,530.0,510.0,420.0,470.0,540.0,380.0,550.0,400.0,360.0,300.0,400.0,400.0,330.0,400.0,390.0,440.0,470.0,280.0,420.0,390.0,400.0,420.0,340.0,380.0,280.0,400.0,300.0,400.0,360.0,230.0,240.0,290.0,330.0,290.0]},{"id":"260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_2tetGFP.csv::S1","label":"2026-08-05 \u00b7 0.4 \u00b7 rep 2","path":"260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_2tetGFP.csv","run":"260805_nTETsfGFPdiluation","run_date":"2026-08-05","subdir":"","construct":"nTET sfGFP","sample":"0.4","sample_raw":"0_4","sample_value":0.4,"role":"sample","replicate":2,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[1360.0,1500.0,1360.0,1600.0,1400.0,1820.0,1760.0,1690.0,1930.0,1840.0,1480.0,1600.0,1460.0,1640.0,1340.0,1370.0,1310.0,1170.0,930.0,1180.0,960.0,1050.0,930.0,1110.0,970.0,760.0,1030.0,990.0,990.0,760.0,650.0,880.0,990.0,750.0,780.0,650.0,650.0,610.0,840.0,640.0,600.0,610.0,550.0,560.0,620.0,490.0,410.0,580.0,450.0,540.0,490.0,550.0,460.0,580.0,590.0,550.0,360.0,530.0,430.0,430.0,540.0,300.0,370.0,280.0,340.0,450.0,470.0,550.0,440.0,360.0,470.0,380.0,340.0,200.0,340.0,380.0,360.0,390.0,350.0,380.0,330.0,260.0,360.0,350.0,360.0,350.0,240.0,340.0,390.0,280.0,360.0,290.0,310.0,210.0,340.0,370.0,280.0,320.0,220.0,360.0,360.0]},{"id":"260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_1tetGFP.csv::S1","label":"2026-08-05 \u00b7 4.0 \u00b7 rep 1","path":"260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_1tetGFP.csv","run":"260805_nTETsfGFPdiluation","run_date":"2026-08-05","subdir":"","construct":"nTET sfGFP","sample":"4.0","sample_raw":"4_0","sample_value":4.0,"role":"sample","replicate":1,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[56560.0,59570.0,62350.0,65540.0,67630.0,68860.0,69560.0,71360.0,70320.0,68970.0,67890.0,67920.0,65300.0,64770.0,59930.0,57960.0,55110.0,53600.0,48090.0,46480.0,43830.0,41120.0,40080.0,37620.0,35020.0,34480.0,32960.0,29770.0,30460.0,27700.0,27600.0,26780.0,26120.0,24720.0,23800.0,23340.0,22460.0,22390.0,21950.0,21520.0,19930.0,19470.0,18390.0,17640.0,17190.0,16580.0,16310.0,15750.0,16130.0,14390.0,14100.0,13590.0,12290.0,11990.0,11160.0,10620.0,10520.0,9520.0,9190.0,8600.0,8680.0,8100.0,7530.0,6940.0,6890.0,6290.0,5970.0,6110.0,5800.0,5410.0,5140.0,4800.0,4730.0,4460.0,4570.0,4430.0,3920.0,4060.0,3650.0,3960.0,3400.0,3470.0,3470.0,3360.0,3350.0,3140.0,2920.0,2160.0,2810.0,2680.0,2380.0,2520.0,2480.0,2450.0,2010.0,1930.0,2250.0,2050.0,1830.0,1940.0,1720.0]},{"id":"260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_2tetGFP.csv::S1","label":"2026-08-05 \u00b7 4.0 \u00b7 rep 2","path":"260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_2tetGFP.csv","run":"260805_nTETsfGFPdiluation","run_date":"2026-08-05","subdir":"","construct":"nTET sfGFP","sample":"4.0","sample_raw":"4_0","sample_value":4.0,"role":"sample","replicate":2,"channel":"S1","ex":485.0,"declared_em":"500\u2013600","sweep":"Ex 485 / Em 500\u2013600","x_unit":"nm","y_unit":"CPS","parsed":true,"x0":500.0,"dx":1.0,"n":101,"y":[41810.0,44010.0,47530.0,47660.0,51280.0,52030.0,53700.0,53470.0,54330.0,52490.0,52280.0,52000.0,50070.0,47980.0,45240.0,44530.0,41470.0,39280.0,36570.0,34900.0,33780.0,31200.0,29700.0,29040.0,25980.0,24970.0,24220.0,22490.0,22300.0,21040.0,20090.0,19960.0,19080.0,18150.0,17940.0,16930.0,16640.0,15880.0,15690.0,15270.0,13520.0,14180.0,13880.0,13310.0,13410.0,12440.0,12560.0,11700.0,11080.0,10300.0,9600.0,9580.0,9010.0,8320.0,8390.0,8330.0,6890.0,7040.0,6920.0,5730.0,6470.0,5790.0,5610.0,4830.0,4790.0,4870.0,4180.0,4100.0,4150.0,3790.0,3680.0,3910.0,3340.0,3210.0,3140.0,2680.0,2960.0,2700.0,2270.0,2820.0,2500.0,2170.0,2310.0,2330.0,1800.0,2010.0,1970.0,1740.0,1690.0,1700.0,1620.0,1420.0,1420.0,1450.0,1420.0,1250.0,1050.0,1340.0,1100.0,1020.0,1000.0]}],"notes":["duplicate: 260805_nTETsfGFPdiluation/massexptest/Data.csv == 260805_nTETsfGFPdiluation/0_4_Ex485_Em500-600_2tetGFP.csv -> dropped 260805_nTETsfGFPdiluation/massexptest/Data.csv","duplicate: 260805_nTETsfGFPdiluation/s.csv == 260805_nTETsfGFPdiluation/4_0_Ex485_Em500-600_1tetGFP.csv -> dropped 260805_nTETsfGFPdiluation/s.csv"],"generated_from":"flurometer"};
+const SERIES = PAYLOAD.series;
+const NOTES  = PAYLOAD.notes;
+
+/* ---------- wavelength axis: stored as {x0,dx,n} when uniform ---------- */
+for (const s of SERIES) {
+  if (!s.x) { s.x = new Array(s.n); for (let i = 0; i < s.n; i++) s.x[i] = s.x0 + i * s.dx; }
+  s.xlo = s.x[0]; s.xhi = s.x[s.n - 1];
+}
+
+/* ---------- colour: hue by construct, lightness by concentration -------
+   Encoding the dilution series as a lightness ramp inside one hue keeps a
+   titration readable at a glance, and keeps constructs separable even when
+   printed greyscale (dash pattern carries the construct too).            */
+const HUES = [214, 25, 145, 288, 45, 190, 330, 110];
+const constructs = [...new Set(SERIES.map(s => s.construct))].sort();
+const hueOf = Object.fromEntries(constructs.map((c, i) => [c, HUES[i % HUES.length]]));
+const dashOf = Object.fromEntries(constructs.map((c, i) => [c, [[], [7, 4], [2, 3], [10, 3, 2, 3]][i % 4]]));
+
+for (const c of constructs) {
+  const fam = SERIES.filter(s => s.construct === c && s.role === "sample" && s.sample_value != null);
+  const vals = [...new Set(fam.map(s => s.sample_value))].sort((a, b) => a - b);
+  for (const s of SERIES.filter(s => s.construct === c)) {
+    if (s.role !== "sample") { s.color = s.role === "blank" ? "#9aa5b1" : "#5f6b78"; }
+    else if (s.sample_value == null || vals.length < 2) { s.color = `hsl(${hueOf[c]} 70% 45%)`; }
+    else {
+      const t = vals.indexOf(s.sample_value) / (vals.length - 1);
+      s.color = `hsl(${hueOf[c]} ${58 + 24 * t}% ${72 - 40 * t}%)`;
+    }
+    // Reference traces get neutral greys and their own dash so they never read
+    // as a member of the dilution series they sit next to.
+    s.dash = s.role === "sample" ? dashOf[c]
+           : s.role === "blank" ? [2, 3] : [6, 3, 2, 3];
+    s.width = s.replicate && s.replicate > 1 ? 1.4 : 2.1;
+  }
+}
+
+/* ---------- state ---------- */
+const facets = ["run", "construct", "sample", "replicate", "channel"];
+const facetVals = {};
+for (const f of facets) {
+  const seen = new Map();
+  for (const s of SERIES) {
+    const k = keyOf(s, f);
+    seen.set(k, (seen.get(k) || 0) + 1);
+  }
+  facetVals[f] = [...seen.entries()].sort((a, b) => cmpKey(f, a[0], b[0]));
+}
+function keyOf(s, f) {
+  if (f === "replicate") return s.replicate == null ? "–" : String(s.replicate);
+  return String(s[f]);
+}
+function cmpKey(f, a, b) {
+  if (f === "sample") {
+    const va = sampleOrder(a), vb = sampleOrder(b);
+    if (va !== vb) return va - vb;
+  }
+  return a.localeCompare(b, undefined, { numeric: true });
+}
+function sampleOrder(name) {
+  const s = SERIES.find(s => String(s.sample) === name);
+  if (!s) return 0;
+  if (s.role === "blank") return -2;
+  if (s.role === "calibration") return -1;
+  return s.sample_value == null ? 1e9 : s.sample_value;
+}
+
+const sweeps = [...new Set(SERIES.map(s => s.sweep))].sort();
+const state = {
+  sweep: "__ALL__",
+  on: Object.fromEntries(facets.map(f => [f, new Set(facetVals[f].map(e => e[0]))])),
+  hidden: new Set(),
+  blank: false, peaks: false, norm: "none", scale: "linear", smooth: 1,
+  xdom: null,
+};
+
+/* ---------- blank lookup: same sweep, prefer same run ---------- */
+function blankFor(s) {
+  const c = SERIES.filter(b => b.role === "blank" && b.sweep === s.sweep && b.channel === s.channel);
+  return c.find(b => b.run === s.run) || c[0] || null;
+}
+
+/* ---------- transforms ---------- */
+function movavg(y, w) {
+  if (w <= 1) return y;
+  const h = (w - 1) / 2, out = new Array(y.length);
+  for (let i = 0; i < y.length; i++) {
+    let sum = 0, k = 0;
+    for (let j = Math.max(0, i - h); j <= Math.min(y.length - 1, i + h); j++) {
+      if (y[j] == null || !isFinite(y[j])) continue;
+      sum += y[j]; k++;
+    }
+    out[i] = k ? sum / k : null;
+  }
+  return out;
+}
+
+function transform(s) {
+  let y = s.y.map(v => (v == null || !isFinite(v)) ? null : v);
+
+  // Subtract from *every* trace including the blanks themselves (which then
+  // sit at zero).  Leaving blanks uncorrected would make them the tallest
+  // curve on a blank-subtracted plot, which reads as a bug.
+  if (state.blank) {
+    const b = blankFor(s);
+    if (b) {
+      // Interpolate the blank onto this series' grid so a 500-600 blank can
+      // still correct the overlapping part of a 380-700 sweep.
+      y = y.map((v, i) => {
+        if (v == null) return null;
+        const bv = interp(b.x, b.y, s.x[i]);
+        return bv == null ? null : v - bv;
+      });
+    }
+  }
+  if (state.smooth > 1) y = movavg(y, state.smooth);
+
+  if (state.norm !== "none") {
+    const idx = [];
+    for (let i = 0; i < y.length; i++) if (y[i] != null) idx.push(i);
+    let d = 0;
+    if (state.norm === "peak") {
+      d = Math.max(...idx.map(i => Math.abs(y[i])));
+    } else {                       // trapezoidal area over the series' own span
+      for (let k = 1; k < idx.length; k++) {
+        const i0 = idx[k - 1], i1 = idx[k];
+        d += (y[i0] + y[i1]) / 2 * (s.x[i1] - s.x[i0]);
+      }
+      d = Math.abs(d);
+    }
+    if (d > 0 && isFinite(d)) y = y.map(v => v == null ? null : v / d);
+  }
+  return y;
+}
+
+function interp(xs, ys, x) {
+  if (x < xs[0] || x > xs[xs.length - 1]) return null;
+  let lo = 0, hi = xs.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xs[m] <= x) lo = m; else hi = m; }
+  const a = ys[lo], b = ys[hi];
+  if (a == null || b == null) return a == null ? b : a;
+  const t = xs[hi] === xs[lo] ? 0 : (x - xs[lo]) / (xs[hi] - xs[lo]);
+  return a + (b - a) * t;
+}
+
+function visible() {
+  return SERIES.filter(s =>
+    (state.sweep === "__ALL__" || s.sweep === state.sweep) &&
+    facets.every(f => state.on[f].has(keyOf(s, f))) &&
+    !state.hidden.has(s.id));
+}
+
+/* ---------- UI construction ---------- */
+function chk(label, checked, count, onChange) {
+  const l = document.createElement("label"); l.className = "chk";
+  const i = document.createElement("input"); i.type = "checkbox"; i.checked = checked;
+  i.addEventListener("change", () => onChange(i.checked));
+  l.append(i, document.createTextNode(label));
+  if (count != null) {
+    const c = document.createElement("span"); c.className = "cnt"; c.textContent = count;
+    l.append(c);
+  }
+  return l;
+}
+
+{ // sweep selector -- "all" superimposes every sweep on one axis
+  const box = document.getElementById("f_sweep");
+  const sel = document.createElement("select");
+  const all = document.createElement("option");
+  all.value = "__ALL__"; all.textContent = `all sweeps (${sweeps.length})`;
+  sel.append(all);
+  for (const sw of sweeps) {
+    const o = document.createElement("option");
+    o.value = sw; o.textContent = `${sw} nm  (${SERIES.filter(s => s.sweep === sw).length})`;
+    sel.append(o);
+  }
+  sel.addEventListener("change", () => { state.sweep = sel.value; state.xdom = null; draw(); });
+  box.append(sel);
+}
+
+for (const f of facets) {
+  const box = document.getElementById("f_" + f);
+  const entries = facetVals[f];
+  if (entries.length < 2) {                       // a one-value facet is noise
+    const g = document.getElementById("g_" + f);
+    if (g) { g.hidden = true; continue; }
+  }
+  for (const [val, n] of entries) {
+    box.append(chk(val, true, n, on => {
+      on ? state.on[f].add(val) : state.on[f].delete(val);
+      draw();
+    }));
+  }
+}
+
+for (const btn of document.querySelectorAll("[data-all]")) {
+  btn.addEventListener("click", () => {
+    const f = btn.dataset.all;
+    const every = state.on[f].size === facetVals[f].length;
+    state.on[f] = new Set(every ? [] : facetVals[f].map(e => e[0]));
+    for (const i of document.querySelectorAll(`#f_${f} input`)) i.checked = !every;
+    draw();
+  });
+}
+
+const bind = (id, ev, fn) => document.getElementById(id).addEventListener(ev, fn);
+bind("o_blank", "change", e => { state.blank = e.target.checked; draw(); });
+bind("o_peaks", "change", e => { state.peaks = e.target.checked; draw(); });
+bind("o_norm", "change", e => { state.norm = e.target.value; draw(); });
+bind("o_scale", "change", e => { state.scale = e.target.value; draw(); });
+bind("o_smooth", "input", e => {
+  state.smooth = +e.target.value;
+  document.getElementById("o_smooth_v").textContent =
+    state.smooth > 1 ? state.smooth + " nm" : "off";
+  draw();
+});
+bind("b_reset", "click", () => {
+  state.xdom = null; state.hidden.clear(); draw();
+});
+
+/* ---------- canvas ---------- */
+const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+const tip = document.getElementById("tip");
+const PAD = { l: 78, r: 18, t: 14, b: 48 };
+let plot = null;                                  // last-drawn frame, for hover
+
+function niceTicks(lo, hi, want) {
+  if (!isFinite(lo) || !isFinite(hi) || !(hi > lo)) return [lo];
+  const raw = (hi - lo) / want, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].find(m => m * mag >= raw) * mag;
+  if (!isFinite(step) || step <= 0) return [lo, hi];
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + step * 1e-9; v += step) out.push(v);
+  return out;
+}
+function logTicks(lo, hi) {
+  const out = [];
+  // A non-positive bound makes Math.log10 return -Infinity, which turns the
+  // loop below into an infinite push().  Callers should not do that, but a
+  // degenerate domain must never hang the page.
+  if (!isFinite(lo) || !isFinite(hi) || lo <= 0 || hi <= lo) return out;
+  for (let e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) {
+    for (const m of [1, 2, 5]) {
+      const v = m * Math.pow(10, e);
+      if (v >= lo * 0.999 && v <= hi * 1.001) out.push(v);
+    }
+  }
+  return out;
+}
+const fmt = v => {
+  const a = Math.abs(v);
+  if (a === 0) return "0";
+  if (a >= 1e5 || a < 1e-3) return v.toExponential(1).replace("e+", "e");
+  if (a >= 100) return v.toFixed(0);
+  if (a >= 1) return v.toFixed(2).replace(/\.?0+$/, "");
+  return v.toPrecision(3).replace(/\.?0+$/, "");
+};
+
+function draw() {
+  const vis = visible();
+  const prep = vis.map(s => ({ s, y: transform(s) }));
+
+  // x domain
+  let x0 = Infinity, x1 = -Infinity;
+  for (const { s } of prep) { x0 = Math.min(x0, s.xlo); x1 = Math.max(x1, s.xhi); }
+  if (!isFinite(x0)) { x0 = 0; x1 = 1; }
+  if (state.xdom) { x0 = state.xdom[0]; x1 = state.xdom[1]; }
+
+  // y domain over the x window only, so zooming rescales usefully
+  const logMode = state.scale === "log";
+  let y0 = Infinity, y1 = -Infinity;
+  for (const { s, y } of prep) {
+    for (let i = 0; i < y.length; i++) {
+      const v = y[i];
+      if (v == null || !isFinite(v)) continue;
+      if (s.x[i] < x0 || s.x[i] > x1) continue;
+      if (logMode && v <= 0) continue;
+      if (v < y0) y0 = v;
+      if (v > y1) y1 = v;
+    }
+  }
+  const empty = !isFinite(y0);
+  if (empty) { y0 = 0; y1 = 1; }
+  if (y0 === y1) { y1 = y0 + (Math.abs(y0) || 1) * 0.1; }
+  if (logMode) {
+    // Nothing positive left to show -- e.g. every trace filtered out, or a
+    // blank subtracted from itself.  Pick an arbitrary decade rather than
+    // handing log10() a zero.
+    if (!(y1 > 0)) { y0 = 1; y1 = 10; }
+    else { if (!(y0 > 0)) y0 = y1 / 1e3; y0 /= 1.6; y1 *= 1.6; }
+  } else {
+    const p = (y1 - y0) * 0.06;
+    y0 = y0 >= 0 ? 0 : y0 - p;
+    y1 += p;
+  }
+
+  // sizing (hi-DPI)
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.parentElement.clientWidth || 900;
+  const H = Math.max(340, Math.min(620, Math.round(W * 0.52)));
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const iw = W - PAD.l - PAD.r, ih = H - PAD.t - PAD.b;
+  const sx = v => PAD.l + (v - x0) / (x1 - x0) * iw;
+  const ly0 = logMode ? Math.log10(y0) : y0, ly1 = logMode ? Math.log10(y1) : y1;
+  const sy = v => PAD.t + ih - ((logMode ? Math.log10(v) : v) - ly0) / (ly1 - ly0) * ih;
+
+  // grid + axes
+  const xt = niceTicks(x0, x1, 9);
+  const yt = logMode ? logTicks(y0, y1) : niceTicks(y0, y1, 7);
+  ctx.lineWidth = 1; ctx.strokeStyle = "#eceff3";
+  ctx.beginPath();
+  for (const t of xt) { const p = Math.round(sx(t)) + .5; ctx.moveTo(p, PAD.t); ctx.lineTo(p, PAD.t + ih); }
+  for (const t of yt) { const p = Math.round(sy(t)) + .5; ctx.moveTo(PAD.l, p); ctx.lineTo(PAD.l + iw, p); }
+  ctx.stroke();
+
+  ctx.strokeStyle = "#b9c2cc"; ctx.beginPath();
+  ctx.moveTo(PAD.l + .5, PAD.t); ctx.lineTo(PAD.l + .5, PAD.t + ih + .5);
+  ctx.lineTo(PAD.l + iw, PAD.t + ih + .5); ctx.stroke();
+
+  ctx.fillStyle = "#63707f";
+  ctx.font = "11px -apple-system, Segoe UI, Roboto, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  for (const t of xt) ctx.fillText(fmt(t), sx(t), PAD.t + ih + 7);
+  ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  for (const t of yt) ctx.fillText(fmt(t), PAD.l - 8, sy(t));
+
+  ctx.fillStyle = "#1c2530";
+  ctx.font = "12px -apple-system, Segoe UI, Roboto, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+  ctx.fillText("Emission wavelength (nm)", PAD.l + iw / 2, H - 6);
+  ctx.save();
+  ctx.translate(14, PAD.t + ih / 2); ctx.rotate(-Math.PI / 2);
+  ctx.textBaseline = "top";
+  ctx.fillText(yLabel(), 0, 0);
+  ctx.restore();
+
+  // series
+  ctx.save();
+  ctx.beginPath(); ctx.rect(PAD.l, PAD.t - 2, iw, ih + 4); ctx.clip();
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+  for (const { s, y } of prep) {
+    ctx.strokeStyle = s.color; ctx.lineWidth = s.width; ctx.setLineDash(s.dash);
+    ctx.beginPath();
+    let pen = false;
+    for (let i = 0; i < y.length; i++) {
+      const v = y[i];
+      // A log axis cannot show <=0, which blank subtraction routinely produces.
+      // Break the polyline there instead of silently clamping.
+      if (v == null || !isFinite(v) || (logMode && v <= 0)) { pen = false; continue; }
+      const px = sx(s.x[i]), py = sy(v);
+      if (!pen) { ctx.moveTo(px, py); pen = true; } else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  if (state.peaks) {
+    for (const { s, y } of prep) {
+      let bi = -1, bv = -Infinity;
+      for (let i = 0; i < y.length; i++) {
+        if (y[i] == null || !isFinite(y[i])) continue;
+        if (s.x[i] < x0 || s.x[i] > x1) continue;
+        if (logMode && y[i] <= 0) continue;
+        if (y[i] > bv) { bv = y[i]; bi = i; }
+      }
+      if (bi < 0) continue;
+      const px = sx(s.x[bi]), py = sy(bv);
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(px, py, 3, 0, 6.2832); ctx.fill();
+      ctx.font = "10.5px -apple-system, Segoe UI, Roboto, sans-serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+      ctx.fillText(fmt(s.x[bi]), px, py - 5);
+    }
+  }
+  ctx.restore();
+
+  if (empty) {
+    ctx.fillStyle = "#8d97a2";
+    ctx.font = "13px -apple-system, Segoe UI, Roboto, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(SERIES.length ? "No series match the current filters."
+                               : "No data found.", PAD.l + iw / 2, PAD.t + ih / 2);
+  }
+
+  if (drag) {
+    ctx.fillStyle = "rgba(37,99,235,.10)";
+    ctx.fillRect(Math.min(drag.a, drag.b), PAD.t, Math.abs(drag.b - drag.a), ih);
+  }
+
+  plot = { prep, x0, x1, sx, sy, iw, ih, W, H, logMode };
+  renderLegend(vis);
+  renderStatus(vis);
+}
+
+function yLabel() {
+  const u = SERIES.length ? SERIES[0].y_unit : "CPS";
+  let base = state.norm === "peak" ? "Normalised intensity (peak = 1)"
+           : state.norm === "area" ? `Normalised intensity (area = 1, ${u}·nm⁻¹)`
+           : `Fluorescence intensity (${u})`;
+  if (state.blank) base += ", blank-subtracted";
+  return base;
+}
+
+function renderLegend(vis) {
+  const box = document.getElementById("legend");
+  box.textContent = "";
+  const pool = SERIES.filter(s =>
+    (state.sweep === "__ALL__" || s.sweep === state.sweep) &&
+    facets.every(f => state.on[f].has(keyOf(s, f))));
+  for (const s of pool) {
+    const it = document.createElement("div");
+    it.className = "it" + (state.hidden.has(s.id) ? " off" : "");
+    it.title = s.path + (s.declared_em ? `  (declared Em ${s.declared_em})` : "");
+    const sw = document.createElement("span");
+    sw.className = "sw";
+    sw.style.borderTop = `2.5px ${s.dash.length ? "dashed" : "solid"} ${s.color}`;
+    it.append(sw, document.createTextNode(
+      s.label + (state.sweep === "__ALL__" ? `  [${s.sweep}]` : "")));
+    it.addEventListener("click", ev => {
+      if (ev.shiftKey) {                          // shift-click = solo
+        const others = pool.filter(o => o.id !== s.id);
+        const soloed = others.every(o => state.hidden.has(o.id));
+        state.hidden = new Set(soloed ? [] : others.map(o => o.id));
+      } else {
+        state.hidden.has(s.id) ? state.hidden.delete(s.id) : state.hidden.add(s.id);
+      }
+      draw();
+    });
+    box.append(it);
+  }
+  if (!pool.length) box.textContent = "No series match the current filters.";
+}
+
+function renderStatus(vis) {
+  const bits = [`${vis.length} of ${SERIES.length} series shown`];
+  if (state.blank) {
+    const missing = vis.filter(s => !blankFor(s));
+    if (missing.length) bits.push(`⚠ no matching blank for ${missing.length} series (left uncorrected)`);
+  }
+  if (state.xdom) bits.push(`zoomed ${fmt(state.xdom[0])}–${fmt(state.xdom[1])} nm · double-click to reset`);
+  else bits.push("drag to zoom · shift-click a legend entry to solo it");
+  document.getElementById("status").textContent = bits.join("  —  ");
+}
+
+/* ---------- hover ---------- */
+cv.addEventListener("mousemove", ev => {
+  if (!plot) return;
+  const r = cv.getBoundingClientRect();
+  const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  if (drag) { drag.b = Math.max(PAD.l, Math.min(plot.W - PAD.r, mx)); draw(); return; }
+  if (mx < PAD.l || mx > plot.W - PAD.r || my < PAD.t || my > PAD.t + plot.ih) {
+    tip.style.display = "none"; return;
+  }
+  const xv = plot.x0 + (mx - PAD.l) / plot.iw * (plot.x1 - plot.x0);
+  const rows = [];
+  for (const { s, y } of plot.prep) {
+    if (xv < s.xlo || xv > s.xhi) continue;
+    let bi = 0, bd = Infinity;
+    for (let i = 0; i < s.n; i++) { const d = Math.abs(s.x[i] - xv); if (d < bd) { bd = d; bi = i; } }
+    if (y[bi] == null || !isFinite(y[bi])) continue;
+    rows.push({ s, xv: s.x[bi], v: y[bi], dy: Math.abs(plot.sy(y[bi]) - my) });
+  }
+  if (!rows.length) { tip.style.display = "none"; return; }
+  rows.sort((a, b) => b.v - a.v);
+  const near = rows.reduce((a, b) => (b.dy < a.dy ? b : a));
+
+  tip.innerHTML = "";
+  const h = document.createElement("b");
+  h.textContent = `${fmt(near.xv)} nm`;
+  tip.append(h);
+  for (const r of rows.slice(0, 10)) {
+    const d = document.createElement("div");
+    d.className = "r";
+    d.style.fontWeight = r === near ? "600" : "400";
+    const i = document.createElement("i"); i.style.background = r.s.color;
+    const e = document.createElement("em"); e.textContent = r.s.label;
+    const v = document.createElement("span"); v.textContent = fmt(r.v);
+    d.append(i, e, v); tip.append(d);
+  }
+  if (rows.length > 10) {
+    const d = document.createElement("div");
+    d.className = "r"; d.style.color = "#63707f";
+    d.textContent = `+${rows.length - 10} more`;
+    tip.append(d);
+  }
+  tip.style.display = "block";
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  tip.style.left = Math.min(mx + 14, plot.W - tw - 4) + "px";
+  tip.style.top = Math.max(4, Math.min(my - th / 2, plot.H - th - 4)) + "px";
+});
+cv.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+
+/* ---------- drag-to-zoom ---------- */
+let drag = null;
+cv.addEventListener("mousedown", ev => {
+  const r = cv.getBoundingClientRect(), mx = ev.clientX - r.left;
+  if (!plot || mx < PAD.l || mx > plot.W - PAD.r) return;
+  drag = { a: mx, b: mx }; tip.style.display = "none";
+});
+window.addEventListener("mouseup", () => {
+  if (!drag || !plot) { drag = null; return; }
+  const { a, b } = drag; drag = null;
+  if (Math.abs(b - a) > 6) {
+    const toData = px => plot.x0 + (px - PAD.l) / plot.iw * (plot.x1 - plot.x0);
+    state.xdom = [toData(Math.min(a, b)), toData(Math.max(a, b))];
+  }
+  draw();
+});
+cv.addEventListener("dblclick", () => { state.xdom = null; draw(); });
+
+/* ---------- export ---------- */
+function download(name, blob) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+document.getElementById("b_png").addEventListener("click", () => {
+  // Re-composite onto an opaque canvas: the live one is transparent, which
+  // renders as black in most image viewers.
+  const out = document.createElement("canvas");
+  out.width = cv.width; out.height = cv.height;
+  const o = out.getContext("2d");
+  o.fillStyle = "#fff"; o.fillRect(0, 0, out.width, out.height);
+  o.drawImage(cv, 0, 0);
+  out.toBlob(b => download("spectra.png", b));
+});
+document.getElementById("b_csv").addEventListener("click", () => {
+  const vis = visible();
+  if (!vis.length) return;
+  const prep = vis.map(s => ({ s, y: transform(s) }));
+  const grid = [...new Set(prep.flatMap(p => p.s.x))].sort((a, b) => a - b);
+  const head = ["Wavelength_nm", ...prep.map(p => p.s.label.replace(/[,\n]/g, " "))];
+  const lines = [head.join(",")];
+  for (const x of grid) {
+    const row = [x];
+    for (const p of prep) {
+      const i = p.s.x.indexOf(x);
+      row.push(i < 0 || p.y[i] == null || !isFinite(p.y[i]) ? "" : p.y[i]);
+    }
+    lines.push(row.join(","));
+  }
+  download("spectra_visible.csv", new Blob([lines.join("\n")], { type: "text/csv" }));
+});
+
+/* ---------- notes ---------- */
+if (NOTES.length) {
+  const n = document.getElementById("notes");
+  n.hidden = false;
+  n.innerHTML = "<b>Import notes</b><ul>" +
+    NOTES.map(t => `<li>${t.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))}</li>`).join("") +
+    "</ul>";
+}
+document.getElementById("subtitle").textContent =
+  `${SERIES.length} series · ${sweeps.length} sweep${sweeps.length === 1 ? "" : "s"} · ${PAYLOAD.generated_from}`;
+
+let rt;
+window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 90); });
+draw();
+</script>

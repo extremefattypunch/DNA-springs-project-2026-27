@@ -1,0 +1,23 @@
+[     155ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:8731/favicon.ico:0
+[   63482ms] RangeError: Invalid array length
+    at Array.push (<anonymous>)
+    at logTicks (http://127.0.0.1:8731/spectra_viewer.html:394:51)
+    at draw (http://127.0.0.1:8731/spectra_viewer.html:451:24)
+    at HTMLButtonElement.<anonymous> (http://127.0.0.1:8731/spectra_viewer.html:356:5)
+    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:31:77)
+    at step (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:10:11)
+    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:31:3)
+    at eval (eval at evaluate (:311:30), <anonymous>:4:50)
+    at UtilityScript.evaluate (<anonymous>:313:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[   68546ms] RangeError: Invalid array length
+    at Array.push (<anonymous>)
+    at logTicks (http://127.0.0.1:8731/spectra_viewer.html:394:51)
+    at draw (http://127.0.0.1:8731/spectra_viewer.html:451:24)
+    at http://127.0.0.1:8731/spectra_viewer.html:345:7
+    at HTMLInputElement.<anonymous> (http://127.0.0.1:8731/spectra_viewer.html:311:38)
+    at fire (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:3:31)
+    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:34:91)
+    at step (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:10:11)
+    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:33:3)
+    at eval (eval at evaluate (:311:30), <anonymous>:4:50)
