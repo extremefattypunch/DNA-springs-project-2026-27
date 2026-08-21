@@ -218,7 +218,7 @@ def solute_residue_order(solute_pdb: Path):
         key = (line[21], int(line[22:26]), resn)
         if key not in seen:
             seen.add(key)
-            order.append((key[1], key[2]))
+            order.append(key)
     return order
 
 
@@ -245,12 +245,15 @@ def write_residue_map(out: Path, solute_pdb: Path):
         return {prmtop_name, input_name} <= {"HIS", "HID", "HIE", "HIP"}
 
     rows, mismatched = [], []
-    for i, (num, name) in enumerate(order):
+    for i, (chain, num, name) in enumerate(order):
         res = p.residues[i]
         if not compatible(res.name, name):
             mismatched.append((i, res.name, name))
-        rows.append({"index": i, "orig_resnum": num, "orig_resname": name,
-                     "prmtop_resname": res.name})
+        # The chain is recorded because an Amber prmtop has no chain field at all:
+        # mdtraj reads the whole system as one chain, so DNA strands cannot be told
+        # apart downstream without it.
+        rows.append({"index": i, "orig_chain": chain, "orig_resnum": num,
+                     "orig_resname": name, "prmtop_resname": res.name})
     if mismatched:
         sys.exit(f"residue map mismatch (first 5): {mismatched[:5]}")
     (out / "residue_map.json").write_text(json.dumps(rows))
@@ -269,8 +272,8 @@ def write_clamp_atoms(out: Path, solute_pdb: Path, sites: list[int], anchor="CB"
     p = parmed.load_file(str(out / "system.prmtop"))
     idx = []
     for resi in sites:
-        pos = next(i for i, (n, _) in enumerate(order) if n == resi)
-        want_name = order[pos][1]
+        pos = next(i for i, (_, n, _) in enumerate(order) if n == resi)
+        want_name = order[pos][2]
         res = p.residues[pos]
         if res.name != want_name:
             sys.exit(f"clamp-atom resolution failed: residue ordinal {pos} is "
