@@ -34,12 +34,16 @@ source ./env/activate.sh
 REP="${REP:-${SLURM_ARRAY_TASK_ID:-1}}"
 NS="${NS:-50}"
 SYSDIR="build/systems/$SYS"
-RUNDIR="data/runs/$SYS/rep$REP"
+# The force-clamp ladder runs six forces off ONE topology, so the force has to be in
+# the run directory name.  Without it every clamp point writes to data/runs/S6_clamp
+# and six different physical conditions overwrite each other's trajectory.
+TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}"
+RUNDIR="data/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
 
 echo "== $(date -Is) $(hostname) part=${SLURM_JOB_PARTITION:-none} job=${SLURM_JOB_ID:-none}"
 nvidia-smi --query-gpu=name,memory.total,mig.mode.current --format=csv,noheader | head -1
-echo "== SYS=$SYS REP=$REP NS=$NS  restart_count=${SLURM_RESTART_COUNT:-0}"
+echo "== SYS=$SYS TAG=$TAG REP=$REP NS=$NS  restart_count=${SLURM_RESTART_COUNT:-0}"
 
 CLAMP_ARGS=()
 if [[ -n "${CLAMP_PN:-}" ]]; then

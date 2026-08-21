@@ -131,22 +131,16 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1):
         cro_idx = np.array([a.index for a in cro.atoms])
         wo = top.select("water and name O")
         if len(wo):
-            pairs = np.array([[w, a] for w in wo for a in cro_idx])
-            near = np.zeros((t.n_frames, len(wo)), bool)
-            col_w = np.repeat(np.arange(len(wo)), len(cro_idx))
-            chunk = 300000
-            for s in range(0, len(pairs), chunk):
-                d = md.compute_distances(t, pairs[s:s + chunk])
-                hit = d < 0.6
-                for c in range(hit.shape[1]):
-                    near[:, col_w[s + c]] |= hit[:, c]
-            rows["waters_within_6A_of_CRO"] = near.sum(axis=1).astype(float)
+            near = md.compute_neighbors(t, 0.6, cro_idx, haystack_indices=wo,
+                                        periodic=True)
+            cnt = np.array([len(x) for x in near], float)
+            rows["waters_within_6A_of_CRO"] = cnt
             summary["cavity_water"] = {
                 "cutoff_A": 6.0,
-                "mean": round(float(near.sum(axis=1).mean()), 3),
-                "sd": round(float(near.sum(axis=1).std()), 3)}
+                "mean": round(float(cnt.mean()), 3),
+                "sd": round(float(cnt.std()), 3)}
             print(f"  cavity water within 6 A of the chromophore: "
-                  f"{near.sum(axis=1).mean():.2f} +/- {near.sum(axis=1).std():.2f}")
+                  f"{cnt.mean():.2f} +/- {cnt.std():.2f}")
 
     pd.DataFrame(rows).to_csv(f"{out_prefix}_barrel.csv", index=False)
     Path(f"{out_prefix}_barrel.json").write_text(json.dumps(summary, indent=2))

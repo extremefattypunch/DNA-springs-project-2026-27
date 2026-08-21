@@ -177,6 +177,14 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
               f"total {total.mean():.1f} +/- {total.std():.1f} deg, "
               f"sharpest near bp {summary['bend']['hottest_bp']}")
 
+        # per-step bend profile along the duplex, averaged over frames: this is where
+        # a kink would announce itself as a localised spike
+        prof = pd.DataFrame({
+            "bp": np.arange(bend.shape[1]) + offset + 1,
+            "bend_deg_mean": bend.mean(axis=0).round(4),
+            "bend_deg_sd": bend.std(axis=0).round(4)})
+        prof.to_csv(f"{out_prefix}_bend_profile.csv", index=False)
+
         # base-pair opening
         pairs, labels = [], []
         for k in range(n):

@@ -1,0 +1,8 @@
+,WT sfGFP,2x Tet2-Et,27 bp spring
+His148 ND1-H -> chromophore phenolate,71.62,82.52,70.61
+Thr203 OG1-H -> chromophore phenolate,94.78,96.37,100.0
+Arg96 NH2-H -> imidazolinone O2,100.0,100.0,100.0
+Gln94 NE2-H -> imidazolinone O2,98.53,96.97,100.0
+Ser205 OG-H -> Glu222 OE1,25.97,40.61,90.0
+chromophore OG1-H -> Glu222 OE2,0.0,0.0,0.0
+His148 NE2 <- Arg168 backbone NH,92.64,86.74,87.58

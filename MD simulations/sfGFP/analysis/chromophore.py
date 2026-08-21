@@ -181,23 +181,16 @@ def analyse(traj_path, top_path, resmap_path, out_prefix, stride=1):
         print(f"  {label:<44} heavy {d_heavy.mean():5.2f}  H...A {d_ha.mean():5.2f} "
               f"+/- {d_ha.std():4.2f} A  angle {ang.mean():5.1f}  occ {100 * occ:5.1f}%")
 
-    # --- waters within 5 A of the chromophore ---
+    # --- waters near the chromophore ---
+    # compute_neighbors, not a pair matrix: waters x chromophore atoms is ~300k pairs,
+    # and materialising that for every frame needs hundreds of MB and got the
+    # aggregation killed by the OOM reaper.  The neighbour search is what this is for.
     water_o = top.select("water and name O")
     if len(water_o):
-        pairs = np.array([[w, a] for w in water_o for a in cro_idx.values()])
-        # chunk to keep memory sane
-        n_near = np.zeros(t.n_frames)
-        chunk = 200000
-        near = np.zeros((t.n_frames, len(water_o)), bool)
-        for s in range(0, len(pairs), chunk):
-            sub = pairs[s:s + chunk]
-            d = md.compute_distances(t, sub)
-            wi = (sub[:, 0][None, :] == water_o[:, None]).argmax(axis=0)
-            hit = d < 0.5
-            for col, w in enumerate(wi):
-                near[:, w] |= hit[:, col]
-        n_near = near.sum(axis=1)
-        rows["waters_within_5A"] = n_near.astype(float)
+        near = md.compute_neighbors(t, 0.5, np.array(list(cro_idx.values())),
+                                    haystack_indices=water_o, periodic=True)
+        n_near = np.array([len(x) for x in near], float)
+        rows["waters_within_5A"] = n_near
         print(f"  waters within 5 A of the chromophore: "
               f"{n_near.mean():.2f} +/- {n_near.std():.2f}")
 
