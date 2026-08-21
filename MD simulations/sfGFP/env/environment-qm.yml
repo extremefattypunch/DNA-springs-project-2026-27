@@ -1,0 +1,13 @@
+# Separate QM environment: RESP charge derivation and relaxed torsion scans for
+# the tetrazine / dihydropyridazine terms that GAFF2 does not cover.
+# Kept apart from `dnaspring` because psi4 and ambertools fight over the solver.
+name: dnaspring-qm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - psi4
+  - resp
+  - rdkit
+  - numpy
+  - scipy

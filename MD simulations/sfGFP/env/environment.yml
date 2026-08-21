@@ -1,0 +1,31 @@
+# Main MD/build environment for the sfGFP-DNA spring chimera.
+# Created at /n/holylabs/hekstra_lab/Everyone/ianpoon/envs/dnaspring
+#
+# ambertools is the load-bearing dependency: it supplies tleap, antechamber,
+# parmchk2, prepgen/residuegen, and -- critically -- leaprc.xFPchromophores,
+# the published AMBER parameters for the GFP CRO chromophore
+# (Breyfogle et al., J Phys Chem B 2023, 127:5772).
+# QM (psi4/RESP) lives in a separate env to keep this solve tractable.
+name: dnaspring
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - cuda-version >=12.0,<13
+  - openmm >=8.1
+  - ambertools >=23
+  - pdbfixer
+  - parmed
+  - mdtraj
+  - mdanalysis
+  - rdkit
+  - pymol-open-source        # fnab B-DNA builder + reads the lab's .pse
+  - pdb2pqr
+  - propka
+  - biopython
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib-base
+  - ffmpeg
+  - tqdm
