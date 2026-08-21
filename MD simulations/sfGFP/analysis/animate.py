@@ -44,6 +44,10 @@ def prepare(traj_path, top_path, out: Path, n_frames: int, sites):
     return t, rmsf
 
 
+# Labels are set up once here rather than per view: a molecular figure that does not
+# say which residue is which is decoration, not evidence.  White-backed outlined text
+# survives being drawn over both the pale cartoon and the dark sticks, and
+# label_position pushes the text toward the camera so side chains do not occlude it.
 PML = """
 load {pdb}, mol
 load_traj {dcd}, mol
@@ -55,6 +59,20 @@ set ambient_occlusion_mode, 1
 set ray_shadow, 0
 set cartoon_transparency, 0.0
 set movie_fps, 20
+set label_size, {label_size}
+set label_font_id, 7
+set label_color, black
+set label_outline_color, white
+set label_bg_color, white
+set label_bg_transparency, 0.15
+set label_bg_outline, 1
+set label_position, (0, 0, 3)
+set label_distance_digits, 2
+set dash_color, grey20
+set dash_width, 3.0
+set dash_gap, 0.28
+set dash_length, 0.30
+set dash_radius, 0.035
 {body}
 set all_states, off
 python
@@ -80,29 +98,53 @@ color limegreen, resn CRO
 show sticks, resn TDP+DNL
 color orange, resn TDP+DNL
 show spheres, resn TDP and name CB
-set sphere_scale, 0.35, resn TDP and name CB
-orient
-zoom all, 4
+set sphere_scale, 0.38, resn TDP and name CB
+color firebrick, resn TDP and name CB
+python
+from pymol import cmd
+# Pseudoatoms at each component's centre of mass, so the parts are named on the
+# picture instead of only in the caption.
+parts = [("lbl_dna",  "polymer.nucleic",                     "27 bp DNA spring"),
+         ("lbl_prot", "polymer.protein and not resn TDP",    "sfGFP beta-barrel"),
+         ("lbl_cro",  "resn CRO",                            "chromophore"),
+         ("lbl_teth", "resn TDP+DNL",                        "Tet2-Et + sTCO tether")]
+for name, sele, text in parts:
+    if cmd.count_atoms(sele):
+        cmd.pseudoatom(name, pos=list(cmd.centerofmass(sele)), label=text)
+cmd.set("label_color", "grey20", "lbl_prot")
+python end
+orient polymer
+zoom all, 6
 turn x, -15
 """,
     "chromophore": """
 show cartoon, polymer.protein
-set cartoon_transparency, 0.75
-color grey90, polymer.protein
+set cartoon_transparency, 0.82
+color grey85, polymer.protein
 show sticks, resn CRO
 color limegreen, resn CRO
-show sticks, byres (polymer.protein within 4.5 of resn CRO) and sidechain
-color salmon, byres (polymer.protein within 4.5 of resn CRO) and sidechain
-show sticks, resi 148+203+205+96+94+222 and sidechain
-distance hb1, resn CRO and name OH, resi 148 and name ND1
-distance hb2, resn CRO and name OH, resi 203 and name OG1
-distance hb3, resn CRO and name O2, resi 96 and name NH2
-color black, hb*
-set dash_gap, 0.35
-set dash_width, 2.0
-set label_size, 0
-orient resn CRO
-zoom resn CRO, 6
+util.cnc("resn CRO")
+color limegreen, resn CRO and elem C
+show sticks, resi 148+203+205+96+94+222 and (sidechain or name CA)
+color salmon, resi 148+203+205+96+94+222 and elem C
+util.cnc("resi 148+203+205+96+94+222 and not elem C")
+# the three bonds that hold the chromophore planar, plus the pair behind it
+distance hb_his148,  resn CRO and name OH, resi 148 and name ND1
+distance hb_thr203,  resn CRO and name OH, resi 203 and name OG1
+distance hb_arg96,   resn CRO and name O2, resi 96  and name NH2
+distance hb_gln94,   resn CRO and name O2, resi 94  and name NE2
+distance hb_ser205,  resi 205 and name OG, resi 222 and name OE1
+color grey20, hb_*
+label resi 148 and name NE2, "His148"
+label resi 203 and name CG2, "Thr203"
+label resi 96  and name NH1, "Arg96"
+label resi 94  and name OE1, "Gln94"
+label resi 205 and name OG,  "Ser205"
+label resi 222 and name OE2, "Glu222"
+label resn CRO and name CZ,  "chromophore (CRO)"
+orient resn CRO or resi 148+203+96
+zoom resn CRO or resi 148+203+96, 3.5
+turn x, -10
 """,
     "strain": """
 show cartoon, polymer.protein
@@ -115,17 +157,59 @@ set cartoon_putty_scale_max, 2.5
 set cartoon_putty_transform, 0
 show sticks, resn CRO
 color limegreen, resn CRO
+show spheres, resn TDP and name CB
+set sphere_scale, 0.4, resn TDP and name CB
+color black, resn TDP and name CB
+python
+from pymol import cmd
+for resi, text in ((133, "Asp133 attachment"), (149, "Asn149 attachment")):
+    sele = f"resi {resi} and name CB"
+    if cmd.count_atoms(sele):
+        cmd.label(sele, f'"{text}"')
+if cmd.count_atoms("resn CRO"):
+    cmd.label("resn CRO and name CZ", '"chromophore"')
+python end
 orient polymer.protein
-zoom all, 4
+zoom all, 5
 """,
 }
+
+
+STILL_TAIL = """
+set all_states, off
+frame {frame}
+ray {w}, {h}
+png {prefix}_still.png, dpi=200
+"""
+
+
+def render_still(view, work: Path, out: Path, name, w, h, pymol, frame):
+    """One ray-traced, labelled frame.  A moving GIF is good for showing motion and
+    bad for reading labels; the report needs both."""
+    pml = work / f"{view}_still.pml"
+    pml.write_text(PML.format(pdb="solute.pdb", dcd="solute.dcd", body=BODIES[view],
+                              prefix="_x", w=w, h=h, label_size=20)
+                   .split("set all_states, off")[0]
+                   + STILL_TAIL.format(frame=frame, w=w, h=h, prefix=view))
+    r = subprocess.run([pymol, "-cq", pml.name], cwd=work, capture_output=True,
+                       text=True)
+    src = work / f"{view}_still.png"
+    if not src.exists():
+        print(f"  {view} still: no output")
+        print((r.stdout + r.stderr)[-1200:])
+        return None
+    dst = out / f"{name}_{view}_still.png"
+    shutil.copy(src, dst)
+    print(f"  {view} still: {dst.name} ({dst.stat().st_size // 1024} kB, {w}x{h})")
+    return dst.name
 
 
 def render(view, work: Path, out: Path, name, w, h, pymol, ffmpeg, fps):
     prefix = work / f"{view}"
     pml = work / f"{view}.pml"
     pml.write_text(PML.format(pdb="solute.pdb", dcd="solute.dcd",
-                              body=BODIES[view], prefix=prefix.name, w=w, h=h))
+                              body=BODIES[view], prefix=prefix.name, w=w, h=h,
+                              label_size=15))
     r = subprocess.run([pymol, "-cq", pml.name], cwd=work, capture_output=True,
                        text=True)
     frames = sorted(work.glob(f"{view}_*.png"))
@@ -161,6 +245,8 @@ def main():
     ap.add_argument("--fps", type=int, default=12)
     ap.add_argument("--width", type=int, default=900)
     ap.add_argument("--height", type=int, default=700)
+    ap.add_argument("--still-width", type=int, default=1500)
+    ap.add_argument("--still-height", type=int, default=1150)
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
     ap.add_argument("--keep-work", action="store_true")
     a = ap.parse_args()
@@ -175,8 +261,12 @@ def main():
     print(f"=== {a.name} ===")
     t, rmsf = prepare(a.traj, a.top, work, a.frames, a.sites)
     print(f"  {t.n_frames} frames, {t.n_atoms} solute atoms")
-    made = [render(v, work, out, a.name, a.width, a.height, pymol, ffmpeg, a.fps)
-            for v in a.views]
+    made = []
+    for v in a.views:
+        made.append(render(v, work, out, a.name, a.width, a.height, pymol, ffmpeg,
+                           a.fps))
+        render_still(v, work, out, a.name, a.still_width, a.still_height, pymol,
+                     max(1, t.n_frames // 2))
     if not a.keep_work:
         shutil.rmtree(work)
     print("  wrote: " + ", ".join(m for m in made if m))
