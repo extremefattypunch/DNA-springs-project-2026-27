@@ -1,0 +1,441 @@
+{
+  "source_pdb": "2B3P",
+  "numbering_note": "2B3P numbers the chain 1-246 with the Thr65-Tyr66-Gly67 chromophore collapsed into CRO 66, so 65 and 67 are absent. The construct's own numbering runs +1 relative to this, i.e. construct D134/N150 are 2B3P Asp133/Asn149. The .pse selections named 134TAG/150TAG point at 2B3P Gly134/Val150, which is one residue off: the ESI-MS mass shifts of +141 and +140 Da can only be Asn->Tet2-Et and Asp->Tet2-Et.",
+  "chosen_pair": "ASP133-ASN149",
+  "arm_nm_provisional": 2.1,
+  "pairs": {
+    "ASP133-ASN149": {
+      "site_a": {
+        "resi": 133,
+        "resname": "ASP",
+        "anchor_atom": "CB",
+        "sasa_A2": 107.5,
+        "dist_to_chromophore_A": 26.53,
+        "xyz": [
+          62.73,
+          -6.235,
+          21.121
+        ]
+      },
+      "site_b": {
+        "resi": 149,
+        "resname": "ASN",
+        "anchor_atom": "CB",
+        "sasa_A2": 60.1,
+        "dist_to_chromophore_A": 11.08,
+        "xyz": [
+          43.284,
+          -0.952,
+          -2.834
+        ]
+      },
+      "d_anchor_anchor_A": 31.3,
+      "span_nm_at_arm": {
+        "2.1": 7.33
+      },
+      "force_pN": {
+        "nicked": {
+          "24": 9.21,
+          "26": 6.14,
+          "28": 4.86,
+          "30": 4.1,
+          "35": 3.06,
+          "40": 2.49,
+          "50": 1.86,
+          "60": 1.5
+        },
+        "continuous": {
+          "24": 11.76,
+          "26": 7.8,
+          "28": 6.16,
+          "30": 5.2,
+          "35": 3.88,
+          "40": 3.16,
+          "50": 2.36,
+          "60": 1.92
+        }
+      },
+      "strong_spring_bp": 27
+    },
+    "ASP133-VAL150": {
+      "site_a": {
+        "resi": 133,
+        "resname": "ASP",
+        "anchor_atom": "CB",
+        "sasa_A2": 107.5,
+        "dist_to_chromophore_A": 26.53,
+        "xyz": [
+          62.73,
+          -6.235,
+          21.121
+        ]
+      },
+      "site_b": {
+        "resi": 150,
+        "resname": "VAL",
+        "anchor_atom": "CB",
+        "sasa_A2": 0.5,
+        "dist_to_chromophore_A": 9.68,
+        "xyz": [
+          44.558,
+          4.563,
+          -1.374
+        ]
+      },
+      "d_anchor_anchor_A": 30.87,
+      "span_nm_at_arm": {
+        "2.1": 7.287
+      },
+      "force_pN": {
+        "nicked": {
+          "24": 8.89,
+          "26": 6.04,
+          "28": 4.81,
+          "30": 4.07,
+          "35": 3.05,
+          "40": 2.48,
+          "50": 1.86,
+          "60": 1.5
+        },
+        "continuous": {
+          "24": 11.33,
+          "26": 7.67,
+          "28": 6.1,
+          "30": 5.16,
+          "35": 3.86,
+          "40": 3.15,
+          "50": 2.36,
+          "60": 1.92
+        }
+      },
+      "strong_spring_bp": 27
+    },
+    "GLY134-ASN149": {
+      "site_a": {
+        "resi": 134,
+        "resname": "GLY",
+        "anchor_atom": "CA",
+        "sasa_A2": 2.4,
+        "dist_to_chromophore_A": 23.57,
+        "xyz": [
+          59.39,
+          -4.698,
+          17.949
+        ]
+      },
+      "site_b": {
+        "resi": 149,
+        "resname": "ASN",
+        "anchor_atom": "CB",
+        "sasa_A2": 60.1,
+        "dist_to_chromophore_A": 11.08,
+        "xyz": [
+          43.284,
+          -0.952,
+          -2.834
+        ]
+      },
+      "d_anchor_anchor_A": 26.56,
+      "span_nm_at_arm": {
+        "2.1": 6.856
+      },
+      "force_pN": {
+        "nicked": {
+          "24": 6.9,
+          "26": 5.29,
+          "28": 4.4,
+          "30": 3.82,
+          "35": 2.94,
+          "40": 2.42,
+          "50": 1.83,
+          "60": 1.49
+        },
+        "continuous": {
+          "24": 8.75,
+          "26": 6.7,
+          "28": 5.57,
+          "30": 4.83,
+          "35": 3.72,
+          "40": 3.07,
+          "50": 2.33,
+          "60": 1.9
+        }
+      },
+      "strong_spring_bp": 26
+    },
+    "GLY134-VAL150": {
+      "site_a": {
+        "resi": 134,
+        "resname": "GLY",
+        "anchor_atom": "CA",
+        "sasa_A2": 2.4,
+        "dist_to_chromophore_A": 23.57,
+        "xyz": [
+          59.39,
+          -4.698,
+          17.949
+        ]
+      },
+      "site_b": {
+        "resi": 150,
+        "resname": "VAL",
+        "anchor_atom": "CB",
+        "sasa_A2": 0.5,
+        "dist_to_chromophore_A": 9.68,
+        "xyz": [
+          44.558,
+          4.563,
+          -1.374
+        ]
+      },
+      "d_anchor_anchor_A": 26.06,
+      "span_nm_at_arm": {
+        "2.1": 6.806
+      },
+      "force_pN": {
+        "nicked": {
+          "24": 6.75,
+          "26": 5.22,
+          "28": 4.36,
+          "30": 3.79,
+          "35": 2.92,
+          "40": 2.42,
+          "50": 1.83,
+          "60": 1.49
+        },
+        "continuous": {
+          "24": 8.56,
+          "26": 6.61,
+          "28": 5.52,
+          "30": 4.8,
+          "35": 3.7,
+          "40": 3.06,
+          "50": 2.32,
+          "60": 1.9
+        }
+      },
+      "strong_spring_bp": 26
+    }
+  },
+  "histidine_tautomers": {
+    "25": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.682,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "VAL22.O",
+            "dist": 2.7,
+            "partner_role": "acceptor"
+          },
+          {
+            "partner": "ASN23.O",
+            "dist": 3.21,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": []
+      }
+    },
+    "77": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.296,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "ILE229.O",
+            "dist": 3.38,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": []
+      }
+    },
+    "81": {
+      "name": "HIE",
+      "reason": "NE2 faces an acceptor, so NE2 is the donor",
+      "score_ND1": 0.287,
+      "score_NE2": 0.31,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "MET78.O",
+            "dist": 3.49,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": [
+          {
+            "partner": "ARG80.NH2",
+            "dist": 3.18,
+            "partner_role": "donor"
+          },
+          {
+            "partner": "ASP197.OD2",
+            "dist": 3.23,
+            "partner_role": "acceptor"
+          }
+        ]
+      }
+    },
+    "139": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.298,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "LEU137.O",
+            "dist": 3.36,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": []
+      }
+    },
+    "148": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.661,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "CRO66.OH",
+            "dist": 2.98,
+            "partner_role": "acceptor"
+          },
+          {
+            "partner": "ASN146.O",
+            "dist": 3.07,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": [
+          {
+            "partner": "ARG168.N",
+            "dist": 2.96,
+            "partner_role": "donor"
+          }
+        ]
+      }
+    },
+    "169": {
+      "name": "HIE",
+      "reason": "NE2 faces an acceptor, so NE2 is the donor",
+      "score_ND1": 0,
+      "score_NE2": 0.305,
+      "contacts": {
+        "ND1": [],
+        "NE2": [
+          {
+            "partner": "PRO58.O",
+            "dist": 3.28,
+            "partner_role": "acceptor"
+          }
+        ]
+      }
+    },
+    "181": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.336,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "ALA179.O",
+            "dist": 2.98,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": [
+          {
+            "partner": "THR62.OG1",
+            "dist": 2.75,
+            "partner_role": "donor"
+          }
+        ]
+      }
+    },
+    "199": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.341,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "ASP197.O",
+            "dist": 2.93,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": [
+          {
+            "partner": "TYR74.OH",
+            "dist": 2.77,
+            "partner_role": "donor"
+          }
+        ]
+      }
+    },
+    "217": {
+      "name": "HID",
+      "reason": "ND1 faces an acceptor, so ND1 is the donor",
+      "score_ND1": 0.35,
+      "score_NE2": 0.287,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "ARG215.O",
+            "dist": 2.86,
+            "partner_role": "acceptor"
+          }
+        ],
+        "NE2": [
+          {
+            "partner": "ASP210.N",
+            "dist": 2.67,
+            "partner_role": "donor"
+          },
+          {
+            "partner": "ASP210.O",
+            "dist": 3.49,
+            "partner_role": "acceptor"
+          }
+        ]
+      }
+    },
+    "231": {
+      "name": "HIE",
+      "reason": "no discriminating contact; Amber default",
+      "score_ND1": 0,
+      "score_NE2": 0,
+      "contacts": {
+        "ND1": [
+          {
+            "partner": "GLY232.N",
+            "dist": 3.03,
+            "partner_role": "donor"
+          }
+        ],
+        "NE2": []
+      }
+    }
+  },
+  "crystal_waters_kept": 327,
+  "residues_missing_sidechain_atoms": {
+    "LYS52": 4,
+    "LYS156": 4,
+    "GLN157": 4,
+    "LYS158": 4,
+    "LYS214": 4
+  },
+  "missing_atoms_note": "tleap rebuilds these from its own libraries; all are surface side chains, none within 15 A of an attachment site or the chromophore"
+}
