@@ -24,13 +24,14 @@ GRID = "#e4e3dd"
 # Fixed system -> slot assignment, so a figure that drops a system never repaints
 # the survivors.  Colour follows the entity, not its rank.
 SYSTEM_COLOR = {
-    "S0_wt": SERIES[0], "S1_tet": SERIES[1], "S3_spring27": SERIES[2],
-    "S4_spring40": SERIES[3], "S5_spring40nick": SERIES[4], "S6_clamp": SERIES[6],
+    "S0_wt": SERIES[0], "S1_tet": SERIES[1], "S2_clicked": SERIES[5],
+    "S3_spring27": SERIES[2], "S4_spring40": SERIES[3],
+    "S5_spring40nick": SERIES[4], "S6_clamp": SERIES[6],
 }
 SYSTEM_LABEL = {
-    "S0_wt": "WT sfGFP", "S1_tet": "2x Tet2-Et", "S3_spring27": "27 bp spring",
-    "S4_spring40": "40 bp spring", "S5_spring40nick": "40 bp nicked",
-    "S6_clamp": "force clamp",
+    "S0_wt": "WT sfGFP", "S1_tet": "2× Tet2-Et", "S2_clicked": "clicked, no DNA",
+    "S3_spring27": "27 bp spring", "S4_spring40": "40 bp spring",
+    "S5_spring40nick": "40 bp nicked", "S6_clamp": "force clamp",
 }
 
 

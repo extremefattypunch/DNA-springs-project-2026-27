@@ -81,9 +81,23 @@ def dna_residues(top, resmap):
     return sorted(strands.items())
 
 
+def drop_equilibration(t, skip):
+    """Drop the first ``skip`` frames (already strided) as settling time.
+
+    The box is still contracting and the solvent-exposed side chains are still
+    finding their positions for the first few ns of production; averaging that into
+    an equilibrium observable biases it and inflates its spread.  Never drops so much
+    that fewer than 10 frames remain.
+    """
+    if skip and t.n_frames - skip >= 10:
+        return t[skip:]
+    return t
+
+
 def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
-            clamp_pN=None, nicked=False):
+            clamp_pN=None, nicked=False, skip=0):
     t = md.load(str(traj), top=str(top_path), stride=stride)
+    t = drop_equilibration(t, skip)
     top = t.topology
     resmap = load_map(resmap_path)
     rows = {"time_ps": t.time if t.time is not None else np.arange(t.n_frames)}
@@ -232,6 +246,8 @@ if __name__ == "__main__":
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
     ap.add_argument("--out-prefix", required=True)
     ap.add_argument("--stride", type=int, default=1)
+    ap.add_argument("--skip", type=int, default=0,
+                    help="frames to drop from the start, after striding")
     ap.add_argument("--clamp-pN", type=float, default=None)
     ap.add_argument("--nicked", action="store_true")
     a = ap.parse_args()

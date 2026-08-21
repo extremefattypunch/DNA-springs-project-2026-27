@@ -33,3 +33,5 @@ build/systems/*/*.prepin
 build/04_assemble/*.pdb
 figures/_work_*
 figures/*.gif
+figures/web/
+report/*.html

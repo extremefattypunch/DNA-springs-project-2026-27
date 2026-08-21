@@ -1,0 +1,57 @@
+CHARGE      0.00 ( 0 )
+Formula: H17 C8 N1 O2 
+ATOM      1  N   DNH     1      -2.445   0.036  -0.231 -0.572900        ns
+ATOM      2  C1  DNH     1      -1.762  -0.798  -1.199  0.085000        c3
+ATOM      3  C2  DNH     1      -0.543  -1.495  -0.600 -0.102400        c3
+ATOM      4  C3  DNH     1       0.564  -0.508  -0.217 -0.081400        c3
+ATOM      5  C4  DNH     1       1.796  -1.240   0.320 -0.078400        c3
+ATOM      6  C5  DNH     1       2.885  -0.297   0.834 -0.083400        c3
+ATOM      7  C6  DNH     1       3.501   0.578  -0.249  0.130400        c3
+ATOM      8  OL  DNH     1       4.562   1.331   0.324 -0.603800        oh
+ATOM      9  HN  DNH     1      -2.562  -0.329   0.706  0.303500        hn
+ATOM     10  HOL DNH     1       4.934   1.885  -0.384  0.399000        ho
+ATOM     11  H11 DNH     1      -1.475  -0.193  -2.066  0.060700        h1
+ATOM     12  H12 DNH     1      -2.485  -1.546  -1.542  0.060700        h1
+ATOM     13  H21 DNH     1      -0.152  -2.209  -1.335  0.044700        hc
+ATOM     14  H22 DNH     1      -0.842  -2.073   0.283  0.044700        hc
+ATOM     15  H31 DNH     1       0.195   0.190   0.544  0.045700        hc
+ATOM     16  H32 DNH     1       0.836   0.085  -1.098  0.045700        hc
+ATOM     17  H41 DNH     1       1.493  -1.895   1.146  0.040700        hc
+ATOM     18  H42 DNH     1       2.211  -1.888  -0.461  0.040700        hc
+ATOM     19  H51 DNH     1       2.486   0.339   1.635  0.054700        hc
+ATOM     20  H52 DNH     1       3.679  -0.893   1.302  0.054700        hc
+ATOM     21  H61 DNH     1       2.770   1.280  -0.660  0.022200        h1
+ATOM     22  H62 DNH     1       3.908  -0.033  -1.061  0.022200        h1
+ATOM     23  CAY DNH     1      -3.314   1.022  -0.643  0.655100         c
+ATOM     24  OAY DNH     1      -3.496   1.326  -1.817 -0.610100         o
+ATOM     25  CAZ DNH     1      -4.048   1.701   0.481 -0.175100        c3
+ATOM     26  HZ1 DNH     1      -5.075   1.329   0.515  0.064700        hc
+ATOM     27  HZ2 DNH     1      -4.052   2.780   0.306  0.064700        hc
+ATOM     28  HZ3 DNH     1      -3.567   1.514   1.446  0.064700        hc
+BOND    1    1    2    1      N   C1
+BOND    2    2    3    1     C1   C2
+BOND    3    3    4    1     C2   C3
+BOND    4    4    5    1     C3   C4
+BOND    5    5    6    1     C4   C5
+BOND    6    6    7    1     C5   C6
+BOND    7    7    8    1     C6   OL
+BOND    8    1    9    1      N   HN
+BOND    9    8   10    1     OL  HOL
+BOND   10    2   11    1     C1  H11
+BOND   11    2   12    1     C1  H12
+BOND   12    3   13    1     C2  H21
+BOND   13    3   14    1     C2  H22
+BOND   14    4   15    1     C3  H31
+BOND   15    4   16    1     C3  H32
+BOND   16    5   17    1     C4  H41
+BOND   17    5   18    1     C4  H42
+BOND   18    6   19    1     C5  H51
+BOND   19    6   20    1     C5  H52
+BOND   20    7   21    1     C6  H61
+BOND   21    7   22    1     C6  H62
+BOND   22    1   23    1      N  CAY
+BOND   23   23   24    2    CAY  OAY
+BOND   24   23   25    1    CAY  CAZ
+BOND   25   25   26    1    CAZ  HZ1
+BOND   26   25   27    1    CAZ  HZ2
+BOND   27   25   28    1    CAZ  HZ3

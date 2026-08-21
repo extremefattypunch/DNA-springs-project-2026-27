@@ -54,6 +54,10 @@ def main():
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
     ap.add_argument("--min-ns", type=float, default=1.0,
                     help="skip replicates with less than this much production")
+    ap.add_argument("--skip-ns", type=float, default=5.0,
+                    help="production time to discard as settling before averaging")
+    ap.add_argument("--report-ps", type=float, default=20.0,
+                    help="trajectory frame spacing, used to convert --skip-ns")
     args = ap.parse_args()
 
     rows = []
@@ -73,23 +77,24 @@ def main():
         if ns < args.min_ns:
             print(f"  skip {tag}/{rep_dir.name}: only {ns} ns so far")
             continue
+        skip = int(round(args.skip_ns * 1000.0 / args.report_ps / args.stride))
         pre = str(traj.parent / "analysis")
-        print(f"\n=== {tag} {rep_dir.name}  ({ns} ns) ===")
+        print(f"\n=== {tag} {rep_dir.name}  ({ns} ns, first {args.skip_ns} ns discarded) ===")
         row = {"system": base, "tag": tag, "clamp_pN": clamp,
-               "replicate": rep_dir.name, "ns": ns}
+               "replicate": rep_dir.name, "ns": ns, "skip_ns": args.skip_ns}
         try:
-            c = chromophore.analyse(traj, top, rmap, pre, args.stride)
+            c = chromophore.analyse(traj, top, rmap, pre, args.stride, skip)
             flat("chromo.", c, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  chromophore failed: {type(e).__name__}: {e}")
         try:
             m = mechanics.analyse(traj, top, rmap, args.sites, pre, args.stride,
-                                  clamp, nicked="nick" in base)
+                                  clamp, nicked="nick" in base, skip=skip)
             flat("mech.", m, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  mechanics failed: {type(e).__name__}: {e}")
         try:
-            b = barrel.analyse(traj, top, rmap, args.sites, pre, args.stride)
+            b = barrel.analyse(traj, top, rmap, args.sites, pre, args.stride, skip)
             flat("barrel.", b, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  barrel failed: {type(e).__name__}: {e}")

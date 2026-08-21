@@ -144,14 +144,18 @@ class Arm:
         return rms
 
 
-def build_arm() -> Arm:
-    """TDP side chain + DNL as one MMFF-optimised molecule."""
+def build_arm(dna_residue: str = "DNL") -> Arm:
+    """TDP side chain + the DNA-side arm as one MMFF-optimised molecule.
+
+    ``dna_residue`` is DNL for a chimera (the arm continues into the duplex) or DNH
+    for the clicked, unloaded control (the arm ends in a free alcohol).
+    """
     from rdkit import Chem
     from rdkit.Chem import AllChem
 
     bt = {1: Chem.BondType.SINGLE, 2: Chem.BondType.DOUBLE, 3: Chem.BondType.TRIPLE,
           "ar": Chem.BondType.AROMATIC}
-    tdp, dnl = RESIDUES["TDP"], RESIDUES["DNL"]
+    tdp, dnl = RESIDUES["TDP"], RESIDUES[dna_residue]
     rw, idx, names, elems = Chem.RWMol(), {}, [], []
 
     def add(nm, el, tag):
@@ -184,7 +188,10 @@ def build_arm() -> Arm:
     # cap the free valences so RDKit can sanitise: an H on the backbone N and C=O
     # already exist; the backbone C needs one more substituent, and DNL's OL one.
     cap_h = []
-    for tag, nm in ((("TDP"), "C"), (("DNL"), "OL")):
+    tail_caps = [("TDP", "C")]
+    if dnl.get("tail"):
+        tail_caps.append(("DNL", dnl["tail"]))
+    for tag, nm in tail_caps:
         h = add(f"HCAP{len(cap_h)}", "H", tag)
         rw.AddBond(idx[(tag, nm)], h, bt[1])
         bonds_named.append(((tag, nm), (tag, f"HCAP{len(cap_h)}")))

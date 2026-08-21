@@ -37,8 +37,10 @@ CAP_PLAN = {
     "TET": [("head", ACE_CAP), ("tail", NME_CAP)],
     "TDP": [("head", ACE_CAP), ("tail", NME_CAP), ("extra", NMETHYL_CAP)],
     "DNL": [("head", ACETYL_CAP), ("tail", PHOSPHATE_CAP)],
+    # DNH's alcohol needs no cap on that end -- it *is* the terminus.
+    "DNH": [("head", ACETYL_CAP)],
 }
-FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1}   # DNL's cap carries a phosphodiester
+FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1, "DNH": 0}
 
 
 def build(name: str, outdir: Path, seed: int = 0xC0FFEE):

@@ -1,8 +1,8 @@
-,WT sfGFP,2x Tet2-Et,27 bp spring
-His148 ND1-H -> chromophore phenolate,71.62,82.52,70.61
-Thr203 OG1-H -> chromophore phenolate,94.78,96.37,100.0
-Arg96 NH2-H -> imidazolinone O2,100.0,100.0,100.0
-Gln94 NE2-H -> imidazolinone O2,98.53,96.97,100.0
-Ser205 OG-H -> Glu222 OE1,25.97,40.61,90.0
-chromophore OG1-H -> Glu222 OE2,0.0,0.0,0.0
-His148 NE2 <- Arg168 backbone NH,92.64,86.74,87.58
+,WT sfGFP,WT sfGFP range,2× Tet2-Et,2× Tet2-Et range,27 bp spring,27 bp spring range,40 bp spring,40 bp spring range,40 bp nicked,40 bp nicked range
+His148 ND1-H -> chromophore phenolate,72.15,66–76,75.7,58–89,81.18,78–84,79.93,76–83,80.07,70–92
+Thr203 OG1-H -> chromophore phenolate,96.08,96–97,95.78,94–97,96.74,94–100,96.89,95–98,97.78,97–99
+Arg96 NH2-H -> imidazolinone O2,100.0,100–100,99.85,100–100,100.0,100–100,99.78,100–100,100.0,100–100
+Gln94 NE2-H -> imidazolinone O2,97.18,96–98,93.63,92–97,95.85,95–97,90.89,82–96,97.26,97–98
+Ser205 OG-H -> Glu222 OE1,29.41,0–88,32.52,0–98,28.52,0–86,0.0,0–0,31.04,0–93
+chromophore OG1-H -> Glu222 OE2,0.0,0–0,0.0,0–0,0.0,0–0,0.0,0–0,0.0,0–0
+His148 NE2 <- Arg168 backbone NH,88.81,88–89,87.85,82–94,86.67,83–91,85.41,79–90,84.37,79–89

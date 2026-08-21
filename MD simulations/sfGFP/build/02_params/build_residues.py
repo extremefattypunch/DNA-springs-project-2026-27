@@ -56,6 +56,7 @@ MC = {
     # TDP's GAFF carbonyl carbon, type c) to the bridging oxygen that bonds the first
     # nucleotide's phosphorus (Amber DNA type P).
     "DNL": {"pre_head": "c", "post_tail": "P", "aa": False},
+    "DNH": {"pre_head": "c", "post_tail": None, "aa": False},
 }
 
 
@@ -244,10 +245,13 @@ def audit_frcmod(path: Path) -> dict:
 
 def write_mc(name: str, cap_atoms, path: Path):
     res, cfg = RESIDUES[name], MC[name]
-    out = [f"HEAD_NAME {res['head']}", f"TAIL_NAME {res['tail']}"]
-    interior = main_chain_path(res)
-    out += [f"MAIN_CHAIN {a}" for a in interior]
-    out += [f"PRE_HEAD_TYPE {cfg['pre_head']}", f"POST_TAIL_TYPE {cfg['post_tail']}"]
+    out = [f"HEAD_NAME {res['head']}"]
+    if res.get("tail"):
+        out.append(f"TAIL_NAME {res['tail']}")
+        out += [f"MAIN_CHAIN {a}" for a in main_chain_path(res)]
+    out.append(f"PRE_HEAD_TYPE {cfg['pre_head']}")
+    if cfg.get("post_tail"):
+        out.append(f"POST_TAIL_TYPE {cfg['post_tail']}")
     out += [f"CHARGE {float(res['net_charge']):.4f}"]
     out += [f"OMIT_NAME {a}" for a in cap_atoms]
     path.write_text("\n".join(out) + "\n")
@@ -278,8 +282,10 @@ def build_one(name: str, outdir: Path, args) -> dict:
     run([args.prepgen, "-i", ac.name, "-o", prepin.name, "-f", "prepi",
          "-m", f"{name}.mc", "-rn", name], work, "prepgen.log")
     _, rows = parse_prep(prepin)
+    chain = (f"{res['head']} -> {'-'.join(main_chain_path(res))} -> {res['tail']}"
+             if res.get("tail") else f"{res['head']} (no tail: terminal residue)")
     print(f"  prepgen: {len(rows)} atoms retained ({len(caps)} cap atoms omitted); "
-          f"main chain {res['head']} -> {'-'.join(main_chain_path(res))} -> {res['tail']}")
+          f"main chain {chain}")
     verify_tree(prepin, res)
     elem_check = assert_elements(prepin, res)
     print(f"  element check: {elem_check['atoms_checked']} atoms, "

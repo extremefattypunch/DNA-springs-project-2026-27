@@ -204,7 +204,36 @@ DNL = {
     ],
 }
 
-RESIDUES = {r["name"]: r for r in (TET, TDP, DNL)}
+# ---------------------------------------------------------------------------
+# DNH -- the DNA-side arm, capped as a free alcohol instead of joined to DNA
+# ---------------------------------------------------------------------------
+# This exists to make one comparison clean.  The force-clamp ladder runs on TET
+# (unclicked tetrazine), so it cannot serve as the zero-force control for a chimera
+# built from TDP: the two differ by the whole sTCO adduct, and that difference turns
+# out to move the attachment sites about as far as the spring does.  DNH gives a
+# system with the identical tether chemistry -- TDP plus the full carbamate arm --
+# and no DNA and no load, which is what isolates the spring's force from the
+# tether's bulk.
+DNH = {
+    "name": "DNH",
+    "description": "5'-amino-C6 arm terminated as a free alcohol: the clicked, "
+                   "unloaded control for the chimeras",
+    "smiles_capped": r"CC(=O)NCCCCCCO",
+    "net_charge": 0,
+    "head": "N", "tail": None,
+    "heavy": ["N", "C1", "C2", "C3", "C4", "C5", "C6", "OL"],
+    "hydrogens": {
+        "N": ["HN"], "OL": ["HOL"],
+        "C1": ["H11", "H12"], "C2": ["H21", "H22"], "C3": ["H31", "H32"],
+        "C4": ["H41", "H42"], "C5": ["H51", "H52"], "C6": ["H61", "H62"],
+    },
+    "bonds": [
+        ("N", "C1", 1), ("C1", "C2", 1), ("C2", "C3", 1), ("C3", "C4", 1),
+        ("C4", "C5", 1), ("C5", "C6", 1), ("C6", "OL", 1),
+    ],
+}
+
+RESIDUES = {r["name"]: r for r in (TET, TDP, DNL, DNH)}
 
 # Standard atomic masses, enough for the elements present.
 MASS = {"H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999, "P": 30.974}
@@ -261,7 +290,9 @@ def validate(res: dict) -> list[str]:
         val[a] += len(hs)
     # inter-residue connections: head takes one bond from the preceding residue,
     # tail one from the following, and any declared extra bond one more.
-    external = {res["head"]: 1, res.get("tail", ""): 1}
+    external = {res["head"]: 1}
+    if res.get("tail"):
+        external[res["tail"]] = 1
     # An extra_bond is only *extra* if it is not already the head or tail connection.
     # For DNL the tail bond and the bond to the nucleotide phosphorus are the same
     # bond, so counting both would give the bridging oxygen a spurious third bond.

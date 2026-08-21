@@ -35,8 +35,22 @@ def load_map(path):
                          r.get("orig_chain", "?")) for r in rows}
 
 
-def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1):
+def drop_equilibration(t, skip):
+    """Drop the first ``skip`` frames (already strided) as settling time.
+
+    The box is still contracting and the solvent-exposed side chains are still
+    finding their positions for the first few ns of production; averaging that into
+    an equilibrium observable biases it and inflates its spread.  Never drops so much
+    that fewer than 10 frames remain.
+    """
+    if skip and t.n_frames - skip >= 10:
+        return t[skip:]
+    return t
+
+
+def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1, skip=0):
     t = md.load(str(traj), top=str(top_path), stride=stride)
+    t = drop_equilibration(t, skip)
     top = t.topology
     resmap = load_map(resmap_path)
     prot_res = [i for i, (n, nm, ch) in resmap.items()
@@ -156,5 +170,7 @@ if __name__ == "__main__":
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
     ap.add_argument("--out-prefix", required=True)
     ap.add_argument("--stride", type=int, default=1)
+    ap.add_argument("--skip", type=int, default=0,
+                    help="frames to drop from the start, after striding")
     a = ap.parse_args()
     analyse(a.traj, a.top, a.resmap, a.sites, a.out_prefix, a.stride)

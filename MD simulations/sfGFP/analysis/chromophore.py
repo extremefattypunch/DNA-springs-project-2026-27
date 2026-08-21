@@ -109,8 +109,22 @@ def circular_stats(deg):
     return mean, sd, twist
 
 
-def analyse(traj_path, top_path, resmap_path, out_prefix, stride=1):
+def drop_equilibration(t, skip):
+    """Drop the first ``skip`` frames (already strided) as settling time.
+
+    The box is still contracting and the solvent-exposed side chains are still
+    finding their positions for the first few ns of production; averaging that into
+    an equilibrium observable biases it and inflates its spread.  Never drops so much
+    that fewer than 10 frames remain.
+    """
+    if skip and t.n_frames - skip >= 10:
+        return t[skip:]
+    return t
+
+
+def analyse(traj_path, top_path, resmap_path, out_prefix, stride=1, skip=0):
     t = md.load(str(traj_path), top=str(top_path), stride=stride)
+    t = drop_equilibration(t, skip)
     top = t.topology
     resmap = load_residue_map(resmap_path)
     print(f"loaded {t.n_frames} frames, {t.n_atoms} atoms")
@@ -218,5 +232,7 @@ if __name__ == "__main__":
                     help="residue_map.json written next to the prmtop")
     ap.add_argument("--out-prefix", required=True)
     ap.add_argument("--stride", type=int, default=1)
+    ap.add_argument("--skip", type=int, default=0,
+                    help="frames to drop from the start, after striding")
     a = ap.parse_args()
     analyse(a.traj, a.top, a.resmap, a.out_prefix, a.stride)

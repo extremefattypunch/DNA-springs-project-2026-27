@@ -1,32 +1,24 @@
 [
   {
-    "residue": "DNL",
-    "description": "5'-amino-modifier-C6 arm: carbamate N through hexyl to the oxygen that bridges the first nucleotide's phosphorus",
-    "smiles_from_tables": "COP(=O)([O-])OCCCCCCNC(C)=O",
-    "formula": "C6H13NO",
-    "mass_Da": 115.176,
-    "net_charge": -0.3079,
-    "model_formal_charge": -1,
+    "residue": "DNH",
+    "description": "5'-amino-C6 arm terminated as a free alcohol: the clicked, unloaded control for the chimeras",
+    "smiles_from_tables": "CC(=O)NCCCCCCO",
+    "formula": "C6H14NO",
+    "mass_Da": 116.184,
+    "net_charge": 0,
+    "model_formal_charge": 0,
     "cap_atoms": [
       "CAY",
       "OAY",
       "CAZ",
       "HZ1",
       "HZ2",
-      "HZ3",
-      "P",
-      "OP1",
-      "OP2",
-      "O5C",
-      "C5C",
-      "H5A",
-      "H5B",
-      "H5C"
+      "HZ3"
     ],
-    "atoms_in_residue": 21,
+    "atoms_in_residue": 22,
     "charge_method": "AM1-BCC (GAFF2 types)",
     "element_check": {
-      "atoms_checked": 21,
+      "atoms_checked": 22,
       "element_mismatches": 0
     },
     "frcmod_audit": {

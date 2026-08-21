@@ -1,2 +1,10 @@
-applied_pN,extension_A,n_rep,label
-5.243,32.105,2,27 bp spring
+series,applied_pN,extension_A,sem_A,n_rep
+S6_clamp,0.0,31.607,0.0656,3
+S6_clamp,2.0,31.641,0.133,3
+S6_clamp,4.0,31.381,0.1223,3
+S6_clamp,7.0,31.608,0.0729,3
+S6_clamp,12.0,31.722,0.0368,3
+S6_clamp,20.0,31.75,0.021,3
+S3_spring27,4.879,32.195,0.1167,3
+S4_spring40,2.965,32.125,0.1596,3
+S5_spring40nick,2.354,31.794,0.1493,3
