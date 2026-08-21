@@ -1,0 +1,43 @@
+{
+  "sequence": "ACCGTGGACTCCTGCCAGCAACTCACG",
+  "straight": {
+    "chains": [
+      "A",
+      "B"
+    ],
+    "n_bp": 27,
+    "C1'-C1' mean_A": 10.688,
+    "bp_centre_spacing_A": [
+      3.576,
+      0.0
+    ],
+    "axial_rise_A": [
+      3.376,
+      0.008
+    ],
+    "straightness_rms_A": 1.869,
+    "twist_deg": [
+      36.0,
+      0.0
+    ],
+    "five_prime_z_A": [
+      -45.69,
+      45.69
+    ],
+    "five_prime_separation_A": 91.67
+  },
+  "bend": {
+    "contour_A": 87.78,
+    "radius_A": 42.98,
+    "arc_deg": 117.0,
+    "target_chord_A": 73.3,
+    "five_prime_separation_after_A": 70.65,
+    "O3prime_P_after": [
+      1.642,
+      0.314,
+      2.124
+    ],
+    "bend_azimuth_deg": 0.0
+  },
+  "nick_after": null
+}

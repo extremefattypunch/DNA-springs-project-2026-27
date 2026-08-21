@@ -9,8 +9,8 @@ echo "=== production progress ==="
 printf "%-22s %-6s %10s %10s %8s\n" system rep ns_done ns_total pct
 shopt -s nullglob
 for p in data/runs/*/rep*/03_production/progress.json; do
-    sys=$(basename "$(dirname "$(dirname "$p")")")
-    rep=$(basename "$(dirname "$p")")
+    sys=$(basename "$(dirname "$(dirname "$(dirname "$p")")")")
+    rep=$(basename "$(dirname "$(dirname "$p")")")
     read -r d t < <(python3 -c "
 import json,sys
 j=json.load(open(sys.argv[1]))

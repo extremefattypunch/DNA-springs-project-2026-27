@@ -25,3 +25,5 @@ build/02_params/*/ANTECHAMBER*
 build/02_params/*/ATOMTYPE.INF
 build/02_params/*/sqm.*
 build/02_params/*/*.log
+build/03_dna/straight_*.pdb
+build/03_dna/*.pml
