@@ -24,7 +24,10 @@ case "$TIER" in
 esac
 
 CHIMERAS=(S3_spring27 S4_spring40 S5_spring40nick)
-CONTROLS=(S0_wt S1_tet S2_clicked)
+CONTROLS=(S0_wt S1_tet)
+# The clamp ladder runs on S1's topology -- the same two Tet2-Et residues the spring
+# pulls on -- so its force-response curve and the chimeras are directly comparable.
+# 0 pN is the matched control: identical topology and code path, no force.
 CLAMPS=(0 2 4 7 12 20)
 
 submit () {

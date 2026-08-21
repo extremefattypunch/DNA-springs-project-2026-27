@@ -28,14 +28,14 @@
   },
   "bend": {
     "contour_A": 131.63,
-    "radius_A": 37.34,
-    "arc_deg": 202.0,
-    "target_chord_A": 73.3,
-    "five_prime_separation_after_A": 70.23,
+    "radius_A": 33.54,
+    "arc_deg": 224.9,
+    "target_chord_A": 62.0,
+    "five_prime_separation_after_A": 59.01,
     "O3prime_P_after": [
-      1.661,
-      0.366,
-      2.198
+      1.675,
+      0.403,
+      2.272
     ],
     "bend_azimuth_deg": 0.0
   },

@@ -50,14 +50,47 @@ FF14SB_BACKBONE = {
 BACKBONE_SUM = sum(q for _, q in FF14SB_BACKBONE.values())
 
 MC = {
-    "TET": {"main_chain": ["CA"], "pre_head": "C", "post_tail": "N", "aa": True},
-    "TDP": {"main_chain": ["CA"], "pre_head": "C", "post_tail": "N", "aa": True},
+    "TET": {"pre_head": "C", "post_tail": "N", "aa": True},
+    "TDP": {"pre_head": "C", "post_tail": "N", "aa": True},
     # DNL is not an amino acid: it runs from the carbamate nitrogen (whose partner is
     # TDP's GAFF carbonyl carbon, type c) to the bridging oxygen that bonds the first
     # nucleotide's phosphorus (Amber DNA type P).
-    "DNL": {"main_chain": ["CL1", "CL2", "CL3", "CL4", "CL5", "CL6"],
-            "pre_head": "c", "post_tail": "P", "aa": False},
+    "DNL": {"pre_head": "c", "post_tail": "P", "aa": False},
 }
+
+
+def main_chain_path(res: dict) -> list:
+    """Interior heavy atoms on the shortest head->tail path through the bonds.
+
+    Derived from the tables rather than listed by hand.  A hand-written list is a
+    trap: DNL's carbons were renamed CL1..CL6 -> C1..C6 to stop antechamber reading
+    them as chlorine, and the stale list left prepgen unable to find any main-chain
+    atom.  It silently fell back to making every one of them a child of the head
+    nitrogen, so the bridging oxygen came out bonded to N instead of C6 -- a residue
+    with the right atoms, the right charge, and the wrong topology.
+    """
+    adj = {}
+    for a, b, _ in res["bonds"]:
+        adj.setdefault(a, set()).add(b)
+        adj.setdefault(b, set()).add(a)
+    head, tail = res["head"], res["tail"]
+    prev, queue = {head: None}, [head]
+    while queue:
+        x = queue.pop(0)
+        if x == tail:
+            break
+        for y in sorted(adj.get(x, ())):
+            if y not in prev:
+                prev[y] = x
+                queue.append(y)
+    if tail not in prev:
+        sys.exit(f"{res['name']}: no bonded path from {head} to {tail}")
+    path, x = [], tail
+    while x is not None:
+        path.append(x)
+        x = prev[x]
+    path.reverse()
+    return path[1:-1]          # interior atoms only; prepgen infers head and tail
 PREP_FMT = ("{idx:>4}  {name:<4}  {typ:<4}  {topo:<1}  {na:>3} {nb:>3} {nc:>3}  "
             "{r:>8.3f}  {th:>8.3f}  {phi:>9.3f} {q:>9.6f}")
 
@@ -171,6 +204,29 @@ def assert_elements(prepin: Path, res: dict) -> dict:
     return {"atoms_checked": len(rows), "element_mismatches": 0}
 
 
+def verify_tree(prepin: Path, res: dict) -> None:
+    """Every prep tree parent link must be a real bond in the residue tables."""
+    lines, rows = parse_prep(prepin)
+    names = {}
+    for i in rows:
+        f = lines[i].split()
+        names[int(f[0])] = f[1]
+    # DUMM atoms occupy the first three indices and have no chemical meaning
+    for i in rows:
+        f = lines[i].split()
+        child, parent = f[1], names.get(int(f[4]))
+        if parent is None:
+            continue
+        bonds = {frozenset((a, b)) for a, b, _ in res["bonds"]}
+        bonds |= {frozenset((h, par)) for par, hs in res["hydrogens"].items()
+                  for h in hs}
+        bonded = frozenset((child, parent)) in bonds
+        if not bonded and parent not in ("DUMM",):
+            sys.exit(f"{res['name']}: prep tree says {child} hangs off {parent}, "
+                     f"but that is not a bond in the residue tables")
+    print(f"  prep tree: every parent link matches a declared bond")
+
+
 def audit_frcmod(path: Path) -> dict:
     flagged, section = [], None
     for line in path.read_text().splitlines():
@@ -189,9 +245,10 @@ def audit_frcmod(path: Path) -> dict:
 def write_mc(name: str, cap_atoms, path: Path):
     res, cfg = RESIDUES[name], MC[name]
     out = [f"HEAD_NAME {res['head']}", f"TAIL_NAME {res['tail']}"]
-    out += [f"MAIN_CHAIN {a}" for a in cfg["main_chain"]]
+    interior = main_chain_path(res)
+    out += [f"MAIN_CHAIN {a}" for a in interior]
     out += [f"PRE_HEAD_TYPE {cfg['pre_head']}", f"POST_TAIL_TYPE {cfg['post_tail']}"]
-    out += [f"CHARGE {float(res['net_charge']):.1f}"]
+    out += [f"CHARGE {float(res['net_charge']):.4f}"]
     out += [f"OMIT_NAME {a}" for a in cap_atoms]
     path.write_text("\n".join(out) + "\n")
 
@@ -221,7 +278,9 @@ def build_one(name: str, outdir: Path, args) -> dict:
     run([args.prepgen, "-i", ac.name, "-o", prepin.name, "-f", "prepi",
          "-m", f"{name}.mc", "-rn", name], work, "prepgen.log")
     _, rows = parse_prep(prepin)
-    print(f"  prepgen: {len(rows)} atoms retained ({len(caps)} cap atoms omitted)")
+    print(f"  prepgen: {len(rows)} atoms retained ({len(caps)} cap atoms omitted); "
+          f"main chain {res['head']} -> {'-'.join(main_chain_path(res))} -> {res['tail']}")
+    verify_tree(prepin, res)
     elem_check = assert_elements(prepin, res)
     print(f"  element check: {elem_check['atoms_checked']} atoms, "
           f"every assigned type matches the declared element")

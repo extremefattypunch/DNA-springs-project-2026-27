@@ -175,7 +175,15 @@ DNL = {
     "description": "5'-amino-modifier-C6 arm: carbamate N through hexyl to the "
                    "oxygen that bridges the first nucleotide's phosphorus",
     "smiles_capped": r"CC(=O)NCCCCCCO[P](=O)([O-])OC",
-    "net_charge": 0,
+    # -0.3079, not 0.  Amber's DNA libraries split one unit of charge between the two
+    # chain ends: every 3'-terminal template (DA3/DG3/DC3/DT3) carries -0.6921 and
+    # every 5'-terminal one -0.3079, so that a complete strand comes out integral.
+    # In this chimera the 5' nucleotide uses the *internal* template -- it has to, to
+    # keep the phosphate the tether bonds to -- and DNL stands in its place.  DNL must
+    # therefore carry the 5'-cap's share, or the strand is left 0.3079 e short and the
+    # whole system has a fractional net charge that no ion count can neutralise.
+    # -0.3079 + (-0.6921) = -1 exactly, as DA5 + DA3 does.
+    "net_charge": -0.3079,
     "head": "N", "tail": "OL",
     "extra_bond": {"this_atom": "OL", "partner_residue": "DNA_5prime",
                    "partner_atom": "P"},

@@ -1,0 +1,55 @@
+Junction parameters where GAFF2 residues meet the Amber DNA backbone.
+#
+# The DNL linker's bridging oxygen (GAFF2 type os) bonds the first nucleotide's
+# phosphorus (Amber DNA type P).  That pair spans two force fields, so neither
+# gaff2.dat nor parm10.dat contains it and parmchk2 cannot invent it: the model
+# compound DNL was fitted against carried a GAFF phosphate, not Amber's.
+#
+# Every value below is copied verbatim from Amber's own phosphodiester in
+# parm10.dat, substituting the GAFF2 type that describes the same chemistry:
+#   os (GAFF2 ester/ether O)  <->  OS (Amber ester O in the DNA backbone)
+#   c3 (GAFF2 sp3 C)          <->  CT (Amber sp3 C)
+# The junction is therefore described exactly as a C5'-O5'-P linkage is, which is
+# the same chemistry: an alkyl ester of a phosphodiester.
+#
+# Provenance, parm10.dat:
+#   OS-P     230.0  1.610      JCC,7,(1986),230; NA PHOSPHATES
+#   CT-OS-P  100.0  120.50
+#   O2-P-OS  100.0  108.23
+#   OS-P-OS   45.0  102.60
+#   X-OS-P-X    3   0.75  0.0  3.
+MASS
+
+BOND
+os-P  230.0     1.610
+
+ANGLE
+c3-os-P    100.0     120.500
+os-P -O2   100.0     108.230
+os-P -OS    45.0     102.600
+
+DIHE
+X -os-P -X    3    0.75          0.0             3.
+#
+# The carbamate that joins TDP to DNL is a c-ns bond.  GAFF2 gives explicit torsions
+# for several c-ns cases (c3-c-ns-c3 and friends) but has no generic X-c-ns-X and
+# nothing with o or os on the carbonyl side, so the four torsions that actually cross
+# this residue boundary -- o-c-ns-c3, o-c-ns-hn, os-c-ns-c3, os-c-ns-hn -- have no
+# term at all.  Left out, the carbamate would rotate freely, and this bond is one of
+# only fourteen in the tether: its planarity sets how stiffly the DNA spring's load is
+# transmitted to the protein.
+#
+# Taken from GAFF2's own amide set, substituting ns for n (both are amide nitrogens;
+# ns is GAFF2's three-substituent, one-hydrogen variant):
+#   X -c -n -X    4   10.000  180.000  2.000   AA,NMA (no c-n3, c-n4, c-nh)
+#   o -c -n -hn   1    2.500  180.000 -2.000   JCC,7,(1986),230
+#   o -c -n -hn   1    2.000    0.000  1.000   J.C.cistrans-NMA
+# LEaP prefers a specific match over a generic one, so GAFF2's explicit c-ns torsions
+# still take precedence over the generic added here.
+X -c -ns-X    4   10.000       180.000           2.000
+o -c -ns-hn   1    2.500       180.000          -2.000
+o -c -ns-hn   1    2.000         0.000           1.000
+
+IMPROPER
+
+NONBON

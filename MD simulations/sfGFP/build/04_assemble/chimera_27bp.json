@@ -1,0 +1,44 @@
+{
+  "protein": "build/01_protein/sfgfp_prepped.pdb",
+  "dna": "build/03_dna/spring_27bp.pdb",
+  "sites": [
+    133,
+    149
+  ],
+  "tether": {
+    "cyclopropane_sides_A": [
+      1.516,
+      1.515,
+      1.512
+    ],
+    "azadiene_torsion_deg": 171.87,
+    "CB_to_OL_A": 17.28,
+    "n_rotatable_bonds": 14
+  },
+  "reach_A": 22.34,
+  "sites_CB_CB_A": 31.3,
+  "duplex_5p_5p_A": 57.31,
+  "a_offset_A": 13.0,
+  "b_offset_A": 14.75,
+  "duplex_spin_deg": 330,
+  "arm_reports": {
+    "133": {
+      "score": 22.624,
+      "OL_to_target_A": 0.593,
+      "clash": 44.544,
+      "OL_to_P_A": 2.022
+    },
+    "149": {
+      "score": 25.607,
+      "OL_to_target_A": 0.62,
+      "clash": 50.446,
+      "OL_to_P_A": 2.098
+    }
+  },
+  "waters_kept": 323,
+  "waters_dropped": 4,
+  "tleap_bonds": [
+    "131@CN:232@N",
+    "147@CN:260@N"
+  ]
+}

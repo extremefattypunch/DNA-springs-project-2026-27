@@ -41,6 +41,10 @@ FORCE_FIELD_LINES = [
     # not 12-6-4: OpenMM has no native C4 term, so a 12-6-4 prmtop would silently
     # lose the polarisation correction on the way in.
     "loadamberparams frcmod.ions234lm_126_tip3p",
+    # The custom residues are GAFF2-typed, so gaff2.dat has to be present for the
+    # bonds, angles and torsions that cross their boundaries -- the per-residue
+    # frcmods only cover what parmchk2 saw inside each capped model.
+    "loadamberparams gaff2.dat",
 ]
 
 
@@ -208,10 +212,13 @@ def solute_residue_order(solute_pdb: Path):
         resn = line[17:20].strip()
         if resn in SOLVENT_NAMES:
             continue
-        key = (int(line[22:26]), resn)
+        # Key on the chain too.  Both DNL linkers are residue 0, one per strand, so a
+        # (number, name) key silently collapses them into one and shifts every
+        # subsequent residue in the map by one.
+        key = (line[21], int(line[22:26]), resn)
         if key not in seen:
             seen.add(key)
-            order.append(key)
+            order.append((key[1], key[2]))
     return order
 
 
@@ -227,10 +234,20 @@ def write_residue_map(out: Path, solute_pdb: Path):
     import parmed
     p = parmed.load_file(str(out / "system.prmtop"))
     order = solute_residue_order(solute_pdb)
+    # tleap legitimately renames residues to their terminal or tautomer variants:
+    # a chain-terminal DG becomes DG3, HIS becomes HID/HIE/HIP.  Accept those; a name
+    # change that is not one of them means the map really is misaligned.
+    def compatible(prmtop_name, input_name):
+        if prmtop_name == input_name:
+            return True
+        if prmtop_name in (input_name + "3", input_name + "5"):
+            return True
+        return {prmtop_name, input_name} <= {"HIS", "HID", "HIE", "HIP"}
+
     rows, mismatched = [], []
     for i, (num, name) in enumerate(order):
         res = p.residues[i]
-        if res.name != name:
+        if not compatible(res.name, name):
             mismatched.append((i, res.name, name))
         rows.append({"index": i, "orig_resnum": num, "orig_resname": name,
                      "prmtop_resname": res.name})
