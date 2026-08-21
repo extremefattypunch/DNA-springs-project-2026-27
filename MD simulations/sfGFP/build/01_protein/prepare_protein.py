@@ -67,6 +67,13 @@ NME_BUILD = [
     ("N",   ("N", "CA", "C"), 1.335, 116.6, 180.0),   # amide N bonded to res-232 C
     ("CH3", ("CA", "C", "N"), 1.449, 121.9, 180.0),
 ]
+# ff14SB loads aminoct12.lib, whose NME template names the methyl carbon "C"
+# (with H1/H2/H3), not "CH3".  Emitting "CH3" makes tleap build the six template
+# atoms and then choke on a seventh, untyped atom.  ACE is unaffected: aminont12's
+# ACE really does use CH3, alongside its own C and O.  We place the atom under the
+# internal name CH3 -- the placement references residue 232's own C -- and rename
+# on output so the two never collide.
+CAP_RENAME = {"NME": {"CH3": "C"}}
 
 
 # --------------------------------------------------------------------------
@@ -319,7 +326,9 @@ def main():
               f"contact {dmin:.2f} A")
         if dmin < 2.2:
             print(f"  WARNING: {resn}{resi} still crowded at {dmin:.2f} A")
-        return [Atom(n, resn, resi, ref_res["CA"].chain, xyz, elem_of[n], 1.0, False)
+        rename = CAP_RENAME.get(resn, {})
+        return [Atom(rename.get(n, n), resn, resi, ref_res["CA"].chain, xyz,
+                     elem_of[n], 1.0, False)
                 for n, xyz in made.items()]
 
     print("\nbuilding terminal caps (ideal internal coordinates; tleap adds their H):")

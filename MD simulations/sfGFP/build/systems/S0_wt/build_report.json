@@ -1,0 +1,37 @@
+{
+  "system": "S0_wt",
+  "solute_pdb": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/01_protein/sfgfp_prepped.pdb",
+  "pad_A": 12.0,
+  "waters_pass1": 13192,
+  "nacl_pairs": 36,
+  "mgcl2": 0,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.0,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [],
+  "atoms": 44016,
+  "residues": 13750,
+  "bonds": 43980,
+  "net_charge": -0.0,
+  "box": [
+    86.311,
+    86.311,
+    86.311,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 13441,
+  "ions": {
+    "Na+": 42,
+    "Cl-": 36
+  },
+  "expected_residues": {
+    "CRO": 1
+  },
+  "bonds_verified": [],
+  "dihedrals": 16295,
+  "angles": 6609,
+  "problems": []
+}

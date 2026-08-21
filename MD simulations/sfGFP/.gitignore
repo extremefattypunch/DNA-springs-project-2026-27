@@ -18,3 +18,6 @@ __pycache__/
 *.molden
 psi.*.clean
 timer.dat
+build/systems/*/system.pdb
+build/systems/*/*.out
+build/systems/*/*.in
