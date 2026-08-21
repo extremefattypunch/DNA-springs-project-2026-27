@@ -14,6 +14,7 @@ Three views, each answering a different question:
 from __future__ import annotations
 
 import argparse
+import json
 import shutil
 import subprocess
 import sys
@@ -23,8 +24,41 @@ import mdtraj as md
 import numpy as np
 
 
-def prepare(traj_path, top_path, out: Path, n_frames: int, sites):
+def renumber(top, resmap_path):
+    """Give the rendered structure crystallographic residue numbers.
+
+    Without this every label and every distance in the PML is aimed at the wrong
+    residue: tleap numbers residues sequentially, so the prmtop's `resi 148` is not
+    His148 — it is whatever sits 148th in the file. The labels came out on unrelated
+    side chains and the distance objects were empty, which is why no dashes appeared.
+
+    A single mdtraj chain cannot carry two residue 1's, so the DNA is offset into its
+    own ranges rather than left colliding with the protein:
+        protein   crystallographic numbering (2-233)
+        strand C  301-3xx, its linker 300
+        strand D  401-4xx, its linker 400
+    """
+    rows = json.loads(Path(resmap_path).read_text())
+    by_index = {r["index"]: r for r in rows}
+    offsets, next_off = {}, {}
+    for res in top.residues:
+        row = by_index.get(res.index)
+        if row is None:
+            continue
+        ch = row.get("orig_chain") or "A"
+        if ch == "A":
+            res.resSeq = row["orig_resnum"]
+        else:
+            if ch not in offsets:
+                offsets[ch] = 300 + 100 * len(offsets)
+            res.resSeq = offsets[ch] + row["orig_resnum"]
+    return top
+
+
+def prepare(traj_path, top_path, out: Path, n_frames: int, sites, resmap=None):
     t = md.load(str(traj_path), top=str(top_path))
+    if resmap:
+        renumber(t.topology, resmap)
     # Selected by iterating residues, not with a selection string: mdtraj's parser
     # chokes on the "+" in the Amber ion names Na+ and Cl-.
     solvent = {"WAT", "HOH", "Na+", "Cl-", "MG", "K+"}
@@ -63,9 +97,13 @@ set label_size, {label_size}
 set label_font_id, 7
 set label_color, black
 set label_outline_color, white
-set label_bg_color, white
-set label_bg_transparency, 0.15
-set label_bg_outline, 1
+# No label background: PyMOL anchors the background box at the atom while
+# label_position moves the text, so an opaque box leaves an empty white rectangle
+# sitting on the side chain. A white outline on black text is legible on both the
+# pale cartoon and the sticks without that artefact.
+set label_bg_transparency, 1
+set label_bg_outline, 0
+set label_outline_color, white
 set label_position, (0, 0, 3)
 set label_distance_digits, 2
 set dash_color, grey20
@@ -102,25 +140,45 @@ set sphere_scale, 0.38, resn TDP and name CB
 color firebrick, resn TDP and name CB
 python
 from pymol import cmd
-# Pseudoatoms at each component's centre of mass, so the parts are named on the
-# picture instead of only in the caption.
-parts = [("lbl_dna",  "polymer.nucleic",                     "27 bp DNA spring"),
-         ("lbl_prot", "polymer.protein and not resn TDP",    "sfGFP beta-barrel"),
-         ("lbl_cro",  "resn CRO",                            "chromophore"),
-         ("lbl_teth", "resn TDP+DNL",                        "Tet2-Et + sTCO tether")]
-for name, sele, text in parts:
-    if cmd.count_atoms(sele):
-        cmd.pseudoatom(name, pos=list(cmd.centerofmass(sele)), label=text)
-cmd.set("label_color", "grey20", "lbl_prot")
+# One pseudoatom per component, carrying the component's name.  The barrel, the
+# chromophore and the tethers all have centres of mass within a few angstroms of each
+# other, so their labels printed on top of one another; each gets an explicit
+# camera-space offset that moves it clear of the structure.
+# Three labels, not four: a label for the grey cartoon adds nothing a reader cannot
+# see, and with four the barrel and chromophore text overlapped whatever offsets they
+# were given. Name the parts that are not obvious.
+parts = [
+    ("lbl_dna",  "polymer.nucleic",       "27 bp DNA spring",      (  4,  11, 12)),
+    ("lbl_cro",  "resn CRO",              "chromophore",           (  1, -17, 12)),
+    ("lbl_teth", "resn TDP and name CB",  "Tet2-Et + sTCO tether", ( -7,  15, 12)),
+]
+for name, sele, text, off in parts:
+    if not cmd.count_atoms(sele):
+        continue
+    cmd.pseudoatom(name, pos=list(cmd.centerofmass(sele)), label=text)
+    cmd.set("label_position", off, name)
+cmd.set("label_color", "grey15", "lbl_*")
 python end
+# Zoom on the molecule, not on "all" -- the label pseudoatoms sit far outside the
+# structure and dragged the framing off centre, leaving half the frame empty.
 orient polymer
-zoom all, 6
+zoom polymer, 4
 turn x, -15
 """,
     "chromophore": """
 show cartoon, polymer.protein
-set cartoon_transparency, 0.82
-color grey85, polymer.protein
+set cartoon_transparency, 0.90
+color grey88, polymer.protein
+python
+from pymol import cmd
+# Fail loudly if the numbering is not what the labels assume.
+want = {148: "HID", 203: "THR", 96: "ARG", 94: "GLN", 205: "SER", 222: "GLU"}
+for resi, resn in want.items():
+    got = set()
+    cmd.iterate(f"resi {resi} and name CA", "got.add(resn)", space={"got": got})
+    if resn not in got:
+        print(f"LABEL-CHECK FAILED: resi {resi} is {got or 'absent'}, expected {resn}")
+python end
 show sticks, resn CRO
 color limegreen, resn CRO
 util.cnc("resn CRO")
@@ -128,20 +186,22 @@ color limegreen, resn CRO and elem C
 show sticks, resi 148+203+205+96+94+222 and (sidechain or name CA)
 color salmon, resi 148+203+205+96+94+222 and elem C
 util.cnc("resi 148+203+205+96+94+222 and not elem C")
-# the three bonds that hold the chromophore planar, plus the pair behind it
+# Exactly the three bonds the caption names, so figure and text cannot disagree.
 distance hb_his148,  resn CRO and name OH, resi 148 and name ND1
 distance hb_thr203,  resn CRO and name OH, resi 203 and name OG1
 distance hb_arg96,   resn CRO and name O2, resi 96  and name NH2
-distance hb_gln94,   resn CRO and name O2, resi 94  and name NE2
-distance hb_ser205,  resi 205 and name OG, resi 222 and name OE1
 color grey20, hb_*
 label resi 148 and name NE2, "His148"
 label resi 203 and name CG2, "Thr203"
 label resi 96  and name NH1, "Arg96"
-label resi 94  and name OE1, "Gln94"
-label resi 205 and name OG,  "Ser205"
-label resi 222 and name OE2, "Glu222"
-label resn CRO and name CZ,  "chromophore (CRO)"
+label resn CRO and name CB2, "chromophore"
+# label_position is a camera-space offset in Angstroms, so each label is pushed away
+# from the pocket centre in the direction it needs to go.  Left to default they pile
+# up on top of one another in the middle of the picture.
+set label_position, ( 7,  5, 6), resi 148
+set label_position, ( 8, -3, 6), resi 203
+set label_position, (-9,  5, 6), resi 96
+set label_position, (-3,-10, 6), resn CRO
 orient resn CRO or resi 148+203+96
 zoom resn CRO or resi 148+203+96, 3.5
 turn x, -10
@@ -188,7 +248,7 @@ def render_still(view, work: Path, out: Path, name, w, h, pymol, frame):
     bad for reading labels; the report needs both."""
     pml = work / f"{view}_still.pml"
     pml.write_text(PML.format(pdb="solute.pdb", dcd="solute.dcd", body=BODIES[view],
-                              prefix="_x", w=w, h=h, label_size=20)
+                              prefix="_x", w=w, h=h, label_size=18)
                    .split("set all_states, off")[0]
                    + STILL_TAIL.format(frame=frame, w=w, h=h, prefix=view))
     r = subprocess.run([pymol, "-cq", pml.name], cwd=work, capture_output=True,
@@ -248,6 +308,9 @@ def main():
     ap.add_argument("--still-width", type=int, default=1500)
     ap.add_argument("--still-height", type=int, default=1150)
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
+    ap.add_argument("--resmap", default=None,
+                    help="residue_map.json; without it labels aim at the prmtop's "
+                         "sequential numbering and land on the wrong residues")
     ap.add_argument("--keep-work", action="store_true")
     a = ap.parse_args()
     pymol = shutil.which("pymol") or sys.exit("pymol not found")
@@ -259,7 +322,7 @@ def main():
         shutil.rmtree(work)
     work.mkdir(parents=True)
     print(f"=== {a.name} ===")
-    t, rmsf = prepare(a.traj, a.top, work, a.frames, a.sites)
+    t, rmsf = prepare(a.traj, a.top, work, a.frames, a.sites, a.resmap)
     print(f"  {t.n_frames} frames, {t.n_atoms} solute atoms")
     made = []
     for v in a.views:

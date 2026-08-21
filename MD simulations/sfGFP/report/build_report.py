@@ -141,6 +141,184 @@ VER = [
     ("Bend transform is the identity at zero curvature", "O3′–P 1.601 Å at R = 566 Å", True),
 ]
 
+
+# ---------------------------------------------------------------------------
+# References.  Order is the order they are first cited; cite() renders the marker.
+# Every entry is something this setup actually rests on -- a structure, a parameter
+# set, a formula, a piece of chemistry, or a program that produced a number here.
+# ---------------------------------------------------------------------------
+REFS = [
+    ("pedelacq", "Pédelacq J-D, Cabantous S, Tran T, Terwilliger TC, Waldo GS. "
+     "Engineering and characterization of a superfolder green fluorescent protein. "
+     "<i>Nat Biotechnol</i> <b>24</b>, 79–88 (2006).",
+     "https://doi.org/10.1038/nbt1172",
+     "The sfGFP structure this work is built on, PDB 2B3P."),
+    ("ormo", "Ormö M, Cubitt AB, Kallio K, Gross LA, Tsien RY, Remington SJ. "
+     "Crystal structure of the <i>Aequorea victoria</i> green fluorescent protein. "
+     "<i>Science</i> <b>273</b>, 1392–1395 (1996).",
+     "https://doi.org/10.1126/science.273.5280.1392",
+     "Identifies the residues that hold the chromophore: Thr203 and His148 at the "
+     "phenolate, Arg96 and Gln94 at the imidazolinone. This is where the choice of "
+     "which hydrogen bonds to track comes from."),
+    ("brejc", "Brejc K, Sixma TK, Kitts PA, Kain SR, Tsien RY, Ormö M, Remington SJ. "
+     "Structural basis for dual excitation and photoisomerization of the "
+     "<i>Aequorea victoria</i> green fluorescent protein. "
+     "<i>Proc Natl Acad Sci USA</i> <b>94</b>, 2306–2311 (1997).",
+     "https://doi.org/10.1073/pnas.94.6.2306",
+     "The Thr203–Glu222–Ser205 proton relay behind the chromophore, and the basis "
+     "for treating the chromophore as anionic at pH 7.4."),
+    ("niwa", "Niwa H, Inouye S, Hirano T, Matsuno T, Kojima S, Kubota M, Ohashi M, "
+     "Tsuji FI. Chemical nature of the light emitter of the <i>Aequorea</i> green "
+     "fluorescent protein. <i>Proc Natl Acad Sci USA</i> <b>93</b>, 13617–13622 (1996).",
+     "https://doi.org/10.1073/pnas.93.24.13617",
+     "The synthetic chromophore is essentially non-fluorescent free in solution while "
+     "the protein-bound one is bright: the basis for reading bridge twist as a proxy "
+     "for non-radiative decay."),
+    ("breyfogle", "Breyfogle KL, Blood DL, Rosnik AM, Krueger BP. "
+     "Molecular dynamics force field parameters for the EGFP chromophore and some of "
+     "its analogues. <i>J Phys Chem B</i> <b>127</b>, 5772–5788 (2023).",
+     "https://doi.org/10.1021/acs.jpcb.3c01486",
+     "The CRO chromophore parameters, loaded through leaprc.xFPchromophores. Also the "
+     "source of the backbone charge-constraint idea used for the custom residues."),
+    ("eddins", "Eddins AJ, Pung H-S, Cooley RB, Mehl RA. Tetrazine amino acid encoding "
+     "for rapid and complete protein bioconjugation. "
+     "<i>Bio-protocol</i> <b>14</b>(16), e5048 (2024).",
+     "https://doi.org/10.21769/BioProtoc.5048",
+     "Tet2-Et itself, the strained-TCO chemistry, and the two permissive amber sites "
+     "in sfGFP (N150 and D134) that this construct uses."),
+    ("blizzard", "Blizzard RJ, Backus DR, Brown W, Bazewicz CG, Li Y, Mehl RA. "
+     "Ideal bioorthogonal reactions using a site-specifically encoded tetrazine amino "
+     "acid. <i>J Am Chem Soc</i> <b>137</b>, 10044–10047 (2015).",
+     "https://doi.org/10.1021/jacs.5b03275",
+     "The tetrazine amino acid scaffold Tet2-Et is built on, and the sTCO kinetics."),
+    ("zocchi_book", "Zocchi G. <i>Molecular Machines: A Materials-Science Approach.</i> "
+     "Princeton University Press (2018).",
+     "https://doi.org/10.2307/j.ctvc77hpc",
+     "The DNA-spring concept and the whole mechanical model: Eqs. 2.188–2.206 for the "
+     "kinked rod, Eq. 3.52 for the force, and the ~100 k<sub>B</sub>T nm⁻² protein "
+     "stiffness with its softening transition."),
+    ("qu", "Qu H, Tseng C-Y, Wang Y, Levine AJ, Zocchi G. The elastic energy of sharply "
+     "bent nicked DNA. <i>Europhys Lett</i> <b>90</b>, 18003 (2010).",
+     "https://doi.org/10.1209/0295-5075/90/18003",
+     "The elastic-energy expression E(x) whose derivative is the force formula used "
+     "here, and the measurement of the critical bending torque."),
+    ("tseng2013", "Tseng C-Y, Zocchi G. Mechanical control of Renilla luciferase. "
+     "<i>J Am Chem Soc</i> <b>135</b>, 11879–11886 (2013).",
+     "https://doi.org/10.1021/ja4045532",
+     "Eq. 6 as implemented, τ<sub>c</sub> = 27 pN nm for a nicked rod, and the "
+     "1.5 / 2.4 pN values the implementation is tested against."),
+    ("tseng2021", "Tseng C-Y, Wang A, Zocchi G. Protein–DNA chimeras: synthesis and "
+     "applications. <i>Methods Enzymol</i> <b>647</b>, 257–281 (2021).",
+     "https://doi.org/10.1016/bs.mie.2020.11.005",
+     "The verified oligonucleotide sequences used for the springs, and the measured "
+     "energy split E<sub>tot</sub> 9.1 = E<sub>DNA</sub> 6.6 + E<sub>enzyme</sub> "
+     "2.5 k<sub>B</sub>T."),
+    ("choi2007", "Choi B, Zocchi G. Guanylate kinase, induced fit, and the allosteric "
+     "spring probe. <i>Biophys J</i> <b>92</b>, 1651–1658 (2007).",
+     "https://doi.org/10.1529/biophysj.106.092049",
+     "The earlier worm-like-chain force estimate of ~10 pN, which that paper itself "
+     "labels an upper bound and which is deliberately <i>not</i> used here."),
+    ("boral", "Boral S, Schnebly J, Gamada D, Gardner KH, Hekstra DR. Conformational "
+     "changes induced in ubiquitin by circular protein–DNA chimeras. "
+     "<i>bioRxiv</i> 2026.07.05.736590 (2026).",
+     "https://doi.org/10.1101/2026.07.05.736590",
+     "The companion experiment in this lab: the ~4 pN estimate for a 50-mer spring, "
+     "and the buffer and salt conditions matched in the simulations."),
+    ("maier", "Maier JA, Martinez C, Kasavajhala K, Wickstrom L, Hauser KE, Simmerling C. "
+     "ff14SB: improving the accuracy of protein side chain and backbone parameters from "
+     "ff99SB. <i>J Chem Theory Comput</i> <b>11</b>, 3696–3713 (2015).",
+     "https://doi.org/10.1021/acs.jctc.5b00255", "The protein force field."),
+    ("zgarbova", "Zgarbová M, Šponer J, Otyepka M, Cheatham TE III, Galindo-Murillo R, "
+     "Jurečka P. Refinement of the sugar–phosphate backbone torsion beta for AMBER force "
+     "fields improves the description of Z- and B-DNA. "
+     "<i>J Chem Theory Comput</i> <b>11</b>, 5723–5736 (2015).",
+     "https://doi.org/10.1021/acs.jctc.5b00716", "The DNA force field, OL15."),
+    ("wang_gaff", "Wang J, Wolf RM, Caldwell JW, Kollman PA, Case DA. Development and "
+     "testing of a general AMBER force field. "
+     "<i>J Comput Chem</i> <b>25</b>, 1157–1174 (2004).",
+     "https://doi.org/10.1002/jcc.20035",
+     "GAFF/GAFF2, which types the tetrazine, the dihydropyridazine, the sTCO cage and "
+     "the linker."),
+    ("jakalian", "Jakalian A, Jack DB, Bayly CI. Fast, efficient generation of "
+     "high-quality atomic charges. AM1-BCC model: II. Parameterization and validation. "
+     "<i>J Comput Chem</i> <b>23</b>, 1623–1641 (2002).",
+     "https://doi.org/10.1002/jcc.10128", "The charge model for the custom residues."),
+    ("jorgensen", "Jorgensen WL, Chandrasekhar J, Madura JD, Impey RW, Klein ML. "
+     "Comparison of simple potential functions for simulating liquid water. "
+     "<i>J Chem Phys</i> <b>79</b>, 926–935 (1983).",
+     "https://doi.org/10.1063/1.445869", "TIP3P water."),
+    ("joung", "Joung IS, Cheatham TE III. Determination of alkali and halide monovalent "
+     "ion parameters for use in explicitly solvated biomolecular simulations. "
+     "<i>J Phys Chem B</i> <b>112</b>, 9020–9041 (2008).",
+     "https://doi.org/10.1021/jp8001614", "Na⁺ and Cl⁻ parameters."),
+    ("li_merz", "Li P, Roberts BP, Chakravorty DK, Merz KM Jr. Rational design of "
+     "particle mesh Ewald compatible Lennard-Jones parameters for +2 metal cations in "
+     "condensed-phase simulations. "
+     "<i>J Chem Theory Comput</i> <b>9</b>, 2733–2748 (2013).",
+     "https://doi.org/10.1021/ct400146w",
+     "Mg²⁺, the 12-6 set — chosen over 12-6-4 because OpenMM has no C4 term."),
+    ("eastman", "Eastman P, Galvelis R, Peláez RP, et al. OpenMM 8: molecular dynamics "
+     "simulation with machine learning potentials. "
+     "<i>J Phys Chem B</i> <b>128</b>, 109–116 (2024).",
+     "https://doi.org/10.1021/acs.jpcb.3c06662", "The simulation engine."),
+    ("leimkuhler", "Leimkuhler B, Matthews C. Rational construction of stochastic "
+     "numerical methods for molecular sampling. "
+     "<i>Appl Math Res Express</i> <b>2013</b>, 34–56 (2013).",
+     "https://doi.org/10.1093/amrx/abs010",
+     "The LangevinMiddle scheme used for production."),
+    ("hopkins", "Hopkins CW, Le Grand S, Walker RC, Roitberg AE. Long-time-step "
+     "molecular dynamics through hydrogen mass repartitioning. "
+     "<i>J Chem Theory Comput</i> <b>11</b>, 1864–1874 (2015).",
+     "https://doi.org/10.1021/ct5010406", "The 4 fs timestep."),
+    ("case", "Case DA, Aktulga HM, Belfon K, et al. <i>AmberTools</i>. "
+     "<i>J Chem Inf Model</i> <b>63</b>, 6183–6191 (2023).",
+     "https://doi.org/10.1021/acs.jcim.3c01153",
+     "tleap, antechamber, prepgen and parmchk2, which built every topology here."),
+    ("mdtraj", "McGibbon RT, Beauchamp KA, Harrigan MP, et al. MDTraj: a modern open "
+     "library for the analysis of molecular dynamics trajectories. "
+     "<i>Biophys J</i> <b>109</b>, 1528–1532 (2015).",
+     "https://doi.org/10.1016/j.bpj.2015.08.015", "Trajectory analysis."),
+    ("shrake", "Shrake A, Rupley JA. Environment and exposure to solvent of protein "
+     "atoms. Lysozyme and insulin. <i>J Mol Biol</i> <b>79</b>, 351–371 (1973).",
+     "https://doi.org/10.1016/0022-2836(73)90011-9",
+     "The solvent-accessibility algorithm used to check both attachment sites are "
+     "exposed."),
+    ("kabsch", "Kabsch W. A solution for the best rotation to relate two sets of "
+     "vectors. <i>Acta Crystallogr A</i> <b>32</b>, 922–923 (1976).",
+     "https://doi.org/10.1107/S0567739476001873",
+     "Superposition, used to place the tethers on the backbone."),
+    ("pymol", "Schrödinger LLC. <i>The PyMOL Molecular Graphics System</i>, "
+     "version 3.x (open-source build).", "https://pymol.org/",
+     "The <code>fnab</code> builder that generated the ideal B-form duplexes, and "
+     "every molecular render here."),
+    ("labms", "Abebe S. Spring-stimulated protein mechanics. Hekstra lab meeting, "
+     "20 March 2026 (internal).", None,
+     "The ESI-MS of the single and double Tet2-Et constructs (27,967 and 28,108 Da) "
+     "that settles which residues carry the amber codons."),
+]
+REF_INDEX = {k: i + 1 for i, (k, *_ ) in enumerate(REFS)}
+
+
+def cite(*keys):
+    """Inline superscript citation markers linking to the reference list."""
+    parts = []
+    for k in keys:
+        n = REF_INDEX[k]
+        parts.append(f'<a href="#ref-{n}" class="cite">{n}</a>')
+    return "<sup>" + ",".join(parts) + "</sup>"
+
+
+def refs_html():
+    rows = []
+    for i, (key, text, url, why) in enumerate(REFS, 1):
+        link = (f' <a href="{url}" target="_blank" rel="noopener">link</a>'
+                if url else "")
+        rows.append(f'<li id="ref-{i}"><span class="ref-n">{i}</span>'
+                    f'<div><p class="ref-cite">{text}{link}</p>'
+                    f'<p class="ref-why">{why}</p></div></li>')
+    return "<ol class=\"refs\">" + "".join(rows) + "</ol>"
+
+
 CSS = """
 <title>DNA Spring on sfGFP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -245,6 +423,18 @@ CSS = """
   .note.flag .h { color:var(--flag); }
   code { font-family:var(--mono); font-size:.9em; background:var(--rule-2);
     padding:1px 5px; border-radius:2px; }
+  sup .cite, a.cite { font-family:var(--mono); font-size:10.5px; color:var(--dna);
+    text-decoration:none; border:0; padding:0 1px; }
+  a.cite:hover { text-decoration:underline; }
+  ol.refs { list-style:none; padding:0; margin:0; counter-reset:r; }
+  ol.refs li { display:flex; gap:14px; padding:12px 0;
+    border-bottom:1px solid var(--rule-2); scroll-margin-top:20px; }
+  ol.refs li:target { background:var(--rule-2); }
+  .ref-n { font-family:var(--mono); font-size:12px; color:var(--ink-3);
+    min-width:26px; padding-top:2px; }
+  .ref-cite { margin:0 0 3px; font-size:14.5px; max-width:82ch; }
+  .ref-why { margin:0; font-size:13.5px; color:var(--ink-3); max-width:82ch;
+    font-style:italic; }
   footer { margin-top:58px; padding-top:22px; border-top:1px solid var(--rule);
     font-size:13.5px; color:var(--ink-3); }
 </style>
@@ -378,9 +568,15 @@ def build(args):
         return (b64(figdir / "web" / f"{args.anim}_{view}.gif", "image/gif")
                 or b64(figdir / f"{args.anim}_{view}.gif", "image/gif"))
 
+    def still_uri(view):
+        return b64(figdir / f"{args.anim}_{view}_still.png", "image/png")
+
     anim = anim_uri("overview")
-    anim2 = anim_uri("strain")
-    anim3 = anim_uri("chromophore")
+    # The chromophore and strain panels use the ray-traced labelled stills rather than
+    # the GIFs: a moving picture is right for showing motion and wrong for reading
+    # labels, and those two panels exist to say which residue is which.
+    anim2 = still_uri("strain") or anim_uri("strain")
+    anim3 = still_uri("chromophore") or anim_uri("chromophore")
 
     # ---------- prose that quotes the numbers ----------
     s27, s40, s40n = (sp.get("S3_spring27"), sp.get("S4_spring40"),
@@ -391,13 +587,31 @@ def build(args):
     bistable = [n for n, v in f["hbonds"].items() if v["bistable"]]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
+    # The template below is an f-string, so every {cite_*} marker has to exist as a
+    # local here -- there is no .format() call to pass them into.
+    refs = refs_html()
+    cite_eddins = cite("eddins", "blizzard"); cite_pedelacq = cite("pedelacq")
+    cite_ormo = cite("ormo"); cite_labms = cite("labms", "eddins")
+    cite_spring = cite("zocchi_book", "qu", "tseng2013")
+    cite_tau = cite("tseng2013", "qu"); cite_tseng2021 = cite("tseng2021")
+    cite_zocchi = cite("zocchi_book"); cite_niwa = cite("niwa")
+    cite_brejc = cite("brejc"); cite_choi = cite("choi2007")
+    cite_maier = cite("maier"); cite_ol15 = cite("zgarbova")
+    cite_tip3p = cite("jorgensen"); cite_ions = cite("joung"); cite_mg = cite("li_merz")
+    cite_boral = cite("boral"); cite_breyfogle = cite("breyfogle")
+    cite_case = cite("case"); cite_gaff = cite("wang_gaff")
+    cite_ambcc = cite("jakalian"); cite_pymol = cite("pymol")
+    cite_kabsch = cite("kabsch"); cite_openmm = cite("eastman")
+    cite_leimkuhler = cite("leimkuhler"); cite_hopkins = cite("hopkins")
+    cite_mdtraj = cite("mdtraj"); cite_shrake = cite("shrake")
+
     html = CSS + f"""
 <div class="wrap">
 <header class="mast">
   <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · {stamp}</p>
   <h1>A DNA spring, wound around a fluorescent protein</h1>
-  <p class="lede">Two amber codons put a tetrazine amino acid on adjacent strands of
-  sfGFP’s β-barrel. A doubly-modified DNA duplex clicks onto both, and because dsDNA is
+  <p class="lede">Two amber codons put a tetrazine amino acid{cite_eddins} on adjacent
+  strands of sfGFP’s β-barrel{cite_pedelacq}. A doubly-modified DNA duplex clicks onto both, and because dsDNA is
   far too stiff to follow the barrel’s curvature it has to bend — pushing the two
   attachment points apart with a force of a few piconewtons. This is what that looks
   like <em>atom by atom</em>: what the spring delivers, what the protein does about it,
@@ -441,13 +655,14 @@ def build(args):
     <p>The attachment sites are <strong>Asp133</strong> and <strong>Asn149</strong> in
     2B3P’s numbering — D134 and N150 in the construct’s own, which runs one higher.
     They sit on adjacent strands of the barrel with <strong>His148</strong> between them,
-    and His148 donates a hydrogen bond straight to the chromophore’s phenolate oxygen.
+    and His148 donates a hydrogen bond straight to the chromophore’s phenolate
+    oxygen{cite_ormo}.
     That is the mechanical path from the DNA to the fluorescence, and it is why these
     two sites are the interesting ones rather than merely convenient ones.</p>
   </div>
   <div class="note flag"><div class="h">A correction worth carrying back to the bench</div>
     <p>The PyMOL session’s <code>134TAG</code> and <code>150TAG</code> selections point
-    at Gly134 and Val150 — one residue off. The mass spectrometry settles it: the single
+    at Gly134 and Val150 — one residue off. The mass spectrometry{cite_labms} settles it: the single
     construct is +141 Da (Asn → Tet2-Et) and the double +281 Da (= 141 + 140, Asn plus
     Asp). Gly → Tet2-Et would be +198 Da and Val → Tet2-Et +156 Da, and neither is
     observed. <code>build/01_protein/fix_pse_selections.pml</code> loads corrected
@@ -468,7 +683,7 @@ def build(args):
     <th>total bend (°)</th><th>bp open</th><th>Δ extension (Å)</th></tr></thead>
     <tbody>{spring_rows}</tbody></table></div>
   <div class="col">
-    <p>Every force here is Zocchi’s <em>f(x)</em> evaluated at the end-to-end distance
+    <p>Every force here is Zocchi’s <em>f(x)</em>{cite_spring} evaluated at the end-to-end distance
     the simulation itself settles at, not at an assumed one. The construct is not free
     to choose that distance arbitrarily — it is set by where the two tethers can reach —
     so this is the one number in the whole model that the simulation can supply
@@ -480,7 +695,7 @@ def build(args):
     the same length, and it is visibly floppier: its span wanders over
     {sig(s40n['x_wander_A']['mean'], 1)} Å within a trajectory against
     {sig(s40['x_wander_A']['mean'], 1)} Å for the intact one. Zocchi’s two values of the
-    critical bending torque — 27 pN·nm with a nick, 31–36 without — predict exactly this
+    critical bending torque{cite_tau} — 27 pN·nm with a nick, 31–36 without — predict this
     ordering, and we reach it here from structure rather than from his calibration. This
     is the control he relies on throughout: the nicked spring is the low-stress
     reference, and it behaves like one.</p>
@@ -496,10 +711,10 @@ def build(args):
     many more base pairs, so a larger integral with a shallower slope. All three
     energies, {min(v['energy_kT']['mean'] for v in sp.values()):.1f}–{max(v['energy_kT']['mean'] for v in sp.values()):.1f}
     k<sub>B</sub>T, bracket the 6.6 k<sub>B</sub>T Zocchi measured for the
-    guanylate-kinase chimera by an entirely different route.</p>
+    guanylate-kinase chimera{cite_tseng2021} by an entirely different route.</p>
 
     <h3>The duplex bends smoothly — it does not kink</h3>
-    <p>Zocchi’s model places all three springs on its <em>kinked</em> branch, and the
+    <p>Zocchi’s model{cite_zocchi} places all three springs on its <em>kinked</em> branch, and the
     forces above come from that branch. The structures do not corroborate it on this
     timescale. Bending is spread evenly at 3–8° per step with no localised spike
     (figure 4), and of 27–40 base pairs only
@@ -530,7 +745,7 @@ def build(args):
     from noise, and the 4 pN point sitting below the 0 pN point in figure 1 is that noise
     made visible. What the data <em>do</em> support is a lower bound,
     <strong>κ &gt; {kap:.0f} k<sub>B</sub>T nm⁻²</strong>, which lands on the
-    ~100 k<sub>B</sub>T nm⁻² Zocchi’s activity measurements imply. Under a few pN a
+    ~100 k<sub>B</sub>T nm⁻² Zocchi’s activity measurements imply{cite_zocchi}. Under a few pN a
     protein this stiff should move by hundredths of an ångström, which is precisely why
     it cannot be measured this way in 45 ns — the honest conclusion is agreement with
     his stiffness and no more.</p>
@@ -545,7 +760,7 @@ def build(args):
     {s40n['extension_A']['mean'] - zero:+.2f}, {s40['extension_A']['mean'] - zero:+.2f}
     and {s27['extension_A']['mean'] - zero:+.2f} Å from the zero-force clamp —
     monotonic in force, a slope of {chim_slope:.2f} Å pN⁻¹, more than ten times the
-    axial-clamp slope. That is what Zocchi argues throughout his work: forces applied at
+    axial-clamp slope. That is what Zocchi argues throughout his work{cite_zocchi}: forces applied at
     different places elicit <em>different responses</em>, not different magnitudes of one
     response. A spring anchored through two flexible tethers applies a couple and a
     shear as well as an extension, and the barrel evidently answers those more readily
@@ -580,7 +795,7 @@ def build(args):
   with the range across replicates in parentheses.</p>
   <div class="col">
     <h3>The network is intact everywhere, and the spring does not break it</h3>
-    <p>Thr203 to the phenolate and Arg96 to the imidazolinone carbonyl hold at 96–100%
+    <p>Thr203 to the phenolate and Arg96 to the imidazolinone carbonyl{cite_ormo} hold at 96–100%
     in every system — these are the buried, load-bearing contacts that keep the
     chromophore planar, and nothing the spring does disturbs them. Gln94 holds at
     91–97%. If the spring were prising the barrel open near the chromophore, these are
@@ -598,7 +813,8 @@ def build(args):
     means. It is a hypothesis worth more sampling, not a result.</p>
 
     <h3>One apparent effect is an artefact of bistability</h3>
-    <p>The <code>{esc(bistable[0]) if bistable else '—'}</code> contact reads about 30%
+    <p>The <code>{esc(bistable[0]) if bistable else '—'}</code> contact — part of the proton relay behind the chromophore{cite_brejc} —
+    reads about 30%
     in most systems and 0% in the 40 bp chimera, which looks like an effect and is not.
     Within a single system it is either near 0% or near 90%: a two-state Ser205 hydroxyl
     rotamer, flipped once per trajectory and then stuck. A mean of three coin flips is
@@ -613,8 +829,9 @@ def build(args):
       <tbody>{aux_rows}</tbody></table></div>
     <p>The two dihedrals that twist the chromophore out of plane — τ across the
     phenol–bridge bond and φ across the bridge–imidazolinone bond — are the structural
-    proxy for non-radiative decay: the wider their excursions, the more of the excited
-    state leaks away without a photon. They sit at 5–6° of twist in every system, with
+    proxy for non-radiative decay: the free chromophore, able to rotate about them, is
+    essentially dark while the protein-bound one is bright{cite_niwa}, so the wider
+    their excursions the more of the excited state leaks away without a photon. They sit at 5–6° of twist in every system, with
     differences between systems of a few tenths of a degree against replicate spreads of
     similar size. Cavity water, the other route to quenching, is 8–11 molecules with
     spreads of 1–3. Neither is resolved. If the spring changes sfGFP’s brightness at
@@ -627,6 +844,34 @@ def build(args):
   <div class="sec-head"><h2>Figures</h2>
     <span class="tag">every panel ships the CSV it was drawn from</span></div>
   {figs_html}
+</section>
+
+<section>
+  <div class="sec-head"><h2>Force field and protocol</h2>
+    <span class="tag">what every number above was computed with</span></div>
+  <div class="col">
+    <p>Protein <strong>ff14SB</strong>{cite_maier}, DNA <strong>OL15</strong>{cite_ol15},
+    <strong>TIP3P</strong> water{cite_tip3p}, Joung–Cheatham monovalent ions{cite_ions}
+    at 150 mM NaCl, and Mg²⁺ from the Li–Merz 12-6 set{cite_mg} at ~5 mM for the duplex
+    systems — 12-6 rather than 12-6-4 because OpenMM has no C⁴ term, so a 12-6-4
+    topology would silently lose the polarisation correction on import. Buffer and salt
+    follow the companion ubiquitin experiment in this lab{cite_boral}.</p>
+    <p>The chromophore uses the published <strong>CRO</strong> parameters{cite_breyfogle},
+    which come out of tleap{cite_case} at exactly −1.0000 e. The four custom residues —
+    the tetrazine amino acid, the click adduct, and the DNA-side arm in its two forms —
+    are typed with <strong>GAFF2</strong>{cite_gaff} and charged with
+    <strong>AM1-BCC</strong>{cite_ambcc}; their six backbone atoms are then overwritten
+    with ff14SB’s types and charges so the peptide bonds into and out of the modified
+    sites match every other one, the same device the chromophore parameters
+    used{cite_breyfogle}. Duplexes are built as ideal B-form DNA with PyMOL’s
+    <code>fnab</code>{cite_pymol}; the tethers are placed by superposition{cite_kabsch}
+    and torsion optimisation.</p>
+    <p>Simulations run in <strong>OpenMM 8.6</strong>{cite_openmm} with the
+    LangevinMiddle integrator{cite_leimkuhler} at 300 K and a 4 fs timestep enabled by
+    hydrogen-mass repartitioning on the solute only{cite_hopkins}, PME with a 0.9 nm
+    cutoff, and a Monte Carlo barostat at 1 bar. Analysis uses MDTraj{cite_mdtraj};
+    solvent accessibility is computed with Shrake–Rupley{cite_shrake}.</p>
+  </div>
 </section>
 
 <section>
@@ -649,7 +894,7 @@ def build(args):
     <thead><tr><th>check</th><th>result</th><th></th></tr></thead>
     <tbody>{rows_ver}</tbody></table></div>
   <div class="note"><div class="h">Deliberately not used</div>
-    <p>The <em>F</em> ≈ 10 pN figure from Choi &amp; Zocchi (2007). That paper labels it
+    <p>The <em>F</em> ≈ 10 pN figure from Choi &amp; Zocchi (2007){cite_choi}. That paper labels it
     an upper bound from a worm-like-chain treatment that ignores kinking; the kinked
     model supersedes it and gives 1.5–2.4 pN for the same constructs. Using it would
     over-stress the protein roughly fourfold.</p></div>
@@ -665,6 +910,12 @@ def build(args):
     need the clicked control now running, more replicates, and longer trajectories —
     <code>bash slurm/submit_all.sh --tier B</code> extends every run to 300 ns from its
     checkpoint.</p></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>References</h2>
+    <span class="tag">everything this setup rests on</span></div>
+  {refs}
 </section>
 
 <footer>
