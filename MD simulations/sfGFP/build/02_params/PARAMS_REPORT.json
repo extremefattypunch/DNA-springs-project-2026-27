@@ -1,0 +1,194 @@
+[
+  {
+    "residue": "TET",
+    "description": "Tet2-Et: 4-(6-ethyl-1,2,4,5-tetrazin-3-yl)-L-phenylalanine, oxidized",
+    "smiles_from_tables": "CCc1nnc(-c2ccc(CC(NC(C)=O)C(=O)NC)cc2)nn1",
+    "formula": "C13H13N5O",
+    "mass_Da": 255.281,
+    "net_charge": 0,
+    "model_formal_charge": 0,
+    "cap_atoms": [
+      "CAY",
+      "OAY",
+      "CAZ",
+      "HZ1",
+      "HZ2",
+      "HZ3",
+      "NNT",
+      "HNT",
+      "CNT",
+      "HT1",
+      "HT2",
+      "HT3"
+    ],
+    "atoms_in_residue": 32,
+    "charge_method": "AM1-BCC (GAFF2 types)",
+    "element_check": {
+      "atoms_checked": 32,
+      "element_mismatches": 0
+    },
+    "backbone_harmonisation": {
+      "atoms_reset": [
+        "N",
+        "H",
+        "CA",
+        "HA",
+        "C",
+        "O"
+      ],
+      "replaced": {
+        "N": {
+          "gaff_type": "ns",
+          "am1bcc_charge": -0.56363
+        },
+        "H": {
+          "gaff_type": "hn",
+          "am1bcc_charge": 0.323469
+        },
+        "CA": {
+          "gaff_type": "c3",
+          "am1bcc_charge": 0.044105
+        },
+        "HA": {
+          "gaff_type": "h1",
+          "am1bcc_charge": 0.087503
+        },
+        "C": {
+          "gaff_type": "c",
+          "am1bcc_charge": 0.644011
+        },
+        "O": {
+          "gaff_type": "o",
+          "am1bcc_charge": -0.615347
+        }
+      },
+      "sidechain_atoms": 26,
+      "sidechain_sum_before": 0.07989,
+      "sidechain_target": -0.0016,
+      "per_atom_shift": -0.003134,
+      "residue_total_charge_after": 6e-06
+    },
+    "frcmod_audit": {
+      "n_flagged": 0,
+      "by_section": {},
+      "flagged": []
+    }
+  },
+  {
+    "residue": "TDP",
+    "description": "Tet2-Et + sTCO click adduct: 4,5-dihydropyridazine fused to trans-bicyclo[6.1.0]nonane, ending at the carbamate C=O",
+    "smiles_from_tables": "CCC1=NN=C(c2ccc(CC(NC(C)=O)C(=O)NC)cc2)C2CCC3C(CCC12)C3COC(=O)NC",
+    "formula": "C24H28N3O3",
+    "mass_Da": 406.506,
+    "net_charge": 0,
+    "model_formal_charge": 0,
+    "cap_atoms": [
+      "CAY",
+      "OAY",
+      "CAZ",
+      "HZ1",
+      "HZ2",
+      "HZ3",
+      "NNT",
+      "HNT",
+      "CNT",
+      "HT1",
+      "HT2",
+      "HT3",
+      "NCP",
+      "HCP",
+      "CCP",
+      "HC1",
+      "HC2",
+      "HC3"
+    ],
+    "atoms_in_residue": 58,
+    "charge_method": "AM1-BCC (GAFF2 types)",
+    "element_check": {
+      "atoms_checked": 58,
+      "element_mismatches": 0
+    },
+    "backbone_harmonisation": {
+      "atoms_reset": [
+        "N",
+        "H",
+        "CA",
+        "HA",
+        "C",
+        "O"
+      ],
+      "replaced": {
+        "N": {
+          "gaff_type": "ns",
+          "am1bcc_charge": -0.562
+        },
+        "H": {
+          "gaff_type": "hn",
+          "am1bcc_charge": 0.322709
+        },
+        "CA": {
+          "gaff_type": "c3",
+          "am1bcc_charge": 0.052056
+        },
+        "HA": {
+          "gaff_type": "h1",
+          "am1bcc_charge": 0.089311
+        },
+        "C": {
+          "gaff_type": "c",
+          "am1bcc_charge": 0.640484
+        },
+        "O": {
+          "gaff_type": "o",
+          "am1bcc_charge": -0.615826
+        }
+      },
+      "sidechain_atoms": 52,
+      "sidechain_sum_before": 0.073266,
+      "sidechain_target": -0.0016,
+      "per_atom_shift": -0.00144,
+      "residue_total_charge_after": -1.4e-05
+    },
+    "frcmod_audit": {
+      "n_flagged": 0,
+      "by_section": {},
+      "flagged": []
+    }
+  },
+  {
+    "residue": "DNL",
+    "description": "5'-amino-modifier-C6 arm: carbamate N through hexyl to the oxygen that bridges the first nucleotide's phosphorus",
+    "smiles_from_tables": "COP(=O)([O-])OCCCCCCNC(C)=O",
+    "formula": "C6H13NO",
+    "mass_Da": 115.176,
+    "net_charge": 0,
+    "model_formal_charge": -1,
+    "cap_atoms": [
+      "CAY",
+      "OAY",
+      "CAZ",
+      "HZ1",
+      "HZ2",
+      "HZ3",
+      "P",
+      "OP1",
+      "OP2",
+      "O5C",
+      "C5C",
+      "H5A",
+      "H5B",
+      "H5C"
+    ],
+    "atoms_in_residue": 21,
+    "charge_method": "AM1-BCC (GAFF2 types)",
+    "element_check": {
+      "atoms_checked": 21,
+      "element_mismatches": 0
+    },
+    "frcmod_audit": {
+      "n_flagged": 0,
+      "by_section": {},
+      "flagged": []
+    }
+  }
+]

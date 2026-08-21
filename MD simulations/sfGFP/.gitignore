@@ -21,3 +21,7 @@ timer.dat
 build/systems/*/system.pdb
 build/systems/*/*.out
 build/systems/*/*.in
+build/02_params/*/ANTECHAMBER*
+build/02_params/*/ATOMTYPE.INF
+build/02_params/*/sqm.*
+build/02_params/*/*.log

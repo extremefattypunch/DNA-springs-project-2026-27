@@ -179,15 +179,20 @@ DNL = {
     "head": "N", "tail": "OL",
     "extra_bond": {"this_atom": "OL", "partner_residue": "DNA_5prime",
                    "partner_atom": "P"},
-    "heavy": ["N", "CL1", "CL2", "CL3", "CL4", "CL5", "CL6", "OL"],
+    # The hexyl carbons are C1..C6, not CL1..CL6.  antechamber (and PyMOL, and VMD)
+    # infer an atom's element from its name, and a name beginning "CL" reads as
+    # chlorine: an earlier version of this table produced six chlorines carrying two
+    # hydrogens each, with GAFF type "cl", and parmchk2 duly flagged 14 invented
+    # parameters for bonds that do not exist.  Never name a carbon CL-anything.
+    "heavy": ["N", "C1", "C2", "C3", "C4", "C5", "C6", "OL"],
     "hydrogens": {
         "N": ["HN"],
-        "CL1": ["H11", "H12"], "CL2": ["H21", "H22"], "CL3": ["H31", "H32"],
-        "CL4": ["H41", "H42"], "CL5": ["H51", "H52"], "CL6": ["H61", "H62"],
+        "C1": ["H11", "H12"], "C2": ["H21", "H22"], "C3": ["H31", "H32"],
+        "C4": ["H41", "H42"], "C5": ["H51", "H52"], "C6": ["H61", "H62"],
     },
     "bonds": [
-        ("N", "CL1", 1), ("CL1", "CL2", 1), ("CL2", "CL3", 1), ("CL3", "CL4", 1),
-        ("CL4", "CL5", 1), ("CL5", "CL6", 1), ("CL6", "OL", 1),
+        ("N", "C1", 1), ("C1", "C2", 1), ("C2", "C3", 1), ("C3", "C4", 1),
+        ("C4", "C5", 1), ("C5", "C6", 1), ("C6", "OL", 1),
     ],
 }
 

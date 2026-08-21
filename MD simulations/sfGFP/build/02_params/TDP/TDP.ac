@@ -1,0 +1,157 @@
+CHARGE      0.00 ( 0 )
+Formula: H39 C28 N5 O4 
+ATOM      1  N   TDP     1      -4.420   0.416  -1.600 -0.565900        ns
+ATOM      2  CA  TDP     1      -4.838  -0.902  -2.114  0.051700        c3
+ATOM      3  C   TDP     1      -6.206  -0.893  -2.836  0.636100         c
+ATOM      4  O   TDP     1      -6.862  -1.914  -3.029 -0.620100         o
+ATOM      5  CB  TDP     1      -4.781  -2.032  -1.068 -0.059100        c3
+ATOM      6  CG  TDP     1      -3.432  -2.146  -0.390 -0.072300        ca
+ATOM      7  CD1 TDP     1      -3.276  -1.739   0.944 -0.131500        ca
+ATOM      8  CD2 TDP     1      -2.325  -2.656  -1.085 -0.131500        ca
+ATOM      9  CE1 TDP     1      -2.032  -1.822   1.568 -0.102500        ca
+ATOM     10  CE2 TDP     1      -1.077  -2.738  -0.465 -0.102500        ca
+ATOM     11  CZ  TDP     1      -0.931  -2.295   0.852 -0.129900        ca
+ATOM     12  CP3 TDP     1       0.387  -2.387   1.527  0.416900        ce
+ATOM     13  NP2 TDP     1       0.455  -3.188   2.542 -0.358700        nf
+ATOM     14  NP1 TDP     1       1.683  -3.463   3.119 -0.374700        nf
+ATOM     15  CP6 TDP     1       2.668  -2.634   2.984  0.381300        c2
+ATOM     16  CQ5 TDP     1       2.536  -1.334   2.185 -0.149000        c6
+ATOM     17  CQ4 TDP     1       1.597  -1.615   0.990 -0.129000        c6
+ATOM     18  CX1 TDP     1       3.968  -2.952   3.718 -0.113700        c3
+ATOM     19  CX2 TDP     1       3.937  -4.236   4.532 -0.087100        c3
+ATOM     20  CO1 TDP     1       1.567   1.668   1.742 -0.109700        cx
+ATOM     21  CO2 TDP     1       0.661   0.836   0.881 -0.048400        c3
+ATOM     22  CO3 TDP     1       1.228  -0.376   0.143 -0.073400        c3
+ATOM     23  CO6 TDP     1       3.916  -0.759   1.792 -0.064400        c3
+ATOM     24  CO7 TDP     1       3.957   0.629   1.152 -0.054400        c3
+ATOM     25  CO8 TDP     1       3.082   1.607   1.859 -0.103700        cx
+ATOM     26  CO9 TDP     1       2.429   2.780   1.159 -0.127700        cx
+ATOM     27  CM  TDP     1       2.558   3.036  -0.311  0.181400        c3
+ATOM     28  OM  TDP     1       3.849   3.603  -0.550 -0.449900        os
+ATOM     29  CN  TDP     1       4.105   3.839  -1.859  0.731100         c
+ATOM     30  ON  TDP     1       3.341   3.600  -2.782 -0.589000         o
+ATOM     31  H   TDP     1      -3.428   0.603  -1.675  0.320500        hn
+ATOM     32  HA  TDP     1      -4.110  -1.123  -2.906  0.088700        h1
+ATOM     33  HB2 TDP     1      -5.566  -1.895  -0.313  0.079200        hc
+ATOM     34  HB3 TDP     1      -5.007  -2.997  -1.542  0.079200        hc
+ATOM     35  HD1 TDP     1      -4.130  -1.366   1.508  0.141000        ha
+ATOM     36  HD2 TDP     1      -2.433  -3.009  -2.109  0.141000        ha
+ATOM     37  HE1 TDP     1      -1.924  -1.526   2.609  0.142000        ha
+ATOM     38  HE2 TDP     1      -0.232  -3.157  -1.004  0.142000        ha
+ATOM     39  HX1 TDP     1       4.773  -3.026   2.980  0.053700        hc
+ATOM     40  HX2 TDP     1       4.189  -2.115   4.390  0.053700        hc
+ATOM     41  HX3 TDP     1       4.900  -4.392   5.029  0.043700        hc
+ATOM     42  HX4 TDP     1       3.739  -5.104   3.895  0.043700        hc
+ATOM     43  HX5 TDP     1       3.161  -4.197   5.303  0.043700        hc
+ATOM     44  HQ4 TDP     1       2.102  -2.325   0.318  0.066700        hc
+ATOM     45  HQ5 TDP     1       2.048  -0.650   2.890  0.082700        hc
+ATOM     46  HO1 TDP     1       1.037   1.932   2.657  0.072700        hc
+ATOM     47  HO2ATDP     1       0.198   1.501   0.140  0.049700        hc
+ATOM     48  HO2BTDP     1      -0.171   0.500   1.511  0.049700        hc
+ATOM     49  HO3ATDP     1       0.479  -0.660  -0.603  0.052700        hc
+ATOM     50  HO3BTDP     1       2.070  -0.093  -0.487  0.052700        hc
+ATOM     51  HO6ATDP     1       4.439  -1.466   1.134  0.047700        hc
+ATOM     52  HO6BTDP     1       4.531  -0.682   2.697  0.047700        hc
+ATOM     53  HO7ATDP     1       3.777   0.573   0.079  0.048700        hc
+ATOM     54  HO7BTDP     1       4.990   0.998   1.220  0.048700        hc
+ATOM     55  HO8 TDP     1       3.489   1.812   2.849  0.074700        hc
+ATOM     56  HO9 TDP     1       2.433   3.725   1.697  0.097700        hc
+ATOM     57  HM1 TDP     1       2.440   2.123  -0.901  0.060200        h1
+ATOM     58  HM2 TDP     1       1.786   3.753  -0.614  0.060200        h1
+ATOM     59  CAY TDP     1      -5.067   1.011  -0.540  0.668100         c
+ATOM     60  OAY TDP     1      -6.153   0.636  -0.114 -0.632100         o
+ATOM     61  CAZ TDP     1      -4.333   2.183   0.053 -0.176100        c3
+ATOM     62  HZ1 TDP     1      -3.524   2.525  -0.599  0.069367        hc
+ATOM     63  HZ2 TDP     1      -5.033   3.011   0.192  0.069367        hc
+ATOM     64  HZ3 TDP     1      -3.912   1.889   1.018  0.069367        hc
+ATOM     65  NNT TDP     1      -6.536   0.326  -3.402 -0.563900        ns
+ATOM     66  HNT TDP     1      -6.095   1.127  -2.968  0.341500        hn
+ATOM     67  CNT TDP     1      -7.825   0.515  -4.015  0.077300        c3
+ATOM     68  HT1 TDP     1      -8.589   0.536  -3.233  0.043367        h1
+ATOM     69  HT2 TDP     1      -8.036  -0.304  -4.708  0.043367        h1
+ATOM     70  HT3 TDP     1      -7.817   1.466  -4.553  0.043367        h1
+ATOM     71  NCP TDP     1       5.351   4.372  -1.978 -0.534900        ns
+ATOM     72  HCP TDP     1       5.900   4.399  -1.130  0.320500        hn
+ATOM     73  CCP TDP     1       5.966   4.617  -3.253  0.077300        c3
+ATOM     74  HC1 TDP     1       6.436   3.691  -3.596  0.049367        h1
+ATOM     75  HC2 TDP     1       5.220   4.938  -3.985  0.049367        h1
+ATOM     76  HC3 TDP     1       6.726   5.391  -3.129  0.049367        h1
+BOND    1    1    2    1      N   CA
+BOND    2    2    3    1     CA    C
+BOND    3    3    4    2      C    O
+BOND    4    2    5    1     CA   CB
+BOND    5    5    6    1     CB   CG
+BOND    6    6    7    7     CG  CD1
+BOND    7    7    9    8    CD1  CE1
+BOND    8    9   11    7    CE1   CZ
+BOND    9   11   10    8     CZ  CE2
+BOND   10   10    8    7    CE2  CD2
+BOND   11    8    6    8    CD2   CG
+BOND   12   11   12    1     CZ  CP3
+BOND   13   12   13    2    CP3  NP2
+BOND   14   13   14    1    NP2  NP1
+BOND   15   14   15    2    NP1  CP6
+BOND   16   15   16    1    CP6  CQ5
+BOND   17   16   17    1    CQ5  CQ4
+BOND   18   17   12    1    CQ4  CP3
+BOND   19   15   18    1    CP6  CX1
+BOND   20   18   19    1    CX1  CX2
+BOND   21   17   22    1    CQ4  CO3
+BOND   22   22   21    1    CO3  CO2
+BOND   23   21   20    1    CO2  CO1
+BOND   24   16   23    1    CQ5  CO6
+BOND   25   23   24    1    CO6  CO7
+BOND   26   24   25    1    CO7  CO8
+BOND   27   20   25    1    CO1  CO8
+BOND   28   20   26    1    CO1  CO9
+BOND   29   25   26    1    CO8  CO9
+BOND   30   26   27    1    CO9   CM
+BOND   31   27   28    1     CM   OM
+BOND   32   28   29    1     OM   CN
+BOND   33   29   30    2     CN   ON
+BOND   34    1   31    1      N    H
+BOND   35    2   32    1     CA   HA
+BOND   36    5   33    1     CB  HB2
+BOND   37    5   34    1     CB  HB3
+BOND   38    7   35    1    CD1  HD1
+BOND   39    8   36    1    CD2  HD2
+BOND   40    9   37    1    CE1  HE1
+BOND   41   10   38    1    CE2  HE2
+BOND   42   18   39    1    CX1  HX1
+BOND   43   18   40    1    CX1  HX2
+BOND   44   19   41    1    CX2  HX3
+BOND   45   19   42    1    CX2  HX4
+BOND   46   19   43    1    CX2  HX5
+BOND   47   17   44    1    CQ4  HQ4
+BOND   48   16   45    1    CQ5  HQ5
+BOND   49   20   46    1    CO1  HO1
+BOND   50   21   47    1    CO2 HO2A
+BOND   51   21   48    1    CO2 HO2B
+BOND   52   22   49    1    CO3 HO3A
+BOND   53   22   50    1    CO3 HO3B
+BOND   54   23   51    1    CO6 HO6A
+BOND   55   23   52    1    CO6 HO6B
+BOND   56   24   53    1    CO7 HO7A
+BOND   57   24   54    1    CO7 HO7B
+BOND   58   25   55    1    CO8  HO8
+BOND   59   26   56    1    CO9  HO9
+BOND   60   27   57    1     CM  HM1
+BOND   61   27   58    1     CM  HM2
+BOND   62    1   59    1      N  CAY
+BOND   63   59   60    2    CAY  OAY
+BOND   64   59   61    1    CAY  CAZ
+BOND   65   61   62    1    CAZ  HZ1
+BOND   66   61   63    1    CAZ  HZ2
+BOND   67   61   64    1    CAZ  HZ3
+BOND   68    3   65    1      C  NNT
+BOND   69   65   66    1    NNT  HNT
+BOND   70   65   67    1    NNT  CNT
+BOND   71   67   68    1    CNT  HT1
+BOND   72   67   69    1    CNT  HT2
+BOND   73   67   70    1    CNT  HT3
+BOND   74   29   71    1     CN  NCP
+BOND   75   71   72    1    NCP  HCP
+BOND   76   71   73    1    NCP  CCP
+BOND   77   73   74    1    CCP  HC1
+BOND   78   73   75    1    CCP  HC2
+BOND   79   73   76    1    CCP  HC3

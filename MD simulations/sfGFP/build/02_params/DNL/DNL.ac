@@ -1,0 +1,71 @@
+CHARGE     -1.00 ( -1 )
+Formula: H19 C9 N1 O5 P1 
+ATOM      1  N   DNL     1      -3.396  -0.671   0.868 -0.560900        ns
+ATOM      2  C1  DNL     1      -3.045  -1.823   0.063  0.090000        c3
+ATOM      3  C2  DNL     1      -2.613  -1.446  -1.355 -0.102400        c3
+ATOM      4  C3  DNL     1      -1.456  -0.443  -1.436 -0.081400        c3
+ATOM      5  C4  DNL     1      -0.179  -0.924  -0.747 -0.078400        c3
+ATOM      6  C5  DNL     1       0.946   0.099  -0.892 -0.111400        c3
+ATOM      7  C6  DNL     1       2.197  -0.335  -0.141  0.188400        c3
+ATOM      8  OL  DNL     1       3.172   0.682  -0.264 -0.574200        os
+ATOM      9  HN  DNL     1      -2.643  -0.181   1.337  0.323500        hn
+ATOM     10  H11 DNL     1      -3.911  -2.493   0.011  0.056700        h1
+ATOM     11  H12 DNL     1      -2.249  -2.359   0.589  0.056700        h1
+ATOM     12  H21 DNL     1      -3.471  -1.018  -1.890  0.039700        hc
+ATOM     13  H22 DNL     1      -2.336  -2.361  -1.892  0.039700        hc
+ATOM     14  H31 DNL     1      -1.770   0.516  -1.005  0.037700        hc
+ATOM     15  H32 DNL     1      -1.244  -0.250  -2.495  0.037700        hc
+ATOM     16  H41 DNL     1      -0.368  -1.090   0.319  0.034700        hc
+ATOM     17  H42 DNL     1       0.135  -1.883  -1.176  0.034700        hc
+ATOM     18  H51 DNL     1       1.189   0.253  -1.951  0.044200        hc
+ATOM     19  H52 DNL     1       0.620   1.076  -0.514  0.044200        hc
+ATOM     20  H61 DNL     1       2.597  -1.263  -0.562  0.028700        h1
+ATOM     21  H62 DNL     1       1.960  -0.505   0.916  0.028700        h1
+ATOM     22  CAY DNL     1      -4.633  -0.077   0.792  0.655100         c
+ATOM     23  OAY DNL     1      -5.559  -0.500   0.107 -0.637100         o
+ATOM     24  CAZ DNL     1      -4.764   1.172   1.622 -0.176100        c3
+ATOM     25  HZ1 DNL     1      -4.730   2.044   0.964  0.064700        hc
+ATOM     26  HZ2 DNL     1      -5.718   1.149   2.156  0.064700        hc
+ATOM     27  HZ3 DNL     1      -3.962   1.251   2.362  0.064700        hc
+ATOM     28  P   DNL     1       4.352   0.629   0.852  1.420800        p5
+ATOM     29  OP1 DNL     1       3.769   1.051   2.177 -0.821000         o
+ATOM     30  OP2 DNL     1       5.097  -0.673   0.697 -0.821000         o
+ATOM     31  O5C DNL     1       5.282   1.834   0.286 -0.584200        os
+ATOM     32  C5C DNL     1       6.449   2.079   1.039  0.180700        c3
+ATOM     33  H5A DNL     1       6.997   2.905   0.577  0.004367        h1
+ATOM     34  H5B DNL     1       7.092   1.194   1.046  0.004367        h1
+ATOM     35  H5C DNL     1       6.191   2.361   2.063  0.004367        h1
+BOND    1    1    2    1      N   C1
+BOND    2    2    3    1     C1   C2
+BOND    3    3    4    1     C2   C3
+BOND    4    4    5    1     C3   C4
+BOND    5    5    6    1     C4   C5
+BOND    6    6    7    1     C5   C6
+BOND    7    7    8    1     C6   OL
+BOND    8    1    9    1      N   HN
+BOND    9    2   10    1     C1  H11
+BOND   10    2   11    1     C1  H12
+BOND   11    3   12    1     C2  H21
+BOND   12    3   13    1     C2  H22
+BOND   13    4   14    1     C3  H31
+BOND   14    4   15    1     C3  H32
+BOND   15    5   16    1     C4  H41
+BOND   16    5   17    1     C4  H42
+BOND   17    6   18    1     C5  H51
+BOND   18    6   19    1     C5  H52
+BOND   19    7   20    1     C6  H61
+BOND   20    7   21    1     C6  H62
+BOND   21    1   22    1      N  CAY
+BOND   22   22   23    2    CAY  OAY
+BOND   23   22   24    1    CAY  CAZ
+BOND   24   24   25    1    CAZ  HZ1
+BOND   25   24   26    1    CAZ  HZ2
+BOND   26   24   27    1    CAZ  HZ3
+BOND   27    8   28    1     OL    P
+BOND   28   28   29    9      P  OP1
+BOND   29   28   30    9      P  OP2
+BOND   30   28   31    1      P  O5C
+BOND   31   31   32    1    O5C  C5C
+BOND   32   32   33    1    C5C  H5A
+BOND   33   32   34    1    C5C  H5B
+BOND   34   32   35    1    C5C  H5C
