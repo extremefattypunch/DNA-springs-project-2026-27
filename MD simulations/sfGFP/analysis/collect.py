@@ -25,7 +25,7 @@ import barrel  # noqa: E402
 import chromophore  # noqa: E402
 import mechanics  # noqa: E402
 import contacts  # noqa: E402
-import sites  # noqa: E402
+import sites as sites_mod  # noqa: E402
 
 CLAMP_RE = re.compile(r"^(?P<base>.+?)_(?P<f>[\d.]+)pN$")
 
@@ -47,13 +47,44 @@ def flat(prefix, d, out):
     return out
 
 
+def sites_for(sysdir: Path, default):
+    """The two modified residues of THIS system, in its own numbering.
+
+    Not a constant.  sfGFP is modified at 133/149 and ubiquitin at 9/63, and passing
+    sfGFP's pair to a ubiquitin trajectory does not fail -- it silently produces no
+    anchor distance at all, which is how every ubiquitin system came to have a blank
+    Cb-Cb column.  The system builder already writes the two clamp atom indices, so the
+    residue numbers are recoverable from them and the residue map with no rebuild.
+    """
+    ca = sysdir / "clamp_atoms.txt"
+    rm = sysdir / "residue_map.json"
+    if not (ca.exists() and rm.exists()):
+        return default
+    try:
+        idx = [int(v) for v in ca.read_text().strip().split(",")]
+        rows = json.loads(rm.read_text())
+        import mdtraj as md
+        top = md.load_prmtop(str(sysdir / "system.prmtop"))
+        by_index = {r["index"]: r["orig_resnum"] for r in rows}
+        out = []
+        for a in idx:
+            ri = top.atom(a).residue.index
+            if ri in by_index:
+                out.append(by_index[ri])
+        return out if len(out) == 2 else default
+    except Exception:                                        # noqa: BLE001
+        return default
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", default="data/runs")
     ap.add_argument("--systems", default="build/systems")
     ap.add_argument("--out", default="analysis")
     ap.add_argument("--stride", type=int, default=2)
-    ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
+    ap.add_argument("--sites", nargs=2, type=int, default=[133, 149],
+                    help="override the modified residues; by default each system's own "
+                         "pair is recovered from its clamp_atoms.txt")
     ap.add_argument("--min-ns", type=float, default=1.0,
                     help="skip replicates with less than this much production")
     ap.add_argument("--skip-ns", type=float, default=5.0,
@@ -61,6 +92,7 @@ def main():
     ap.add_argument("--report-ps", type=float, default=20.0,
                     help="trajectory frame spacing, used to convert --skip-ns")
     args = ap.parse_args()
+    args.sites_given = any(a.startswith("--sites") for a in sys.argv)
 
     rows = []
     for traj in sorted(Path(args.runs).glob("*/rep*/03_production/traj.dcd")):
@@ -82,21 +114,23 @@ def main():
         skip = int(round(args.skip_ns * 1000.0 / args.report_ps / args.stride))
         pre = str(traj.parent / "analysis")
         print(f"\n=== {tag} {rep_dir.name}  ({ns} ns, first {args.skip_ns} ns discarded) ===")
+        sites = args.sites if args.sites_given else sites_for(sysdir, args.sites)
         row = {"system": base, "tag": tag, "clamp_pN": clamp,
-               "replicate": rep_dir.name, "ns": ns, "skip_ns": args.skip_ns}
+               "replicate": rep_dir.name, "ns": ns, "skip_ns": args.skip_ns,
+               "sites": "/".join(str(s) for s in sites)}
         try:
             c = chromophore.analyse(traj, top, rmap, pre, args.stride, skip)
             flat("chromo.", c, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  chromophore failed: {type(e).__name__}: {e}")
         try:
-            m = mechanics.analyse(traj, top, rmap, args.sites, pre, args.stride,
+            m = mechanics.analyse(traj, top, rmap, sites, pre, args.stride,
                                   clamp, nicked="nick" in base, skip=skip)
             flat("mech.", m, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  mechanics failed: {type(e).__name__}: {e}")
         try:
-            b = barrel.analyse(traj, top, rmap, args.sites, pre, args.stride, skip)
+            b = barrel.analyse(traj, top, rmap, sites, pre, args.stride, skip)
             flat("barrel.", b, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  barrel failed: {type(e).__name__}: {e}")
@@ -110,7 +144,7 @@ def main():
         except Exception as e:                              # noqa: BLE001
             print(f"  contacts failed: {type(e).__name__}: {e}")
         try:
-            sc = sites.analyse(traj, top, rmap, args.sites, pre, args.stride, skip)
+            sc = sites_mod.analyse(traj, top, rmap, sites, pre, args.stride, skip)
             # DSSP is a per-residue dict of fractions; keep it in the per-run JSON and
             # out of the flat CSV, which would otherwise gain 84 columns of mostly zeros.
             flat("site.", {k: v for k, v in sc.items() if k != "dssp"}, row)
