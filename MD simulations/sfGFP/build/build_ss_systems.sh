@@ -8,10 +8,13 @@
 # tighter comparison than the two 12-mers used in the ubiquitin preprint and is Zocchi's
 # own recommended design: change the mechanics, hold every contact constant.
 #
-# 50 nt, not 27: at 0.255 nm/base a 27-mer has ~6.9 nm of contour against the 6.6 nm
-# the sites plus linkers impose, so it would be taut and would report stretching rather
-# than the slack, zero-stress reference the control is for.  50 nt is also the length
-# used in the ubiquitin work, which makes the two studies comparable.
+# 50 nt, not 27, and the reason is comparability rather than mechanics.  An earlier
+# comment here claimed a 27-mer would be taut, on the grounds that it has "6.9 nm of
+# contour at 0.255 nm/base".  That was wrong: 6.9 nm is a 27-mer's natural rms end-to-end
+# sqrt(2*xi*L0), not its contour, which is 15.9 nm at 0.59 nm/nt.  Against the 6.6 nm the
+# sites impose, a 27-mer is matched and a 50-mer (9.4 nm) is slack -- neither is taut.
+# 50 nt is the length used in the ubiquitin work, and the slackest option, so it is both
+# comparable and the cleanest zero-stress reference.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source ./env/activate.sh

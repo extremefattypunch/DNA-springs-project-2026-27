@@ -38,7 +38,8 @@ import pandas as pd
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import geometry  # noqa: E402
-from spring_model import KT, TAU_C_CONTINUOUS, TAU_C_NICKED, Spring  # noqa: E402
+from spring_model import (KT, TAU_C_CONTINUOUS, TAU_C_NICKED,  # noqa: E402
+                           Spring, SsSpring)
 
 WC = {("DA", "DT"): [("N1", "N3"), ("N6", "O4")],
       ("DT", "DA"): [("N3", "N1"), ("O4", "N6")],
@@ -124,7 +125,7 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
 
     # --- 2. spring extension and the force it implies ---
     strands = dna_residues(top, resmap)
-    if len(strands) == 2:
+    if strands:
         # The spring's end-to-end distance is measured between the two nucleotide atoms
         # the linkers are actually bonded to, found from the bond graph rather than
         # assumed.  This has to be derived and not hard-coded, because the two builds
@@ -144,15 +145,18 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
                     attach.append((near.index, near.residue.index, near.name))
         attach = sorted(set(attach), key=lambda x: x[1])
         if len(attach) != 2:
+            # Two linker-to-DNA bonds is what every chimera should have.  Anything else
+            # is reported rather than papered over: the two-arm control C2_ssarms
+            # legitimately has two, one per arm, but a build that lost one would look
+            # like a valid single-tether construct if we silently invented a second.
             print(f"  WARNING: found {len(attach)} linker-to-DNA bonds, expected 2; "
-                  "falling back to the two strands' 5' phosphorus")
-            attach = []
-            for _, res in strands:
-                first = res[0]
-                p = next((a for a in first.atoms if a.name == "P"), None)
-                a = p if p is not None else next(x for x in first.atoms
-                                                 if x.name == "C5'")
-                attach.append((a.index, first.index, a.name))
+                  "falling back to the first and last nucleotide of the first strand")
+            first_res, last_res = strands[0][1][0], strands[0][1][-1]
+            head = next((a for a in first_res.atoms if a.name == "P"), None) or \
+                next(x for x in first_res.atoms if x.name == "C5'")
+            tail = next(x for x in last_res.atoms if x.name == "O3'")
+            attach = [(head.index, first_res.index, head.name),
+                      (tail.index, last_res.index, tail.name)]
         one_strand = len({top.atom(i).residue.chain.index for i, _, _ in attach}) == 1
         summary["attachment"] = {
             "atoms": [f"{top.atom(i).residue.name}{top.atom(i).residue.resSeq}.{nm}"
@@ -172,115 +176,152 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
             t, attach[0][0], attach[1][0], "spring end-to-end", mols)
         summary["pbc"]["spring_end_to_end"] = spring_pbc
         rows["spring_end_to_end_A"] = d
-        n_bp = len(strands[0][1])
-        tau = TAU_C_NICKED if nicked else TAU_C_CONTINUOUS
-        sp = Spring(n_bp, tau_c=tau)
-        f = np.array([sp.force(x / 10.0) if x / 10.0 < sp.L else np.nan for x in d])
-        e = np.array([sp.energy(x / 10.0) / KT if x / 10.0 < sp.L else np.nan for x in d])
-        rows["spring_5P_5P_A"] = d          # kept under the old name for the
-        #                                      earlier runs' CSVs to stay readable
-        rows["spring_force_pN"] = f
-        rows["spring_energy_kT"] = e
-        summary["spring"] = {
-            "n_bp": n_bp, "tau_c_pN_nm": tau, "nicked": nicked,
-            "contour_nm": round(sp.L, 3),
-            "x_mean_A": round(float(d.mean()), 3), "x_sd_A": round(float(d.std()), 3),
-            "force_pN_mean": round(float(np.nanmean(f)), 3),
-            "force_pN_sd": round(float(np.nanstd(f)), 3),
-            "energy_kT_mean": round(float(np.nanmean(e)), 3),
-            "regime": "kinked" if d.mean() / 10.0 < sp.x_c else "smoothly bent"}
-        print(f"  spring 5'P-5'P: {d.mean():.2f} +/- {d.std():.2f} A -> "
-              f"f = {np.nanmean(f):.2f} +/- {np.nanstd(f):.2f} pN, "
-              f"E = {np.nanmean(e):.2f} kT ({summary['spring']['regime']})")
+        n_units = len(strands[0][1])
+        rows["spring_5P_5P_A"] = d          # kept under the old name so the earlier
+        #                                      runs' CSVs stay readable
+        if len(strands) == 2:
+            # A compressed duplex is an elastic rod: it PUSHES its ends apart.
+            tau = TAU_C_NICKED if nicked else TAU_C_CONTINUOUS
+            sp = Spring(n_units, tau_c=tau)
+            f = np.array([sp.force(x / 10.0) if x / 10.0 < sp.L else np.nan for x in d])
+            e = np.array([sp.energy(x / 10.0) / KT if x / 10.0 < sp.L else np.nan
+                          for x in d])
+            rows["spring_force_pN"] = f
+            rows["spring_energy_kT"] = e
+            summary["spring"] = {
+                "kind": "dsDNA elastic rod (pushes)",
+                "model": "Zocchi f(x); MODELLED, not measured -- see the bare-duplex "
+                         "force-extension runs for the measured curve",
+                "n_bp": n_units, "tau_c_pN_nm": tau, "nicked": nicked,
+                "contour_nm": round(sp.L, 3),
+                "x_mean_A": round(float(d.mean()), 3),
+                "x_sd_A": round(float(d.std()), 3),
+                "force_pN_mean": round(float(np.nanmean(f)), 3),
+                "force_pN_sd": round(float(np.nanstd(f)), 3),
+                "energy_kT_mean": round(float(np.nanmean(e)), 3),
+                "regime": "kinked" if d.mean() / 10.0 < sp.x_c else "smoothly bent"}
+            print(f"  spring end-to-end: {d.mean():.2f} +/- {d.std():.2f} A -> "
+                  f"modelled f = {np.nanmean(f):.2f} +/- {np.nanstd(f):.2f} pN, "
+                  f"E = {np.nanmean(e):.2f} kT ({summary['spring']['regime']})")
+        else:
+            # One strand is the opposite animal: an entropic chain that PULLS its ends
+            # together when stretched past its natural size.  Handing it Spring(), which
+            # describes a rod under compression, would report a push where the physics
+            # gives a pull -- so it gets its own model and its own sign, and the key is
+            # named differently so nothing downstream can average the two together.
+            ss = SsSpring(n_units)
+            ten = np.array([ss.tension(x / 10.0) for x in d])
+            rows["ss_tension_pN"] = ten
+            summary["ss_spring"] = {
+                "kind": "ssDNA worm-like chain (pulls)",
+                "model": "Marko-Siggia; MODELLED, not measured",
+                "n_nt": n_units, "contour_nm": round(ss.L0, 3),
+                "persistence_nm": ss.xi,
+                "natural_rms_end_to_end_nm": round(ss.rms_end_to_end, 3),
+                "x_mean_A": round(float(d.mean()), 3),
+                "x_sd_A": round(float(d.std()), 3),
+                "tension_pN_mean": round(float(ten.mean()), 3),
+                "state": ss.state(float(d.mean()) / 10.0)}
+            print(f"  ssDNA end-to-end: {d.mean():.2f} +/- {d.std():.2f} A "
+                  f"(natural rms {10 * ss.rms_end_to_end:.1f} A, contour "
+                  f"{10 * ss.L0:.1f} A) -> {summary['ss_spring']['state']}, "
+                  f"tension {ten.mean():.2f} pN")
 
-        # --- 3. where the duplex gives ---
-        a_res, b_res = strands[0][1], strands[1][1]
-        n = min(len(a_res), len(b_res))
-        c1 = []
-        for k in range(n):
-            ai = next(x.index for x in a_res[k].atoms if x.name == "C1'")
-            bi = next(x.index for x in b_res[n - 1 - k].atoms if x.name == "C1'")
-            c1.append((ai, bi))
-        pos = t.xyz[:, np.array(c1).ravel(), :].reshape(t.n_frames, n, 2, 3)
-        centres = pos.mean(axis=2) * 10.0
+        # Sections 3 onward are about a DUPLEX: base pairs that can open and a
+        # helical axis that can bend.  A single strand has neither, so they are
+        # skipped rather than fed one strand and asked to pair it with itself.
+        # This is what the ssDNA chimera and its two-arm control need -- they have
+        # exactly one DNA chain, and before this the whole block above was skipped
+        # too, so they got no end-to-end distance at all.
+        if len(strands) == 2:
+            # --- 3. where the duplex gives ---
+            a_res, b_res = strands[0][1], strands[1][1]
+            n = min(len(a_res), len(b_res))
+            c1 = []
+            for k in range(n):
+                ai = next(x.index for x in a_res[k].atoms if x.name == "C1'")
+                bi = next(x.index for x in b_res[n - 1 - k].atoms if x.name == "C1'")
+                c1.append((ai, bi))
+            pos = t.xyz[:, np.array(c1).ravel(), :].reshape(t.n_frames, n, 2, 3)
+            centres = pos.mean(axis=2) * 10.0
 
-        # Base-pair centres spiral around the helical axis at ~1.9 A, so the direction
-        # between *consecutive* centres swings by 20-30 deg per step from the helix
-        # itself, with nothing to do with bending -- measured naively this duplex
-        # reported 27 deg/bp and 687 deg of total bend.  Averaging the centres over one
-        # full turn cancels the spiral and leaves the axis.
-        w = int(min(11, max(3, n // 3)))
-        if w % 2 == 0:
-            w -= 1
-        kern = np.ones(w) / w
-        smooth = np.stack([np.apply_along_axis(
-            lambda v: np.convolve(v, kern, mode="valid"), 1, centres[:, :, k])
-            for k in range(3)], axis=2)
-        tang = np.diff(smooth, axis=1)
-        tang /= np.linalg.norm(tang, axis=2, keepdims=True)
-        cosang = np.clip((tang[:, :-1] * tang[:, 1:]).sum(axis=2), -1, 1)
-        bend = np.degrees(np.arccos(cosang))          # per axis step
-        total = np.degrees(np.arccos(np.clip(
-            (tang[:, 0] * tang[:, -1]).sum(axis=1), -1, 1)))
-        offset = 1 + w // 2                           # smoothed index -> bp number
-        rows["bend_max_deg"] = bend.max(axis=1)
-        rows["bend_argmax_bp"] = bend.argmax(axis=1) + offset + 1.0
-        rows["bend_total_deg"] = total
-        summary["bend"] = {
-            "axis_smoothing_window_bp": w,
-            "per_step_mean_deg": round(float(bend.mean()), 3),
-            "per_step_max_mean_deg": round(float(bend.max(axis=1).mean()), 3),
-            "hottest_bp": int(np.bincount(bend.argmax(axis=1) + offset + 1,
-                                          minlength=n + 2).argmax()),
-            "total_bend_deg_mean": round(float(total.mean()), 2),
-            "total_bend_deg_sd": round(float(total.std()), 2),
-            "span_bp": [1 + w // 2, n - w // 2],
-            "note": ("total_bend covers only the interior span the smoothing window "
-                     "leaves, so it is smaller than the arc the duplex was built with "
-                     "by roughly the fraction of base pairs trimmed")}
-        print(f"  axis bend: {bend.mean():.2f} deg/step (window {w} bp), "
-              f"total {total.mean():.1f} +/- {total.std():.1f} deg, "
-              f"sharpest near bp {summary['bend']['hottest_bp']}")
+            # Base-pair centres spiral around the helical axis at ~1.9 A, so the direction
+            # between *consecutive* centres swings by 20-30 deg per step from the helix
+            # itself, with nothing to do with bending -- measured naively this duplex
+            # reported 27 deg/bp and 687 deg of total bend.  Averaging the centres over one
+            # full turn cancels the spiral and leaves the axis.
+            w = int(min(11, max(3, n // 3)))
+            if w % 2 == 0:
+                w -= 1
+            kern = np.ones(w) / w
+            smooth = np.stack([np.apply_along_axis(
+                lambda v: np.convolve(v, kern, mode="valid"), 1, centres[:, :, k])
+                for k in range(3)], axis=2)
+            tang = np.diff(smooth, axis=1)
+            tang /= np.linalg.norm(tang, axis=2, keepdims=True)
+            cosang = np.clip((tang[:, :-1] * tang[:, 1:]).sum(axis=2), -1, 1)
+            bend = np.degrees(np.arccos(cosang))          # per axis step
+            total = np.degrees(np.arccos(np.clip(
+                (tang[:, 0] * tang[:, -1]).sum(axis=1), -1, 1)))
+            offset = 1 + w // 2                           # smoothed index -> bp number
+            rows["bend_max_deg"] = bend.max(axis=1)
+            rows["bend_argmax_bp"] = bend.argmax(axis=1) + offset + 1.0
+            rows["bend_total_deg"] = total
+            summary["bend"] = {
+                "axis_smoothing_window_bp": w,
+                "per_step_mean_deg": round(float(bend.mean()), 3),
+                "per_step_max_mean_deg": round(float(bend.max(axis=1).mean()), 3),
+                "hottest_bp": int(np.bincount(bend.argmax(axis=1) + offset + 1,
+                                              minlength=n + 2).argmax()),
+                "total_bend_deg_mean": round(float(total.mean()), 2),
+                "total_bend_deg_sd": round(float(total.std()), 2),
+                "span_bp": [1 + w // 2, n - w // 2],
+                "note": ("total_bend covers only the interior span the smoothing window "
+                         "leaves, so it is smaller than the arc the duplex was built with "
+                         "by roughly the fraction of base pairs trimmed")}
+            print(f"  axis bend: {bend.mean():.2f} deg/step (window {w} bp), "
+                  f"total {total.mean():.1f} +/- {total.std():.1f} deg, "
+                  f"sharpest near bp {summary['bend']['hottest_bp']}")
 
-        # per-step bend profile along the duplex, averaged over frames: this is where
-        # a kink would announce itself as a localised spike
-        prof = pd.DataFrame({
-            "bp": np.arange(bend.shape[1]) + offset + 1,
-            "bend_deg_mean": bend.mean(axis=0).round(4),
-            "bend_deg_sd": bend.std(axis=0).round(4)})
-        prof.to_csv(f"{out_prefix}_bend_profile.csv", index=False)
+            # per-step bend profile along the duplex, averaged over frames: this is where
+            # a kink would announce itself as a localised spike
+            prof = pd.DataFrame({
+                "bp": np.arange(bend.shape[1]) + offset + 1,
+                "bend_deg_mean": bend.mean(axis=0).round(4),
+                "bend_deg_sd": bend.std(axis=0).round(4)})
+            prof.to_csv(f"{out_prefix}_bend_profile.csv", index=False)
 
-        # base-pair opening
-        pairs, labels = [], []
-        for k in range(n):
-            ra, rb = a_res[k], b_res[n - 1 - k]
-            key = (ra.name.rstrip("35"), rb.name.rstrip("35"))
-            for na, nb in WC.get(key, []):
-                try:
-                    pairs.append([next(x.index for x in ra.atoms if x.name == na),
-                                  next(x.index for x in rb.atoms if x.name == nb)])
-                    labels.append(k + 1)
-                except StopIteration:
-                    pass
-        if pairs:
-            dd = md.compute_distances(t, np.array(pairs)) * 10.0
-            lab = np.array(labels)
-            open_frac = []
-            for k in range(1, n + 1):
-                sel = dd[:, lab == k]
-                if sel.size:
-                    open_frac.append(float((sel.mean(axis=1) > 4.0).mean()))
-            rows["bp_open_count"] = np.array(
-                [sum(dd[fr, lab == k].mean() > 4.0 for k in range(1, n + 1))
-                 for fr in range(t.n_frames)], float)
-            summary["base_pair_opening"] = {
-                "criterion": "mean WC donor-acceptor distance > 4.0 A",
-                "fraction_open_per_bp": [round(v, 4) for v in open_frac],
-                "most_open_bp": int(np.argmax(open_frac) + 1),
-                "mean_open_count": round(float(rows["bp_open_count"].mean()), 3)}
-            print(f"  base pairs open (>4 A): "
-                  f"{rows['bp_open_count'].mean():.2f} of {n} on average; "
-                  f"most labile bp {summary['base_pair_opening']['most_open_bp']}")
+            # base-pair opening
+            pairs, labels = [], []
+            for k in range(n):
+                ra, rb = a_res[k], b_res[n - 1 - k]
+                key = (ra.name.rstrip("35"), rb.name.rstrip("35"))
+                for na, nb in WC.get(key, []):
+                    try:
+                        pairs.append([next(x.index for x in ra.atoms if x.name == na),
+                                      next(x.index for x in rb.atoms if x.name == nb)])
+                        labels.append(k + 1)
+                    except StopIteration:
+                        pass
+            if pairs:
+                dd = md.compute_distances(t, np.array(pairs)) * 10.0
+                lab = np.array(labels)
+                open_frac = []
+                for k in range(1, n + 1):
+                    sel = dd[:, lab == k]
+                    if sel.size:
+                        open_frac.append(float((sel.mean(axis=1) > 4.0).mean()))
+                rows["bp_open_count"] = np.array(
+                    [sum(dd[fr, lab == k].mean() > 4.0 for k in range(1, n + 1))
+                     for fr in range(t.n_frames)], float)
+                summary["base_pair_opening"] = {
+                    "criterion": "mean WC donor-acceptor distance > 4.0 A",
+                    "fraction_open_per_bp": [round(v, 4) for v in open_frac],
+                    "most_open_bp": int(np.argmax(open_frac) + 1),
+                    "mean_open_count": round(float(rows["bp_open_count"].mean()), 3)}
+                print(f"  base pairs open (>4 A): "
+                      f"{rows['bp_open_count'].mean():.2f} of {n} on average; "
+                      f"most labile bp {summary['base_pair_opening']['most_open_bp']}")
 
     df = pd.DataFrame(rows)
     df.to_csv(f"{out_prefix}_mechanics.csv", index=False)

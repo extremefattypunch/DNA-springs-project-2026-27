@@ -377,10 +377,17 @@ Built and running: **C1_ss50**, one 50-nt strand clicked at both ends, no comple
 
 Two notes on the design.
 
-**Why 50 nt and not 27.** At 0.255 nm per base a 27-mer has only ~6.9 nm of contour
-against the 6.6 nm the sites plus linkers impose. It would be taut, and would report
-stretching rather than the slack, zero-stress reference the control is for. 50 nt is also
-the length used in the ubiquitin work, which makes the two studies comparable.
+**Why 50 nt and not 27 — with a correction to my own reasoning.** I first justified this
+by saying a 27-mer has "only ~6.9 nm of contour at 0.255 nm per base" and would be taut.
+That was wrong, and worth correcting because the number was right and the label was not.
+6.9 nm is a 27-mer's *natural rms end-to-end distance*, √(2ξL₀); its **contour** is
+15.9 nm, at 0.59 nm per nucleotide (Smith, Cui & Bustamante 1996). With ξ_ss = 1.5 nm —
+the figure Zocchi's own 2021 chapter uses — a 27-mer's natural size is 6.9 nm against a
+6.6 nm span, so it is **matched, not taut**, and a 50-mer at 9.4 nm is genuinely slack.
+
+So the real reason to use 50 nt is the simpler one: it is the length used in the ubiquitin
+work, which makes the two studies comparable, and it is the slackest of the options and
+therefore the cleanest zero-stress reference. Neither would have been taut.
 
 **The sign flips.** With a persistence length of ~1.5 nm, ssDNA is an *entropic* spring
 that **pulls** as it is stretched, where the compressed duplex **pushes**. So this is not

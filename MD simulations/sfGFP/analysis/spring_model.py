@@ -198,3 +198,67 @@ if __name__ == "__main__":
         n = choose_n_bp(x, args.target_force)
         print(f"strong spring targeting {args.target_force:.1f} pN: "
               f"{n} bp -> {Spring(n).force(x):.2f} pN (nicked)")
+
+# ---------------------------------------------------------------------------
+# Single-stranded DNA: an entropic spring, and one that pulls
+# ---------------------------------------------------------------------------
+# The duplex above is an elastic rod that PUSHES its ends apart when compressed.  A
+# single strand is the opposite animal: a flexible chain whose restoring force is
+# entropic and which PULLS its ends together when stretched past its natural size.  So
+# the ssDNA chimera is not "the spring switched off", it is a spring of the other sign,
+# and reporting a dsDNA force for it would be worse than reporting nothing.
+#
+# Parameters: contour length 0.59 nm per nucleotide (Smith, Cui & Bustamante 1996 give
+# 0.56-0.59) and persistence length 1.5 nm, which is the figure Zocchi's own 2021 chapter
+# uses -- "the persistence length of ss DNA being around 3 bases or l_ss = 1.5 nm".
+RISE_SS = 0.59           # nm per nucleotide, contour
+XI_SS = 1.5              # nm, persistence length
+
+
+@dataclass(frozen=True)
+class SsSpring:
+    """A single strand as a worm-like chain."""
+
+    n_nt: int
+    rise: float = RISE_SS
+    xi: float = XI_SS
+
+    @property
+    def L0(self) -> float:
+        """Contour length (nm)."""
+        return self.rise * self.n_nt
+
+    @property
+    def rms_end_to_end(self) -> float:
+        """Unstressed rms end-to-end distance (nm), ideal-chain limit sqrt(2*xi*L0).
+
+        This is the number that decides whether a given strand is slack or stretched at
+        a given span, and it is NOT the contour length -- a distinction worth labouring,
+        because an earlier version of the write-up quoted 6.9 nm for a 27-mer and called
+        it the contour.  6.9 nm is this quantity; the contour is 15.9 nm.  Getting the two
+        confused turns "matched to the span" into "taut", which is the opposite reading.
+        """
+        return math.sqrt(2.0 * self.xi * self.L0)
+
+    def tension(self, x: float) -> float:
+        """Marko-Siggia tension (pN) at end-to-end distance x (nm).
+
+        POSITIVE means the chain pulls its ends together -- the opposite sign to
+        Spring.force() above, which pushes them apart.  Below the unstressed rms size the
+        interpolation formula is not meaningful (an ideal chain exerts essentially no
+        restoring force there), so it returns 0 rather than a small fictitious number.
+        """
+        if x <= self.rms_end_to_end:
+            return 0.0
+        if x >= self.L0:
+            return float("inf")
+        s = x / self.L0
+        return (KT / self.xi) * (1.0 / (4.0 * (1.0 - s) ** 2) - 0.25 + s)
+
+    def state(self, x: float) -> str:
+        r = self.rms_end_to_end
+        if x > 1.05 * r:
+            return "stretched (pulls)"
+        if x > 0.85 * r:
+            return "matched"
+        return "slack"
