@@ -74,12 +74,14 @@ def build(args) -> dict:
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
     solute = Path(args.solute).resolve()
-    shutil.copy(solute, out / solute.name)
+    if (out / solute.name).resolve() != solute:
+        shutil.copy(solute, out / solute.name)
 
     extra_params = "\n".join(f"loadamberparams {Path(p).name}" for p in args.frcmod)
     extra_libs = "\n".join(f"loadamberprep {Path(p).name}" for p in args.prep)
     for p in list(args.frcmod) + list(args.prep):
-        shutil.copy(p, out / Path(p).name)
+        if (out / Path(p).name).resolve() != Path(p).resolve():
+            shutil.copy(p, out / Path(p).name)
     bonds = "\n".join(f"bond mol.{a} mol.{b}" for a, b in
                       (s.split(":") for s in args.bond))
 
@@ -133,6 +135,63 @@ quit
     return validate(out, report, args)
 
 
+def covalent_loop(p, resname: str) -> dict:
+    """Is there a covalent path between the two tether roots that avoids the protein?
+
+    The obvious test -- "is the solute one connected component?" -- does not
+    discriminate, and this is worth spelling out because it is what let the wrong
+    topology through the first time.  With a linker on each of two *different* strands
+    the solute is still one component: both arms hang off the protein backbone, so
+    everything is connected through the protein.  What was missing was a covalent
+    *cycle*.  Every tether bond was a bridge in the bond graph, and the loop was closed
+    by twenty-seven base pairs rather than by chemistry.
+
+    So: cut the CA-CB bond at each of the two modified residues, and ask whether the two
+    C-beta are still connected.  They can only be if a path runs out along one tether,
+    through the DNA, and back along the other -- which is true exactly when one strand
+    carries both linkers.
+    """
+    # Keyed on the residue NAME, not a number.  A prmtop has no crystallographic
+    # numbering -- tleap renumbers every residue sequentially from 1 -- so looking for
+    # residue 133 finds whatever happens to be 133rd, which here is neither modified
+    # residue.  There are exactly two modified residues per chimera, so the name is
+    # enough and it cannot drift.
+    hits = [r for r in p.residues if r.name == resname]
+    if len(hits) != 2:
+        return {"tested": False,
+                "why": f"expected exactly 2 {resname} residues, found {len(hits)}"}
+    cb, cut = {}, set()
+    for r in hits:
+        b = next((a for a in r.atoms if a.name == "CB"), None)
+        ca = next((a for a in r.atoms if a.name == "CA"), None)
+        if b is None:
+            return {"tested": False, "why": f"{resname} idx {r.idx} has no CB"}
+        cb[r.idx] = b
+        if ca is not None:
+            cut.add(frozenset((b.idx, ca.idx)))
+    keys = sorted(cb)
+    adj = {}
+    for bd in p.bonds:
+        i, j = bd.atom1.idx, bd.atom2.idx
+        if frozenset((i, j)) in cut:
+            continue
+        adj.setdefault(i, set()).add(j)
+        adj.setdefault(j, set()).add(i)
+    start, goal = cb[keys[0]].idx, cb[keys[1]].idx
+    seen, stack = {start}, [start]
+    while stack:
+        v = stack.pop()
+        if v == goal:
+            break
+        for w in adj.get(v, ()):
+            if w not in seen:
+                seen.add(w)
+                stack.append(w)
+    return {"tested": True, "residue": resname, "residue_indices": keys,
+            "backbone_bonds_cut": len(cut), "closed": goal in seen,
+            "atoms_reached": len(seen)}
+
+
 def validate(out: Path, report: dict, args) -> dict:
     import parmed
     p = parmed.load_file(str(out / "system.prmtop"), xyz=str(out / "system.inpcrd"))
@@ -176,6 +235,18 @@ def validate(out: Path, report: dict, args) -> dict:
         else:
             problems.append(f"bond {spec} is missing from the prmtop")
     report["bonds_verified"] = sorted(made)
+
+    # the construct must be a covalent circle, not two arms held shut by base pairing
+    if args.expect_loop:
+        loop = covalent_loop(p, args.expect_loop)
+        report["covalent_loop"] = loop
+        if not loop.get("tested"):
+            problems.append(f"could not test the covalent loop: {loop.get('why')}")
+        elif not loop["closed"]:
+            problems.append(
+                "no covalent cycle: cutting CA-CB at both modified residues "
+                "disconnects them, so each tether is a bridge and the loop is closed "
+                "by base pairing alone -- this is the topology error in the first build")
 
     # a missing dihedral type would show up as a zero-parameter term
     report["dihedrals"] = len(p.dihedrals)
@@ -300,6 +371,10 @@ def main():
                     help="inter-residue bonds as RESI@ATOM:RESI@ATOM using the "
                          "solute PDB's own residue numbering (1-based ordinal)")
     ap.add_argument("--expect-residue", nargs="*", default=["CRO"])
+    ap.add_argument("--expect-loop", default=None, metavar="RESNAME",
+                    help="name of the modified residue (exactly two expected); assert "
+                         "a covalent cycle joins their C-beta without using the "
+                         "protein backbone")
     ap.add_argument("--clamp-sites", nargs="*", type=int, default=[],
                     help="two residue numbers whose CB atoms the force clamp uses")
     ap.add_argument("--tleap", default=shutil.which("tleap") or "tleap")

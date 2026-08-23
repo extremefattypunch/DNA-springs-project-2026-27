@@ -1,0 +1,58 @@
+{
+  "system": "L5_loop40nick",
+  "solute_pdb": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/04_assemble/chimera_loop40nick.pdb",
+  "pad_A": 12.0,
+  "waters_pass1": 34444,
+  "nacl_pairs": 93,
+  "mgcl2": 3,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.005,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [
+    "131@CN:232@N",
+    "147@CN:273@N"
+  ],
+  "atoms": 110012,
+  "residues": 35074,
+  "bonds": 109982,
+  "net_charge": -3.1e-05,
+  "box": [
+    116.543,
+    116.543,
+    116.543,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 34482,
+  "ions": {
+    "Na+": 177,
+    "Cl-": 99,
+    "MG": 3
+  },
+  "expected_residues": {
+    "CRO": 1,
+    "TDP": 2,
+    "DNL": 1,
+    "DNP": 1
+  },
+  "bonds_verified": [
+    "131@CN:232@N",
+    "147@CN:273@N"
+  ],
+  "covalent_loop": {
+    "tested": true,
+    "residue": "TDP",
+    "residue_indices": [
+      130,
+      146
+    ],
+    "backbone_bonds_cut": 2,
+    "closed": true,
+    "atoms_reached": 1205
+  },
+  "dihedrals": 27345,
+  "angles": 11852,
+  "problems": []
+}

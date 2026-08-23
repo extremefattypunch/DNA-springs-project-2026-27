@@ -62,7 +62,14 @@ def dihedral(p0, p1, p2, p3):
 class Arm:
     """TDP side chain + DNL, with coordinates and a torsion-rotation interface."""
 
-    def __init__(self, names, coords, bonds, elements):
+    def __init__(self, names, coords, bonds, elements,
+                 dna_atom: str = "OL*", linker: str = "DNL"):
+        # `dna_atom` is the arm atom that bonds the duplex.  It is not always the same
+        # atom: the 5' linker ends in the oxygen that becomes nucleotide 1's bridging
+        # O5' (DNL.OL), while the 3' linker ends in its own phosphorus, which bonds
+        # nucleotide N's existing O3' (DNP.P).  Callers must not hard-code "OL*".
+        self.dna_atom = dna_atom
+        self.linker = linker
         self.names = list(names)
         self.index = {n: i for i, n in enumerate(self.names)}
         self.xyz = np.asarray(coords, float)
@@ -147,8 +154,8 @@ class Arm:
 def build_arm(dna_residue: str = "DNL") -> Arm:
     """TDP side chain + the DNA-side arm as one MMFF-optimised molecule.
 
-    ``dna_residue`` is DNL for a chimera (the arm continues into the duplex) or DNH
-    for the clicked, unloaded control (the arm ends in a free alcohol).
+    ``dna_residue`` is DNL for the 5' end of the modified strand, DNP for its 3' end,
+    or DNH for the clicked, unloaded control (the arm ends in a free alcohol).
     """
     from rdkit import Chem
     from rdkit.Chem import AllChem
@@ -185,17 +192,36 @@ def build_arm(dna_residue: str = "DNL") -> Arm:
     rw.AddBond(idx[("TDP", "CN")], idx[("DNL", "N")], bt[1])
     bonds_named.append((("TDP", "CN"), ("DNL", "N")))
 
-    # cap the free valences so RDKit can sanitise: an H on the backbone N and C=O
-    # already exist; the backbone C needs one more substituent, and DNL's OL one.
-    cap_h = []
-    tail_caps = [("TDP", "C")]
+    # Cap the free valences so RDKit can sanitise.  The backbone N and C=O already
+    # carry their hydrogens; the backbone C needs one more substituent, and so does
+    # whichever linker terminal the DNA will take over.  Which terminal that is
+    # differs between the two arms, and so does the cap:
+    #   DNL hands its TAIL oxygen to nucleotide 1's phosphorus  -> one H (a free
+    #       alcohol, which is exactly what the DNH control keeps);
+    #   DNP hands its HEAD phosphorus to nucleotide N's O3'      -> OH, which makes the
+    #       fragment a phosphate monoester.  A bare H on phosphorus would satisfy the
+    #       valence but MMFF has no business typing a P-H here.
+    cap_ids, cap_chain = [], [("TDP", "C", ["H"])]
     if dnl.get("tail"):
-        tail_caps.append(("DNL", dnl["tail"]))
-    for tag, nm in tail_caps:
-        h = add(f"HCAP{len(cap_h)}", "H", tag)
-        rw.AddBond(idx[(tag, nm)], h, bt[1])
-        bonds_named.append(((tag, nm), (tag, f"HCAP{len(cap_h)}")))
-        cap_h.append(h)
+        cap_chain.append(("DNL", dnl["tail"], ["H"]))
+        dna_atom = f"{dnl['tail']}*"
+    elif dnl["head"] != "N":
+        cap_chain.append(("DNL", dnl["head"], ["O", "H"]))
+        dna_atom = f"{dnl['head']}*"
+    else:
+        # DNH, the clicked control: its head N is already satisfied by the carbamate
+        # and its far end is a real free alcohol with its hydrogen in the tables, so
+        # there is no free valence to cap and nothing is handed to a duplex.
+        dna_atom = "OL*"
+    for tag, nm, elements in cap_chain:
+        prev = (tag, nm)
+        for el in elements:
+            cname = f"{el}CAP{len(cap_ids)}"
+            i = add(cname, el, tag)
+            rw.AddBond(idx[prev], i, bt[1])
+            bonds_named.append((prev, (tag, cname)))
+            cap_ids.append(i)
+            prev = (tag, cname)
 
     mol = rw.GetMol()
     Chem.SanitizeMol(mol)
@@ -211,15 +237,16 @@ def build_arm(dna_residue: str = "DNL") -> Arm:
     xyz = np.array([[conf.GetAtomPosition(i).x, conf.GetAtomPosition(i).y,
                      conf.GetAtomPosition(i).z] for i in range(mol.GetNumAtoms())])
 
-    # drop the two capping hydrogens
-    keep = [i for i in range(mol.GetNumAtoms()) if i not in cap_h]
+    # drop the capping atoms
+    keep = [i for i in range(mol.GetNumAtoms()) if i not in cap_ids]
     remap = {old: new for new, old in enumerate(keep)}
     names2 = [names[i] for i in keep]
     elems2 = [elems[i] for i in keep]
     bonds2 = [(names[a], names[b]) for (ta, na), (tb, nb) in bonds_named
               for a, b in [(idx[(ta, na)], idx[(tb, nb)])]
               if a in remap and b in remap]
-    return Arm(names2, xyz[keep], bonds2, elems2)
+    return Arm(names2, xyz[keep], bonds2, elems2,
+               dna_atom=dna_atom, linker=dna_residue)
 
 
 def build_residue_mol(name: str) -> Arm:
@@ -283,7 +310,9 @@ def validate_cage(arm: Arm) -> dict:
     rep = {"cyclopropane_sides_A": [round(float(s), 3) for s in sides],
            "azadiene_torsion_deg": round(float(np.degrees(
                dihedral(g("CP3"), g("NP2"), g("NP1"), g("CP6")))), 2),
-           "CB_to_OL_A": round(float(np.linalg.norm(g("OL*") - g("CB"))), 2),
+           "linker": arm.linker, "dna_atom": arm.dna_atom,
+           "CB_to_dna_atom_A": round(float(np.linalg.norm(
+               g(arm.dna_atom) - g("CB"))), 2),
            "n_rotatable_bonds": len(arm.rotatable())}
     if max(sides) > 1.7:
         sys.exit(f"cyclopropane is not closed: sides {rep['cyclopropane_sides_A']}")
@@ -291,12 +320,11 @@ def validate_cage(arm: Arm) -> dict:
 
 
 if __name__ == "__main__":
-    a = build_arm()
-    print(f"arm: {len(a.names)} atoms "
-          f"({sum(1 for e in a.elements if e != 'H')} heavy)")
-    rep = validate_cage(a)
-    for k, v in rep.items():
-        print(f"  {k}: {v}")
-    print("\n  rotatable bonds (distal side moves):")
-    for i, j, mov in a.rotatable():
-        print(f"    {a.names[i]:<5}-{a.names[j]:<5}  {len(mov):>2} atoms move")
+    for linker in ("DNL", "DNP", "DNH"):
+        a = build_arm(linker)
+        print(f"\n=== TDP + {linker} ===")
+        print(f"  {len(a.names)} atoms "
+              f"({sum(1 for e in a.elements if e != 'H')} heavy)")
+        for k, v in validate_cage(a).items():
+            print(f"  {k}: {v}")
+        print(f"  rotatable bonds: {len(a.rotatable())}")

@@ -32,6 +32,7 @@ import sys
 import time
 from pathlib import Path
 
+import numpy as np
 import openmm as mm
 import openmm.app as app
 import openmm.unit as unit
@@ -125,6 +126,40 @@ def add_force_clamp(system, atom_i: int, atom_j: int, force_pN: float):
     log(f"force clamp: {force_pN:.2f} pN between atoms {atom_i} and {atom_j} "
         f"({f_openmm:.4f} kJ/mol/nm)")
     return clamp
+
+
+def add_harmonic_clamp(system, atom_i: int, atom_j: int, k: float, x0_A: float):
+    """Harmonic restraint holding atoms i and j at x0, for measuring the DNA's force.
+
+    E = 1/2 k (r - x0)^2, so at equilibrium the restraint pulls with -k(<r> - x0) and
+    the molecule itself must be pushing outward with exactly
+
+        f_DNA = k (<r> - x0)
+
+    That is the force the *force field* says the spring delivers, with no elastic model
+    in the way -- which is the point of the exercise.  A constant-force clamp cannot do
+    this job on a bare duplex: below the buckling plateau it would give an equilibrium
+    separation, but above it there is nothing to stop the ends being dragged together,
+    so the low-extension half of the curve is unreachable.  A restraint holds any x.
+
+    k is deliberately soft (default 200 kJ/mol/nm^2).  The precision of a mean force
+    measured from equilibrium fluctuations is sqrt(k*kT/N_independent) regardless of how
+    the restraint is applied, so k trades only positional spread (sqrt(kT/k), about 1.1
+    A here) against nothing.  It is chosen to keep each window narrow enough that
+    neighbouring windows do not merge.
+    """
+    k_openmm = k                                   # kJ/mol/nm^2
+    x0_nm = x0_A / 10.0
+    rest = mm.CustomBondForce("0.5*k_rest*(r-x0_rest)^2")
+    rest.addGlobalParameter("k_rest", k_openmm)
+    rest.addGlobalParameter("x0_rest", x0_nm)
+    rest.addBond(int(atom_i), int(atom_j), [])
+    rest.setUsesPeriodicBoundaryConditions(False)
+    system.addForce(rest)
+    log(f"harmonic clamp: k = {k:.1f} kJ/mol/nm^2 at x0 = {x0_A:.2f} A between atoms "
+        f"{atom_i} and {atom_j}; positional spread sqrt(kT/k) = "
+        f"{10.0 * (2.494 / k) ** 0.5:.2f} A")
+    return rest
 
 
 def make_simulation(st, system, integrator, platform_name="CUDA", precision="mixed"):
@@ -237,6 +272,14 @@ def stage_produce(st, outdir: Path, args):
             sys.exit("--clamp-pN requires --clamp-atoms i,j")
         i, j = (int(v) for v in args.clamp_atoms.split(","))
         add_force_clamp(system, i, j, args.clamp_pN)
+    if args.restraint_x0 is not None:
+        if args.clamp_atoms is None:
+            sys.exit("--restraint-x0 requires --clamp-atoms i,j")
+        if args.clamp_pN is not None:
+            sys.exit("--restraint-x0 and --clamp-pN both act on the same pair; "
+                     "applying them together makes the measured force uninterpretable")
+        i, j = (int(v) for v in args.clamp_atoms.split(","))
+        add_harmonic_clamp(system, i, j, args.restraint_k, args.restraint_x0)
 
     integrator = mm.LangevinMiddleIntegrator(TEMPERATURE, FRICTION, DT_PROD)
     sim = make_simulation(st, system, integrator, args.platform)
@@ -256,6 +299,37 @@ def stage_produce(st, outdir: Path, args):
         sim.context.setState(mm.XmlSerializer.deserialize(eq.read_text()))
         sim.context.setVelocitiesToTemperature(TEMPERATURE, args.seed)
         log(f"started from {eq} (seed {args.seed})")
+
+    # Walk the restraint centre from wherever the equilibrated structure sits to the
+    # window's target, before any of the trajectory is written.  Dropping a duplex
+    # straight into a window 20 A away would do ~400 kJ/mol of work on it in one step,
+    # and whatever base pair happened to give way under that impulse would look exactly
+    # like the kink these runs are meant to look for.  The ramp is not counted in the
+    # step budget and produces no frames, so the trajectory contains only the settled
+    # window.
+    ramped = None
+    if args.restraint_x0 is not None and done == 0 and args.restraint_ramp_ps > 0:
+        i, j = (int(v) for v in args.clamp_atoms.split(","))
+        pos = sim.context.getState(getPositions=True).getPositions(asNumpy=True)
+        pos = pos.value_in_unit(unit.nanometer)
+        r_now = float(np.linalg.norm(pos[i] - pos[j]))
+        x_target = args.restraint_x0 / 10.0
+        n_ramp = int(round(args.restraint_ramp_ps * unit.picosecond / DT_PROD))
+        stages = 50
+        log(f"ramping the restraint centre {r_now * 10:.2f} A -> "
+            f"{args.restraint_x0:.2f} A over {args.restraint_ramp_ps} ps, "
+            f"{stages} stages, no frames written")
+        for s in range(stages):
+            sim.context.setParameter(
+                "x0_rest", r_now + (x_target - r_now) * (s + 1) / stages)
+            sim.step(max(1, n_ramp // stages))
+        sim.context.setParameter("x0_rest", x_target)
+        pos = sim.context.getState(getPositions=True).getPositions(asNumpy=True)
+        pos = pos.value_in_unit(unit.nanometer)
+        ramped = {"from_A": round(r_now * 10, 2), "to_A": args.restraint_x0,
+                  "ps": args.restraint_ramp_ps,
+                  "arrived_A": round(float(np.linalg.norm(pos[i] - pos[j])) * 10, 2)}
+        log(f"ramp done: separation now {ramped['arrived_A']:.2f} A")
 
     total = int(round(args.ns * unit.nanosecond / DT_PROD))
     interval = int(round(args.report_ps * unit.picosecond / DT_PROD))
@@ -284,7 +358,10 @@ def stage_produce(st, outdir: Path, args):
             "steps_done": done, "steps_total": total,
             "ns_done": round(done * DT_PROD.value_in_unit(unit.nanosecond), 4),
             "dt_fs": DT_PROD.value_in_unit(unit.femtosecond),
-            "clamp_pN": args.clamp_pN, "seed": args.seed}, indent=2))
+            "clamp_pN": args.clamp_pN, "restraint_x0_A": args.restraint_x0,
+            "restraint_k": args.restraint_k if args.restraint_x0 is not None else None,
+            "clamp_atoms": args.clamp_atoms, "restraint_ramp": ramped,
+            "seed": args.seed}, indent=2))
     log(f"production complete: {done} steps")
 
 
@@ -308,6 +385,15 @@ def main():
     ap.add_argument("--clamp-pN", type=float, default=None,
                     help="constant outward force between --clamp-atoms, in pN")
     ap.add_argument("--clamp-atoms", default=None, help="two 0-based atom indices, i,j")
+    ap.add_argument("--restraint-x0", type=float, default=None,
+                    help="hold --clamp-atoms at this separation (A) with a harmonic "
+                         "restraint, so the force the molecule itself exerts can be "
+                         "read off as k*(<r> - x0)")
+    ap.add_argument("--restraint-k", type=float, default=200.0,
+                    help="restraint stiffness in kJ/mol/nm^2 (default 200)")
+    ap.add_argument("--restraint-ramp-ps", type=float, default=2000.0,
+                    help="walk the restraint centre to its target over this long "
+                         "before recording, so the window is entered gently")
     args = ap.parse_args()
 
     outdir = Path(args.outdir)

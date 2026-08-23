@@ -55,7 +55,7 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1, skip=0):
     resmap = load_map(resmap_path)
     prot_res = [i for i, (n, nm, ch) in resmap.items()
                 if nm not in ("WAT", "HOH") and not nm.rstrip("35") in
-                ("DA", "DT", "DG", "DC", "DNL")]
+                ("DA", "DT", "DG", "DC", "DNL", "DNP", "DNH")]
     num_of = {i: resmap[i][0] for i in prot_res}
 
     ca = [(i, next((a.index for a in top.residue(i).atoms if a.name == "CA"), None))

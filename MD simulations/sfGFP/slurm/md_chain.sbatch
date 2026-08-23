@@ -37,7 +37,9 @@ SYSDIR="build/systems/$SYS"
 # The force-clamp ladder runs six forces off ONE topology, so the force has to be in
 # the run directory name.  Without it every clamp point writes to data/runs/S6_clamp
 # and six different physical conditions overwrite each other's trajectory.
-TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}"
+# The same reasoning applies to the force-extension windows: several separations run
+# off ONE topology, so x0 has to be in the directory name too.
+TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}${RESTRAINT_X0:+_x${RESTRAINT_X0}A}"
 RUNDIR="data/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
 
@@ -46,7 +48,14 @@ nvidia-smi --query-gpu=name,memory.total,mig.mode.current --format=csv,noheader 
 echo "== SYS=$SYS TAG=$TAG REP=$REP NS=$NS  restart_count=${SLURM_RESTART_COUNT:-0}"
 
 CLAMP_ARGS=()
-if [[ -n "${CLAMP_PN:-}" ]]; then
+if [[ -n "${RESTRAINT_X0:-}" ]]; then
+    # Force-extension window: hold the two ends of the spring at a fixed separation and
+    # let the mean restraint force report what the force field says the spring pushes
+    # with.  Same anchor atoms as the clamp ladder, written by the system builder.
+    CLAMP_ATOMS="$(cat "$SYSDIR/clamp_atoms.txt")"
+    CLAMP_ARGS=(--restraint-x0 "$RESTRAINT_X0" --clamp-atoms "$CLAMP_ATOMS")
+    echo "== harmonic window x0 = ${RESTRAINT_X0} A between atoms ${CLAMP_ATOMS}"
+elif [[ -n "${CLAMP_PN:-}" ]]; then
     # Force-clamp ladder: the two attachment-site atom indices are written by the
     # system builder so the physics and the topology cannot drift apart.
     CLAMP_ATOMS="$(cat "$SYSDIR/clamp_atoms.txt")"

@@ -115,19 +115,52 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
     # --- 2. spring extension and the force it implies ---
     strands = dna_residues(top, resmap)
     if len(strands) == 2:
-        p5 = []
-        for _, res in strands:
-            first = res[0]
-            p = next((a for a in first.atoms if a.name == "P"), None)
-            p5.append(p.index if p is not None else
-                      next(a for a in first.atoms if a.name == "C5'").index)
-        d = md.compute_distances(t, np.array([[p5[0], p5[1]]]))[:, 0] * 10.0
-        rows["spring_5P_5P_A"] = d
+        # The spring's end-to-end distance is measured between the two nucleotide atoms
+        # the linkers are actually bonded to, found from the bond graph rather than
+        # assumed.  This has to be derived and not hard-coded, because the two builds
+        # attach differently: the corrected chimera puts both linkers on ONE strand
+        # (the 5' P of nucleotide 1 and the 3' O3' of nucleotide N), while the earlier
+        # two-arm build put one on each strand's 5' P.  Reading the graph gives the
+        # right pair either way, and both are the same physical quantity -- the distance
+        # across the duplex between the points where the protein holds it -- which is
+        # the x that enters Zocchi's f(x).
+        linkers = {"DNL", "DNP"}
+        nuc = {r.index for _, res in strands for r in res}
+        attach = []
+        for b in top.bonds:
+            ra, rb = b[0].residue, b[1].residue
+            for near, far in ((b[0], b[1]), (b[1], b[0])):
+                if far.residue.name in linkers and near.residue.index in nuc:
+                    attach.append((near.index, near.residue.index, near.name))
+        attach = sorted(set(attach), key=lambda x: x[1])
+        if len(attach) != 2:
+            print(f"  WARNING: found {len(attach)} linker-to-DNA bonds, expected 2; "
+                  "falling back to the two strands' 5' phosphorus")
+            attach = []
+            for _, res in strands:
+                first = res[0]
+                p = next((a for a in first.atoms if a.name == "P"), None)
+                a = p if p is not None else next(x for x in first.atoms
+                                                 if x.name == "C5'")
+                attach.append((a.index, first.index, a.name))
+        one_strand = len({top.atom(i).residue.chain.index for i, _, _ in attach}) == 1
+        summary["attachment"] = {
+            "atoms": [f"{top.atom(i).residue.name}{top.atom(i).residue.resSeq}.{nm}"
+                      for i, _, nm in attach],
+            "same_strand": one_strand,
+            "topology": "closed covalent loop" if one_strand else "two separate arms"}
+        print(f"  attachment: {summary['attachment']['atoms']} -> "
+              f"{summary['attachment']['topology']}")
+        d = md.compute_distances(
+            t, np.array([[attach[0][0], attach[1][0]]]))[:, 0] * 10.0
+        rows["spring_end_to_end_A"] = d
         n_bp = len(strands[0][1])
         tau = TAU_C_NICKED if nicked else TAU_C_CONTINUOUS
         sp = Spring(n_bp, tau_c=tau)
         f = np.array([sp.force(x / 10.0) if x / 10.0 < sp.L else np.nan for x in d])
         e = np.array([sp.energy(x / 10.0) / KT if x / 10.0 < sp.L else np.nan for x in d])
+        rows["spring_5P_5P_A"] = d          # kept under the old name for the
+        #                                      earlier runs' CSVs to stay readable
         rows["spring_force_pN"] = f
         rows["spring_energy_kT"] = e
         summary["spring"] = {

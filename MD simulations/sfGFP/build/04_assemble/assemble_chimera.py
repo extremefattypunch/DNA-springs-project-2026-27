@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -47,6 +48,7 @@ sys.path.insert(0, str(HERE))
 from arm import Arm, build_arm, validate_cage  # noqa: E402
 
 WATER = {"WAT", "HOH"}
+PRIME3 = "O3'"
 
 
 def read_pdb(path):
@@ -95,16 +97,26 @@ def clash_score(pts, tree, cutoff=3.0):
 
 
 def pose_arm(arm: Arm, site: dict, ol_target, protein_tree, rng, n_starts=8,
-             sweeps=4, step_deg=(60, 20, 6)):
-    """Coordinate descent over the tether's torsions to reach ol_target."""
+             sweeps=4, step_deg=(60, 20, 6), bond_length=None):
+    """Coordinate descent over the tether's torsions.
+
+    With ``bond_length`` set, ``ol_target`` is the *anchor atom* and the objective is
+    the length of the bond about to be formed to it.  Aiming at a fixed point instead
+    -- one bond short of the anchor along some chosen direction -- overconstrains the
+    problem: it fixes the bond's direction as well as its length, and missing that
+    point by half an angstrom sideways can leave the bond itself half an angstrom too
+    long.  The longer 3' arm, with 17 torsions to settle, is where that showed.
+    """
     arm.place_on_backbone(site)
     rot = arm.rotatable()
-    ol = arm.index["OL*"]
+    ol = arm.index[arm.dna_atom]
     heavy = [i for i, e in enumerate(arm.elements) if e != "H"]
     base = arm.xyz.copy()
 
     def score():
         d = np.linalg.norm(arm.xyz[ol] - ol_target)
+        if bond_length is not None:
+            d = d - bond_length
         return d * d + 0.5 * clash_score(arm.xyz[heavy], protein_tree)
 
     best_xyz, best = None, np.inf
@@ -130,8 +142,9 @@ def pose_arm(arm: Arm, site: dict, ol_target, protein_tree, rng, n_starts=8,
         if cur < best:
             best, best_xyz = cur, arm.xyz.copy()
     arm.xyz = best_xyz
-    return {"score": round(float(best), 3),
-            "OL_to_target_A": round(float(np.linalg.norm(arm.xyz[ol] - ol_target)), 3),
+    return {"score": round(float(best), 3), "dna_atom": arm.dna_atom,
+            "to_target_A": round(float(np.linalg.norm(arm.xyz[ol] - ol_target)), 3),
+            "bond_objective": bond_length,
             "clash": round(clash_score(arm.xyz[heavy], protein_tree), 3)}
 
 
@@ -159,19 +172,27 @@ def main():
         if s not in pres:
             sys.exit(f"site {s} not present in {args.protein}")
 
-    arm = build_arm()
-    cage = validate_cage(arm)
-    # full reach: fully extend every torsion away from CB, then measure
-    reach_arm = build_arm()
-    reach_arm.place_on_backbone({k: pres[args.sites[0]][k]["xyz"]
-                                for k in ("N", "CA", "CB")})
-    cb = reach_arm.xyz[reach_arm.index["CB"]]
-    far = cb + 1000.0 * (cb - np.mean([a["xyz"] for a in solute], axis=0))
-    pose_arm(reach_arm, {k: pres[args.sites[0]][k]["xyz"] for k in ("N", "CA", "CB")},
-             far, cKDTree(np.array([[1e6, 1e6, 1e6]])), rng, n_starts=4)
-    reach = float(np.linalg.norm(reach_arm.xyz[reach_arm.index["OL*"]] - cb))
-    print(f"tether: {cage['n_rotatable_bonds']} torsions, cyclopropane "
-          f"{cage['cyclopropane_sides_A']}, extended CB->OL reach {reach:.2f} A")
+    # The two arms are chemically different, so they are built and measured separately.
+    # Site 0 carries the 5' linker DNL, whose terminal oxygen becomes nucleotide 1's
+    # bridging O5'.  Site 1 carries the 3' linker DNP, which brings its own phosphate
+    # and bonds nucleotide N's existing O3'.  DNP is the longer arm by roughly the
+    # width of that phosphate, so the placement below cannot assume symmetry.
+    LINKERS = {args.sites[0]: "DNL", args.sites[1]: "DNP"}
+    cage, reach = {}, {}
+    for site, linker in LINKERS.items():
+        a0 = build_arm(linker)
+        cage[linker] = validate_cage(a0)
+        # full reach: extend every torsion away from CB and away from the protein
+        ra = build_arm(linker)
+        bb = {k: pres[site][k]["xyz"] for k in ("N", "CA", "CB")}
+        ra.place_on_backbone(bb)
+        cb = ra.xyz[ra.index["CB"]]
+        far = cb + 1000.0 * (cb - np.mean([a["xyz"] for a in solute], axis=0))
+        pose_arm(ra, bb, far, cKDTree(np.array([[1e6, 1e6, 1e6]])), rng, n_starts=4)
+        reach[site] = float(np.linalg.norm(ra.xyz[ra.index[ra.dna_atom]] - cb))
+        print(f"tether at {site}: {linker}, {cage[linker]['n_rotatable_bonds']} "
+              f"torsions, cyclopropane {cage[linker]['cyclopropane_sides_A']}, "
+              f"extended CB->{ra.dna_atom[:-1]} reach {reach[site]:.2f} A")
 
     # --- target phosphate positions ---
     A = pres[args.sites[0]]["CB"]["xyz"]
@@ -186,21 +207,51 @@ def main():
     for a in dna:
         dres.setdefault((a["chain"], a["resi"]), {})[a["name"]] = a
     dchains = sorted({c for c, _ in dres})
-    PA = dres[(dchains[0], 1)]["P"]["xyz"]
-    PB = dres[(dchains[1], 1)]["P"]["xyz"]
+    n_bp = max(r for _, r in dres)
+    mod, comp = dchains[0], dchains[1]          # modified strand, complement
+    # BOTH anchors are on the modified strand: its 5' phosphate and its 3' O3'.  This
+    # is the whole point of the correction -- with a linker on each of two different
+    # strands the tether bonds are bridges in the bond graph and no covalent cycle
+    # exists, so the "loop" is held shut by base pairing alone and the construct can
+    # swap arms with another chimera to form a dimer.
+    PA = dres[(mod, 1)]["P"]["xyz"]                    # DNL.OL will bond this P
+    PB = dres[(mod, n_bp)][PRIME3]["xyz"]              # DNP.P will bond this O3'
     D = float(np.linalg.norm(PA - PB))
     ab = float(np.linalg.norm(B - A))
-    a_off = 0.5 * (D - ab)
-    span_target = args.extension_frac * reach
-    b_off = float(np.sqrt(max(0.0, span_target ** 2 - a_off ** 2)))
-    tA = A - a_off * u + b_off * n
-    tB = B + a_off * u + b_off * n
-    print(f"sites {ab:.2f} A apart; duplex 5'-5' {D:.2f} A -> a = {a_off:.2f}, "
-          f"b = {b_off:.2f} A; tether span {np.linalg.norm(tA - A):.2f} A "
-          f"({100 * np.linalg.norm(tA - A) / reach:.0f}% of reach)")
-    if np.linalg.norm(tA - A) > reach:
-        sys.exit(f"required tether span {np.linalg.norm(tA - A):.2f} A exceeds the "
-                 f"reach {reach:.2f} A: bend the duplex further")
+
+    # Place the two anchor targets outboard of the two C-beta, both pushed the same
+    # distance b along the outward normal so the arc bulges away from the barrel:
+    #   tA = A - aA*u + b*n,  tB = B + aB*u + b*n
+    # Requiring |tA-tB| = D gives aA + aB = D - ab, and requiring each arm to use the
+    # same fraction of its own reach gives aA = sqrt(sA^2 - b^2), aB = sqrt(sB^2 - b^2).
+    # The old code fixed aA = aB = (D-ab)/2, which is only right when the two arms are
+    # the same length.  DNP is ~5 A longer than DNL, so solve for b instead.
+    sA = args.extension_frac * reach[args.sites[0]]
+    sB = args.extension_frac * reach[args.sites[1]]
+    need = D - ab
+    if sA + sB < need:
+        sys.exit(f"the two tethers reach {sA:.2f} + {sB:.2f} = {sA + sB:.2f} A but the "
+                 f"duplex anchors are {D:.2f} A apart and the sites {ab:.2f} A, so "
+                 f"{need:.2f} A must be spanned: bend the duplex further")
+    lo, hi = 0.0, min(sA, sB)
+    for _ in range(100):                          # g(b) decreases monotonically
+        b = 0.5 * (lo + hi)
+        g = math.sqrt(max(0.0, sA ** 2 - b * b)) + math.sqrt(max(0.0, sB ** 2 - b * b))
+        if g > need:
+            lo = b
+        else:
+            hi = b
+    b_off = 0.5 * (lo + hi)
+    aA = math.sqrt(max(0.0, sA ** 2 - b_off ** 2))
+    aB = math.sqrt(max(0.0, sB ** 2 - b_off ** 2))
+    tA = A - aA * u + b_off * n
+    tB = B + aB * u + b_off * n
+    print(f"sites {ab:.2f} A apart; duplex anchors (5'P nt1 -> 3'O3' nt{n_bp}) "
+          f"{D:.2f} A apart")
+    print(f"  targets: a = {aA:.2f}/{aB:.2f}, b = {b_off:.2f} A; tether spans "
+          f"{np.linalg.norm(tA - A):.2f} A ({100 * np.linalg.norm(tA - A) / reach[args.sites[0]]:.0f}% "
+          f"of reach) and {np.linalg.norm(tB - B):.2f} A "
+          f"({100 * np.linalg.norm(tB - B) / reach[args.sites[1]]:.0f}%)")
 
     # --- place the duplex: align P-P, then scan the spin about that axis ---
     ptree = cKDTree(np.array([a["xyz"] for a in solute]))
@@ -226,21 +277,22 @@ def main():
 
     # --- pose the two tethers ---
     arms, reports = {}, {}
-    for site, tgt, ch in ((args.sites[0], tA, dchains[0]),
-                          (args.sites[1], tB, dchains[1])):
-        P = dres[(ch, 1)]["P"]["xyz"]
-        ol_t = P + 1.61 * (A + B) / 2.0 * 0  # placeholder, replaced below
-        ol_t = P - 1.61 * (P - pres[site]["CB"]["xyz"]) / np.linalg.norm(
-            P - pres[site]["CB"]["xyz"])
-        this = build_arm()
+    # ideal bond lengths at the two junctions: DNL.OL-P is a phosphodiester ester bond,
+    # DNP.P-O3' the same bond seen from the other side.  Both are 1.61 A (parm10 OS-P).
+    for site, key, atom in ((args.sites[0], (mod, 1), "P"),
+                            (args.sites[1], (mod, n_bp), PRIME3)):
+        anchor = dres[key][atom]["xyz"]
+        this = build_arm(LINKERS[site])
         rep = pose_arm(this, {k: pres[site][k]["xyz"] for k in ("N", "CA", "CB")},
-                       ol_t, ptree, rng)
-        ol = this.xyz[this.index["OL*"]]
-        rep["OL_to_P_A"] = round(float(np.linalg.norm(ol - P)), 3)
+                       anchor, ptree, rng, n_starts=16, bond_length=1.61)
+        rep["bond_length_A"] = round(float(np.linalg.norm(
+            this.xyz[this.index[this.dna_atom]] - anchor)), 3)
+        rep["linker"] = LINKERS[site]
         arms[site] = this
         reports[str(site)] = rep
-        print(f"tether at {site}: OL-to-target {rep['OL_to_target_A']} A, "
-              f"OL-P bond {rep['OL_to_P_A']} A (ideal 1.61), clash {rep['clash']}")
+        print(f"tether at {site} ({LINKERS[site]}): to-target {rep['to_target_A']} A, "
+              f"{this.dna_atom[:-1]}-{atom} bond {rep['bond_length_A']} A "
+              f"(ideal 1.61), clash {rep['clash']}")
 
     # --- write the assembled PDB ---
     lines, serial = [], 1
@@ -270,27 +322,48 @@ def main():
     lines.append(f"TER   {serial:5d}")
     serial += 1
 
-    dna_chain_ids = {dchains[0]: "C", dchains[1]: "D"}
-    n_bp = max(r for _, r in dres)
-    for src, site in ((dchains[0], args.sites[0]), (dchains[1], args.sites[1])):
+    dna_chain_ids = {mod: "C", comp: "D"}
+
+    def write_linker(site, resi):
+        """One linker residue, its atoms being the star-tagged half of the arm."""
+        nonlocal serial, ordinal
         a = arms[site]
         ordinal += 1
         dnl_ord[site] = ordinal
         for nm in a.names:
             if not nm.endswith("*"):
                 continue
-            lines.append(fmt(serial, nm[:-1], "DNL", dna_chain_ids[src], 0,
+            lines.append(fmt(serial, nm[:-1], LINKERS[site], "C", resi,
                              a.xyz[a.index[nm]], a.elements[a.index[nm]]))
             serial += 1
-        for i in range(1, n_bp + 1):
-            ordinal += 1
-            rn = next(iter(dres[(src, i)].values()))["resn"]
-            for nm, at in dres[(src, i)].items():
-                lines.append(fmt(serial, nm, rn, dna_chain_ids[src], i, at["xyz"],
-                                 at["elem"]))
-                serial += 1
-        lines.append(f"TER   {serial:5d}")
-        serial += 1
+
+    # The modified strand, in tleap order.  DNL comes FIRST so that its tail oxygen
+    # links to nucleotide 1's phosphorus by ordinary head-to-tail chaining, and DNP
+    # comes LAST so nucleotide N's O3' links to its phosphorus the same way.  Writing
+    # them inside the chain like this is also what keeps nucleotides 1 and N on the
+    # *internal* templates -- they are no longer chain-initial or chain-final -- which
+    # is exactly the charge bookkeeping DNL's -0.3079 and DNP's -0.6921 assume.
+    write_linker(args.sites[0], 0)
+    for i in range(1, n_bp + 1):
+        ordinal += 1
+        rn = next(iter(dres[(mod, i)].values()))["resn"]
+        for nm, at in dres[(mod, i)].items():
+            lines.append(fmt(serial, nm, rn, "C", i, at["xyz"], at["elem"]))
+            serial += 1
+    write_linker(args.sites[1], n_bp + 1)
+    lines.append(f"TER   {serial:5d}")
+    serial += 1
+
+    # The complement carries no linker at all.  Its own 5'/3' termini were already
+    # written as DA5/DA3-style names by build_dna.py, phosphate stripped.
+    for i in range(1, n_bp + 1):
+        ordinal += 1
+        rn = next(iter(dres[(comp, i)].values()))["resn"]
+        for nm, at in dres[(comp, i)].items():
+            lines.append(fmt(serial, nm, rn, "D", i, at["xyz"], at["elem"]))
+            serial += 1
+    lines.append(f"TER   {serial:5d}")
+    serial += 1
 
     # crystal waters, minus any that the DNA or tethers now occupy
     newxyz = np.array([a.xyz[i] for a in arms.values()
@@ -312,11 +385,16 @@ def main():
         serial += 1
     Path(args.out).write_text("\n".join(lines) + "\nEND\n")
 
+    # Only the two carbamates need declaring: they cross from the protein chain to the
+    # DNA chain, so tleap cannot infer them.  The two DNA-side bonds (DNL.OL to
+    # nucleotide 1's P, and nucleotide N's O3' to DNP.P) are ordinary head-to-tail
+    # links within chain C and tleap makes them from the residue order alone.
     bonds = [f"{tdp_ord[s]}@CN:{dnl_ord[s]}@N" for s in args.sites]
     meta = {"protein": args.protein, "dna": args.dna, "sites": args.sites,
-            "tether": cage, "reach_A": round(reach, 2),
-            "sites_CB_CB_A": round(ab, 2), "duplex_5p_5p_A": round(D, 2),
-            "a_offset_A": round(a_off, 2), "b_offset_A": round(b_off, 2),
+            "linkers": {str(k): v for k, v in LINKERS.items()},
+            "tether": cage, "reach_A": {str(k): round(v, 2) for k, v in reach.items()},
+            "sites_CB_CB_A": round(ab, 2), "duplex_anchor_span_A": round(D, 2),
+            "a_offsets_A": [round(aA, 2), round(aB, 2)], "b_offset_A": round(b_off, 2),
             "duplex_spin_deg": spin, "arm_reports": reports,
             "waters_kept": kept, "waters_dropped": len(wres) - kept,
             "tleap_bonds": bonds}
