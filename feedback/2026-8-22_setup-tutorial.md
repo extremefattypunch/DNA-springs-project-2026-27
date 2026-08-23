@@ -339,6 +339,47 @@ If you remember nothing else:
     CONECT records; assign `atom.number` explicitly and assert uniqueness.
 13. "One connected component" is not a test for a covalent loop.
 
+And the ones that cost me the most time, added after the first draft — every one of these
+produced a *plausible* wrong number rather than an error:
+
+14. **mdtraj minimum-images distances by default.** `compute_distances(..., periodic=True)`
+    is the default and is right for a hydrogen bond and wrong for anything longer than
+    half the cell's smallest perpendicular width — 38–48 Å in a truncated octahedron of
+    the size we use. Our springs' ends are 60–75 Å apart, so every reported end-to-end
+    distance was flipping between periodic images from frame to frame, and every force
+    derived from one was wrong. The give-away was the spread: raw distances had a
+    standard deviation of 3 Å and the minimum-imaged ones 8. OpenMM wraps by whole
+    *molecule* and never splits one, so within a molecule the raw coordinates are already
+    contiguous and are the honest answer; across molecules, beyond the minimum image
+    there is no answer to be had and the code should refuse rather than guess.
+15. **A hardcoded site pair silently produces nothing.** `collect.py` passed residues
+    133/149 to every system; ubiquitin is modified at 9/63. It does not fail — it just
+    finds no such residues and writes an empty column, which reads exactly like a
+    system that has not run yet. Derive per-system identifiers from what the builder
+    wrote, never from a constant.
+16. **Prefix globbing collides.** `D_40bp*` also matches `D_40bp_nick_*`, which paired
+    one duplex's topology with another's trajectory — 77,397 atoms against 77,407, and
+    ParmEd raised a reshape error thirty lines from the cause. Match the suffix pattern
+    you actually generate, and check the atom count as well.
+17. **`pkill -f <pattern>` matches the process issuing it.** The bracket trick
+    (`[a]nalysis/collect.py`) does not save you if the same command line also contains
+    the plain string somewhere else — mine did, in the relaunch that followed the kill,
+    so it killed its own shell and the edit it was about to make never happened. Twice.
+18. **A report file that only describes its last invocation.** `PARAMS_REPORT.json` holds
+    the residues of the run that wrote it, so building a subset silently narrows what
+    downstream text can quote — which is how a verification table came to say "all four
+    custom residues" long after there were seven. Either always build the full set, or
+    derive the count and let it move.
+19. **Seeding a distortion into an already-distorted structure.** An 85° kink rolled into
+    a duplex that was already bent 122° folded the helix into itself: sixty atom pairs
+    closer than 1.5 Å, a guanine ring left stretched to 2.66 Å after minimisation, and
+    NaN coordinates six minutes into production on all six runs. Minimisation relaxes
+    *into* a tangle and cannot escape it. A clash check before writing the structure
+    costs a second and would have saved the six jobs.
+20. **Prefer a stretched bond to a threaded ring.** When a rigid-body seed has to break
+    something, break it in a way minimisation can undo. A covalent bond stretched to 3 Å
+    pulls straight back in; two rings passed through each other never separate.
+
 ---
 
 ## 10. What I would do differently
@@ -353,3 +394,13 @@ If you remember nothing else:
 - **Say which parts of a structure are chosen rather than known.** For the ubiquitin
   crosslinker, four structural details are decisions I made because the vendor publishes a
   formula but not a structure sheet. Those belong in the write-up, not in a comment.
+- **Check the units and conventions of every library call that returns a number you will
+  publish.** The periodic-boundary bug above was one default argument, it changed every
+  force in the project, and nothing anywhere failed. The pattern to watch for is a
+  quantity whose *scatter* is larger than the physics should allow — that is usually the
+  first symptom, and it is visible long before the mean looks wrong.
+- **Prefer a check that discriminates to a check that passes.** Several assertions here
+  were satisfied by the wrong build as happily as the right one: one connected component,
+  integral net charge, zero flagged parameters. The test that mattered — cut two bonds and
+  ask whether a cycle remains — took fifteen lines and would have caught the original
+  error on day one.
