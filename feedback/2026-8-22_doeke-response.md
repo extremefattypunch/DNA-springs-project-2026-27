@@ -30,7 +30,7 @@ and one turned out to have a sharper answer than the hypothesis it came with.
 | 5 | The book DOI does not resolve | **Right, and four others were also wrong** — two of them resolved to unrelated papers |
 | 6 | Is the force modelled or measured? | It was modelled. Now **measured** too — and the two disagree by 5×, for a reason that is #8. Both written out; a PBC bug found and fixed along the way |
 | 7 | ssDNA chimera? | Built and running, 50 nt, plus a two-arm control that holds DNA content exactly fixed |
-| 8 | "It does not kink" — force field, timescale, or model? | Mostly **model and timescale**. Our curvature is a little over half of where all-atom MD nucleates kinks — and the measured force independently confirms the duplex is on the *unyielded* branch |
+| 8 | "It does not kink" — force field, timescale, or model? | **The model.** We measured our own threshold: this force field kinks above 6.7–8.3°/bp, at the CpA step the literature predicts. Our chimera sits at 4.8–5.2. Not a force-field limitation — excluded by our own data |
 | 9 | Do the Et-tet residues change local secondary structure? | **No** — DSSP is identical. But there is a real local effect, and it is a different one |
 
 Two of these connect: the mechanism behind #9 is also the artefact behind #3.
@@ -599,21 +599,65 @@ settle. If real DNA does yield at this curvature and ours does not because 50 ns
 short, then the model is right about the experiment and our force field is stuck on the
 wrong branch.
 
-### What we are doing about it
+### We measured the threshold instead of arguing about it
 
-The compression windows from #6 do double duty: they squeeze the duplex far past where it
-sits in the chimera (down to 50 Å end-to-end on a 92 Å contour), and `force_extension.py`
-measures the per-step bend profile and the N1–N3 distance of every Watson–Crick pair in
-each window. A type-II kink breaks exactly one central pair, so a per-pair measure is the
-right one. What counts as a kink is stated in advance: a local step far above the smooth
-background, or an opened pair. **[running]**
+Everything above is other people's numbers. The compression windows let us put our own
+against them: hold the bare 27 bp duplex at a series of separations, from its contour
+length down to 64 % compression, and ask at what curvature *this* force field starts
+breaking base pairs. Two replicates per window, 12–30 ns each, and the criterion was
+fixed in advance — an **internal** pair (not the terminal two, which fray in anything)
+open in more than 10 % of frames.
 
-The cheapest decisive experiment, which I have not run and propose to: **seed a type-II
-kink and test whether it survives.** Build the three-base-pair motif with the central pair
-broken and propeller ~120°, place it at several positions in the bent duplex, run 45 ns × 3.
-If it is metastable, the force field can support kinks and the answer is (b) + (c). If it
-heals in a few ns, that is a force-field result worth reporting on its own. It costs no
-more than one existing system.
+| °/bp | *x*₀ | rep 1 | rep 2 |
+|---|---|---|---|
+| 0.0 | 88 Å | — | — |
+| 2.8 | 82 | — | — |
+| 4.4 | 74 | — | — |
+| **5.6** | **66** | **—** | **—** |
+| 6.7 | 58 | — | bp17, 67 % |
+| 7.6 | 50 | — | bp13/16/17 |
+| 8.3 | 44 | bp17, 81 % | — |
+| 9.0 | 38 | **bp17, 100 %** | bp17, 71 % |
+| 9.7 | 32 | bp17, 14 % | bp17, 96 % |
+
+Three things follow, and they settle your question between them.
+
+**The force field can kink.** It does so reproducibly, and the opened pair sits at the
+same place as the maximum of the bend profile every time. So explanation (a) — that AMBER
+with OL15 simply cannot support a kink — is excluded by our own data rather than by
+argument. That also means the seeded-kink test I proposed is no longer the decisive
+experiment; it is still running, but as a question about metastability below the
+threshold rather than about whether the force field is capable of it at all.
+
+**The threshold is 6.7–8.3°/bp**, first appearing at 6.7 and reliable above 8.3. Curuksu
+*et al.*'s umbrella sampling puts type II kink nucleation above 8.6–9.3°/bp. Ours is a
+little lower, which is what you would expect from an unbiased run with a stiff restraint
+rather than a biased scan, but it is the same regime — and it is a long way from Zocchi's
+τ_c, which places the transition at 2.6–3.0°/bp.
+
+**Our chimera is at 4.8–5.2°/bp, below the threshold we measure ourselves.** That is the
+answer. Not seeing a kink in the chimera is not a force-field limitation and not
+principally a timescale artefact: the construct is simply not bent far enough, on this
+force field's own showing.
+
+One detail worth having, because it is a check rather than a coincidence. The kink lands
+on **base pair 17 every single time**, across independent windows and replicates. Base 17
+is an adenine and the step into it is **CpA** — one of the three pyrimidine–purine steps
+(CpG, TpA, CpA) that Curuksu names as the preferred sites for roll to localise at. The
+other pair that opened, bp13, sits at a **TpG** step, also pyrimidine–purine. So the force
+field is not breaking a pair at random under load; it is picking exactly the dinucleotide
+steps the literature says it should.
+
+### What is still running
+
+The compression windows are 12–30 ns and the deepest two are the youngest, so the
+threshold will tighten. The seeded-kink runs (three positions, two replicates, 30 ns) test
+whether a kink placed *below* the threshold persists, which bears on whether the
+transition is hysteretic. **[running]**
+
+The timescale arithmetic above still stands as a statement about *spontaneous* nucleation
+in the chimera's own geometry — but it is now the secondary explanation, not the primary
+one.
 
 ---
 
