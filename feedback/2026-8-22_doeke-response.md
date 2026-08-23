@@ -399,53 +399,70 @@ is √(k k_BT/N) however the restraint is applied, so a **softer** spring is str
 A second pass at *k* = 33 resolves 2.5× finer. Both are reported below, and their
 agreement is the method checking itself.
 
-**Result, 27 bp duplex** (2 replicates per window; the two stiffnesses are independent
-measurements of the same quantity):
+**A second correction, and this one bites the headline.** The solvent boxes were padded
+around the *bent* duplex, which is 61.7 Å long, while the straight molecule is 93 Å. So
+every extended window ran in a box too small for it — the 27-mer beyond 58 Å and the
+40-mers beyond 66 Å were measuring a duplex that can reach its own periodic image. That
+includes the ~70 Å separation the chimera actually sits at, which is precisely the number
+the measured-versus-modelled comparison rests on. I had quoted 33 pN there; that window is
+not trustworthy and the figure is withdrawn until the re-run lands.
 
-| window *x*₀ | ⟨*r*⟩, *k*=33 | *f*, *k*=33 | ⟨*r*⟩, *k*=200 | *f*, *k*=200 |
-|---|---|---|---|---|
-| 50 Å | 55.0 Å | 27.4 ± 1.5 pN | 50.7 Å | 24.7 ± 2.2 pN |
-| 58 | 63.9 | 32.1 ± 1.7 | 58.9 | 28.3 ± 2.2 |
-| 66 | 72.2 | 33.9 ± 1.3 | 67.1 | 36.0 ± 2.2 |
-| 74 | 79.9 | 32.2 ± 0.9 | 74.9 | 30.8 ± 2.2 |
-| 82 | 84.6 | 14.3 ± 1.0 | 82.7 | 24.0 ± 2.0 |
-| 88 | 88.5 | 2.9 ± 1.1 | 88.2 | 5.1 ± 2.1 |
+What survives untouched is the kinking threshold in #8: all of it lives between 32 and
+58 Å, comfortably inside the box.
 
-A plateau of 25–36 pN across most of the range, collapsing to a few pN at 88 Å, which is
-the contour length — where a spring should of course deliver nothing.
+**Result, 27 bp duplex, windows inside their box only** (two replicates each, two
+independent restraint stiffnesses):
+
+| window *x*₀ | °/bp | ⟨*r*⟩ | measured *f* |
+|---|---|---|---|
+| 32 Å | 9.7 | 34.9 Å | 26.9 ± 5.8 pN |
+| 38 | 9.0 | 40.5 | 22.0 ± 2.1 |
+| 44 | 8.3 | 47.0 | 27.3 ± 3.0 |
+| 50 | 7.6 | 52.9 | 26.4 ± 4.1 |
+| 58 | 6.7 | 61.3 | 29.2 ± 8.0 |
+
+A flat plateau of 22–29 pN across the whole valid range, which is what a buckled rod does
+— and it sits on the Euler load for a 27-mer, π²*B*/*L*² = **25.6 pN**, not on Zocchi's
+kinked branch, which gives 2.4–6.6 pN over the same range. The two independent restraint
+stiffnesses agreeing at matched ⟨*r*⟩ is the method checking itself.
+
+**And the nick matters far more than the model says.** At the two windows where the 40-mers
+are inside their box:
+
+| | *x*₀ = 50 Å | *x*₀ = 66 Å |
+|---|---|---|
+| 40 bp intact | 13.3 pN | 18.1 pN |
+| 40 bp nicked | **4.2 pN** | **6.9 pN** |
+| ratio | 3.2× | 2.6× |
+
+Zocchi's model puts the nicked spring at 2.37 pN against the intact 3.04 — a factor of
+1.3, because in the kinked branch the force is set almost entirely by τ_c. The force field
+says roughly **three**. That is worth having beside your point 7: the nicked spring is not
+"weaker but not much weaker" in this force field; it is a great deal weaker.
 
 ### The two calculations disagree by a factor of five, and the reason is point 8
 
-At the separation the chimera actually sits at, 70 Å:
+Over the range where both can be evaluated and the box is adequate:
 
 | | force |
 |---|---|
-| Zocchi's kinked branch | **6.3 pN** |
-| Euler buckling load, π²B/L², for an *unyielded* rod | **24.9 pN** |
-| measured, from the force field | **33.4 pN** |
+| Zocchi's kinked branch, 27 bp at 50 Å | **2.9 pN** |
+| Euler buckling load, π²*B*/*L*², for an *unyielded* rod | **25.6 pN** |
+| measured, from the force field | **26.4 ± 4.1 pN** |
 
-The measurement lands on the Euler load, not the kinked one. And that is exactly what
-should happen given #8: **the duplex never yields in this force field, so it stays on the
-elastic branch, and an unyielded rod sustains its buckling load.** Zocchi's kinked branch
-is a factor of ~4–5 lower precisely because it presupposes the yield. One fact — no kink —
-explains both the smooth bend profile and the force discrepancy, which is what makes me
-believe it rather than suspecting two separate errors.
+The measurement lands on the Euler load, not the kinked one — and #8 says why: this duplex
+does not yield at the curvature the chimera imposes, so it stays on the elastic branch, and
+an unyielded rod sustains its buckling load. Zocchi's branch is lower by four or five
+precisely because it presupposes the yield.
 
-Which of the two is right about the real molecule is a different question, and the honest
-answer is that our simulation cannot settle it: if real DNA does yield at this curvature
-and ours does not because 50 ns is too short (see #8), then the model is right about the
-experiment and our force field is simply stuck on the wrong branch. The measurement tells
-you what the force field says, not what DNA does.
+Which of the two is right about real DNA is a separate question our simulation cannot
+settle. If real DNA does yield here and ours does not, the model is right about the
+experiment and our force field is on the wrong branch.
 
-**Caveats.** These windows have 5–15 ns each so far and the replicate scatter is real —
-the 82 Å point disagrees between stiffnesses (14 vs 24 pN) and needs more sampling. The
-full runs are now **complete at 30 ns × 2 per window**, including three deeper windows
-added afterwards, so the numbers above will tighten slightly when the table is regenerated.
-Also,
-this measures the force between the duplex's own ends under a stiff restraint, which is
-the right analogue of the model's *f*(*x*); how much of it reaches Cβ–Cβ in the chimera
-depends on the tether geometry, and #3 says: not much, and not in the direction a pure
-axial pull would give.
+**Still outstanding.** Near-straight duplexes have been solvated in boxes that fit the long
+windows (the 27-mer's now reaches 73 Å, covering the chimera's 70), and the 50 and 58 Å
+windows are being re-run in both boxes so the two halves of the curve can be checked
+against each other before they are joined. **[running]**
 
 ## 7. The ssDNA chimera
 
