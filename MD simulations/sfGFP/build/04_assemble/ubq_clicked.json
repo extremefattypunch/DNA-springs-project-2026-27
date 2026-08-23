@@ -1,0 +1,14 @@
+{
+  "sites": [
+    9,
+    63
+  ],
+  "tleap_bonds": [
+    "9@N7:77@CW",
+    "77@CG:78@N",
+    "63@N7:79@CW",
+    "79@CG:80@N"
+  ],
+  "waters_kept": 56,
+  "waters_dropped": 2
+}

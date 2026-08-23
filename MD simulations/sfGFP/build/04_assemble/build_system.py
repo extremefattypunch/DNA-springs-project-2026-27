@@ -378,7 +378,10 @@ def main():
     ap.add_argument("--bond", nargs="*", default=[],
                     help="inter-residue bonds as RESI@ATOM:RESI@ATOM using the "
                          "solute PDB's own residue numbering (1-based ordinal)")
-    ap.add_argument("--expect-residue", nargs="*", default=["CRO"])
+    # No default: CRO used to be one, which quietly failed every ubiquitin system --
+    # that protein has no chromophore.  Each build states what it expects.
+    ap.add_argument("--expect-residue", nargs="*", default=[],
+                    help="residue names that must be present in the finished topology")
     ap.add_argument("--expect-open-loop", default=None, metavar="RESNAME",
                     help="assert the opposite of --expect-loop: the two modified "
                          "residues must NOT be joined by a covalent cycle")

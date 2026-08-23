@@ -1,0 +1,39 @@
+{
+  "system": "U0_apo",
+  "solute_pdb": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/01_protein/ubq_prepped.pdb",
+  "pad_A": 12.0,
+  "waters_pass1": 6058,
+  "nacl_pairs": 16,
+  "mgcl2": 1,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.005,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [],
+  "atoms": 19497,
+  "residues": 6192,
+  "bonds": 19468,
+  "net_charge": -0.0,
+  "box": [
+    66.292,
+    66.292,
+    66.292,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 6080,
+  "ions": {
+    "Na+": 17,
+    "Cl-": 18,
+    "MG": 1
+  },
+  "expected_residues": {
+    "CYS": 2,
+    "TRP": 1
+  },
+  "bonds_verified": [],
+  "dihedrals": 5468,
+  "angles": 2237,
+  "problems": []
+}

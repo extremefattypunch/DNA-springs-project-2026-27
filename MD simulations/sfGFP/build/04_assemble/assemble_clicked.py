@@ -26,6 +26,8 @@ from scipy.spatial import cKDTree
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from arm import build_arm  # noqa: E402
+sys.path.insert(0, str(HERE.parent / "02_params"))
+from residue_defs import RESIDUES  # noqa: E402
 from assemble_chimera import WATER, clash_score, fmt, read_pdb  # noqa: E402
 
 
@@ -36,6 +38,9 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--seed", type=int, default=23)
     ap.add_argument("--starts", type=int, default=32)
+    ap.add_argument("--arm", nargs="+", default=["TDP", "DNH"], metavar="RESIDUE",
+                    help="the tether, protein outwards, terminating in something inert. "
+                         "sfGFP: TDP DNH.  Ubiquitin: CMS CDB DNH.")
     a = ap.parse_args()
     rng = np.random.default_rng(a.seed)
 
@@ -51,11 +56,11 @@ def main():
 
     arms = {}
     for site in a.sites:
-        mol = build_arm("DNH")
+        mol = build_arm(tuple(a.arm))
         mol.place_on_backbone({k: pres[site][k]["xyz"] for k in ("N", "CA", "CB")})
         rot = mol.rotatable()
         heavy = [i for i, e in enumerate(mol.elements) if e != "H"]
-        ol = mol.index["OL*"]
+        ol = mol.index[mol.dna_atom]
         cb = mol.xyz[mol.index["CB"]]
         outward = cb - centroid
         outward /= np.linalg.norm(outward)
@@ -94,7 +99,7 @@ def main():
               f"clash {clash_score(mol.xyz[heavy], tree):.2f}")
 
     lines, serial, ordinal = [], 1, 0
-    tdp_ord, dnh_ord = {}, {}
+    tdp_ord, link_ord = {}, {}
     bb = {"N", "CA", "C", "O", "H", "HA"}
     for resi in sorted(pres):
         ordinal += 1
@@ -106,7 +111,7 @@ def main():
                     continue
                 xyz = (pres[resi][nm]["xyz"] if nm in bb and nm in pres[resi]
                        else m.xyz[m.index[nm]])
-                lines.append(fmt(serial, nm, "TDP", "A", resi, xyz,
+                lines.append(fmt(serial, nm, a.arm[0], "A", resi, xyz,
                                  m.elements[m.index[nm]]))
                 serial += 1
         else:
@@ -116,16 +121,32 @@ def main():
                 serial += 1
     lines.append(f"TER   {serial:5d}")
     serial += 1
+    # One residue per star level, so a three-residue tether writes its two non-protein
+    # residues separately.  Each arm gets its own chain letter and its residues are
+    # numbered 1..k within it; nothing chains head-to-tail here, since every link is
+    # declared explicitly below.
     for k, site in enumerate(a.sites):
         m = arms[site]
-        ordinal += 1
-        dnh_ord[site] = ordinal
-        for nm in m.names:
-            if not nm.endswith("*"):
-                continue
-            lines.append(fmt(serial, nm[:-1], "DNH", "EF"[k], 1,
-                             m.xyz[m.index[nm]], m.elements[m.index[nm]]))
-            serial += 1
+        for level in range(1, len(a.arm)):
+            star = "*" * level
+            ordinal += 1
+            link_ord[(site, level)] = ordinal
+            n = 0
+            for nm in m.names:
+                if not (nm.endswith(star) and not nm.endswith(star + "*")):
+                    continue
+                lines.append(fmt(serial, nm[:-level], a.arm[level], "EF"[k], level,
+                                 m.xyz[m.index[nm]], m.elements[m.index[nm]]))
+                serial += 1
+                n += 1
+            if n == 0:
+                sys.exit(f"no atoms at star level {level} for the arm at {site}")
+            # See the note in assemble_chimera.py: tleap chains a prep residue's last
+            # main-chain atom to the next residue's head on its own, so two linker
+            # residues written back to back get an extra bond nobody asked for.
+            if level < len(a.arm) - 1:
+                lines.append(f"TER   {serial:5d}")
+                serial += 1
         lines.append(f"TER   {serial:5d}")
         serial += 1
 
@@ -146,7 +167,15 @@ def main():
         lines.append(f"TER   {serial:5d}")
         serial += 1
     Path(a.out).write_text("\n".join(lines) + "\nEND\n")
-    bonds = [f"{tdp_ord[s]}@CN:{dnh_ord[s]}@N" for s in a.sites]
+    # Read from each residue's own extra_bond, so the declared topology and the built
+    # geometry come from the same tables.
+    bonds = []
+    for s in a.sites:
+        for level in range(len(a.arm) - 1):
+            eb = RESIDUES[a.arm[level]]["extra_bond"]
+            up = tdp_ord[s] if level == 0 else link_ord[(s, level)]
+            bonds.append(f"{up}@{eb['this_atom']}:"
+                         f"{link_ord[(s, level + 1)]}@{eb['partner_atom']}")
     Path(a.out).with_suffix(".json").write_text(json.dumps(
         {"sites": a.sites, "tleap_bonds": bonds, "waters_kept": kept,
          "waters_dropped": len(wres) - kept}, indent=2))

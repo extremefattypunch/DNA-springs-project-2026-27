@@ -46,6 +46,8 @@ from scipy.spatial import cKDTree
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from arm import Arm, build_arm, validate_cage  # noqa: E402
+sys.path.insert(0, str(HERE.parent / "02_params"))
+from residue_defs import RESIDUES  # noqa: E402
 
 WATER = {"WAT", "HOH"}
 PRIME3 = "O3'"
@@ -154,6 +156,14 @@ def main():
     ap.add_argument("--dna", required=True)
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149])
     ap.add_argument("--out", required=True)
+    ap.add_argument("--arm-5prime", nargs="+", default=["TDP", "DNL"],
+                    metavar="RESIDUE",
+                    help="residues of the tether at the 5' attachment, protein "
+                         "outwards.  sfGFP: TDP DNL.  Ubiquitin: CMS CDB DNL.")
+    ap.add_argument("--arm-3prime", nargs="+", default=["TDP", "DNP"],
+                    metavar="RESIDUE",
+                    help="the same for the 3' attachment.  sfGFP: TDP DNP.  "
+                         "Ubiquitin: CMS CDB DNP.")
     ap.add_argument("--extension-frac", type=float, default=0.88,
                     help="fraction of the tether's full reach to use for the span")
     ap.add_argument("--water-clash", type=float, default=2.6)
@@ -177,22 +187,28 @@ def main():
     # bridging O5'.  Site 1 carries the 3' linker DNP, which brings its own phosphate
     # and bonds nucleotide N's existing O3'.  DNP is the longer arm by roughly the
     # width of that phosphate, so the placement below cannot assume symmetry.
-    LINKERS = {args.sites[0]: "DNL", args.sites[1]: "DNP"}
+    ARMS = {args.sites[0]: tuple(args.arm_5prime),
+            args.sites[1]: tuple(args.arm_3prime)}
+    if len({c[0] for c in ARMS.values()}) != 1:
+        sys.exit(f"the two arms start from different protein residues "
+                 f"{[c[0] for c in ARMS.values()]}; they are the same mutation")
+    PROT_RES = ARMS[args.sites[0]][0]
+    LINKERS = {s: c[-1] for s, c in ARMS.items()}
     cage, reach = {}, {}
-    for site, linker in LINKERS.items():
-        a0 = build_arm(linker)
-        cage[linker] = validate_cage(a0)
+    for site, chain in ARMS.items():
+        a0 = build_arm(chain)
+        cage[" + ".join(chain)] = validate_cage(a0)
         # full reach: extend every torsion away from CB and away from the protein
-        ra = build_arm(linker)
+        ra = build_arm(ARMS[site])
         bb = {k: pres[site][k]["xyz"] for k in ("N", "CA", "CB")}
         ra.place_on_backbone(bb)
         cb = ra.xyz[ra.index["CB"]]
         far = cb + 1000.0 * (cb - np.mean([a["xyz"] for a in solute], axis=0))
         pose_arm(ra, bb, far, cKDTree(np.array([[1e6, 1e6, 1e6]])), rng, n_starts=4)
         reach[site] = float(np.linalg.norm(ra.xyz[ra.index[ra.dna_atom]] - cb))
-        print(f"tether at {site}: {linker}, {cage[linker]['n_rotatable_bonds']} "
-              f"torsions, cyclopropane {cage[linker]['cyclopropane_sides_A']}, "
-              f"extended CB->{ra.dna_atom[:-1]} reach {reach[site]:.2f} A")
+        key = " + ".join(ARMS[site])
+        print(f"tether at {site}: {key}, {cage[key]['n_rotatable_bonds']} torsions, "
+              f"extended CB->{ra.dna_atom.rstrip('*')} reach {reach[site]:.2f} A")
 
     # --- target phosphate positions ---
     A = pres[args.sites[0]]["CB"]["xyz"]
@@ -283,21 +299,21 @@ def main():
     for site, key, atom in ((args.sites[0], (mod, 1), "P"),
                             (args.sites[1], (mod, n_bp), PRIME3)):
         anchor = dres[key][atom]["xyz"]
-        this = build_arm(LINKERS[site])
+        this = build_arm(ARMS[site])
         rep = pose_arm(this, {k: pres[site][k]["xyz"] for k in ("N", "CA", "CB")},
                        anchor, ptree, rng, n_starts=16, bond_length=1.61)
         rep["bond_length_A"] = round(float(np.linalg.norm(
             this.xyz[this.index[this.dna_atom]] - anchor)), 3)
-        rep["linker"] = LINKERS[site]
+        rep["arm"] = " + ".join(ARMS[site])
         arms[site] = this
         reports[str(site)] = rep
-        print(f"tether at {site} ({LINKERS[site]}): to-target {rep['to_target_A']} A, "
+        print(f"tether at {site} ({rep['arm']}): to-target {rep['to_target_A']} A, "
               f"{this.dna_atom[:-1]}-{atom} bond {rep['bond_length_A']} A "
               f"(ideal 1.61), clash {rep['clash']}")
 
     # --- write the assembled PDB ---
     lines, serial = [], 1
-    ordinal, tdp_ord, dnl_ord = 0, {}, {}
+    ordinal, tdp_ord, link_ord = 0, {}, {}
     resi_order = sorted(pres)
     for resi in resi_order:
         ordinal += 1
@@ -307,12 +323,12 @@ def main():
             bb = {"N", "CA", "C", "O", "H", "HA"}
             for nm in a.names:
                 if nm.endswith("*"):
-                    continue
+                    continue        # the starred atoms belong to the linker residues
                 if nm in bb and nm not in pres[resi]:
                     continue
                 xyz = (pres[resi][nm]["xyz"] if nm in pres[resi] and nm in bb
                        else a.xyz[a.index[nm]])
-                lines.append(fmt(serial, nm, "TDP", "A", resi, xyz,
+                lines.append(fmt(serial, nm, PROT_RES, "A", resi, xyz,
                                  a.elements[a.index[nm]]))
                 serial += 1
         else:
@@ -325,18 +341,28 @@ def main():
 
     dna_chain_ids = {mod: "C"} if comp is None else {mod: "C", comp: "D"}
 
-    def write_linker(site, resi):
-        """One linker residue, its atoms being the star-tagged half of the arm."""
+    def write_linker(site, level, resi):
+        """One linker residue: the arm atoms carrying exactly `level` trailing stars.
+
+        A two-residue tether has one such level and a three-residue one has two, so the
+        ubiquitin crosslinker's DBCO half and the amino-modifier arm come out as separate
+        residues without the caller having to know which chemistry it asked for.
+        """
         nonlocal serial, ordinal
         a = arms[site]
+        star = "*" * level
         ordinal += 1
-        dnl_ord[site] = ordinal
+        link_ord[(site, level)] = ordinal
+        n = 0
         for nm in a.names:
-            if not nm.endswith("*"):
+            if not (nm.endswith(star) and not nm.endswith(star + "*")):
                 continue
-            lines.append(fmt(serial, nm[:-1], LINKERS[site], "C", resi,
+            lines.append(fmt(serial, nm[:-level], ARMS[site][level], "C", resi,
                              a.xyz[a.index[nm]], a.elements[a.index[nm]]))
             serial += 1
+            n += 1
+        if n == 0:
+            sys.exit(f"no atoms at star level {level} for the arm at site {site}")
 
     # The modified strand, in tleap order.  DNL comes FIRST so that its tail oxygen
     # links to nucleotide 1's phosphorus by ordinary head-to-tail chaining, and DNP
@@ -344,7 +370,25 @@ def main():
     # them inside the chain like this is also what keeps nucleotides 1 and N on the
     # *internal* templates -- they are no longer chain-initial or chain-final -- which
     # is exactly the charge bookkeeping DNL's -0.3079 and DNP's -0.6921 assume.
-    write_linker(args.sites[0], 0)
+    # The 5' arm's linker residues run protein-outwards, and the LAST of them is the
+    # one whose tail chains to nucleotide 1, so it must be written immediately before
+    # it.  Numbering runs backwards from 0 so the nucleotides keep 1..N and the analysis
+    # that reads nucleotide numbers out of the residue map is unaffected.
+    # tleap gives a prep residue an implicit tail at its LAST main-chain atom, whether or
+    # not TAIL_NAME was declared.  prepgen flags CDB's CG and DNP's N as main chain, so
+    # tleap will happily chain one linker residue to the next all by itself.  For the 5'
+    # arm that duplicates a bond we declare and tleap dies outright; for the 3' arm,
+    # where DNP is written before CDB, it would instead make DNP's nitrogen bond CDB's
+    # CW as well as its CG -- a wrong bond, quietly.  A TER between consecutive linker
+    # residues shuts the automatic chaining off and leaves every intra-arm bond to the
+    # explicit declarations.  No TER goes between the innermost linker and the
+    # nucleotides: that link IS the head-to-tail chaining we want.
+    n5 = len(ARMS[args.sites[0]]) - 1
+    for k in range(1, n5 + 1):
+        write_linker(args.sites[0], k, k - n5)
+        if k < n5:
+            lines.append(f"TER   {serial:5d}")
+            serial += 1
     for i in range(1, n_bp + 1):
         ordinal += 1
         rn = next(iter(dres[(mod, i)].values()))["resn"]
@@ -359,7 +403,14 @@ def main():
         if rn.endswith("3") and i < n_bp:
             lines.append(f"TER   {serial:5d}")
             serial += 1
-    write_linker(args.sites[1], n_bp + 1)
+    # The 3' arm is the mirror image: the residue adjacent to nucleotide N is the one
+    # FURTHEST from the protein, so these are written in reverse.
+    n3 = len(ARMS[args.sites[1]]) - 1
+    for k in range(n3, 0, -1):
+        write_linker(args.sites[1], k, n_bp + 1 + (n3 - k))
+        if k > 1:
+            lines.append(f"TER   {serial:5d}")
+            serial += 1
     lines.append(f"TER   {serial:5d}")
     serial += 1
 
@@ -399,13 +450,27 @@ def main():
         serial += 1
     Path(args.out).write_text("\n".join(lines) + "\nEND\n")
 
-    # Only the two carbamates need declaring: they cross from the protein chain to the
-    # DNA chain, so tleap cannot infer them.  The two DNA-side bonds (DNL.OL to
-    # nucleotide 1's P, and nucleotide N's O3' to DNP.P) are ordinary head-to-tail
-    # links within chain C and tleap makes them from the residue order alone.
-    bonds = [f"{tdp_ord[s]}@CN:{dnl_ord[s]}@N" for s in args.sites]
+    # Every link INSIDE an arm has to be declared: those bonds cross from the protein
+    # chain to the DNA chain, or join two residues that are adjacent in neither, so tleap
+    # cannot infer any of them.  Each link is read from the upstream residue's own
+    # extra_bond, the same declaration build_arm used to build the geometry, so the
+    # topology tleap is told about and the topology that was posed cannot disagree.
+    #
+    # The two DNA-side bonds are the exception and are NOT listed: the last linker of the
+    # 5' arm tails into nucleotide 1's phosphorus and nucleotide N's O3' heads into the
+    # last linker of the 3' arm, and both are ordinary head-to-tail links within chain C
+    # that tleap makes from the residue order alone.
+    bonds = []
+    for s in args.sites:
+        chain = ARMS[s]
+        for level in range(len(chain) - 1):
+            eb = RESIDUES[chain[level]]["extra_bond"]
+            up = tdp_ord[s] if level == 0 else link_ord[(s, level)]
+            bonds.append(f"{up}@{eb['this_atom']}:"
+                         f"{link_ord[(s, level + 1)]}@{eb['partner_atom']}")
     meta = {"protein": args.protein, "dna": args.dna, "sites": args.sites,
-            "linkers": {str(k): v for k, v in LINKERS.items()},
+            "arms": {str(k): list(v) for k, v in ARMS.items()},
+            "protein_residue": PROT_RES,
             "tether": cage, "reach_A": {str(k): round(v, 2) for k, v in reach.items()},
             "sites_CB_CB_A": round(ab, 2), "duplex_anchor_span_A": round(D, 2),
             "a_offsets_A": [round(aA, 2), round(aB, 2)], "b_offset_A": round(b_off, 2),

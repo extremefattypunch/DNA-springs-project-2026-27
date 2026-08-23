@@ -1,0 +1,85 @@
+{
+  "protein": "build/01_protein/ubq_prepped.pdb",
+  "dna": "build/03_dna/ubq/spring_50nt.pdb",
+  "sites": [
+    9,
+    63
+  ],
+  "arms": {
+    "9": [
+      "CMS",
+      "CDB",
+      "DNL"
+    ],
+    "63": [
+      "CMS",
+      "CDB",
+      "DNP"
+    ]
+  },
+  "protein_residue": "CMS",
+  "tether": {
+    "CMS + CDB + DNL": {
+      "chain": "CMS + CDB + DNL",
+      "linker": "DNL",
+      "dna_atom": "OL**",
+      "n_rotatable_bonds": 21,
+      "CB_to_dna_atom_A": 18.06,
+      "DBCO benzo 1 planarity_rms_A": 0.003,
+      "DBCO benzo 2 planarity_rms_A": 0.009,
+      "SPAAC triazole planarity_rms_A": 0.011,
+      "rings_checked": 3
+    },
+    "CMS + CDB + DNP": {
+      "chain": "CMS + CDB + DNP",
+      "linker": "DNP",
+      "dna_atom": "P**",
+      "n_rotatable_bonds": 24,
+      "CB_to_dna_atom_A": 20.62,
+      "DBCO benzo 1 planarity_rms_A": 0.03,
+      "DBCO benzo 2 planarity_rms_A": 0.008,
+      "SPAAC triazole planarity_rms_A": 0.01,
+      "rings_checked": 3
+    }
+  },
+  "reach_A": {
+    "9": 30.3,
+    "63": 33.68
+  },
+  "sites_CB_CB_A": 24.81,
+  "duplex_anchor_span_A": 59.99,
+  "a_offsets_A": [
+    15.21,
+    19.97
+  ],
+  "b_offset_A": 21.9,
+  "duplex_spin_deg": 280,
+  "arm_reports": {
+    "9": {
+      "score": 21.079,
+      "dna_atom": "OL**",
+      "to_target_A": 1.609,
+      "bond_objective": 1.61,
+      "clash": 42.157,
+      "bond_length_A": 1.609,
+      "arm": "CMS + CDB + DNL"
+    },
+    "63": {
+      "score": 15.782,
+      "dna_atom": "P**",
+      "to_target_A": 1.668,
+      "bond_objective": 1.61,
+      "clash": 31.557,
+      "bond_length_A": 1.668,
+      "arm": "CMS + CDB + DNP"
+    }
+  },
+  "waters_kept": 56,
+  "waters_dropped": 2,
+  "tleap_bonds": [
+    "9@N7:77@CW",
+    "77@CG:78@N",
+    "63@N7:130@CW",
+    "130@CG:129@N"
+  ]
+}

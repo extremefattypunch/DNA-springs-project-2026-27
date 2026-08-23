@@ -29,7 +29,7 @@ common_frcmod=("$PARAMS/TDP/TDP.frcmod" "$PARAMS/DNL/DNL.frcmod" "$PARAMS/juncti
 common_prep=("$PARAMS/TDP/TDP.prepin" "$PARAMS/DNL/DNL.prepin")
 
 # S0: wild type
-$P build/04_assemble/build_system.py --name S0_wt \
+$P build/04_assemble/build_system.py --name S0_wt --expect-residue CRO \
    --solute build/01_protein/sfgfp_prepped.pdb --outdir build/systems/S0_wt \
    --clamp-sites $SITES
 
