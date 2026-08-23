@@ -15,8 +15,15 @@ closing a covalent loop.
 > alone. They are kept and reported as what they are — the two-arm construct, which is
 > Zocchi's pre-ligation chimera. `L3_loop27`, `L4_loop40` and `L5_loop40nick` are the
 > corrected, genuinely circular builds, and `build_system.py` now asserts the cycle.
-Because dsDNA's persistence length (~50 nm) dwarfs the barrel, the duplex must bend,
-and it pushes the two attachment points apart with a force of a few pN.
+
+Because dsDNA's persistence length (~50 nm) dwarfs the barrel, the duplex must bend, and
+it pushes its own two ends apart. **How hard is two different questions.** Zocchi's model,
+evaluated at the separation each simulation settles at, gives 2.4–6.5 pN. Measured
+directly — a bare duplex held at a series of separations, with the mean restraint force
+read off — this force field gives **25–36 pN**, which is the Euler buckling load of an
+*unyielded* rod. The model's smaller number presupposes the yield into a kinked state
+that we never observe. Both routes are written out in
+[`feedback/2026-8-22_doeke-response.md`](../../feedback/2026-8-22_doeke-response.md).
 
 
 ## Quick start
@@ -24,12 +31,15 @@ and it pushes the two attachment points apart with a force of a few pN.
 ```bash
 source env/activate.sh          # sets MAMBA_*, $DNASPRING_PY, $DNASPRING_SCRATCH
 ./env/create_envs.sh            # one-time, ~1 h
-./build/build_all.sh            # raw 2B3P -> five parameterised, solvated systems
+./build/build_all.sh            # the superseded two-arm systems S0-S6 (see the note above)
+./build/build_loop_systems.sh   # the corrected closed-loop sfGFP chimeras L3-L5
+./build/build_ss_systems.sh     # the ssDNA spring C1 and its non-circular control C2
+./build/build_ubiquitin.sh      # the ubiquitin set U0-U4
 bash slurm/submit_all.sh --tier A          # 11 configurations x 3 replicates x 50 ns
 bash slurm/status.sh                       # queue + per-run progress
 $DNASPRING_PY analysis/collect.py          # every analysis over every replicate
 $DNASPRING_PY analysis/figures.py          # report figures + the CSVs behind them
-$DNASPRING_PY analysis/animate.py --traj … --top … --name S3_spring27
+$DNASPRING_PY analysis/animate.py --traj … --top … --name L3_loop27
 bash slurm/submit_all.sh --tier B          # extend to 300 ns from the checkpoints
 ```
 
@@ -44,16 +54,26 @@ GitHub remote.
 |---|---|---|---|
 | `S0_wt` | WT sfGFP | 44,016 | baseline; validates the chromophore parameters |
 | `S1_tet` | sfGFP + 2× Tet2-Et (unclicked) | 44,011 | matches the 2-tet fluorometry sample; also the force-clamp topology |
-| `S3_spring27` | 27 bp spring | 86,126 | the strong spring |
-| `S4_spring40` | 40 bp spring | 121,404 | Zocchi's mechanically clean length (γ<1) |
-| `S5_spring40nick` | 40 bp, nicked | 121,420 | his calibrated low-stress reference |
-| `S6_clamp` | constant force 0/2/4/7/12/20 pN on `S1_tet` | 44,011 | the calibration curve |
+| `S2_clicked` | clicked tether, no DNA | 44,107 | **the zero-force reference with a chimera's own chemistry** |
+| `S6_clamp` | constant force 0/2/4/7/12/20 pN on `S1_tet` | 44,011 | the barrel's stiffness |
+| `S3_spring27` | 27 bp, **two-arm** | 86,126 | superseded by `L3_loop27`; kept as the non-circular comparison |
+| `S4_spring40` | 40 bp, two-arm | 121,404 | superseded by `L4_loop40` |
+| `S5_spring40nick` | 40 bp nicked, two-arm | 121,420 | superseded by `L5_loop40nick` |
+| `L3_loop27` | 27 bp, **closed loop** | 82,472 | the corrected construct |
+| `L4_loop40` | 40 bp, closed loop | 110,002 | the corrected construct |
+| `L5_loop40nick` | 40 bp closed loop, complement nicked | 110,012 | mechanics-only control: same DNA, softer spring |
+| `C1_ss50` | 50 nt ssDNA, closed loop | 136,685 | the ssDNA spring — an entropic chain that *pulls* |
+| `C2_ssarms` | two 25 nt arms | 134,153 | the same strand cut in half: cannot circularise |
+| `D_27bp` / `D_40bp` / `D_40bp_nick` | duplex alone | 61k–77k | force–extension, measured from the force field |
+| `U0_apo` … `U4_ssarms` | ubiquitin F45W/T9C/K63C, five states | 19k–124k | the companion experiment, DBCO-maleimide chemistry |
 
-The clamp ladder runs on `S1_tet`'s topology — the same two residues the spring pulls
-on — so its force–response curve and the chimeras are directly comparable. The
-chimeras' tension is read off their own geometry through Zocchi's formula; reading
-their measured extension against the clamp curve is the independent second route to
-the same number.
+The clamp ladder runs on `S1_tet`'s topology — the **unclicked** protein. It acts on the
+same two Cβ the spring pulls on, so it measures the barrel's stiffness along that
+coordinate (230–350 k<sub>B</sub>T nm⁻², two to three and a half times Zocchi's generic
+100). What it is **not** is a calibration curve for the chimeras: every chimera carries
+the clicked adduct, and clicking alone moves the sites 0.65 Å — fifteen to thirty times
+any force effect. Reading a chimera's extension against this ladder is what produced the
+claim retracted in the response document. A chimera's zero is `S2_clicked`.
 
 `--clamp-pN` applies a genuine constant force, `E = −f·r` between the two Cβ atoms, so
 `F = −dE/dr = +f` pushes them apart — the sign a compressed leaf spring applies. A
@@ -144,8 +164,8 @@ documents each bridging parameter and the Amber/GAFF term it was copied from.
 | `python -m openmm.testInstallation`, CUDA | passes; all four platforms agree |
 | CRO atom names match the xFPchromophores template | 22/22, checked before use |
 | CRO net charge from the library | −1.0000 exactly |
-| `parmchk2` parameters flagged "ATTN, need revision" | **0** across TET, TDP, DNL |
-| Every assigned GAFF type implies the declared element | 111/111 atoms |
+| `parmchk2` parameters flagged "ATTN, need revision" | **0** across all seven custom residues (TET, TDP, DNL, DNH, DNP, CMS, CDB) |
+| Every assigned GAFF type implies the declared element | 235/235 atoms, 7 residues |
 | Every prep tree parent link is a declared bond | passes for all three residues |
 | tleap errors on the assembled chimera | **0** |
 | Net charge, every system | integral to <1e-4 |

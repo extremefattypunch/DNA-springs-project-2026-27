@@ -12,7 +12,10 @@ $P analysis/collect.py --stride "$STRIDE"
 $P analysis/figures.py
 
 # Animate the longest chimera replicate available, plus a control for comparison.
-for sys in S3_spring27 S0_wt; do
+# L3_loop27, not S3_spring27: the movie is the report's hero image, and S3 is the
+# superseded two-arm build -- a viewer tracing its two strands sees exactly the error
+# Doeke spotted, with each strand tethered at one end instead of one strand at both.
+for sys in L3_loop27 S0_wt; do
   traj=$(ls -S data/runs/$sys/rep*/03_production/traj.dcd 2>/dev/null | head -1) || true
   [ -n "${traj:-}" ] || continue
   $P analysis/animate.py --traj "$traj" --top "build/systems/$sys/system.prmtop" \
@@ -25,12 +28,12 @@ done
 # background, and dithering it costs megabytes for nothing.
 mkdir -p figures/web
 gifify () {  # view width colors fps crop
-  local src="figures/${ANIM:-S3_spring27}_$1.mp4"
+  local src="figures/${ANIM:-L3_loop27}_$1.mp4"
   [ -f "$src" ] || return 0
   ffmpeg -y -loglevel error -i "$src" \
     -vf "fps=$4,crop=iw*$5:ih*$5,scale=$2:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=$3[p];[b][p]paletteuse=dither=none" \
-    -loop 0 "figures/web/${ANIM:-S3_spring27}_$1.gif"
-  printf "  %-12s %6d kB\n" "$1" "$(( $(stat -c%s "figures/web/${ANIM:-S3_spring27}_$1.gif")/1024 ))"
+    -loop 0 "figures/web/${ANIM:-L3_loop27}_$1.gif"
+  printf "  %-12s %6d kB\n" "$1" "$(( $(stat -c%s "figures/web/${ANIM:-L3_loop27}_$1.gif")/1024 ))"
 }
 gifify overview    500 64 10 0.94
 gifify chromophore 400 32  6 0.78

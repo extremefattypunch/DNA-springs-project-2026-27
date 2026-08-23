@@ -19,6 +19,16 @@ echo "##### 2. custom residue parameters"
 $P $PARAMS/build_residues.py
 
 echo "##### 3. DNA springs"
+# WARNING, and it is a real one: this script no longer reproduces S3-S5 bit for bit.
+# --span-A used to mean the CROSS-STRAND 5'P-to-5'P chord, which is what 62 refers to.
+# It now means the distance between the two linker anchors on ONE strand, because the
+# corrected construct modifies a single strand at both ends -- see build_loop_systems.sh.
+# The flag kept its name and changed its meaning, so 62 here now asks for a different
+# (much tighter) geometry than the one S3-S5 were actually built with.
+#
+# S3-S5 are kept as the two-arm construct they are, and are not rebuilt.  If you need to
+# regenerate them, check out the commit before the topology fix.  For anything new, use
+# build_loop_systems.sh (sfGFP, 66 A) or build_ubiquitin.sh (ubiquitin, 60 A).
 for n in 27 40; do
   $P build/03_dna/build_dna.py --n-bp $n --span-A 62 --outdir build/03_dna
 done

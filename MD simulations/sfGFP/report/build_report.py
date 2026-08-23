@@ -40,8 +40,15 @@ def pm(a, nd=2, key="sem"):
 
 
 LABEL = {"S0_wt": "WT sfGFP", "S1_tet": "2× Tet2-Et", "S2_clicked": "clicked, no DNA",
-         "S3_spring27": "27 bp spring", "S4_spring40": "40 bp spring",
-         "S5_spring40nick": "40 bp nicked", "S6_clamp": "force clamp"}
+         "S3_spring27": "27 bp, two-arm", "S4_spring40": "40 bp, two-arm",
+         "S5_spring40nick": "40 bp nicked, two-arm", "S6_clamp": "force clamp",
+         "L3_loop27": "27 bp, closed loop", "L4_loop40": "40 bp, closed loop",
+         "L5_loop40nick": "40 bp nicked, closed loop",
+         "C1_ss50": "50 nt ssDNA, closed loop", "C2_ssarms": "two 25 nt arms",
+         "U0_apo": "ubiquitin, apo", "U1_clicked": "ubiquitin, clicked, no DNA",
+         "U2_ss50": "ubiquitin, 50 nt ssDNA loop",
+         "U3_ds50": "ubiquitin, 50 bp dsDNA loop",
+         "U4_ssarms": "ubiquitin, two 25 nt arms"}
 PURPOSE = {
     "S0_wt": "Baseline. Validates the published chromophore parameters against a "
              "structure nobody modified.",
@@ -49,9 +56,19 @@ PURPOSE = {
               "the topology the force-clamp ladder runs on.",
     "S2_clicked": "The clicked tether with no DNA: the zero-force reference with a "
                   "chimera’s own chemistry.",
-    "S3_spring27": "The strong spring.",
-    "S4_spring40": "Zocchi’s mechanically clean length (γ &lt; 1).",
-    "S5_spring40nick": "Nicked at the centre — his calibrated low-stress reference.",
+    # These three are the SUPERSEDED builds: a linker on the 5' end of each of two
+    # different strands, so no covalent cycle exists and the loop is closed by base
+    # pairing alone.  They are kept and reported as what they are, because that is
+    # Zocchi's own pre-ligation two-arm chimera and it is the closest thing we have to a
+    # non-circular control.  L3/L4/L5 are the corrected circular builds.
+    "S3_spring27": "27 bp spring, <strong>two-arm</strong> construct — one linker on "
+                   "each of two strands, no covalent cycle. Superseded by "
+                   "<code>L3_loop27</code>; kept as the non-circular comparison.",
+    "S4_spring40": "40 bp, two-arm construct. Zocchi’s mechanically clean length "
+                   "(γ &lt; 1). Superseded by <code>L4_loop40</code>.",
+    "S5_spring40nick": "40 bp two-arm construct, nicked at the centre of one strand. "
+                       "Superseded by <code>L5_loop40nick</code>, where the nick moves "
+                       "to the complement so the loop stays closed.",
     "S6_clamp": "A constant force of 0/2/4/7/12/20 pN applied straight along the "
                 "Cβ–Cβ axis: the calibration curve.",
 }
@@ -138,13 +155,36 @@ STEPS = [
      "the duplex gives, barrel deformation, cavity water — then reduced to one row per "
      "replicate and one findings file the report renders."),
 ]
+def params_summary(root: Path):
+    """Read the parameterisation report so the verification table cannot go stale.
+
+    These rows used to be literals reading "all four custom residues".  There are seven
+    now, and a literal has no way of noticing -- so the counts are derived, and if a
+    residue is ever added without rerunning build_residues.py the numbers move rather
+    than the sentence quietly becoming false.
+    """
+    f = root / "build" / "02_params" / "PARAMS_REPORT.json"
+    if not f.exists():
+        return None
+    rows = json.loads(f.read_text())
+    if isinstance(rows, dict):
+        rows = list(rows.values())
+    names = [r["residue"] for r in rows]
+    return {
+        "n": len(rows), "names": ", ".join(names),
+        "atoms": sum(r["element_check"]["atoms_checked"] for r in rows),
+        "mismatches": sum(r["element_check"]["element_mismatches"] for r in rows),
+        "flagged": sum(r["frcmod_audit"]["n_flagged"] for r in rows),
+    }
+
+
 VER = [
     ("OpenMM with CUDA", "all four platforms agree within tolerance", True),
     ("CRO atom names against the xFPchromophores template", "22 / 22, checked before use", True),
     ("CRO net charge from the library", "−1.0000 exactly", True),
-    ("parmchk2 parameters flagged “ATTN, need revision”", "0, all four custom residues", True),
-    ("Assigned GAFF type implies the declared element", "every atom, every residue", True),
-    ("Prep tree parent links are declared bonds", "all four residues", True),
+    ("parmchk2 parameters flagged “ATTN, need revision”", "__PARAMS_FLAGGED__", True),
+    ("Assigned GAFF type implies the declared element", "__PARAMS_ELEMENTS__", True),
+    ("Prep tree parent links are declared bonds", "__PARAMS_TREE__", True),
     ("tleap errors on the assembled chimera", "0", True),
     ("Net charge, every system", "integral to &lt; 1×10⁻⁴", True),
     ("Carbamate bonds present in the prmtop", "2 / 2 per chimera, asserted", True),
@@ -472,11 +512,22 @@ def build(args):
     strongest = max(sp, key=lambda k: sp[k]["force_pN"]["mean"]) if sp else None
     clamp6 = f.get("clamp", {}).get("S6_clamp", {})
     ext = f.get("extension", {})
-    zero = ext.get("zero_force_ref", {}).get("mean")
+    # TWO zeros, deliberately, because the tables below need different ones and sharing
+    # one variable is how the retracted comparison stayed on the page after the prose
+    # retracting it went up.  The clamp ladder runs on the UNCLICKED protein, so
+    # unclicked-at-0-pN is its own correct and self-consistent reference -- its 0 pN row
+    # has to read +0.000.  A chimera's zero is the clicked, unloaded control, because
+    # every chimera carries the clicked adduct and clicking alone moves the sites 0.65 A.
+    zero_unclicked = ext.get("zero_force_ref", {}).get("mean")
+    zero_clicked = ext.get("matched_control", {}).get("mean") or zero_unclicked
 
     # ---------- hero ----------
     hero_force = (f"{sp[strongest]['force_pN']['mean']:.1f} pN" if strongest else "—")
-    hero_sub = (f"{sp[strongest]['label']}, from a 5′P–5′P span of "
+    # "5'P-5'P" described the superseded attachment, where a linker sat on each of two
+    # strands.  The distance is now measured between whichever nucleotide atoms the
+    # linkers are actually bonded to, which for the corrected build is one strand's 5' P
+    # and its own 3' O3'.  It is also a MODELLED force, and the hero stat should say so.
+    hero_sub = (f"{sp[strongest]['label']}, modelled from an end-to-end span of "
                 f"{sp[strongest]['x_A']['mean']:.0f} Å" if strongest else "")
     kap = clamp6.get("kappa_lower_bound_kT_nm2")
 
@@ -490,7 +541,7 @@ def build(args):
         <td class="num">{pm(v['energy_kT'], 1)}</td>
         <td class="num">{pm(v['bend_total_deg'], 0)}</td>
         <td class="num">{v['bp_open']['mean']:.2f}</td>
-        <td class="num">{v['extension_A']['mean'] - zero:+.2f}</td></tr>"""
+        <td class="num">{v['extension_A']['mean'] - zero_clicked:+.2f}</td></tr>"""
         for k, v in sp.items())
 
     # ---------- clamp ladder ----------
@@ -499,7 +550,7 @@ def build(args):
         <td class="num">{r['mean']:.3f}</td><td class="num">{r['sem']:.3f}</td>
         <td class="num">{r['min']:.3f} – {r['max']:.3f}</td>
         <td class="num">{r['n']}</td>
-        <td class="num">{r['mean'] - zero:+.3f}</td></tr>"""
+        <td class="num">{r['mean'] - zero_unclicked:+.3f}</td></tr>"""
         for r in clamp6.get("ladder", []))
 
     # ---------- extension table ----------
@@ -517,7 +568,7 @@ def build(args):
         <td class="num">{v['mean']:.3f}</td><td class="num">{v['sem']:.3f}</td>
         <td class="num">{v['min']:.3f} – {v['max']:.3f}</td>
         <td class="num">{v['n']}</td>
-        <td class="num">{v['mean'] - zero:+.3f}</td></tr>\n""")
+        <td class="num">{v['mean'] - zero_clicked:+.3f}</td></tr>\n""")
 
     # ---------- H-bond table ----------
     cols = [k for k in ("S0_wt", "S1_tet", "S2_clicked", "S3_spring27",
@@ -560,8 +611,17 @@ def build(args):
         <td class="num">{r['net_charge']:+.4f}</td>
         <td>{PURPOSE.get(k, '')}</td></tr>"""
         for k, r in systems.items() if k in LABEL)
+    ps = params_summary(Path(args.root))
+    _pv = {
+        "__PARAMS_FLAGGED__": (f"{ps['flagged']}, all {ps['n']} custom residues "
+                               f"({ps['names']})" if ps else "0"),
+        "__PARAMS_ELEMENTS__": (f"{ps['atoms']} atoms across {ps['n']} residues, "
+                                f"{ps['mismatches']} mismatches" if ps
+                                else "every atom, every residue"),
+        "__PARAMS_TREE__": (f"all {ps['n']} residues" if ps else "every residue"),
+    }
     rows_ver = "\n".join(
-        f"""<tr><td>{v[0]}</td><td class="mono">{v[1]}</td>
+        f"""<tr><td>{v[0]}</td><td class="mono">{_pv.get(v[1], v[1])}</td>
         <td class="badge {'ok' if v[2] else 'warn'}">{'pass' if v[2] else 'check'}</td></tr>"""
         for v in VER)
     rows_steps = "\n".join(
@@ -688,7 +748,8 @@ def build(args):
       <div class="s">k<sub>B</sub>T nm⁻², a bound not a value — see below</div></div>
     <div class="stat ok"><div class="k">invented parameters</div>
       <div class="v">0</div>
-      <div class="s">nothing flagged for review across the four custom residues</div></div>
+      <div class="s">nothing flagged for review across the
+      {ps['n'] if ps else 'seven'} custom residues</div></div>
   </div>
 </header>
 
@@ -744,7 +805,8 @@ def build(args):
   <div class="tbl-wrap"><table>
     <thead><tr><th>spring</th><th>contour (Å)</th><th>span x (Å)</th>
     <th>τ<sub>c</sub></th><th>force (pN)</th><th>energy (k<sub>B</sub>T)</th>
-    <th>total bend (°)</th><th>bp open</th><th>Δ extension (Å)</th></tr></thead>
+    <th>total bend (°)</th><th>bp open</th>
+    <th>Δ Cβ–Cβ vs clicked control (Å)</th></tr></thead>
     <tbody>{spring_rows}</tbody></table></div>
   <div class="col">
     <p>Every force here is Zocchi’s <em>f(x)</em>{cite_spring} evaluated at the end-to-end distance
@@ -862,7 +924,7 @@ def build(args):
     <span class="tag">Cβ–Cβ separation, Asp133–Asn149</span></div>
   <div class="tbl-wrap"><table>
     <thead><tr><th>system</th><th>force (pN)</th><th>mean (Å)</th><th>s.e.m.</th>
-    <th>replicate range</th><th>n</th><th>Δ vs 0 pN</th></tr></thead>
+    <th>replicate range</th><th>n</th><th>Δ vs clicked control (Å)</th></tr></thead>
     <tbody>{ext_rows}</tbody></table></div>
   <div class="col">
     <h3>The protein is stiff; how stiff, we can only bound</h3>
@@ -1147,5 +1209,6 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=str(ROOT))
     ap.add_argument("--out", default=str(ROOT / "report" / "sfgfp_dna_spring_report.html"))
-    ap.add_argument("--anim", default="S3_spring27")
+    # the corrected closed-loop build, not the superseded two-arm one
+    ap.add_argument("--anim", default="L3_loop27")
     build(ap.parse_args())

@@ -351,8 +351,12 @@ def build_one(name: str, outdir: Path, args) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--outdir", default=str(HERE))
+    # All seven by default, so PARAMS_REPORT.json describes the whole set.  It holds
+    # only the residues of the LAST invocation, so running a subset silently narrows
+    # what the report's verification table can quote -- which is how it came to say
+    # "all four custom residues" long after there were seven.
     ap.add_argument("--residues", nargs="+",
-                    default=["TET", "TDP", "DNL", "DNH", "DNP"])
+                    default=["TET", "TDP", "DNL", "DNH", "DNP", "CMS", "CDB"])
     ap.add_argument("--force", action="store_true", help="redo the AM1-BCC step")
     for tool in ("antechamber", "prepgen", "parmchk2"):
         ap.add_argument(f"--{tool}", default=shutil.which(tool) or tool)

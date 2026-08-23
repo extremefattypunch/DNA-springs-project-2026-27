@@ -120,7 +120,7 @@
 
 <div class="wrap">
 <header class="mast">
-  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-23 10:37 UTC</p>
+  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-23 14:20 UTC</p>
   <h1>A DNA spring, wound around a fluorescent protein</h1>
   <p class="lede">Two amber codons put a tetrazine amino acid<sup><a href="#ref-6" class="cite">6</a>,<a href="#ref-7" class="cite">7</a></sup> on adjacent
   strands of sfGFP’s β-barrel<sup><a href="#ref-1" class="cite">1</a></sup>. A doubly-modified DNA duplex clicks onto both, and because dsDNA is
@@ -130,17 +130,18 @@
   and which of the apparent effects survive their own error bars.</p>
   <div class="stats">
     <div class="stat force"><div class="k">strongest spring</div>
-      <div class="v">4.8 pN</div><div class="s">27 bp, from a 5′P–5′P span of 52 Å</div></div>
+      <div class="v">4.8 pN</div><div class="s">27 bp, modelled from an end-to-end span of 52 Å</div></div>
     <div class="stat"><div class="k">production analysed</div>
       <div class="v">2,550 ns</div>
       <div class="s">51 replicates across
-      6 systems</div></div>
+      16 systems</div></div>
     <div class="stat"><div class="k">protein stiffness</div>
       <div class="v">&gt; 107</div>
       <div class="s">k<sub>B</sub>T nm⁻², a bound not a value — see below</div></div>
     <div class="stat ok"><div class="k">invented parameters</div>
       <div class="v">0</div>
-      <div class="s">nothing flagged for review across the four custom residues</div></div>
+      <div class="s">nothing flagged for review across the
+      7 custom residues</div></div>
   </div>
 </header>
 
@@ -196,7 +197,8 @@
   <div class="tbl-wrap"><table>
     <thead><tr><th>spring</th><th>contour (Å)</th><th>span x (Å)</th>
     <th>τ<sub>c</sub></th><th>force (pN)</th><th>energy (k<sub>B</sub>T)</th>
-    <th>total bend (°)</th><th>bp open</th><th>Δ extension (Å)</th></tr></thead>
+    <th>total bend (°)</th><th>bp open</th>
+    <th>Δ Cβ–Cβ vs clicked control (Å)</th></tr></thead>
     <tbody><tr><td>27 bp</td>
         <td class="num">89</td>
         <td class="num">52.4 ± 1.5</td>
@@ -205,7 +207,7 @@
         <td class="num">7.6 ± 0.2</td>
         <td class="num">45 ± 2</td>
         <td class="num">0.11</td>
-        <td class="num">+0.69</td></tr>
+        <td class="num">+0.02</td></tr>
 <tr><td>40 bp</td>
         <td class="num">132</td>
         <td class="num">62.5 ± 1.8</td>
@@ -214,7 +216,7 @@
         <td class="num">8.7 ± 0.1</td>
         <td class="num">127 ± 3</td>
         <td class="num">0.07</td>
-        <td class="num">+0.46</td></tr>
+        <td class="num">-0.20</td></tr>
 <tr><td>40 bp, nicked</td>
         <td class="num">132</td>
         <td class="num">60.8 ± 2.9</td>
@@ -223,7 +225,7 @@
         <td class="num">7.0 ± 0.2</td>
         <td class="num">129 ± 5</td>
         <td class="num">0.03</td>
-        <td class="num">+0.25</td></tr></tbody></table></div>
+        <td class="num">-0.42</td></tr></tbody></table></div>
   <div class="col">
     <p>Every force here is Zocchi’s <em>f(x)</em><sup><a href="#ref-8" class="cite">8</a>,<a href="#ref-9" class="cite">9</a>,<a href="#ref-10" class="cite">10</a></sup> evaluated at the end-to-end distance
     the simulation itself settles at, not at an assumed one. The construct is not free
@@ -267,11 +269,20 @@
     is mostly the last two.</p>
 
     <h4>The curvature we impose is below where all-atom MD nucleates kinks</h4>
-    <p>Our radius of 31–34 Å is 5.7–6.3° per base-pair step, equivalent to a 57–63 bp
-    minicircle. (For scale: that is about 25% <em>tighter</em> in radius than nucleosomal
-    DNA, which runs at ~42 Å and ~4.6°/bp — not "roughly nucleosomal", as an earlier
-    version of this page said.) Converting each published criterion to a threshold radius
-    through <em>R</em> = <em>B</em>/τ<sub>c</sub>:</p>
+    <p>The duplexes are built at <em>R</em> = 41–44 Å and relax over the run to
+    <strong>37–41 Å, i.e. 4.8–5.2° per base-pair step</strong> (measured, one-turn
+    smoothed, 18 replicates), equivalent to a 70–78 bp minicircle. That is essentially
+    <em>nucleosomal</em> curvature — 42 Å and 4.6°/bp — and about
+    <strong>56% of the curvature at which all-atom MD nucleates kinks</strong>.</p>
+    <div class="note"><div class="h">Correcting a correction</div>
+      <p>An earlier version of this page said 31–34 Å and 5.7–6.3°/bp, and a version after
+      that "corrected" it to being 25% tighter than nucleosomal. Both were wrong: 31–34 Å
+      was a figure I had carried over without checking it against the trajectories, and
+      the numbers above are what the bend analysis actually reports. The conclusion is
+      unaffected in direction and slightly strengthened in degree — we are further below
+      the kinking threshold than either earlier version implied.</p></div>
+    <p>Converting each published criterion to a threshold radius through
+    <em>R</em> = <em>B</em>/τ<sub>c</sub>:</p>
 
     <div class="tbl-wrap"><table>
       <thead><tr><th>source</th><th>criterion</th><th>threshold R</th><th>°/bp</th></tr></thead>
@@ -281,16 +292,16 @@
       <tr><td>Vologodskii &amp; Frank-Kamenetskii 2013; Du 2008</td><td>nuclease probing</td><td>35–40 Å</td><td>4.9–5.6</td></tr>
       <tr><td>Fields, Meyer &amp; Cohen 2013</td><td>FRET “molecular vice”, WLC linear to 7°/bp</td><td>≤28 Å</td><td>7</td></tr>
       <tr><td>Curuksu <em>et al.</em> 2009</td><td>umbrella sampling, same force-field family</td><td>21–23 Å</td><td><strong>8.6–9.3</strong></td></tr>
-      <tr class="hi"><td><strong>this work</strong></td><td>bent duplex in the chimera</td><td><strong>31–34 Å</strong></td><td><strong>5.7–6.3</strong></td></tr>
+      <tr class="hi"><td><strong>this work</strong></td><td>bent duplex in the chimera, measured</td><td><strong>37–41 Å</strong></td><td><strong>4.8–5.2</strong></td></tr>
       </tbody></table></div>
 
     <p>Zocchi’s τ<sub>c</sub> is the most kink-friendly estimate in the field: it places
     the softening transition at a <em>gentler</em> bend than a nucleosome, where every
     independent estimate is 1.3–2.7× stiffer. The one directly comparable calculation —
     Curuksu <em>et al.</em>’s umbrella sampling on a bent linear duplex in the same
-    force-field family — finds type II kinks only above 8.6–9.3° per step, <strong>40–60%
-    more curvature than we impose</strong>. On that criterion, not seeing a kink is the
-    expected result rather than an anomaly.</p>
+    force-field family — finds type II kinks only above 8.6–9.3° per step, which is
+    <strong>almost twice the curvature we impose</strong>. On that criterion, not seeing a
+    kink is the expected result rather than an anomaly.</p>
 
     <h4>45 ns is short by two to five orders of magnitude</h4>
     <p>Base-pair lifetimes measured by NMR imino exchange are 1–40 ms, so the per-pair
@@ -331,43 +342,43 @@
     <span class="tag">Cβ–Cβ separation, Asp133–Asn149</span></div>
   <div class="tbl-wrap"><table>
     <thead><tr><th>system</th><th>force (pN)</th><th>mean (Å)</th><th>s.e.m.</th>
-    <th>replicate range</th><th>n</th><th>Δ vs 0 pN</th></tr></thead>
+    <th>replicate range</th><th>n</th><th>Δ vs clicked control (Å)</th></tr></thead>
     <tbody><tr>
         <td>WT sfGFP</td><td class="num">0 (by construction)</td>
         <td class="num">32.245</td><td class="num">0.059</td>
         <td class="num">32.127 – 32.312</td>
         <td class="num">3</td>
-        <td class="num">+0.638</td></tr>
+        <td class="num">-0.030</td></tr>
 <tr>
         <td>2× Tet2-Et</td><td class="num">0 (by construction)</td>
         <td class="num">31.627</td><td class="num">0.022</td>
         <td class="num">31.588 – 31.663</td>
         <td class="num">3</td>
-        <td class="num">+0.020</td></tr>
+        <td class="num">-0.647</td></tr>
 <tr>
         <td>clicked, no DNA</td><td class="num">0 (by construction)</td>
         <td class="num">32.291</td><td class="num">0.029</td>
         <td class="num">32.144 – 32.452</td>
         <td class="num">9</td>
-        <td class="num">+0.684</td></tr>
+        <td class="num">+0.016</td></tr>
 <tr class="hl">
-        <td>27 bp spring</td><td class="num">4.82</td>
+        <td>27 bp, two-arm</td><td class="num">4.82</td>
         <td class="num">32.296</td><td class="num">0.096</td>
         <td class="num">31.972 – 32.683</td>
         <td class="num">6</td>
-        <td class="num">+0.689</td></tr>
+        <td class="num">+0.021</td></tr>
 <tr class="hl">
-        <td>40 bp spring</td><td class="num">2.99</td>
+        <td>40 bp, two-arm</td><td class="num">2.99</td>
         <td class="num">32.069</td><td class="num">0.081</td>
         <td class="num">31.859 – 32.411</td>
         <td class="num">6</td>
-        <td class="num">+0.462</td></tr>
+        <td class="num">-0.205</td></tr>
 <tr class="hl">
-        <td>40 bp nicked</td><td class="num">2.34</td>
+        <td>40 bp nicked, two-arm</td><td class="num">2.34</td>
         <td class="num">31.856</td><td class="num">0.110</td>
         <td class="num">31.502 – 32.281</td>
         <td class="num">6</td>
-        <td class="num">+0.249</td></tr>
+        <td class="num">-0.418</td></tr>
 </tbody></table></div>
   <div class="col">
     <h3>The protein is stiff; how stiff, we can only bound</h3>
@@ -532,7 +543,7 @@
   <div class="sec-head"><h2>The chromophore</h2>
     <span class="tag">occupancy on H···A and D–H···A, not heavy atoms</span></div>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>hydrogen bond</th><th>WT sfGFP</th><th>2× Tet2-Et</th><th>clicked, no DNA</th><th>27 bp spring</th><th>40 bp spring</th><th>40 bp nicked</th></tr></thead>
+    <thead><tr><th>hydrogen bond</th><th>WT sfGFP</th><th>2× Tet2-Et</th><th>clicked, no DNA</th><th>27 bp, two-arm</th><th>40 bp, two-arm</th><th>40 bp nicked, two-arm</th></tr></thead>
     <tbody><tr><td>Arg96 NH2-H → imidazolinone O2 </td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td><td class="num">100<span style="color:var(--ink-3)"> (100–100)</span></td></tr>
 <tr><td>Thr203 OG1-H → chromophore phenolate </td><td class="num">96<span style="color:var(--ink-3)"> (96–97)</span></td><td class="num">96<span style="color:var(--ink-3)"> (94–97)</span></td><td class="num">97<span style="color:var(--ink-3)"> (93–98)</span></td><td class="num">97<span style="color:var(--ink-3)"> (94–100)</span></td><td class="num">97<span style="color:var(--ink-3)"> (95–99)</span></td><td class="num">96<span style="color:var(--ink-3)"> (92–99)</span></td></tr>
 <tr><td>Gln94 NE2-H → imidazolinone O2 </td><td class="num">97<span style="color:var(--ink-3)"> (96–98)</span></td><td class="num">94<span style="color:var(--ink-3)"> (92–97)</span></td><td class="num">95<span style="color:var(--ink-3)"> (92–98)</span></td><td class="num">93<span style="color:var(--ink-3)"> (86–97)</span></td><td class="num">92<span style="color:var(--ink-3)"> (82–96)</span></td><td class="num">94<span style="color:var(--ink-3)"> (84–98)</span></td></tr>
@@ -588,15 +599,15 @@
         <td class="num">5.35 ± 0.05</td><td class="num">6.09 ± 0.07</td>
         <td class="num">9.9 ± 1.2</td>
         <td class="num">0.665 ± 0.016</td></tr>
-<tr><td>27 bp spring</td>
+<tr><td>27 bp, two-arm</td>
         <td class="num">5.26 ± 0.05</td><td class="num">6.21 ± 0.11</td>
         <td class="num">10.6 ± 1.2</td>
         <td class="num">0.780 ± 0.034</td></tr>
-<tr><td>40 bp spring</td>
+<tr><td>40 bp, two-arm</td>
         <td class="num">5.41 ± 0.07</td><td class="num">6.15 ± 0.11</td>
         <td class="num">9.1 ± 1.1</td>
         <td class="num">0.760 ± 0.033</td></tr>
-<tr><td>40 bp nicked</td>
+<tr><td>40 bp nicked, two-arm</td>
         <td class="num">5.19 ± 0.08</td><td class="num">6.12 ± 0.05</td>
         <td class="num">9.0 ± 0.5</td>
         <td class="num">0.763 ± 0.035</td></tr>
@@ -702,7 +713,27 @@
     <span class="tag">explicit solvent · 150 mM NaCl · 300 K</span></div>
   <div class="tbl-wrap"><table>
     <thead><tr><th>id</th><th>system</th><th>atoms</th><th>net charge</th>
-    <th>what it is for</th></tr></thead><tbody><tr><td class="mono">S0_wt</td><td>WT sfGFP</td>
+    <th>what it is for</th></tr></thead><tbody><tr><td class="mono">C1_ss50</td><td>50 nt ssDNA, closed loop</td>
+        <td class="num">136,685</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">C2_ssarms</td><td>two 25 nt arms</td>
+        <td class="num">134,153</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">L3_loop27</td><td>27 bp, closed loop</td>
+        <td class="num">82,472</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">L4_loop40</td><td>40 bp, closed loop</td>
+        <td class="num">110,002</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">L5_loop40nick</td><td>40 bp nicked, closed loop</td>
+        <td class="num">110,012</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">S0_wt</td><td>WT sfGFP</td>
         <td class="num">44,016</td>
         <td class="num">-0.0000</td>
         <td>Baseline. Validates the published chromophore parameters against a structure nobody modified.</td></tr>
@@ -714,18 +745,38 @@
         <td class="num">63,731</td>
         <td class="num">-0.0000</td>
         <td>The clicked tether with no DNA: the zero-force reference with a chimera’s own chemistry.</td></tr>
-<tr><td class="mono">S3_spring27</td><td>27 bp spring</td>
+<tr><td class="mono">S3_spring27</td><td>27 bp, two-arm</td>
         <td class="num">86,126</td>
         <td class="num">-0.0000</td>
-        <td>The strong spring.</td></tr>
-<tr><td class="mono">S4_spring40</td><td>40 bp spring</td>
+        <td>27 bp spring, <strong>two-arm</strong> construct — one linker on each of two strands, no covalent cycle. Superseded by <code>L3_loop27</code>; kept as the non-circular comparison.</td></tr>
+<tr><td class="mono">S4_spring40</td><td>40 bp, two-arm</td>
         <td class="num">121,404</td>
         <td class="num">-0.0000</td>
-        <td>Zocchi’s mechanically clean length (γ &lt; 1).</td></tr>
-<tr><td class="mono">S5_spring40nick</td><td>40 bp nicked</td>
+        <td>40 bp, two-arm construct. Zocchi’s mechanically clean length (γ &lt; 1). Superseded by <code>L4_loop40</code>.</td></tr>
+<tr><td class="mono">S5_spring40nick</td><td>40 bp nicked, two-arm</td>
         <td class="num">121,420</td>
         <td class="num">-0.0000</td>
-        <td>Nicked at the centre — his calibrated low-stress reference.</td></tr></tbody></table></div>
+        <td>40 bp two-arm construct, nicked at the centre of one strand. Superseded by <code>L5_loop40nick</code>, where the nick moves to the complement so the loop stays closed.</td></tr>
+<tr><td class="mono">U0_apo</td><td>ubiquitin, apo</td>
+        <td class="num">19,497</td>
+        <td class="num">-0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">U1_clicked</td><td>ubiquitin, clicked, no DNA</td>
+        <td class="num">58,184</td>
+        <td class="num">+0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">U2_ss50</td><td>ubiquitin, 50 nt ssDNA loop</td>
+        <td class="num">124,044</td>
+        <td class="num">+0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">U3_ds50</td><td>ubiquitin, 50 bp dsDNA loop</td>
+        <td class="num">123,384</td>
+        <td class="num">+0.0000</td>
+        <td></td></tr>
+<tr><td class="mono">U4_ssarms</td><td>ubiquitin, two 25 nt arms</td>
+        <td class="num">119,758</td>
+        <td class="num">+0.0000</td>
+        <td></td></tr></tbody></table></div>
 </section>
 
 <section>
@@ -755,11 +806,11 @@
         <td class="badge ok">pass</td></tr>
 <tr><td>CRO net charge from the library</td><td class="mono">−1.0000 exactly</td>
         <td class="badge ok">pass</td></tr>
-<tr><td>parmchk2 parameters flagged “ATTN, need revision”</td><td class="mono">0, all four custom residues</td>
+<tr><td>parmchk2 parameters flagged “ATTN, need revision”</td><td class="mono">0, all 7 custom residues (TET, TDP, DNL, DNH, DNP, CMS, CDB)</td>
         <td class="badge ok">pass</td></tr>
-<tr><td>Assigned GAFF type implies the declared element</td><td class="mono">every atom, every residue</td>
+<tr><td>Assigned GAFF type implies the declared element</td><td class="mono">235 atoms across 7 residues, 0 mismatches</td>
         <td class="badge ok">pass</td></tr>
-<tr><td>Prep tree parent links are declared bonds</td><td class="mono">all four residues</td>
+<tr><td>Prep tree parent links are declared bonds</td><td class="mono">all 7 residues</td>
         <td class="badge ok">pass</td></tr>
 <tr><td>tleap errors on the assembled chimera</td><td class="mono">0</td>
         <td class="badge ok">pass</td></tr>
@@ -802,6 +853,6 @@
   Generated by <code>report/build_report.py</code> from <code>analysis/findings.json</code>
   and the per-run analyses. Regenerate with <code>bash finalize.sh</code> after any run
   extends. 51 replicates · 2,550 ns ·
-  systems analysed: WT sfGFP, 2× Tet2-Et, clicked, no DNA, 27 bp spring, 40 bp spring, 40 bp nicked, force clamp.
+  systems analysed: WT sfGFP, 2× Tet2-Et, clicked, no DNA, 27 bp, two-arm, 40 bp, two-arm, 40 bp nicked, two-arm, force clamp.
 </footer>
 </div>
