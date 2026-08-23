@@ -65,8 +65,15 @@ def min_image_limit(traj) -> float:
     return 0.5 * min(widths)
 
 
-def molecule_ids(top):
+def molecule_ids(top, cut=()):
     """atom index -> molecule id, molecules being connected components of the bonds.
+
+    `cut` is a set of frozenset({i, j}) bonds to ignore.  Cutting the two C-alpha--C-beta
+    bonds at the modified residues turns this into the covalent-cycle test: afterwards the
+    two attachment atoms are in one component only if a path runs out along one tether,
+    through the DNA and back along the other.  Without the cut every construct looks
+    connected, because both tethers hang off the protein -- which is exactly the mistake
+    that let the original two-arm build pass as a closed loop.
 
     Built here rather than taken from ``top.find_molecules()`` so the result is a plain
     array that can be indexed cheaply, and so the same definition is used everywhere.
@@ -81,6 +88,8 @@ def molecule_ids(top):
         return x
 
     for b in top.bonds:
+        if frozenset((b[0].index, b[1].index)) in cut:
+            continue
         i, j = find(b[0].index), find(b[1].index)
         if i != j:
             parent[i] = j

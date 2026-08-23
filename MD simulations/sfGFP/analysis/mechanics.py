@@ -168,12 +168,31 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
             tail = next(x for x in last_res.atoms if x.name == "O3'")
             attach = [(head.index, first_res.index, head.name),
                       (tail.index, last_res.index, tail.name)]
-        one_strand = len({top.atom(i).residue.chain.index for i, _, _ in attach}) == 1
+        # Being on one CHAIN is not the same as being on one molecule.  The two-arm
+        # controls are written as a single chain with a break in the middle, so a chain
+        # test called C2_ssarms and U4_ssarms "closed covalent loop" -- exactly the label
+        # they exist to be the opposite of.  Ask the bond graph instead: is there a
+        # covalent path from one attachment atom to the other?
+        one_chain = len({top.atom(i).residue.chain.index for i, _, _ in attach}) == 1
+        # Cut the two C-alpha--C-beta bonds first.  Without that every construct is
+        # "connected", because both tethers hang off the protein backbone -- which is the
+        # very mistake this project had to correct, so the analysis must not repeat it.
+        cb_i, cb_j = i, j                       # the two attachment C-beta, from part 1
+        cut = set()
+        for cb in (cb_i, cb_j):
+            ca = next((b[1].index if b[0].index == cb else b[0].index)
+                      for b in top.bonds
+                      if cb in (b[0].index, b[1].index)
+                      and (b[0].name == "CA" or b[1].name == "CA"))
+            cut.add(frozenset((cb, ca)))
+        cut_mols = geometry.molecule_ids(top, cut)
+        connected = bool(cut_mols[attach[0][0]] == cut_mols[attach[1][0]])
         summary["attachment"] = {
             "atoms": [f"{top.atom(i).residue.name}{top.atom(i).residue.resSeq}.{nm}"
                       for i, _, nm in attach],
-            "same_strand": one_strand,
-            "topology": "closed covalent loop" if one_strand else "two separate arms"}
+            "same_chain": one_chain, "same_molecule": connected,
+            "topology": ("closed covalent loop" if connected else
+                         "two separate arms — no covalent path between the sites")}
         print(f"  attachment: {summary['attachment']['atoms']} -> "
               f"{summary['attachment']['topology']}")
         # THIS is the one the convention actually mattered for.  The spring's ends are
@@ -253,22 +272,22 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
             else:
                 ss = SsSpring(n_units)
             if ss is not None:
-                    ten = np.array([ss.tension(x / 10.0) for x in d])
-            rows["ss_tension_pN"] = ten
-            summary["ss_spring"] = {
-                "kind": "ssDNA worm-like chain (pulls)",
-                "model": "Marko-Siggia; MODELLED, not measured",
-                "n_nt": n_units, "contour_nm": round(ss.L0, 3),
-                "persistence_nm": ss.xi,
-                "natural_rms_end_to_end_nm": round(ss.rms_end_to_end, 3),
-                "x_mean_A": round(float(d.mean()), 3),
-                "x_sd_A": round(float(d.std()), 3),
-                "tension_pN_mean": round(float(ten.mean()), 3),
-                "state": ss.state(float(d.mean()) / 10.0)}
-            print(f"  ssDNA end-to-end: {d.mean():.2f} +/- {d.std():.2f} A "
-                  f"(natural rms {10 * ss.rms_end_to_end:.1f} A, contour "
-                  f"{10 * ss.L0:.1f} A) -> {summary['ss_spring']['state']}, "
-                  f"tension {ten.mean():.2f} pN")
+                ten = np.array([ss.tension(x / 10.0) for x in d])
+                rows["ss_tension_pN"] = ten
+                summary["ss_spring"] = {
+                    "kind": "ssDNA worm-like chain (pulls)",
+                    "model": "Marko-Siggia; MODELLED, not measured",
+                    "n_nt": n_units, "contour_nm": round(ss.L0, 3),
+                    "persistence_nm": ss.xi,
+                    "natural_rms_end_to_end_nm": round(ss.rms_end_to_end, 3),
+                    "x_mean_A": round(float(d.mean()), 3),
+                    "x_sd_A": round(float(d.std()), 3),
+                    "tension_pN_mean": round(float(ten.mean()), 3),
+                    "state": ss.state(float(d.mean()) / 10.0)}
+                print(f"  ssDNA end-to-end: {d.mean():.2f} +/- {d.std():.2f} A "
+                      f"(natural rms {10 * ss.rms_end_to_end:.1f} A, contour "
+                      f"{10 * ss.L0:.1f} A) -> {summary['ss_spring']['state']}, "
+                      f"tension {ten.mean():.2f} pN")
 
         # Sections 3 onward are about a DUPLEX: base pairs that can open and a
         # helical axis that can bend.  A single strand has neither, so they are

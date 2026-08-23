@@ -85,6 +85,11 @@ def main():
     ap.add_argument("--sites", nargs=2, type=int, default=[133, 149],
                     help="override the modified residues; by default each system's own "
                          "pair is recovered from its clamp_atoms.txt")
+    ap.add_argument("--only", nargs="+", default=None, metavar="SYSTEM",
+                    help="re-analyse just these systems and MERGE the result into the "
+                         "existing summary, leaving every other row untouched.  A full "
+                         "pass costs the better part of an hour, and most code fixes "
+                         "touch one code path on a handful of systems.")
     ap.add_argument("--min-ns", type=float, default=1.0,
                     help="skip replicates with less than this much production")
     ap.add_argument("--skip-ns", type=float, default=5.0,
@@ -101,6 +106,8 @@ def main():
         if tag.startswith("_"):
             continue
         base, clamp = split_tag(tag)
+        if args.only and base not in args.only:
+            continue
         sysdir = Path(args.systems) / base
         top, rmap = sysdir / "system.prmtop", sysdir / "residue_map.json"
         if not top.exists() or not rmap.exists():
@@ -154,9 +161,19 @@ def main():
 
     if not rows:
         sys.exit("no replicates with enough production yet")
-    df = pd.DataFrame(rows).sort_values(["system", "clamp_pN", "replicate"])
+    df = pd.DataFrame(rows)
     out = Path(args.out)
-    df.to_csv(out / "summary.csv", index=False)
+    prev = out / "summary.csv"
+    if args.only and prev.exists():
+        # Keep every row this pass did not recompute.  Concat rather than update in place,
+        # because a re-analysed system can legitimately gain or lose columns -- that is
+        # usually WHY it is being re-analysed -- and pandas aligns them for us.
+        old = pd.read_csv(prev)
+        keep = old[~old.system.isin(args.only)]
+        df = pd.concat([keep, df], ignore_index=True, sort=False)
+        print(f"  merged {len(rows)} recomputed rows into {len(keep)} kept rows")
+    df = df.sort_values(["system", "clamp_pN", "replicate"])
+    df.to_csv(prev, index=False)
     print(f"\nwrote {out / 'summary.csv'}: {len(df)} replicates, {len(df.columns)} columns")
     for s, g in df.groupby("system"):
         print(f"  {s:<16} {len(g)} replicate(s), {g['ns'].sum():.0f} ns total")
