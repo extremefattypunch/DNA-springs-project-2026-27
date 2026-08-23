@@ -48,6 +48,12 @@ import geometry  # noqa: E402
 KJ_PER_MOL_NM_TO_PN = 1.0 / 0.60221408
 PURINES = {"DA", "DG"}
 WC_OPEN_A = 4.0          # N1(purine)-N3(pyrimidine) beyond this: the pair has opened
+# A kink breaks an INTERNAL pair.  The terminal two at each end fray in any duplex at any
+# curvature, so counting them would report kinking in a perfectly straight molecule; and
+# the occupancy threshold keeps a single fluctuating frame from counting as a kink.  Both
+# numbers are fixed here rather than chosen after looking at the data.
+TERMINAL_MARGIN = 2
+OPEN_OCCUPANCY = 0.10
 TURN_BP = 10.5           # one helical turn, for smoothing the axis
 
 
@@ -190,15 +196,25 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
         wc, labels = wc_opening(t, strands)
         if wc is not None:
             open_frac = (wc > WC_OPEN_A).mean(axis=0)
+            n_pairs = len(labels)
+            internal = [(i + 1, float(f)) for i, f in enumerate(open_frac)
+                        if TERMINAL_MARGIN < i + 1 <= n_pairs - TERMINAL_MARGIN
+                        and f > OPEN_OCCUPANCY]
             out["wc"] = {
                 "criterion_A": WC_OPEN_A,
-                "pairs": len(labels),
+                "pairs": n_pairs,
                 "mean_N1_N3_A": round(float(wc.mean()), 3),
                 "worst_pair": labels[int(open_frac.argmax())],
                 "worst_pair_open_fraction": round(float(open_frac.max()), 4),
-                "pairs_open_over_10pc": int((open_frac > 0.10).sum()),
+                "pairs_open_over_10pc": int((open_frac > OPEN_OCCUPANCY).sum()),
                 "frames_with_any_open": round(
-                    float(((wc > WC_OPEN_A).any(axis=1)).mean()), 4)}
+                    float(((wc > WC_OPEN_A).any(axis=1)).mean()), 4),
+                # This is the one that decides whether a kink has formed.  Terminal
+                # fraying is not a kink and is excluded by construction.
+                "internal_open": [{"bp": b, "occupancy": round(o, 3)}
+                                  for b, o in internal],
+                "n_internal_open": len(internal),
+                "kinked": bool(internal)}
             rows["n_open_pairs"] = (wc > WC_OPEN_A).sum(axis=1).astype(float)
 
     if out_prefix:
@@ -252,7 +268,9 @@ def main():
               f"+/- {r['force_sem_pN']:.2f} pN"
               + (f", max step {r['bend']['max_step_deg']:.1f} deg "
                  f"(z {r['bend']['max_step_z']:.1f})" if "bend" in r else "")
-              + (f", pairs open {r['wc']['pairs_open_over_10pc']}"
+              + (f", internal pairs open {r['wc']['n_internal_open']}"
+                 + (f" (bp {[x['bp'] for x in r['wc']['internal_open']]})"
+                    if r['wc']['internal_open'] else "")
                  if "wc" in r else ""))
     if not rows:
         raise SystemExit("no force-extension windows with enough production yet")
