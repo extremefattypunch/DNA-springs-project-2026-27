@@ -1,0 +1,35 @@
+{
+  "system": "K27_bp7",
+  "solute_pdb": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/03_dna/solute_K27_bp7.pdb",
+  "pad_A": 12.0,
+  "waters_pass1": 22136,
+  "nacl_pairs": 60,
+  "mgcl2": 2,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.005,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [],
+  "atoms": 67761,
+  "residues": 22190,
+  "bonds": 67716,
+  "net_charge": 0.0,
+  "box": [
+    99.077,
+    99.077,
+    99.077,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 21958,
+  "ions": {
+    "Na+": 112,
+    "Cl-": 64,
+    "MG": 2
+  },
+  "bonds_verified": [],
+  "dihedrals": 7121,
+  "angles": 3339,
+  "problems": []
+}

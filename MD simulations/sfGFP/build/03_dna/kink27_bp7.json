@@ -1,0 +1,23 @@
+{
+  "step": 7,
+  "n_bp": 27,
+  "roll_deg": -85.0,
+  "propeller_deg": 120.0,
+  "roll_axis": "through both O3'-P junctions",
+  "atoms_rolled": 817,
+  "base_rotated": {
+    "residue": "DC",
+    "atoms": 8,
+    "about": "C1'-N1"
+  },
+  "N1_N3_A": {
+    "6": 2.85,
+    "7": 4.75,
+    "8": 2.88
+  },
+  "local_bend_deg": 90.8,
+  "O3prime_P": [
+    1.64,
+    2.161
+  ]
+}

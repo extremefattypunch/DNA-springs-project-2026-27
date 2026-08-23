@@ -118,13 +118,33 @@ def seed(atoms, step: int, roll_deg: float, propeller_deg: float):
     report = {"step": step, "n_bp": n_bp, "roll_deg": roll_deg,
               "propeller_deg": propeller_deg}
 
-    # ---- 1. the roll ----
-    R = rodrigues(long_axis, math.radians(roll_deg))
+    # ---- 1. the roll, about the axis that runs THROUGH both backbone junctions ----
+    # The roll axis of a base-pair STEP is not the line through the base-pair centre.  It
+    # runs across the duplex between the two backbones, and the two O3'-P junctions being
+    # rolled about lie on it -- which is the whole point: atoms on the rotation axis do not
+    # move, so the backbone stays closed while the helix bends.
+    #
+    # Rolling about the base-pair centre instead tore both junctions open, to 7.3 A at the
+    # middle of the duplex and 35 A near its end, and no rigid translation can repair that:
+    # the two junctions are ~18 A apart across the helix, so a roll moves them in different
+    # directions and a single shift can only fix their average.  Putting the axis through
+    # them removes the problem rather than patching it.
+    up_a, dn_a = res[(a, step)].get(PRIME3), res[(a, step + 1)].get("P")
+    up_b, dn_b = res[(b, n_bp - step)].get(PRIME3), res[(b, n_bp + 1 - step)].get("P")
+    if all(x is not None for x in (up_a, dn_a, up_b, dn_b)):
+        j_a = 0.5 * (up_a["xyz"] + dn_a["xyz"])       # strand A's junction midpoint
+        j_b = 0.5 * (up_b["xyz"] + dn_b["xyz"])       # strand B's
+        pivot, axis = j_a, (j_b - j_a)
+        report["roll_axis"] = "through both O3'-P junctions"
+    else:
+        pivot, axis = centre, long_axis
+        report["roll_axis"] = "base-pair long axis (junction atoms not found)"
+    R = rodrigues(axis, math.radians(roll_deg))
     moved = 0
     for i in range(step + 1, n_bp + 1):
         for key in ((a, i), (b, n_bp + 1 - i)):
             for at in res[key].values():
-                at["xyz"] = centre + R @ (at["xyz"] - centre)
+                at["xyz"] = pivot + R @ (at["xyz"] - pivot)
                 moved += 1
     report["atoms_rolled"] = moved
 
@@ -189,7 +209,8 @@ def main():
     write_pdb(atoms, Path(a.out))
     Path(a.out).with_suffix(".json").write_text(json.dumps(rep, indent=2))
     print(f"seeded a kink at base pair {rep['step']} of {rep['n_bp']}")
-    print(f"  rolled {rep['atoms_rolled']} atoms by {a.roll:+.0f} deg about the long axis")
+    print(f"  rolled {rep['atoms_rolled']} atoms by {a.roll:+.0f} deg about an axis "
+          f"{rep.get('roll_axis','')}")
     print(f"  spun {rep['base_rotated']['atoms']} base atoms of "
           f"{rep['base_rotated']['residue']} by {a.propeller:+.0f} deg about "
           f"{rep['base_rotated']['about']}")
