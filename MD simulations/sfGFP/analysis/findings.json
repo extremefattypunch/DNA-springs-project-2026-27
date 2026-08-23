@@ -1390,6 +1390,20 @@
         31.901
       ]
     },
+    "C2_ssarms": {
+      "label": "two 25 nt arms",
+      "mean": 31.977999999999998,
+      "sd": 0.10393748120865776,
+      "sem": 0.06000833275471023,
+      "min": 31.869,
+      "max": 32.076,
+      "n": 3,
+      "values": [
+        32.076,
+        31.869,
+        31.989
+      ]
+    },
     "U0_apo": {
       "label": "ubiquitin, apo",
       "mean": 25.01533333333333,
@@ -1446,6 +1460,20 @@
         24.967
       ]
     },
+    "U4_ssarms": {
+      "label": "two 25 nt arms",
+      "mean": 24.766000000000002,
+      "sd": 0.24948747463550017,
+      "sem": 0.14404166064024596,
+      "min": 24.574,
+      "max": 25.048,
+      "n": 3,
+      "values": [
+        25.048,
+        24.574,
+        24.676
+      ]
+    },
     "tet_vs_wt": {
       "delta": -0.6173333333333311,
       "t": -9.813099842521243,
@@ -1483,7 +1511,7 @@
         "label": "27 bp, two-arm",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "S4_spring40": {
         "delta": -0.2049999999999983,
@@ -1499,7 +1527,7 @@
         "label": "40 bp, two-arm",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "S5_spring40nick": {
         "delta": -0.4183333333333401,
@@ -1511,11 +1539,11 @@
           3
         ],
         "resolved": true,
-        "p_bonferroni": 0.17098132641369426,
+        "p_bonferroni": 0.19540723018707915,
         "label": "40 bp nicked, two-arm",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "L3_loop27": {
         "delta": -0.4506666666666703,
@@ -1527,11 +1555,11 @@
           3
         ],
         "resolved": true,
-        "p_bonferroni": 0.14885437751664424,
+        "p_bonferroni": 0.17011928859045056,
         "label": "27 bp, closed loop",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "L4_loop40": {
         "delta": -0.48200000000000287,
@@ -1543,11 +1571,11 @@
           3
         ],
         "resolved": true,
-        "p_bonferroni": 0.21264664442439718,
+        "p_bonferroni": 0.24302473648502534,
         "label": "40 bp, closed loop",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "L5_loop40nick": {
         "delta": -0.5863333333333394,
@@ -1559,11 +1587,11 @@
           3
         ],
         "resolved": true,
-        "p_bonferroni": 0.09838351636603374,
+        "p_bonferroni": 0.11243830441832427,
         "label": "40 bp nicked, closed loop",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
       },
       "C1_ss50": {
         "delta": -0.3220000000000063,
@@ -1575,11 +1603,27 @@
           3
         ],
         "resolved": false,
-        "p_bonferroni": 0.44163532288967694,
+        "p_bonferroni": 0.5047260833024879,
         "label": "50 nt ssDNA, closed loop",
         "family": "sfGFP",
         "control": "S2_clicked",
-        "n_comparisons_in_family": 7
+        "n_comparisons_in_family": 8
+      },
+      "C2_ssarms": {
+        "delta": -0.2963333333333402,
+        "t": -2.6976825792117576,
+        "dof": 3.440799859304667,
+        "p": 0.06373673590856128,
+        "n": [
+          3,
+          3
+        ],
+        "resolved": false,
+        "p_bonferroni": 0.5098938872684903,
+        "label": "two 25 nt arms",
+        "family": "sfGFP",
+        "control": "S2_clicked",
+        "n_comparisons_in_family": 8
       },
       "U2_ss50": {
         "delta": -0.09433333333333849,
@@ -1591,11 +1635,11 @@
           3
         ],
         "resolved": false,
-        "p_bonferroni": 0.8240075131026141,
+        "p_bonferroni": 1.0,
         "label": "50 nt ssDNA, closed loop",
         "family": "ubiquitin",
         "control": "U1_clicked",
-        "n_comparisons_in_family": 2
+        "n_comparisons_in_family": 3
       },
       "U3_ds50": {
         "delta": -0.3196666666666701,
@@ -1607,11 +1651,27 @@
           3
         ],
         "resolved": false,
-        "p_bonferroni": 0.10372925484554554,
+        "p_bonferroni": 0.15559388226831833,
         "label": "50 bp dsDNA, closed loop",
         "family": "ubiquitin",
         "control": "U1_clicked",
-        "n_comparisons_in_family": 2
+        "n_comparisons_in_family": 3
+      },
+      "U4_ssarms": {
+        "delta": -0.4170000000000016,
+        "t": -2.5377341884648574,
+        "dof": 3.105135470422458,
+        "p": 0.0820204837132257,
+        "n": [
+          3,
+          3
+        ],
+        "resolved": false,
+        "p_bonferroni": 0.24606145113967712,
+        "label": "two 25 nt arms",
+        "family": "ubiquitin",
+        "control": "U1_clicked",
+        "n_comparisons_in_family": 3
       }
     },
     "chimera_slope_A_per_pN": 0.5408717677874096
@@ -2033,6 +2093,137 @@
       },
       "frames_with_contact": 0.9498666666666667,
       "residues_touched": 16.333333333333332
+    }
+  },
+  "topology": {
+    "pairs": {
+      "27 bp": {
+        "delta": -0.4720000000000013,
+        "t": -3.806531384095614,
+        "dof": 6.57565319376184,
+        "p": 0.0074884524321460295,
+        "n": [
+          3,
+          6
+        ],
+        "resolved": true,
+        "label": "27 bp",
+        "closed": "L3_loop27",
+        "open": "S3_spring27"
+      },
+      "40 bp": {
+        "delta": -0.2770000000000046,
+        "t": -3.3471567404365303,
+        "dof": 5.510341546683688,
+        "p": 0.017594877597848516,
+        "n": [
+          3,
+          6
+        ],
+        "resolved": true,
+        "label": "40 bp",
+        "closed": "L4_loop40",
+        "open": "S4_spring40"
+      },
+      "40 bp nicked": {
+        "delta": -0.16799999999999926,
+        "t": -1.1067043191410635,
+        "dof": 5.960098760612138,
+        "p": 0.3110780835742179,
+        "n": [
+          3,
+          6
+        ],
+        "resolved": false,
+        "label": "40 bp nicked",
+        "closed": "L5_loop40nick",
+        "open": "S5_spring40nick"
+      },
+      "50 nt ssDNA, sfGFP": {
+        "delta": -0.02566666666666606,
+        "t": -0.3910594856020397,
+        "dof": 2.755968427818894,
+        "p": 0.7240015430393969,
+        "n": [
+          3,
+          3
+        ],
+        "resolved": false,
+        "label": "50 nt ssDNA, sfGFP",
+        "closed": "C1_ss50",
+        "open": "C2_ssarms"
+      },
+      "50 nt ssDNA, ubiquitin": {
+        "delta": 0.3226666666666631,
+        "t": 2.0389523293417855,
+        "dof": 2.7940820390851164,
+        "p": 0.1408771035060091,
+        "n": [
+          3,
+          3
+        ],
+        "resolved": false,
+        "label": "50 nt ssDNA, ubiquitin",
+        "closed": "U2_ss50",
+        "open": "U4_ssarms"
+      }
+    },
+    "n_pairs": 5,
+    "closed_minus_open_A": [
+      -0.472,
+      -0.277,
+      -0.168,
+      -0.026,
+      0.323
+    ],
+    "mean_closed_minus_open_A": -0.124,
+    "all_same_sign": false,
+    "paired_across_pairs": {
+      "n_pairs": 5,
+      "mean_A": -0.124,
+      "t": -0.93,
+      "dof": 4,
+      "p": 0.4051,
+      "resolved": false
+    },
+    "duplex_pairs_planned": {
+      "n_pairs": 3,
+      "mean_A": -0.306,
+      "t": -3.438,
+      "dof": 2,
+      "p": 0.0752,
+      "resolved": false
+    },
+    "ssDNA_pairs": {
+      "deltas_A": [
+        -0.026,
+        0.323
+      ],
+      "reproduces_duplex_ordering": false
+    }
+  },
+  "is_it_a_spring": {
+    "n_constructs": 11,
+    "vs_modelled_force": {
+      "r": 0.084,
+      "p": 0.805
+    },
+    "mean_delta_no_spring": -0.282,
+    "mean_delta_with_spring": -0.349,
+    "vs_contact": {
+      "r": 0.324,
+      "p": 0.332
+    },
+    "no_spring_vs_spring": {
+      "delta": 0.06624999999999837,
+      "t": 0.6463347805734714,
+      "dof": 8.575541039190014,
+      "p": 0.5349745183923849,
+      "n": [
+        4,
+        7
+      ],
+      "resolved": false
     }
   },
   "hbonds": {

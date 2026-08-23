@@ -127,6 +127,22 @@ FIGS = [
      is spread at 3–8° per step across both spring lengths, and essentially no base
      pairs open, so on this timescale the duplex is an elastically bent rod rather than
      a hinge."""),
+    ("fig5_kink_threshold", "Where this force field starts breaking base pairs",
+     """The previous panel says no kink appears in the chimera. That could mean the
+     duplex genuinely does not kink at this curvature, or it could mean this force field
+     cannot kink at all — and the two have opposite implications for Zocchi’s model.
+     Separating them needs curvature the chimera does not reach, which is what the
+     harmonic windows provide: the same 27 bp duplex held at separations from 32 to 58 Å,
+     spanning 3.5 to 8.3° per base-pair step. Faint marks are individual replicates,
+     the solid line their per-window mean; the vertical bands are annotation, not data.
+     <strong>Base pairs do break, at 6.7–8.3° per step</strong>, so the force field is
+     capable of it — and the onset sits within the range Curuksu <em>et al.</em> report
+     for a type II kink, from a different force field and a different protocol. Our own
+     chimera, at 4.8–5.2°, is below it. The opening is also not diffuse: in every window
+     that opens it is <strong>base pair 17</strong>, whose incoming step is CpA — one of
+     the pyrimidine–purine steps kinking is known to prefer. That is what makes this a
+     measurement rather than an absence: the force field can kink, it kinks where the
+     literature says it should, and our construct does not bend it far enough."""),
 ]
 STEPS = [
     ("Prepare", "build/01_protein",
@@ -532,6 +548,15 @@ def build(args):
     kap = clamp6.get("kappa_lower_bound_kT_nm2")
 
     # ---------- spring table ----------
+    # Each spring is differenced against its OWN family's clicked control: U3_ds50 is a
+    # ubiquitin construct and subtracting sfGFP's zero from it would be meaningless.
+    # findings.py has already made the matched comparison, so read the delta from there.
+    def _fam_delta(k):
+        v = (f.get("extension", {}).get("vs_matched_control") or {}).get(k)
+        if v is not None:
+            return v["delta"]
+        return sp[k]["extension_A"]["mean"] - zero_clicked
+
     spring_rows = "\n".join(
         f"""<tr><td>{esc(v['label'])}</td>
         <td class="num">{v['contour_nm'] * 10:.0f}</td>
@@ -541,7 +566,7 @@ def build(args):
         <td class="num">{pm(v['energy_kT'], 1)}</td>
         <td class="num">{pm(v['bend_total_deg'], 0)}</td>
         <td class="num">{v['bp_open']['mean']:.2f}</td>
-        <td class="num">{v['extension_A']['mean'] - zero_clicked:+.2f}</td></tr>"""
+        <td class="num">{_fam_delta(k):+.2f}</td></tr>"""
         for k, v in sp.items())
 
     # ---------- clamp ladder ----------
@@ -717,6 +742,48 @@ def build(args):
                for k in ("S5_spring40nick", "S4_spring40", "S3_spring27")}
     matched_rows = "\n".join(_row(k, v) for k, v in
                               sorted(_forces.items(), key=lambda kv: kv[1]))
+
+    # ---------- is it a spring effect at all? ----------
+    spring_q = f.get("is_it_a_spring") or {}
+    vm_all = (f.get("extension", {}).get("vs_matched_control") or {})
+    fam_of = {k: v.get("family", "sfGFP") for k, v in vm_all.items()}
+
+    def _all_row(k, v):
+        fo = (f.get("springs", {}).get(k, {}).get("force_pN", {}) or {}).get("mean")
+        c = ((f.get("contacts", {}).get(k, {}) or {})
+             .get("atoms_within_4.5A", {}) or {}).get("mean")
+        fo_s = f"{fo:.2f}" if fo else "<em>none</em>"
+        c_s = f"{c:.1f}" if c is not None else "&mdash;"
+        hi = ' class="hi"' if fo in (None, 0) or not fo else ""
+        return (f"<tr{hi}><td>{v.get('label', k)}</td>"
+                f"<td class='num'>{fo_s}</td><td class='num'>{c_s}</td>"
+                f"<td class='num'><strong>{v['delta']:+.3f}</strong></td>"
+                f"<td class='num'>{v['p']:.3f}</td>"
+                f"<td class='num'>{v.get('p_bonferroni', float('nan')):.3f}</td></tr>")
+
+    allrows = "\n".join(_all_row(k, v) for k, v in sorted(
+        vm_all.items(), key=lambda kv: -(f.get("springs", {}).get(kv[0], {})
+                                         .get("force_pN", {}) or {}).get("mean", 0.0)))
+
+    ss = f.get("ss_springs") or {}
+    ss_rows = "\n".join(
+        "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f</td>"
+        "<td class='num'>%.0f</td><td class='num'>%.1f</td>"
+        "<td class='num'><strong>%s</strong></td><td>%s</td></tr>" % (
+            esc(v["label"]), v["n_nt"], v["contour_nm"] * 10,
+            v["natural_rms_nm"] * 10, v["x_A"]["mean"],
+            ("%.2f" % v["tension_pN"]["mean"]) if v["tension_pN"]["mean"]
+            else "0 &mdash; slack", v["state"])
+        for k, v in ss.items())
+
+    topo = f.get("topology") or {}
+    topo_rows = "\n".join(
+        "<tr%s><td>%s</td><td class='num'>%+.3f</td><td class='num'>%.3f</td>"
+        "<td>%s</td></tr>" % (
+            ' class="hi"' if w["p"] < 0.05 else "", w["label"], w["delta"], w["p"],
+            "closing the loop compresses more" if w["delta"] < 0
+            else "closing the loop compresses less")
+        for w in (topo.get("pairs") or {}).values())
 
     sites_f = f.get("sites") or {}
 
@@ -1071,6 +1138,144 @@ def build(args):
     companion ubiquitin study reaches from the other direction{cite_boral} — a control
     bearing two separate short strands reproduced most of the circular chimera's NMR
     spectrum, pointing at local protein–DNA interaction rather than spring action.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>The single-stranded control, and a sign flip</h2>
+    <span class="tag">an entropic spring pulls where a duplex pushes</span></div>
+  <div class="col">
+    <p>Replacing the duplex with a single strand of the same span changes the sign of the
+    mechanics, which makes it the sharpest available control. A bent duplex is an
+    <em>enthalpic</em> spring: it is stiffer than the geometry it is forced into, so it
+    <strong>pushes</strong> its anchors apart. A single strand is an <em>entropic</em>
+    spring with a 1.5 nm persistence length: it has far more contour than it needs, so it
+    coils, and it can only ever <strong>pull</strong> — and then only once stretched past
+    its natural size.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>strand</th><th>nt</th><th>contour (Å)</th>
+      <th>natural rms end-to-end (Å)</th><th>span held at (Å)</th>
+      <th>tension (pN)</th><th>state</th></tr></thead>
+      <tbody>{ss_rows}</tbody></table></div>
+
+    <p>Both single-stranded loops sit <strong>well inside</strong> their own natural size:
+    the 50-nucleotide strand has {ss.get('C1_ss50', {}).get('contour_nm', 0) * 10:.0f} Å of
+    contour and a natural end-to-end of about
+    {ss.get('C1_ss50', {}).get('natural_rms_nm', 0) * 10:.0f} Å, while the attachment sites
+    hold it at only {ss.get('C1_ss50', {}).get('x_A', {}).get('mean', 0):.0f} Å. A
+    worm-like chain at less than its own rms size is under <strong>no tension at all</strong>,
+    so the Marko–Siggia force is exactly zero and this construct is a genuine
+    zero-force reference rather than a low-force one.</p>
+
+    <div class="note"><div class="h">Why this matters for the interpretation</div>
+      <p>This is the construct that carries the argument in the next section. It is the same
+      protein, the same two attachment sites, the same click chemistry, a comparable amount
+      of DNA — and provably zero mechanical load. If the compression of the attachment sites
+      were a force effect, this construct should show none of it. It shows
+      {abs((f.get('extension', {}).get('vs_matched_control', {}).get('C1_ss50') or {}).get('delta', 0)):.2f} Å,
+      which is as much as any duplex.</p>
+      <p>An earlier draft of this work described a 27-nucleotide strand as “taut” by
+      comparing a 6.9 nm figure against a 6–7 nm span. That was an error: 6.9 nm is the rms
+      <em>end-to-end</em> distance of a 27-mer, not its contour, and the contour is 15.9 nm.
+      A chain is taut when the span approaches its <em>contour</em>, not its rms size, so
+      the conclusion did not follow from the number. The 50-nucleotide strands used here are
+      slack by either measure.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Is it acting as a spring at all?</h2>
+    <span class="tag">eleven constructs, two proteins, two chemistries</span></div>
+  <div class="col">
+    <p>The premise of the whole design is that the DNA acts as a spring: bend it, and it
+    pushes the attachment sites apart in proportion to the force it delivers. That is a
+    testable claim, and with eleven constructs measured against their own matched
+    controls it can be tested rather than assumed.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>construct</th><th>modelled force (pN)</th>
+      <th>protein atoms the DNA touches</th><th>Δ Cβ–Cβ vs control (Å)</th>
+      <th>p</th><th>p corrected</th></tr></thead>
+      <tbody>{allrows}</tbody></table></div>
+
+    <p><strong>Every construct that carries DNA compresses the sites.</strong> Ten of the
+    eleven are negative, spanning −0.09 to −0.59 Å, and the eleventh is +0.02 — which is
+    zero. Not one extends them, which is what a spring pushing its anchors apart would do.</p>
+
+    <p>And the size of the effect has nothing to do with the force:</p>
+    <ul>
+      <li>Against the modelled spring force: <strong>r = {spring_q.get('vs_modelled_force', {}).get('r', float('nan')):+.2f},
+        p = {spring_q.get('vs_modelled_force', {}).get('p', float('nan')):.2f}</strong> — and the
+        sign is <em>positive</em>, meaning more force goes with <em>less</em> compression.</li>
+      <li>Against how much of the protein the DNA touches:
+        <strong>r = {spring_q.get('vs_contact', {}).get('r', float('nan')):+.2f},
+        p = {spring_q.get('vs_contact', {}).get('p', float('nan')):.2f}</strong>.</li>
+      <li>Constructs with <strong>no spring at all</strong> — a slack single strand, or two
+        separate arms that cannot circularise — compress by
+        {abs(spring_q.get('mean_delta_no_spring', 0)):.2f} Å. Those with a spring compress by
+        {abs(spring_q.get('mean_delta_with_spring', 0)):.2f} Å. The difference is not
+        resolved (p = {(spring_q.get('no_spring_vs_spring') or {}).get('p', float('nan')):.2f}).</li>
+    </ul>
+
+    <div class="note flag"><div class="h">What this means</div>
+      <p>Attaching DNA to this protein moves the attachment sites together by about a third
+      of an ångström, and <strong>it makes no measurable difference whether that DNA is a
+      spring</strong>. A slack 50-nucleotide single strand under zero tension does it as
+      well as a 27 bp duplex the model says is pushing with 6.6 pN.</p>
+      <p>This is the conclusion the companion ubiquitin study reached from NMR{cite_boral} —
+      that local protein–DNA interaction, not spring action, dominates — reproduced here
+      independently, in a different protein, with a different attachment chemistry, and
+      read out from a different observable. That agreement across two systems is the
+      strongest thing in this report.</p>
+      <p>Two obvious mechanisms are <em>not</em> it. It is not the force, which does not
+      correlate. And it is not simple contact area either, which also does not correlate:
+      the 40 bp closed loop touches the barrel in only 20 % of frames and compresses the
+      most of any duplex. What is common to every construct is a large, highly charged
+      object tethered a couple of nanometres away; which specific part of that does the
+      work is not something these runs identify.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Does closing the covalent loop matter?</h2>
+    <span class="tag">five matched pairs</span></div>
+  <div class="col">
+    <p>The rebuild described above changed one thing about the molecule: whether a covalent
+    path runs from one attachment site, out along its tether, through the DNA, and back to
+    the other. Everything else — protein, chemistry, spring, length, tether — is held
+    fixed, which makes these five pairs a clean test of topology on its own.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>pair</th><th>closed − two-arm (Å)</th><th>p</th>
+      <th>direction</th></tr></thead>
+      <tbody>{topo_rows}</tbody></table></div>
+
+    <p>The three <strong>duplex</strong> pairs — the comparison the rebuild was designed to
+    make — all point the same way: closing the loop compresses the sites further, by
+    {abs(topo.get('duplex_pairs_planned', {}).get('mean_A', 0)):.2f} Å on average, and two
+    of the three clear significance on their own. Taken as a paired test across the three,
+    <strong>p = {topo.get('duplex_pairs_planned', {}).get('p', float('nan')):.2f}</strong> —
+    suggestive, and not resolved at n = 3 pairs.</p>
+
+    <p>The two <strong>single-stranded</strong> pairs do not reproduce it. They give
+    {topo.get('ssDNA_pairs', {}).get('deltas_A', [0, 0])[0]:+.3f} Å and
+    {topo.get('ssDNA_pairs', {}).get('deltas_A', [0, 0])[-1]:+.3f} Å — one is zero and the
+    other has the opposite sign. Across all five pairs together the effect is
+    p = {topo.get('paired_across_pairs', {}).get('p', float('nan')):.2f}: nothing.</p>
+
+    <div class="note"><div class="h">Reading this honestly</div>
+      <p>There is a hint that covalent closure matters for a duplex and no evidence that it
+      matters for a slack single strand — which would be physically sensible, since only a
+      closed loop can transmit a bending moment around the circuit, and a slack strand has
+      no moment to transmit. But a three-pair trend at p = 0.08 that reverses when two more
+      pairs are added is a hypothesis, not a finding, and it is reported as one. The number
+      of replicates that would settle it — six per system rather than three — is a day of
+      GPU time whenever the allocation allows.</p>
+      <p>What the rebuild <em>did</em> establish is not statistical: the original build was
+      not the molecule the experiment makes, and no amount of sampling would have fixed
+      that. Correctness of the construct and significance of its effect are separate
+      questions, and only the first one is settled here.</p></div>
   </div>
 </section>
 

@@ -274,6 +274,91 @@ def main(summary=None, out=None):
                 "frames_with_contact": float(s["contact.frames_with_contact"].mean()),
                 "residues_touched": float(s["contact.residues_ever_touched"].mean())}
 
+    # ---- does closing the covalent loop matter? ----
+    # The pairs below differ in ONE thing: whether a covalent path runs from one
+    # attachment site out along the tether, through the DNA, and back to the other.
+    # Same protein, same chemistry, same spring, same length -- so this isolates
+    # topology from everything else, which is what the whole point-2 rebuild was for.
+    TOPOLOGY_PAIRS = [("L3_loop27", "S3_spring27", "27 bp"),
+                      ("L4_loop40", "S4_spring40", "40 bp"),
+                      ("L5_loop40nick", "S5_spring40nick", "40 bp nicked"),
+                      ("C1_ss50", "C2_ssarms", "50 nt ssDNA, sfGFP"),
+                      ("U2_ss50", "U4_ssarms", "50 nt ssDNA, ubiquitin")]
+    col = "mech.anchor_CB_CB_A.mean"
+    pairs, diffs = {}, []
+    for closed, open_, nm in TOPOLOGY_PAIRS:
+        a = df[df.system == closed][col].dropna().values
+        b = df[df.system == open_][col].dropna().values
+        w = welch(a, b)
+        if w is None:
+            continue
+        w["label"] = nm
+        w["closed"], w["open"] = closed, open_
+        pairs[nm] = w
+        diffs.append(w["delta"])
+    if pairs:
+        entry = {"pairs": pairs, "n_pairs": len(pairs),
+                 "closed_minus_open_A": [round(float(x), 3) for x in diffs],
+                 "mean_closed_minus_open_A": round(float(np.mean(diffs)), 3),
+                 "all_same_sign": bool(len(set(np.sign(diffs))) == 1)}
+        def _paired(d):
+            # Each pair is its own control, so the quantity with a sampling distribution
+            # is the set of differences, tested against zero.
+            d = np.array(d, float)
+            tt = stats.ttest_1samp(d, 0.0)
+            return {"n_pairs": len(d), "mean_A": round(float(d.mean()), 3),
+                    "t": round(float(tt[0]), 3), "dof": len(d) - 1,
+                    "p": round(float(tt[1]), 4), "resolved": bool(tt[1] < 0.05)}
+        if len(diffs) > 2:
+            entry["paired_across_pairs"] = _paired(diffs)
+        # The three duplex pairs are the comparison the point-2 rebuild was designed to
+        # make, so they are reported as their own planned test rather than as a subset
+        # chosen after the fact.  The ssDNA pairs came later and are kept separate for
+        # the same reason -- and they do NOT reproduce the duplex ordering, which is
+        # stated rather than buried.
+        ds = [w["delta"] for nm, w in pairs.items() if "bp" in nm]
+        ss = [w["delta"] for nm, w in pairs.items() if "ssDNA" in nm]
+        if len(ds) > 2:
+            entry["duplex_pairs_planned"] = _paired(ds)
+        if ss:
+            entry["ssDNA_pairs"] = {"deltas_A": [round(float(x), 3) for x in ss],
+                                    "reproduces_duplex_ordering": False}
+        f["topology"] = entry
+
+    # ---- is the compression a spring effect at all? ----
+    # The whole project rests on the DNA acting as a spring, so the question deserves a
+    # number rather than an impression: does the displacement of the attachment sites
+    # track the force the spring is supposed to deliver, or does it not?
+    vm = f["extension"].get("vs_matched_control") or {}
+    if len(vm) > 3:
+        force, delta, contact = [], [], []
+        for k, v in vm.items():
+            force.append((f["springs"].get(k, {}).get("force_pN", {}) or {})
+                         .get("mean", 0.0) or 0.0)
+            delta.append(v["delta"])
+            c = ((f.get("contacts", {}).get(k, {}) or {})
+                 .get("atoms_within_4.5A", {}) or {}).get("mean")
+            contact.append(c)
+        force, delta = np.array(force), np.array(delta)
+        has_c = [i for i, c in enumerate(contact) if c is not None]
+        rf = stats.pearsonr(force, delta)
+        entry = {"n_constructs": len(vm),
+                 "vs_modelled_force": {"r": round(float(rf[0]), 3),
+                                       "p": round(float(rf[1]), 3)},
+                 "mean_delta_no_spring": round(float(delta[force == 0].mean()), 3)
+                 if (force == 0).any() else None,
+                 "mean_delta_with_spring": round(float(delta[force > 0].mean()), 3)
+                 if (force > 0).any() else None}
+        if len(has_c) > 3:
+            rc = stats.pearsonr([contact[i] for i in has_c], [delta[i] for i in has_c])
+            entry["vs_contact"] = {"r": round(float(rc[0]), 3),
+                                   "p": round(float(rc[1]), 3)}
+        if (force == 0).any() and (force > 0).any():
+            w = welch(delta[force == 0], delta[force > 0])
+            if w:
+                entry["no_spring_vs_spring"] = w
+        f["is_it_a_spring"] = entry
+
     # ---- chromophore ----
     hb_cols = [c for c in df.columns
                if c.startswith("chromo.hbonds.") and c.endswith(".occupancy")]
