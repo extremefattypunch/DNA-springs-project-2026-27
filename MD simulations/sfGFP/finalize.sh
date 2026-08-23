@@ -40,3 +40,12 @@ $P analysis/findings.py
 $P report/build_report.py
 echo
 echo "report: $(pwd)/report/sfgfp_dna_spring_report.html"
+
+# Publish.  This was a manual copy before, which is how docs/index.html came to lag the
+# report it is meant to mirror; it is part of the pipeline now.
+ROOT="$(cd ../.. && pwd)"
+mkdir -p "$ROOT/docs/figures"
+cp report/sfgfp_dna_spring_report.html "$ROOT/docs/index.html"
+cp figures/*.png "$ROOT/docs/figures/" 2>/dev/null || true
+touch "$ROOT/docs/.nojekyll"
+echo "published: $ROOT/docs/index.html ($(du -h "$ROOT/docs/index.html" | cut -f1))"

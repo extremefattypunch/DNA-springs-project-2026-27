@@ -64,10 +64,24 @@ FIGS = [
      the three chimeras, placed at the force their own spring geometry implies. Two
      things to read: the clamp response is barely distinguishable from flat — its fitted
      compliance has a confidence interval straddling zero, which is why the annotation
-     quotes a <em>bound</em> on stiffness rather than a value — and the chimeras sit well
-     above that line, so the spring is not equivalent to pulling along the same axis.
-     The 4 pN clamp point falling below the 0 pN point is the size of the noise at this
-     sampling; it is not a physical dip."""),
+     quotes a <em>bound</em> on stiffness rather than a value — and the chimeras are
+     offset from it, but <em>downward</em> once the right zero is used. The chimeras are
+     plotted here against the clamp ladder, which runs on the <em>unclicked</em> protein;
+     read the offsets against the clicked control in the table above instead, not off
+     this panel. The 4 pN clamp point falling below the 0 pN point is the size of the
+     noise at this sampling; it is not a physical dip."""),
+    ("ramachandran", "Backbone conformation at the two modified sites",
+     """Every frame of every replicate of the wild type, the unclicked Tet2-Et protein
+     and the clicked adduct, at both attachment sites; large markers are circular means,
+     and the grey outlines are the conventional Ramachandran regions drawn as a common
+     reference across the two panels. The point is the position, not the spread.
+     <strong>Site 133 lives in the left-handed α region</strong> — positive φ — which is
+     a conformation Asp, Asn and Gly commonly adopt and a phenylalanine-shaped side chain
+     does not: Tet2-Et (orange) is pushed 17.5° out in φ and 14° in ψ, and clicking
+     (green) returns it to within a few degrees of wild type (blue). Site 149 is ordinary
+     β and all three sit on top of one another. DSSP over residues 128–155 is identical
+     in all three, so this is a local backbone strain, not a change of secondary
+     structure."""),
     ("fig2_rmsf", "Backbone mobility, residue by residue",
      """Per-residue Cα RMSF, aligned on the barrel core rather than the whole protein —
      aligning globally lets the tethers and the flexible loops they sit in absorb the
@@ -604,6 +618,22 @@ def build(args):
     matched_rows = "\n".join(_row(k, v) for k, v in
                               sorted(_forces.items(), key=lambda kv: kv[1]))
 
+    sites_f = f.get("sites") or {}
+
+    def _site(sysk, site, key, dflt=float("nan")):
+        return (sites_f.get(sysk, {}).get(str(site), {}) or {}).get(key, dflt)
+
+    site_rows = "\n".join(
+        f"<tr><td>{v['label']}</td>"
+        f"<td>{_site(k, 133, 'residue') or '&mdash;'}</td>"
+        f"<td>{_site(k, 133, 'phi'):+.1f}, {_site(k, 133, 'psi'):+.1f}</td>"
+        f"<td>{_site(k, 149, 'residue') or '&mdash;'}</td>"
+        f"<td>{_site(k, 149, 'phi'):+.1f}, {_site(k, 149, 'psi'):+.1f}</td>"
+        f"<td>{(lambda x: '&mdash;' if x != x else f'{x:.2f}')(_site(k, 149, 'Tyr200_contacts_per_frame'))}</td>"
+        f"</tr>"
+        for k, v in sites_f.items())
+    have_sites = bool(site_rows)
+
     con = f.get("contacts") or {}
     contact_rows = "\n".join(
         f"<tr><td>{v['label']}</td>"
@@ -903,6 +933,55 @@ def build(args):
     companion ubiquitin study reaches from the other direction{cite_boral} — a control
     bearing two separate short strands reproduced most of the circular chimera's NMR
     spectrum, pointing at local protein–DNA interaction rather than spring action.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>What the modification itself does</h2>
+    <span class="tag">before any force is applied</span></div>
+  <div class="col">
+    <p>Installing the two Tet2-Et residues shortens the Cβ–Cβ separation by
+    {abs(tw.get('delta', 0)):.2f} Å before any DNA is attached, and clicking gives most of
+    it back. That is larger than any force effect in this study, so it is worth knowing
+    what it is — and it is <em>not</em> a change in secondary structure. DSSP over
+    residues 128–155 is identical in the wild type, the unclicked protein and the clicked
+    adduct: site 133 is coil in every case and site 149 is 100% β in every case.</p>
+
+    {'<div class="tbl-wrap"><table><thead><tr><th>system</th><th>133</th>'
+     '<th>φ, ψ at 133</th><th>149</th><th>φ, ψ at 149</th>'
+     '<th>ring–Tyr200 contacts at 149</th></tr></thead><tbody>'
+     + site_rows + '</tbody></table></div>' if have_sites else ''}
+
+    <p><strong>Site 133 is the clean result.</strong> Asp133 natively occupies the
+    <em>left-handed</em> α region — positive φ — a conformation that Asp, Asn and Gly
+    commonly adopt and that a phenylalanine-shaped side chain tolerates poorly. Tet2-Et is
+    a phenylalanine derivative, and it is pushed 17.5° out in φ and 14° in ψ; clicking
+    returns it to within a few degrees of wild type. The replicate spread is 0.5–0.8°, so
+    this is not noise.</p>
+
+    <p><strong>Site 149's ring stacks on Tyr200, but not reproducibly.</strong> The
+    unclicked tetrazine averages ~10 heavy-atom contacts per frame, but the three
+    replicates give 20.0, 10.4 and 0.9 — it samples stacked and unstacked states and three
+    replicates cannot pin the occupancy. The clicked control is tight and low
+    (0.68 ± 0.4 over nine replicates), yet the 40 bp chimeras stack again. So the ring at
+    149 <em>can</em> stack, and whether it does depends on the construct.</p>
+
+    <p>Both variables track the contraction. Across all 30–33 replicates carrying these
+    residues, Cβ–Cβ correlates with the Tyr200 contact count (r = −0.68, p = 5×10⁻⁵,
+    −38 mÅ per contact) and with φ at site 133 (r = −0.59, p = 3×10⁻⁴, −39 mÅ per degree);
+    together they account for 55% of its variance. These are correlations across
+    constructs that differ chemically, so this is suggestive rather than causal — but the
+    contraction is <em>local structure at the modified sites</em>, and nothing to do with
+    the spring.</p>
+
+    <div class="note"><div class="h">Which positions can take Tet2-Et</div>
+      <p>Avoid positive-φ positions: the left-handed α region is occupied by Asp, Asn and
+      Gly for a reason. Treat an aromatic neighbour as a liability, because the ring will
+      stack on it in some constructs and not others, and because that stacking
+      <em>differs between the unclicked and clicked states</em> — so it will masquerade as
+      a mechanical effect for anyone using the unclicked protein as a reference. That is
+      exactly how the retracted claim above arose. Ordinary β and α positions with no
+      aromatic neighbour should be fine.</p></div>
   </div>
 </section>
 

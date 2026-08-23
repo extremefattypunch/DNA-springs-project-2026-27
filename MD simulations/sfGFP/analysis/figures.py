@@ -36,6 +36,7 @@ from spring_model import Spring, TAU_C_NICKED, TAU_C_CONTINUOUS  # noqa: E402
 
 VS.apply(matplotlib)
 MARKERS = {"S3_spring27": "o", "S4_spring40": "s", "S5_spring40nick": "D"}
+MEAN_MARKERS = ["o", "s", "D"]
 
 
 def label_right(ax, x, y, text, color, dx=9, dy=0):
@@ -295,8 +296,8 @@ def fig_ramachandran(runs, outdir):
                (25, 100, -20, 90, r"left-handed $\alpha$")]
     for ax, site in zip(axes, (133, 149)):
         for x0, x1, y0, y1, lab in regions:
-            ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fc=VS.GRID,
-                                       ec="none", zorder=0, alpha=0.55))
+            ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fc="none",
+                                       ec=VS.GRID, lw=1.2, zorder=0))
             if lab:
                 ax.text(x0 + 3, y1 - 6, lab, fontsize=7.5, color=VS.INK_MUTED,
                         va="top", zorder=1)
@@ -311,11 +312,19 @@ def fig_ramachandran(runs, outdir):
                                        np.cos(np.radians(v[:, 0])).mean()))
             my = np.degrees(np.arctan2(np.sin(np.radians(v[:, 1])).mean(),
                                        np.cos(np.radians(v[:, 1])).mean()))
-            ax.plot(mx, my, "o", ms=9, mfc=VS.SERIES[i], mec="white", mew=1.8,
-                    zorder=4)
-            ax.annotate(f"{label}\n{mx:+.0f}, {my:+.0f}", (mx, my),
-                        xytext=(10, -4 + 22 * (1 - i)), textcoords="offset points",
-                        fontsize=8, color=VS.SERIES[i], zorder=5)
+            # Marker SHAPE as well as colour, because the three means sit within a few
+            # degrees of one another at site 133 and overlapping discs of different
+            # hues are not distinguishable.
+            ax.plot(mx, my, marker=MEAN_MARKERS[i], ms=10, mfc=VS.SERIES[i],
+                    mec="white", mew=1.8, ls="none", zorder=4)
+            # Labels go in a fixed stack in an empty corner rather than beside each
+            # mean: at site 133 all three land on top of each other otherwise, which is
+            # what the first draft did.
+            ax.plot(-165, -108 - 22 * i, marker=MEAN_MARKERS[i], ms=8,
+                    mfc=VS.SERIES[i], mec="white", mew=1.4, ls="none",
+                    clip_on=False, zorder=5)
+            ax.text(-150, -108 - 22 * i, f"{label}   {mx:+.0f}, {my:+.0f}",
+                    fontsize=8.5, color=VS.INK_2, va="center", zorder=5)
         ax.axhline(0, color=VS.INK_MUTED, lw=0.6, zorder=1)
         ax.axvline(0, color=VS.INK_MUTED, lw=0.6, zorder=1)
         ax.set_xlim(-180, 180); ax.set_ylim(-180, 180)
