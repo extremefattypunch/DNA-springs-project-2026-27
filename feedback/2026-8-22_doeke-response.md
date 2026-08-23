@@ -488,9 +488,11 @@ softens DNA (see #8).
 
 ## 8. "It does not kink" — which of your three explanations?
 
-Mostly **(c) the model's threshold is too permissive** and **(b) 45 ns is far too short**.
-(a), a force-field limitation, is real but secondary and does not point the way that would
-rescue the model. Here is the evidence.
+**(c), the model's threshold is too permissive.** We can now say that from our own data
+rather than by citing other people's, and the same data excludes (a) outright: this force
+field kinks perfectly well, just not at the curvature our construct imposes. (b), the
+timescale, remains a real constraint on *spontaneous* nucleation but is no longer the
+main story.
 
 ### What our system's curvature actually is — and a number I had wrong
 
@@ -507,97 +509,6 @@ against the nucleosome's 42 Å the original wording was closer to right than my 
 was. The conclusion is unaffected in direction and slightly strengthened in degree: we sit
 at about **56 % of the curvature at which all-atom MD nucleates kinks**, not somewhat below
 it.
-
-### (c) Zocchi's τ_c is the most kink-friendly estimate in the field
-
-Converting each published criterion to a threshold radius via *R* = *B*/τ_c:
-
-| source | criterion | threshold *R* | °/bp |
-|---|---|---|---|
-| Zocchi, nicked (EPL 2010) | τ_c = 27 pN nm | 76 Å | 2.6 |
-| Zocchi, intact (PRX 2011) | τ_c = 31 pN nm | 66 Å | 3.0 |
-| Vologodskii & Frank-Kamenetskii 2013; Du 2008 | nuclease probing | 35–40 Å | 4.9–5.6 |
-| Curuksu et al. 2009 (umbrella sampling, AMBER) | asymptotic torque 40–51 pN nm | — | kink only above **8.6–9.3** |
-| Fields, Meyer & Cohen 2013 (FRET "molecular vice") | WLC linear up to 7°/bp | ≤28 Å | 7 |
-| **our chimeras, measured** | | **37–41 Å** | **4.8–5.2** |
-
-Zocchi's τ_c puts the softening transition at a *gentler* bend than a nucleosome. Every
-independent estimate is 1.3–2.7× stiffer. On his criterion we are well past the
-transition; on Curuksu's and on Fields'/Cohen's we are comfortably below it. So the
-disagreement between our simulation and his prediction is substantially a disagreement
-between his τ_c and the rest of the literature — and the one directly comparable
-calculation, Curuksu's umbrella sampling on a bent *linear* duplex in the same force-field
-family, finds kinks only above 8.6–9.3°/bp, **almost twice the curvature we impose**.
-Not seeing a kink is the expected result, not an anomaly.
-
-Zocchi's implied kink cost, (π/2)τ_c ≈ 12 k_BT, is likewise at the bottom of the published
-range of 12–22 k_BT.
-
-### (b) The timescale, with the arithmetic
-
-Base-pair lifetimes from NMR imino exchange are 1–40 ms (Guéron 1987; Leroy 1988;
-Krueger 2006), so the per-pair opening rate is ~10²–10³ s⁻¹. For ~30 pairs in parallel over
-our 270 ns of aggregate sampling, the **expected number of opening events is 8×10⁻⁴ to
-8×10⁻³**. Seeing none is what unstressed kinetics predicts before bending is even
-considered. Turning that around gives a real bound rather than a null result: our data are
-consistent with a stress-induced reduction of the opening barrier of **up to ~5 k_BT**, and
-cannot support more.
-
-Independently, kink free energies of 12–22 k_BT with a 10⁹–10¹² s⁻¹ prefactor give mean
-waiting times of microseconds to hundreds of milliseconds — 10²–10⁷ times our window.
-Fassino, Carlon & Voorspoels (JCTC 2026) state it flatly: *"in unbiased MD simulations, it
-is not possible to observe the spontaneous formation of kinks due to limitations in the
-time scale currently reachable in all-atom simulations."*
-
-Calibration from published work: Pasi & Lavery saw kinks at 80–800 ns in nucleosomal loops
-held far more tightly than ours; Mitchell & Harris saw them at 20–25 ns but only in 65 bp
-*closed* minicircles (R ≈ 35 Å, torsionally coupled); and Yoo et al. ran a 90 bp minicircle
-for **11 µs** at R ≈ 49 Å with **no kinks and no base-pair-level distortion at all**. That
-last one is the strongest counter to "you would have seen it if the force field were
-right": 240× longer than ours, closed topology, and nothing.
-
-### (a) The force field, honestly
-
-There *is* a documented bias here, and OL15 is specifically implicated: Winkler,
-Galindo-Murillo & Cheatham (JCTC 2023) find that backbone-dihedral refinements
-"inadvertently favored B-form DNA geometries even in non-helical contexts", with OL15
-producing anomalous compact structures in 42 % of a mini-dumbbell trajectory. All AMBER
-variants also overestimate persistence length, with OL15 the stiffest of them
-(Roldán-Piñero et al. 2024). And there is a mechanistic reason to expect OL15 to be the
-least kink-prone choice: twist-bend kinks require local *under*twisting, and the OL family
-was tuned to *increase* helical twist.
-
-But the magnitude is nowhere near enough to rescue the model. parmbsc0 and parmbsc1 are
-softer and also fail to kink at comparable curvature on 20–240× longer runs; parmbsc1's
-free-energy landscape is *sub*-harmonic, i.e. more deformable than elasticity predicts;
-and the only alternative family, CHARMM36, has the opposite pathology of spurious
-base-pair disruption and cannot hold a duplex past 1 µs. Notably, the classic MD kinking
-results came from force fields with a 12 bp/turn helical repeat artefact, which imposes
-spurious torsional stress in a closed circle — so some of the historical evidence *for*
-kinking may itself be a force-field artefact, in the opposite direction from your concern.
-
-There is one genuine gap: **no published head-to-head comparison of kinking propensity
-across bsc0/bsc1/OL15/OL21/CHARMM36 in a sharply bent duplex exists**, as far as I can
-find. That is the control your question implies and nobody has run it.
-
-### The measured force says the same thing, independently
-
-This is the part that persuaded me. If the duplex never yields it stays on the elastic
-branch, and an unyielded rod under compression sustains its Euler buckling load,
-π²*B*/*L*² = 24.9 pN for a 27-mer. The directly measured force at the separation the
-chimera sits at is **33 pN**; Zocchi's kinked branch gives **6.3 pN** (see #6). The
-measurement lands on the unyielded value, four to five times the kinked one.
-
-So two quite different observables — the shape of the bend profile and the magnitude of
-the delivered force — agree that this duplex has not yielded. That is more convincing than
-either alone, and it means the model's few-pN forces are not merely uncorroborated here:
-they are *inconsistent* with what the same force field delivers, because they presuppose
-the transition it never makes.
-
-Which of the two is right about real DNA is a separate question our simulation cannot
-settle. If real DNA does yield at this curvature and ours does not because 50 ns is too
-short, then the model is right about the experiment and our force field is stuck on the
-wrong branch.
 
 ### We measured the threshold instead of arguing about it
 
@@ -647,6 +558,99 @@ is an adenine and the step into it is **CpA** — one of the three pyrimidine–
 other pair that opened, bp13, sits at a **TpG** step, also pyrimidine–purine. So the force
 field is not breaking a pair at random under load; it is picking exactly the dinucleotide
 steps the literature says it should.
+
+### The measured force says the same thing, independently
+
+This is the part that persuaded me. If the duplex never yields it stays on the elastic
+branch, and an unyielded rod under compression sustains its Euler buckling load,
+π²*B*/*L*² = 24.9 pN for a 27-mer. The directly measured force at the separation the
+chimera sits at is **33 pN**; Zocchi's kinked branch gives **6.3 pN** (see #6). The
+measurement lands on the unyielded value, four to five times the kinked one.
+
+So two quite different observables — the shape of the bend profile and the magnitude of
+the delivered force — agree that this duplex has not yielded. That is more convincing than
+either alone, and it means the model's few-pN forces are not merely uncorroborated here:
+they are *inconsistent* with what the same force field delivers, because they presuppose
+the transition it never makes.
+
+Which of the two is right about real DNA is a separate question our simulation cannot
+settle. If real DNA does yield at this curvature and ours does not because 50 ns is too
+short, then the model is right about the experiment and our force field is stuck on the
+wrong branch.
+
+### (c) Zocchi's τ_c is the most kink-friendly estimate in the field
+
+Converting each published criterion to a threshold radius via *R* = *B*/τ_c:
+
+| source | criterion | threshold *R* | °/bp |
+|---|---|---|---|
+| Zocchi, nicked (EPL 2010) | τ_c = 27 pN nm | 76 Å | 2.6 |
+| Zocchi, intact (PRX 2011) | τ_c = 31 pN nm | 66 Å | 3.0 |
+| Vologodskii & Frank-Kamenetskii 2013; Du 2008 | nuclease probing | 35–40 Å | 4.9–5.6 |
+| Curuksu et al. 2009 (umbrella sampling, AMBER) | asymptotic torque 40–51 pN nm | — | kink only above **8.6–9.3** |
+| Fields, Meyer & Cohen 2013 (FRET "molecular vice") | WLC linear up to 7°/bp | ≤28 Å | 7 |
+| **our chimeras, measured** | | **37–41 Å** | **4.8–5.2** |
+
+Zocchi's τ_c puts the softening transition at a *gentler* bend than a nucleosome. Every
+independent estimate is 1.3–2.7× stiffer. On his criterion we are well past the
+transition; on Curuksu's and on Fields'/Cohen's we are comfortably below it. So the
+disagreement between our simulation and his prediction is substantially a disagreement
+between his τ_c and the rest of the literature — and the one directly comparable
+calculation, Curuksu's umbrella sampling on a bent *linear* duplex in the same force-field
+family, finds kinks only above 8.6–9.3°/bp, **almost twice the curvature we impose**.
+Not seeing a kink is the expected result, not an anomaly.
+
+Zocchi's implied kink cost, (π/2)τ_c ≈ 12 k_BT, is likewise at the bottom of the published
+range of 12–22 k_BT.
+
+### (b) The timescale, with the arithmetic
+
+Base-pair lifetimes from NMR imino exchange are 1–40 ms (Guéron 1987; Leroy 1988;
+Krueger 2006), so the per-pair opening rate is ~10²–10³ s⁻¹. For ~30 pairs in parallel over
+our 270 ns of aggregate sampling, the **expected number of opening events is 8×10⁻⁴ to
+8×10⁻³**. Seeing none is what unstressed kinetics predicts before bending is even
+considered. Turning that around gives a real bound rather than a null result: our data are
+consistent with a stress-induced reduction of the opening barrier of **up to ~5 k_BT**, and
+cannot support more.
+
+Independently, kink free energies of 12–22 k_BT with a 10⁹–10¹² s⁻¹ prefactor give mean
+waiting times of microseconds to hundreds of milliseconds — 10²–10⁷ times our window.
+Fassino, Carlon & Voorspoels (JCTC 2026) state it flatly: *"in unbiased MD simulations, it
+is not possible to observe the spontaneous formation of kinks due to limitations in the
+time scale currently reachable in all-atom simulations."*
+
+Calibration from published work: Pasi & Lavery saw kinks at 80–800 ns in nucleosomal loops
+held far more tightly than ours; Mitchell & Harris saw them at 20–25 ns but only in 65 bp
+*closed* minicircles (R ≈ 35 Å, torsionally coupled); and Yoo et al. ran a 90 bp minicircle
+for **11 µs** at R ≈ 49 Å with **no kinks and no base-pair-level distortion at all**. That
+last one is the strongest counter to "you would have seen it if the force field were
+right": 240× longer than ours, closed topology, and nothing.
+
+### (a) The force field — settled, but the concern was reasonable
+
+The measurement above excludes this explanation: OL15 kinks. It is still worth recording what the literature says, because your worry was well founded and because the residual bias may be why our threshold sits a little below Curuksu's rather than a little above.
+
+There *is* a documented bias here, and OL15 is specifically implicated: Winkler,
+Galindo-Murillo & Cheatham (JCTC 2023) find that backbone-dihedral refinements
+"inadvertently favored B-form DNA geometries even in non-helical contexts", with OL15
+producing anomalous compact structures in 42 % of a mini-dumbbell trajectory. All AMBER
+variants also overestimate persistence length, with OL15 the stiffest of them
+(Roldán-Piñero et al. 2024). And there is a mechanistic reason to expect OL15 to be the
+least kink-prone choice: twist-bend kinks require local *under*twisting, and the OL family
+was tuned to *increase* helical twist.
+
+But the magnitude is nowhere near enough to rescue the model. parmbsc0 and parmbsc1 are
+softer and also fail to kink at comparable curvature on 20–240× longer runs; parmbsc1's
+free-energy landscape is *sub*-harmonic, i.e. more deformable than elasticity predicts;
+and the only alternative family, CHARMM36, has the opposite pathology of spurious
+base-pair disruption and cannot hold a duplex past 1 µs. Notably, the classic MD kinking
+results came from force fields with a 12 bp/turn helical repeat artefact, which imposes
+spurious torsional stress in a closed circle — so some of the historical evidence *for*
+kinking may itself be a force-field artefact, in the opposite direction from your concern.
+
+There is one genuine gap: **no published head-to-head comparison of kinking propensity
+across bsc0/bsc1/OL15/OL21/CHARMM36 in a sharply bent duplex exists**, as far as I can
+find. That is the control your question implies and nobody has run it.
 
 ### What is still running
 
