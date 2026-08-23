@@ -63,13 +63,14 @@ class Arm:
     """TDP side chain + DNL, with coordinates and a torsion-rotation interface."""
 
     def __init__(self, names, coords, bonds, elements,
-                 dna_atom: str = "OL*", linker: str = "DNL"):
+                 dna_atom: str = "OL*", linker: str = "DNL", chain=("TDP", "DNL")):
         # `dna_atom` is the arm atom that bonds the duplex.  It is not always the same
         # atom: the 5' linker ends in the oxygen that becomes nucleotide 1's bridging
         # O5' (DNL.OL), while the 3' linker ends in its own phosphorus, which bonds
         # nucleotide N's existing O3' (DNP.P).  Callers must not hard-code "OL*".
         self.dna_atom = dna_atom
         self.linker = linker
+        self.chain = tuple(chain)
         self.names = list(names)
         self.index = {n: i for i, n in enumerate(self.names)}
         self.xyz = np.asarray(coords, float)
@@ -151,36 +152,58 @@ class Arm:
         return rms
 
 
-def build_arm(dna_residue: str = "DNL") -> Arm:
-    """TDP side chain + the DNA-side arm as one MMFF-optimised molecule.
+def build_arm(chain=("TDP", "DNL")) -> Arm:
+    """A whole tether -- protein-side residue through to the DNA -- as one molecule.
 
-    ``dna_residue`` is DNL for the 5' end of the modified strand, DNP for its 3' end,
-    or DNH for the clicked, unloaded control (the arm ends in a free alcohol).
+    ``chain`` is the residue names in order from the protein outwards.  Two residues is
+    the sfGFP tether (``("TDP", "DNL")``, or DNP at the 3' end, or DNH for the clicked
+    control that stops at a free alcohol); three is the ubiquitin one
+    (``("CMS", "CDB", "DNL")``), where the crosslinker is split at an amide so that
+    neither half is an unreasonable AM1-BCC problem.  A bare string is accepted as the
+    old two-residue form for convenience: ``build_arm("DNP")``.
+
+    The whole thing is built and MMFF-optimised as a single molecule rather than
+    residue by residue, because the geometry that matters is across the junctions --
+    and because tleap cannot build the polycyclic pieces at all: handed the cyclopropane
+    of the sTCO cage it returned sides of 5.28, 4.70 and 1.52 A, and the DBCO cage is
+    worse.  Consecutive residues are joined using each one's own declared extra_bond,
+    so the connectivity comes from the same tables the parameters were fitted against.
     """
+    if isinstance(chain, str):
+        chain = ("TDP", chain)
     from rdkit import Chem
     from rdkit.Chem import AllChem
 
     bt = {1: Chem.BondType.SINGLE, 2: Chem.BondType.DOUBLE, 3: Chem.BondType.TRIPLE,
           "ar": Chem.BondType.AROMATIC}
-    tdp, dnl = RESIDUES["TDP"], RESIDUES[dna_residue]
+    residues = [RESIDUES[n] for n in chain]
+    first, dnl = residues[0], residues[-1]
     rw, idx, names, elems = Chem.RWMol(), {}, [], []
 
+    # Atoms of the protein-side residue keep their bare names; each residue further out
+    # gets one more trailing star.  The stars are how the assembler knows which atoms
+    # belong to which residue when it writes the PDB, and they are stripped there.
+    def suffix(tag):
+        return "*" * tag
+
     def add(nm, el, tag):
+        if (tag, nm) in idx:
+            raise ValueError(f"duplicate atom {chain[tag]}.{nm} in the arm")
         a = Chem.Atom(el)
         a.SetNoImplicit(True)
         idx[(tag, nm)] = rw.AddAtom(a)
-        names.append(nm if tag == "TDP" else f"{nm}*")
+        names.append(f"{nm}{suffix(tag)}")
         elems.append(el)
         return idx[(tag, nm)]
 
-    for res, tag in ((tdp, "TDP"), (dnl, "DNL")):
+    for tag, res in enumerate(residues):
         for a in res["heavy"]:
             add(a, element_of(a), tag)
         for parent, hs in res["hydrogens"].items():
             for h in hs:
                 add(h, "H", tag)
     bonds_named = []
-    for res, tag in ((tdp, "TDP"), (dnl, "DNL")):
+    for tag, res in enumerate(residues):
         for a, b, o in res["bonds"]:
             rw.AddBond(idx[(tag, a)], idx[(tag, b)], bt[o])
             bonds_named.append(((tag, a), (tag, b)))
@@ -188,9 +211,24 @@ def build_arm(dna_residue: str = "DNL") -> Arm:
             for h in hs:
                 rw.AddBond(idx[(tag, parent)], idx[(tag, h)], bt[1])
                 bonds_named.append(((tag, parent), (tag, h)))
-    # the carbamate C-N bond joining the two residues
-    rw.AddBond(idx[("TDP", "CN")], idx[("DNL", "N")], bt[1])
-    bonds_named.append((("TDP", "CN"), ("DNL", "N")))
+    # Join consecutive residues using the upstream one's declared extra_bond, and check
+    # it points where we are actually attaching: a mismatch here would build a molecule
+    # whose connectivity differs from the tables the charges were fitted against.
+    for tag in range(len(residues) - 1):
+        eb = residues[tag].get("extra_bond")
+        if eb is None:
+            sys.exit(f"{chain[tag]} declares no extra_bond, so it cannot be chained "
+                     f"to {chain[tag + 1]}")
+        want, got = eb["partner_residue"], chain[tag + 1]
+        # DNL, DNP and DNH are interchangeable at this junction -- all three present an
+        # amide nitrogen named N -- so only the amino-arm family is treated as a match.
+        family = {"DNL", "DNP", "DNH"}
+        if want != got and not ({want, got} <= family):
+            sys.exit(f"{chain[tag]}.extra_bond points at {want}, not {got}")
+        rw.AddBond(idx[(tag, eb["this_atom"])],
+                   idx[(tag + 1, eb["partner_atom"])], bt[1])
+        bonds_named.append(((tag, eb["this_atom"]),
+                            (tag + 1, eb["partner_atom"])))
 
     # Cap the free valences so RDKit can sanitise.  The backbone N and C=O already
     # carry their hydrogens; the backbone C needs one more substituent, and so does
@@ -201,18 +239,24 @@ def build_arm(dna_residue: str = "DNL") -> Arm:
     #   DNP hands its HEAD phosphorus to nucleotide N's O3'      -> OH, which makes the
     #       fragment a phosphate monoester.  A bare H on phosphorus would satisfy the
     #       valence but MMFF has no business typing a P-H here.
-    cap_ids, cap_chain = [], [("TDP", "C", ["H"])]
+    last = len(residues) - 1
+    cap_ids, cap_chain = [], []
+    # An amino-acid residue is recognised by its head/tail being the backbone N and C
+    # rather than by a flag, because that flag lives in build_residues' own table and
+    # not in the residue definitions; the backbone carbonyl then needs one substituent.
+    if first["head"] == "N" and first.get("tail") == "C":
+        cap_chain.append((0, "C", ["H"]))
     if dnl.get("tail"):
-        cap_chain.append(("DNL", dnl["tail"], ["H"]))
-        dna_atom = f"{dnl['tail']}*"
+        cap_chain.append((last, dnl["tail"], ["H"]))
+        dna_atom = f"{dnl['tail']}{suffix(last)}"
     elif dnl["head"] != "N":
-        cap_chain.append(("DNL", dnl["head"], ["O", "H"]))
-        dna_atom = f"{dnl['head']}*"
+        cap_chain.append((last, dnl["head"], ["O", "H"]))
+        dna_atom = f"{dnl['head']}{suffix(last)}"
     else:
         # DNH, the clicked control: its head N is already satisfied by the carbamate
         # and its far end is a real free alcohol with its hydrogen in the tables, so
         # there is no free valence to cap and nothing is handed to a duplex.
-        dna_atom = "OL*"
+        dna_atom = f"OL{suffix(last)}"
     for tag, nm, elements in cap_chain:
         prev = (tag, nm)
         for el in elements:
@@ -246,7 +290,7 @@ def build_arm(dna_residue: str = "DNL") -> Arm:
               for a, b in [(idx[(ta, na)], idx[(tb, nb)])]
               if a in remap and b in remap]
     return Arm(names2, xyz[keep], bonds2, elems2,
-               dna_atom=dna_atom, linker=dna_residue)
+               dna_atom=dna_atom, linker=chain[-1], chain=tuple(chain))
 
 
 def build_residue_mol(name: str) -> Arm:
@@ -303,26 +347,92 @@ def build_residue_mol(name: str) -> Arm:
     return Arm(names, xyz, bonds, elems)
 
 
+# Rings whose geometry is worth asserting, by the atom names that make them up.  Each
+# arm has only some of these, so each is checked only if its atoms are present -- the
+# sfGFP tether has the strained sTCO cyclopropane and the dihydropyridazine, the
+# ubiquitin one has the DBCO cage's two benzo rings and a triazole.  Names carry the
+# star suffix of whichever residue they belong to, so the lookup tries every suffix.
+# Each entry is (atom names, maximum rms deviation from the ring's own best-fit plane).
+# The tolerances differ because the rings differ: an aromatic ring should be flat to
+# within a few hundredths of an angstrom, but the clicked product is a 4,5-DIHYDRO
+# pyridazine, whose two sp3 carbons make it a half-chair -- it is not supposed to be
+# planar, and holding it to an aromatic tolerance rejects a perfectly good structure.
+# What matters there is the azadiene, checked separately as a torsion.
+RINGS = {
+    "sTCO cyclopropane": (("CO1", "CO8", "CO9"), None),
+    "dihydropyridazine": (("CP3", "NP2", "NP1", "CP6", "CQ5", "CQ4"), 0.45),
+    "tetrazine": (("CT3", "NT2", "NT1", "CT6", "NT5", "NT4"), 0.10),
+    "DBCO benzo 1": (("CP1", "CP2", "CP3", "CP4", "CP5", "CP6"), 0.10),
+    "DBCO benzo 2": (("CQ1", "CQ2", "CQ3", "CQ4", "CQ5", "CQ6"), 0.10),
+    "SPAAC triazole": (("NJ1", "NJ2", "NJ3", "CJ1", "CJ2"), 0.10),
+}
+# The conjugated C=N-N=C of the clicked adduct, which should be close to flat even
+# though the ring around it is not.
+AZADIENE = ("CP3", "NP2", "NP1", "CP6")
+AZADIENE_MAX_DEV_DEG = 35.0
+
+
+def _find(arm, name):
+    """Resolve an atom name that may carry any number of trailing stars."""
+    for s in ("", "*", "**", "***"):
+        if name + s in arm.index:
+            return arm.xyz[arm.index[name + s]]
+    return None
+
+
 def validate_cage(arm: Arm) -> dict:
-    g = lambda n: arm.xyz[arm.index[n]]  # noqa: E731
-    sides = [np.linalg.norm(g("CO1") - g("CO8")), np.linalg.norm(g("CO8") - g("CO9")),
-             np.linalg.norm(g("CO9") - g("CO1"))]
-    rep = {"cyclopropane_sides_A": [round(float(s), 3) for s in sides],
-           "azadiene_torsion_deg": round(float(np.degrees(
-               dihedral(g("CP3"), g("NP2"), g("NP1"), g("CP6")))), 2),
-           "linker": arm.linker, "dna_atom": arm.dna_atom,
-           "CB_to_dna_atom_A": round(float(np.linalg.norm(
-               g(arm.dna_atom) - g("CB"))), 2),
-           "n_rotatable_bonds": len(arm.rotatable())}
-    if max(sides) > 1.7:
-        sys.exit(f"cyclopropane is not closed: sides {rep['cyclopropane_sides_A']}")
+    """Check the rings the arm actually has, and report its reach.
+
+    Written to be adaptive rather than to assume one tether's atom names, because the
+    two chemistries share no rings: asking the ubiquitin arm for the sTCO cyclopropane
+    simply raised a KeyError.  Ring geometry is worth asserting at all because RDKit's
+    embedding plus MMFF is the only thing standing between us and a broken cage --
+    handed the same job, tleap returned cyclopropane sides of 5.28, 4.70 and 1.52 A.
+    """
+    rep = {"chain": " + ".join(arm.chain), "linker": arm.linker,
+           "dna_atom": arm.dna_atom, "n_rotatable_bonds": len(arm.rotatable())}
+    cb = _find(arm, "CB")
+    dna = arm.xyz[arm.index[arm.dna_atom]]
+    if cb is not None:
+        rep["CB_to_dna_atom_A"] = round(float(np.linalg.norm(dna - cb)), 2)
+
+    problems = []
+    for label, (names, max_rms) in RINGS.items():
+        pts = [_find(arm, n) for n in names]
+        if any(q is None for q in pts):
+            continue
+        pts = np.array(pts)
+        if len(pts) == 3:                       # a three-ring has no planarity to test
+            sides = [float(np.linalg.norm(pts[i] - pts[(i + 1) % 3])) for i in range(3)]
+            rep[f"{label} sides_A"] = [round(s, 3) for s in sides]
+            if max(sides) > 1.7:
+                problems.append(f"{label} is not closed: {sides}")
+            continue
+        c = pts.mean(axis=0)
+        normal = np.linalg.svd(pts - c)[2][-1]
+        rms = float(np.sqrt((((pts - c) @ normal) ** 2).mean()))
+        rep[f"{label} planarity_rms_A"] = round(rms, 3)
+        if max_rms is not None and rms > max_rms:
+            problems.append(f"{label} rms {rms:.3f} A exceeds {max_rms} A")
+
+    az = [_find(arm, n) for n in AZADIENE]
+    if all(q is not None for q in az):
+        d = float(np.degrees(dihedral(*az)))
+        rep["azadiene_torsion_deg"] = round(d, 2)
+        dev = min(abs(abs(d) - 180.0), abs(d))
+        if dev > AZADIENE_MAX_DEV_DEG:
+            problems.append(f"azadiene twisted {dev:.1f} deg out of plane")
+    if problems:
+        sys.exit("arm geometry: " + "; ".join(problems))
+    rep["rings_checked"] = sum(1 for k in rep if "sides_A" in k or "planarity" in k)
     return rep
 
 
 if __name__ == "__main__":
-    for linker in ("DNL", "DNP", "DNH"):
-        a = build_arm(linker)
-        print(f"\n=== TDP + {linker} ===")
+    for chain in (("TDP", "DNL"), ("TDP", "DNP"), ("TDP", "DNH"),
+                  ("CMS", "CDB", "DNL"), ("CMS", "CDB", "DNP")):
+        a = build_arm(chain)
+        print(f"\n=== {' + '.join(chain)} ===")
         print(f"  {len(a.names)} atoms "
               f"({sum(1 for e in a.elements if e != 'H')} heavy)")
         for k, v in validate_cage(a).items():

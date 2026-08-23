@@ -1,0 +1,71 @@
+{
+  "source": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/01_protein/1ubq.pdb",
+  "chain": "A",
+  "mutations": {
+    "9": {
+      "from": "THR",
+      "to": "CYS",
+      "kept": [
+        "C",
+        "CA",
+        "CB",
+        "N",
+        "O"
+      ],
+      "dropped": [
+        "CG2",
+        "OG1"
+      ]
+    },
+    "45": {
+      "from": "PHE",
+      "to": "TRP",
+      "kept": [
+        "C",
+        "CA",
+        "CB",
+        "N",
+        "O"
+      ],
+      "dropped": [
+        "CD1",
+        "CD2",
+        "CE1",
+        "CE2",
+        "CG",
+        "CZ"
+      ]
+    },
+    "63": {
+      "from": "LYS",
+      "to": "CYS",
+      "kept": [
+        "C",
+        "CA",
+        "CB",
+        "N",
+        "O"
+      ],
+      "dropped": [
+        "CD",
+        "CE",
+        "CG",
+        "NZ"
+      ]
+    }
+  },
+  "histidines": {
+    "68": {
+      "tautomer": "HIE",
+      "why": "ND1 4.58 A, NE2 4.74 A -- too close to call, HIE"
+    }
+  },
+  "attachment": {
+    "sites": [
+      9,
+      63
+    ],
+    "CB_CB_A": 24.81,
+    "CA_CA_A": 23.22
+  }
+}

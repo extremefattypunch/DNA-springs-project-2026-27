@@ -40,6 +40,16 @@ O3PRIME_CAP = [("C", "O3C", "O", 1), ("O3C", "C3C", "C", 1),
                ("C3C", "H3A", "H", 1), ("C3C", "H3B", "H", 1),
                ("C3C", "H3C", "H", 1)]
 
+# Cap atom names are literals, so a residue needing two caps of the same kind would
+# name both sets identically.  Second copies with distinct names, for CMS (an acetyl on
+# its amide nitrogen as well as the ACE on its backbone N) and CDB (N-methylamides on
+# both of its carbonyls).  add() below now refuses a duplicate name outright: it indexes
+# atoms by name, so a collision would silently discard one of them.
+ACETYL_CAP_B = [("C", "CDY", "C", 1), ("CDY", "ODY", "O", 2), ("CDY", "CDZ", "C", 1),
+                ("CDZ", "HD1", "H", 1), ("CDZ", "HD2", "H", 1), ("CDZ", "HD3", "H", 1)]
+NMETHYL_CAP_B = [("C", "NDP", "N", 1), ("NDP", "HDP", "H", 1), ("NDP", "CDP", "C", 1),
+                 ("CDP", "HE1", "H", 1), ("CDP", "HE2", "H", 1), ("CDP", "HE3", "H", 1)]
+
 CAP_PLAN = {
     "TET": [("head", ACE_CAP), ("tail", NME_CAP)],
     "TDP": [("head", ACE_CAP), ("tail", NME_CAP), ("extra", NMETHYL_CAP)],
@@ -47,8 +57,15 @@ CAP_PLAN = {
     # DNH's alcohol needs no cap on that end -- it *is* the terminus.
     "DNH": [("head", ACETYL_CAP)],
     "DNP": [("head", O3PRIME_CAP), ("extra", ACETYL_CAP)],
+    # CMS is an ordinary amino acid at its backbone, plus an amide nitrogen that CDB's
+    # carbonyl will acylate -- so an acetyl stands in for that carbonyl.
+    "CMS": [("head", ACE_CAP), ("tail", NME_CAP), ("extra", ACETYL_CAP_B)],
+    # CDB is a carbonyl at each end, each of which will amidate a nitrogen: CMS's at the
+    # head and DNL's or DNP's at the far end.  Both are capped as N-methylamides.
+    "CDB": [("head", NMETHYL_CAP), ("extra", NMETHYL_CAP_B)],
 }
-FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1, "DNH": 0, "DNP": -1}
+FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1, "DNH": 0, "DNP": -1,
+                 "CMS": 0, "CDB": 0}
 
 
 def build(name: str, outdir: Path, seed: int = 0xC0FFEE):
@@ -61,6 +78,12 @@ def build(name: str, outdir: Path, seed: int = 0xC0FFEE):
     rw, idx, elem = Chem.RWMol(), {}, {}
 
     def add(nm, el):
+        if nm in idx:
+            raise ValueError(
+                f"duplicate atom name {nm} in the model compound for {res['name']} -- "
+                "atoms are indexed by name here, so one of the two would be silently "
+                "discarded.  Two caps of the same kind on one residue is the usual "
+                "cause; give the second copy distinct atom names.")
         a = Chem.Atom(el)
         a.SetNoImplicit(True)
         idx[nm] = rw.AddAtom(a)

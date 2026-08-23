@@ -1,0 +1,94 @@
+CHARGE      0.00 ( 0 )
+Formula: H22 C14 N4 O5 S1 
+ATOM      1  N   CMS     1      -1.801   0.871   0.396 -0.562900        ns
+ATOM      2  CA  CMS     1      -2.587  -0.205  -0.211  0.035700        c3
+ATOM      3  C   CMS     1      -4.067   0.163   0.000  0.653100         c
+ATOM      4  O   CMS     1      -4.443   0.800   0.984 -0.625100         o
+ATOM      5  CB  CMS     1      -2.332  -1.566   0.453 -0.050300        c3
+ATOM      6  SG  CMS     1      -0.863  -2.468  -0.185 -0.228200        ss
+ATOM      7  NS  CMS     1       2.721  -1.718   0.851 -0.504400         n
+ATOM      8  CS1 CMS     1       1.827  -1.804  -0.181  0.726500         c
+ATOM      9  OS1 CMS     1       2.099  -2.106  -1.336 -0.634500         o
+ATOM     10  CS2 CMS     1       0.477  -1.347   0.325 -0.109600        c5
+ATOM     11  CS3 CMS     1       0.654  -1.266   1.834 -0.146400        c5
+ATOM     12  CS4 CMS     1       2.141  -1.316   2.017  0.705500         c
+ATOM     13  OS4 CMS     1       2.717  -1.068   3.067 -0.568500         o
+ATOM     14  CV5 CMS     1       4.158  -1.758   0.659  0.076000        c3
+ATOM     15  CV6 CMS     1       4.757  -0.356   0.439  0.071000        c3
+ATOM     16  N7  CMS     1       4.272   0.306  -0.765 -0.579900        ns
+ATOM     17  H   CMS     1      -2.099   1.144   1.329  0.333500        hn
+ATOM     18  HA  CMS     1      -2.393  -0.254  -1.289  0.100700        h1
+ATOM     19  HB2 CMS     1      -2.243  -1.468   1.541  0.096700        h1
+ATOM     20  HB3 CMS     1      -3.181  -2.236   0.272  0.096700        h1
+ATOM     21  HS2 CMS     1       0.325  -0.360  -0.113  0.149700        h1
+ATOM     22  HS31CMS     1       0.260  -0.327   2.232  0.105700        hc
+ATOM     23  HS32CMS     1       0.215  -2.110   2.376  0.105700        hc
+ATOM     24  HV51CMS     1       4.384  -2.397  -0.201  0.074700        h1
+ATOM     25  HV52CMS     1       4.612  -2.203   1.551  0.074700        h1
+ATOM     26  HV61CMS     1       5.843  -0.440   0.333  0.069200        h1
+ATOM     27  HV62CMS     1       4.549   0.288   1.300  0.069200        h1
+ATOM     28  HN7 CMS     1       4.641  -0.003  -1.657  0.322500        hn
+ATOM     29  CAY CMS     1      -1.310   1.895  -0.387  0.663100         c
+ATOM     30  OAY CMS     1      -1.347   1.887  -1.612 -0.636100         o
+ATOM     31  CAZ CMS     1      -0.716   3.034   0.397 -0.172100        c3
+ATOM     32  HZ1 CMS     1       0.194   3.376  -0.103  0.071033        hc
+ATOM     33  HZ2 CMS     1      -0.452   2.723   1.411  0.071033        hc
+ATOM     34  HZ3 CMS     1      -1.440   3.851   0.446  0.071033        hc
+ATOM     35  NNT CMS     1      -4.928  -0.343  -0.952 -0.552900        ns
+ATOM     36  HNT CMS     1      -4.536  -0.610  -1.848  0.338500        hn
+ATOM     37  CNT CMS     1      -6.330  -0.005  -0.920  0.076300        c3
+ATOM     38  HT1 CMS     1      -6.866  -0.683  -1.589  0.047033        h1
+ATOM     39  HT2 CMS     1      -6.718  -0.101   0.098  0.047033        h1
+ATOM     40  HT3 CMS     1      -6.451   1.026  -1.261  0.047033        h1
+ATOM     41  CDY CMS     1       3.128   1.073  -0.775  0.656100         c
+ATOM     42  ODY CMS     1       2.442   1.287   0.222 -0.611100         o
+ATOM     43  CDZ CMS     1       2.746   1.598  -2.132 -0.174100        c3
+ATOM     44  HD1 CMS     1       2.409   2.633  -2.034  0.067367        hc
+ATOM     45  HD2 CMS     1       1.938   0.984  -2.538  0.067367        hc
+ATOM     46  HD3 CMS     1       3.594   1.578  -2.822  0.067367        hc
+BOND    1    1    2    1      N   CA
+BOND    2    2    3    1     CA    C
+BOND    3    3    4    2      C    O
+BOND    4    2    5    1     CA   CB
+BOND    5    5    6    1     CB   SG
+BOND    6    6   10    1     SG  CS2
+BOND    7    7    8    1     NS  CS1
+BOND    8    8    9    2    CS1  OS1
+BOND    9    8   10    1    CS1  CS2
+BOND   10   10   11    1    CS2  CS3
+BOND   11   11   12    1    CS3  CS4
+BOND   12   12   13    2    CS4  OS4
+BOND   13   12    7    1    CS4   NS
+BOND   14    7   14    1     NS  CV5
+BOND   15   14   15    1    CV5  CV6
+BOND   16   15   16    1    CV6   N7
+BOND   17    1   17    1      N    H
+BOND   18    2   18    1     CA   HA
+BOND   19    5   19    1     CB  HB2
+BOND   20    5   20    1     CB  HB3
+BOND   21   10   21    1    CS2  HS2
+BOND   22   11   22    1    CS3 HS31
+BOND   23   11   23    1    CS3 HS32
+BOND   24   14   24    1    CV5 HV51
+BOND   25   14   25    1    CV5 HV52
+BOND   26   15   26    1    CV6 HV61
+BOND   27   15   27    1    CV6 HV62
+BOND   28   16   28    1     N7  HN7
+BOND   29    1   29    1      N  CAY
+BOND   30   29   30    2    CAY  OAY
+BOND   31   29   31    1    CAY  CAZ
+BOND   32   31   32    1    CAZ  HZ1
+BOND   33   31   33    1    CAZ  HZ2
+BOND   34   31   34    1    CAZ  HZ3
+BOND   35    3   35    1      C  NNT
+BOND   36   35   36    1    NNT  HNT
+BOND   37   35   37    1    NNT  CNT
+BOND   38   37   38    1    CNT  HT1
+BOND   39   37   39    1    CNT  HT2
+BOND   40   37   40    1    CNT  HT3
+BOND   41   16   41    1     N7  CDY
+BOND   42   41   42    2    CDY  ODY
+BOND   43   41   43    1    CDY  CDZ
+BOND   44   43   44    1    CDZ  HD1
+BOND   45   43   45    1    CDZ  HD2
+BOND   46   43   46    1    CDZ  HD3

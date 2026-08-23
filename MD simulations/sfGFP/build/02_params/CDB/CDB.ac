@@ -1,0 +1,123 @@
+CHARGE      0.00 ( 0 )
+Formula: H26 C24 N6 O3 
+ATOM      1  CW  CDB     1       4.555   1.631   2.020  0.652100         c
+ATOM      2  OW  CDB     1       3.453   2.003   2.409 -0.614100         o
+ATOM      3  CV1 CDB     1       4.883   1.401   0.557 -0.152400        c3
+ATOM      4  CV2 CDB     1       3.613   1.241  -0.276 -0.146400        c3
+ATOM      5  CT  CDB     1       2.893  -0.060   0.069  0.668100         c
+ATOM      6  OT  CDB     1       3.545  -1.011   0.506 -0.572100         o
+ATOM      7  NZ  CDB     1       1.501  -0.077  -0.167 -0.381000         n
+ATOM      8  CK  CDB     1       1.038   0.521  -1.415  0.130300        c3
+ATOM      9  CP1 CDB     1       0.614  -0.929   0.627  0.120600        ca
+ATOM     10  CP2 CDB     1      -0.747  -1.237   0.345 -0.078000        ca
+ATOM     11  CP3 CDB     1      -1.430  -2.180   1.162 -0.099000        ca
+ATOM     12  CP4 CDB     1      -0.855  -2.737   2.297 -0.157000        ca
+ATOM     13  CP5 CDB     1       0.421  -2.353   2.650 -0.088000        ca
+ATOM     14  CP6 CDB     1       1.129  -1.464   1.835 -0.160000        ca
+ATOM     15  CQ1 CDB     1       0.915  -0.496  -2.534 -0.114300        ca
+ATOM     16  CQ2 CDB     1      -0.333  -1.058  -2.853 -0.079500        ca
+ATOM     17  CQ3 CDB     1      -0.455  -1.964  -3.912 -0.096000        ca
+ATOM     18  CQ4 CDB     1       0.673  -2.346  -4.636 -0.120000        ca
+ATOM     19  CQ5 CDB     1       1.921  -1.821  -4.308 -0.123000        ca
+ATOM     20  CQ6 CDB     1       2.044  -0.901  -3.265 -0.118000        ca
+ATOM     21  CJ1 CDB     1      -1.493  -0.665  -2.099  0.307800        cc
+ATOM     22  CJ2 CDB     1      -1.589  -0.670  -0.719 -0.097600        cd
+ATOM     23  NJ1 CDB     1      -2.793  -0.019  -0.514  0.047400        na
+ATOM     24  NJ2 CDB     1      -3.419   0.242  -1.680 -0.183800        nc
+ATOM     25  NJ3 CDB     1      -2.618  -0.135  -2.662 -0.340000        nd
+ATOM     26  CY1 CDB     1      -3.391   0.401   0.743  0.051300        c3
+ATOM     27  CY2 CDB     1      -4.172   1.708   0.674 -0.161400        c3
+ATOM     28  CG  CDB     1      -5.625   1.444   0.353  0.653100         c
+ATOM     29  OG  CDB     1      -6.452   1.254   1.240 -0.617100         o
+ATOM     30  HV11CDB     1       5.532   0.524   0.455  0.083700        hc
+ATOM     31  HV12CDB     1       5.441   2.276   0.204  0.083700        hc
+ATOM     32  HV21CDB     1       2.946   2.095  -0.110  0.083200        hc
+ATOM     33  HV22CDB     1       3.892   1.207  -1.334  0.083200        hc
+ATOM     34  HK1 CDB     1       0.132   1.106  -1.229  0.071200        h1
+ATOM     35  HK2 CDB     1       1.736   1.282  -1.778  0.071200        h1
+ATOM     36  HP3 CDB     1      -2.445  -2.489   0.910  0.140000        ha
+ATOM     37  HP4 CDB     1      -1.407  -3.447   2.905  0.143000        ha
+ATOM     38  HP5 CDB     1       0.886  -2.745   3.551  0.140000        ha
+ATOM     39  HP6 CDB     1       2.118  -1.195   2.196  0.148000        ha
+ATOM     40  HQ3 CDB     1      -1.427  -2.380  -4.170  0.151000        ha
+ATOM     41  HQ4 CDB     1       0.579  -3.058  -5.453  0.138000        ha
+ATOM     42  HQ5 CDB     1       2.802  -2.127  -4.868  0.136000        ha
+ATOM     43  HQ6 CDB     1       3.028  -0.504  -3.029  0.125000        ha
+ATOM     44  HY11CDB     1      -4.014  -0.432   1.086  0.081200        h1
+ATOM     45  HY12CDB     1      -2.567   0.535   1.453  0.081200        h1
+ATOM     46  HY21CDB     1      -4.153   2.199   1.655  0.080700        hc
+ATOM     47  HY22CDB     1      -3.744   2.419  -0.041  0.080700        hc
+ATOM     48  NCP CDB     1       5.633   1.435   2.856 -0.575900        ns
+ATOM     49  HCP CDB     1       6.413   0.896   2.500  0.329500        hn
+ATOM     50  CCP CDB     1       5.474   1.518   4.286  0.078300        c3
+ATOM     51  HC1 CDB     1       6.464   1.587   4.742  0.043700        h1
+ATOM     52  HC2 CDB     1       4.878   2.396   4.550  0.043700        h1
+ATOM     53  HC3 CDB     1       4.966   0.615   4.635  0.043700        h1
+ATOM     54  NDP CDB     1      -5.920   1.413  -0.989 -0.543900        ns
+ATOM     55  HDP CDB     1      -5.143   1.237  -1.626  0.315500        hn
+ATOM     56  CDP CDB     1      -7.237   1.050  -1.446  0.070300        c3
+ATOM     57  HE1 CDB     1      -7.362  -0.030  -1.333  0.046033        h1
+ATOM     58  HE2 CDB     1      -7.997   1.568  -0.856  0.046033        h1
+ATOM     59  HE3 CDB     1      -7.327   1.327  -2.499  0.046033        h1
+BOND    1    1    2    2     CW   OW
+BOND    2    1    3    1     CW  CV1
+BOND    3    3    4    1    CV1  CV2
+BOND    4    4    5    1    CV2   CT
+BOND    5    5    6    2     CT   OT
+BOND    6    5    7    1     CT   NZ
+BOND    7    7    9    1     NZ  CP1
+BOND    8    7    8    1     NZ   CK
+BOND    9    8   15    1     CK  CQ1
+BOND   10    9   10    7    CP1  CP2
+BOND   11   10   11    8    CP2  CP3
+BOND   12   11   12    7    CP3  CP4
+BOND   13   12   13    8    CP4  CP5
+BOND   14   13   14    7    CP5  CP6
+BOND   15   14    9    8    CP6  CP1
+BOND   16   15   16    7    CQ1  CQ2
+BOND   17   16   17    8    CQ2  CQ3
+BOND   18   17   18    7    CQ3  CQ4
+BOND   19   18   19    8    CQ4  CQ5
+BOND   20   19   20    7    CQ5  CQ6
+BOND   21   20   15    8    CQ6  CQ1
+BOND   22   10   22    1    CP2  CJ2
+BOND   23   16   21    1    CQ2  CJ1
+BOND   24   23   24    7    NJ1  NJ2
+BOND   25   24   25    8    NJ2  NJ3
+BOND   26   25   21    7    NJ3  CJ1
+BOND   27   21   22    8    CJ1  CJ2
+BOND   28   22   23    7    CJ2  NJ1
+BOND   29   23   26    1    NJ1  CY1
+BOND   30   26   27    1    CY1  CY2
+BOND   31   27   28    1    CY2   CG
+BOND   32   28   29    2     CG   OG
+BOND   33    3   30    1    CV1 HV11
+BOND   34    3   31    1    CV1 HV12
+BOND   35    4   32    1    CV2 HV21
+BOND   36    4   33    1    CV2 HV22
+BOND   37    8   34    1     CK  HK1
+BOND   38    8   35    1     CK  HK2
+BOND   39   11   36    1    CP3  HP3
+BOND   40   12   37    1    CP4  HP4
+BOND   41   13   38    1    CP5  HP5
+BOND   42   14   39    1    CP6  HP6
+BOND   43   17   40    1    CQ3  HQ3
+BOND   44   18   41    1    CQ4  HQ4
+BOND   45   19   42    1    CQ5  HQ5
+BOND   46   20   43    1    CQ6  HQ6
+BOND   47   26   44    1    CY1 HY11
+BOND   48   26   45    1    CY1 HY12
+BOND   49   27   46    1    CY2 HY21
+BOND   50   27   47    1    CY2 HY22
+BOND   51    1   48    1     CW  NCP
+BOND   52   48   49    1    NCP  HCP
+BOND   53   48   50    1    NCP  CCP
+BOND   54   50   51    1    CCP  HC1
+BOND   55   50   52    1    CCP  HC2
+BOND   56   50   53    1    CCP  HC3
+BOND   57   28   54    1     CG  NDP
+BOND   58   54   55    1    NDP  HDP
+BOND   59   54   56    1    NDP  CDP
+BOND   60   56   57    1    CDP  HE1
+BOND   61   56   58    1    CDP  HE2
+BOND   62   56   59    1    CDP  HE3

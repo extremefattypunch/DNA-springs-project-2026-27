@@ -292,12 +292,129 @@ DNP = {
     ],
 }
 
-RESIDUES = {r["name"]: r for r in (TET, TDP, DNL, DNH, DNP)}
+# ---------------------------------------------------------------------------
+# The ubiquitin chimera: a different protein, a different chemistry, the same DNA
+# ---------------------------------------------------------------------------
+# Boral, Schnebly et al. attach DNA to ubiquitin with DBCO-maleimide (Vector Labs
+# CCT-A108, CAS 1395786-30-7, C25H21N3O4, MW 427.75), which forms two bonds: a
+# thioether from a surface cysteine's S-gamma across the maleimide, and a triazole from
+# the strained cyclooctyne to an azide on the oligo.  The whole covalent path from the
+# protein to the first nucleotide is
+#
+#   Cys C-beta - S - [succinimide] - CH2CH2 - NH - CO - CH2CH2 - CO - N[DBCO]
+#     ... DBCO cyclooctyne fused to [1,2,3-triazole] ... - CH2CH2 - CO - NH - [DNL/DNP]
+#
+# and it is split into two residues at the first amide, CMS + CDB, for a practical
+# reason: the whole arm is 45 heavy atoms, which is a large and slow AM1-BCC problem,
+# whereas 16 + 29 is two comfortable ones.  The split is free because it falls on an
+# amide -- a c-ns bond, exactly the bond type junction.frcmod already carries for the
+# carbamate in the sfGFP tether, so no new cross terms are needed.
+#
+# It also means DNL and DNP are reused unchanged.  Their nitrogens are amidated by
+# whatever carbonyl precedes them; in sfGFP that is TDP's carbamate and here it is the
+# NHS-ester-derived amide, and the bond is the same in both.
+#
+# Four structural details are CHOSEN rather than established, and each is flagged in
+# the report as an approximation:
+#
+#   1. The spacer lengths inside DBCO-maleimide.  The vendor gives a formula and a "C6
+#      spacer" but not a structure sheet.  Only one arrangement of the known pieces --
+#      azadibenzocyclooctyne, a 4-oxobutanoyl, an amide, an ethylene, a maleimide --
+#      reproduces C25H21N3O4 exactly, and that is what is built here:
+#        C15H10N (azocinyl) + C4H4O2 + NH + C2H4 + C4H2NO2 = C25H21N3O4.
+#      Getting a CH2 wrong here would change the arm's reach by ~1.2 A on a linker that
+#      is already ~20 A of freely rotating chain, so the mechanical consequence is small,
+#      but it is an assumption and not a measurement.
+#   2. Triazole regiochemistry.  Strain-promoted cycloaddition on DBCO gives both
+#      orientations and they are not separated; one is built.
+#   3. The stereocentre created at the thioether carbon.  Racemic in the experiment; one
+#      epimer is built.
+#   4. The NHS-ester azide's own spacer, taken as 3-azidopropanoyl.
+#
+# None of the four is load-bearing for the question the ubiquitin runs are meant to
+# answer, which is whether local protein-DNA contacts or spring action dominates.
+CMS = {
+    "name": "CMS",
+    "description": "cysteine with its S-gamma added across a maleimide: the "
+                   "succinimidyl thioether, through an ethylene to the amide nitrogen "
+                   "that continues into the DBCO half",
+    "smiles_capped": r"CC(=O)NC(CSC1CC(=O)N(CCNC(C)=O)C1=O)C(=O)NC",
+    "net_charge": 0.0,
+    "head": "N", "tail": "C", "aa": True,
+    "extra_bond": {"this_atom": "N7", "partner_residue": "CDB",
+                   "partner_atom": "CW"},
+    "heavy": ["N", "CA", "C", "O", "CB", "SG",
+              "NS", "CS1", "OS1", "CS2", "CS3", "CS4", "OS4", "CV5", "CV6", "N7"],
+    "hydrogens": {
+        "N": ["H"], "CA": ["HA"], "CB": ["HB2", "HB3"],
+        "CS2": ["HS2"], "CS3": ["HS31", "HS32"],
+        "CV5": ["HV51", "HV52"], "CV6": ["HV61", "HV62"], "N7": ["HN7"],
+    },
+    "bonds": [
+        ("N", "CA", 1), ("CA", "C", 1), ("C", "O", 2), ("CA", "CB", 1),
+        ("CB", "SG", 1), ("SG", "CS2", 1),
+        # the succinimide ring, saturated by the thiol addition
+        ("NS", "CS1", 1), ("CS1", "OS1", 2), ("CS1", "CS2", 1), ("CS2", "CS3", 1),
+        ("CS3", "CS4", 1), ("CS4", "OS4", 2), ("CS4", "NS", 1),
+        # out of the ring nitrogen to the amide that joins CDB
+        ("NS", "CV5", 1), ("CV5", "CV6", 1), ("CV6", "N7", 1),
+    ],
+}
+
+CDB = {
+    "name": "CDB",
+    "description": "the DBCO half: an amide and a 4-oxobutanoyl into the "
+                   "azadibenzocyclooctyne, whose strained alkyne has become a "
+                   "1,2,3-triazole with the oligo's azide, then out to the carbonyl "
+                   "that amidates DNL or DNP",
+    "smiles_capped": r"CNC(=O)CCC(=O)N1Cc2ccccc2c3nnn(CCC(=O)NC)c3c4ccccc41",
+    "net_charge": 0.0,
+    "head": "CW", "tail": None,
+    "extra_bond": {"this_atom": "CG", "partner_residue": "DNL",
+                   "partner_atom": "N"},
+    # Stated explicitly because CDB has no tail: prepgen is handed no MAIN_CHAIN in that
+    # case and would guess the tree through a fused polycyclic cage.
+    # Amber's MAIN_CHAIN lists the atoms BETWEEN head and tail, so the head CW is not
+    # named here (compare DNP, whose list starts after its head phosphorus).  The path
+    # runs through the fused cage by way of one benzo ring and the triazole.
+    "main_chain": ["CV1", "CV2", "CT", "NZ", "CP1", "CP2", "CJ2", "NJ1",
+                   "CY1", "CY2", "CG"],
+    "heavy": ["CW", "OW", "CV1", "CV2", "CT", "OT", "NZ", "CK",
+              "CP1", "CP2", "CP3", "CP4", "CP5", "CP6",
+              "CQ1", "CQ2", "CQ3", "CQ4", "CQ5", "CQ6",
+              "CJ1", "CJ2", "NJ1", "NJ2", "NJ3",
+              "CY1", "CY2", "CG", "OG"],
+    "hydrogens": {
+        "CV1": ["HV11", "HV12"], "CV2": ["HV21", "HV22"], "CK": ["HK1", "HK2"],
+        "CP3": ["HP3"], "CP4": ["HP4"], "CP5": ["HP5"], "CP6": ["HP6"],
+        "CQ3": ["HQ3"], "CQ4": ["HQ4"], "CQ5": ["HQ5"], "CQ6": ["HQ6"],
+        "CY1": ["HY11", "HY12"], "CY2": ["HY21", "HY22"],
+    },
+    "bonds": [
+        ("CW", "OW", 2), ("CW", "CV1", 1), ("CV1", "CV2", 1),
+        ("CV2", "CT", 1), ("CT", "OT", 2), ("CT", "NZ", 1),
+        # the eight-membered azocine: N and a methylene on one side, the former alkyne
+        # (now two triazole carbons) on the other, with a benzo ring bridging each pair
+        ("NZ", "CP1", 1), ("NZ", "CK", 1), ("CK", "CQ1", 1),
+        ("CP1", "CP2", "ar"), ("CP2", "CP3", "ar"), ("CP3", "CP4", "ar"),
+        ("CP4", "CP5", "ar"), ("CP5", "CP6", "ar"), ("CP6", "CP1", "ar"),
+        ("CQ1", "CQ2", "ar"), ("CQ2", "CQ3", "ar"), ("CQ3", "CQ4", "ar"),
+        ("CQ4", "CQ5", "ar"), ("CQ5", "CQ6", "ar"), ("CQ6", "CQ1", "ar"),
+        ("CP2", "CJ2", 1), ("CQ2", "CJ1", 1),
+        # the triazole formed by the cycloaddition; NJ1 is the nitrogen the azide
+        # brought in, so it is the one carrying the chain back to the DNA
+        ("NJ1", "NJ2", 1), ("NJ2", "NJ3", 2), ("NJ3", "CJ1", 1),
+        ("CJ1", "CJ2", 2), ("CJ2", "NJ1", 1),
+        ("NJ1", "CY1", 1), ("CY1", "CY2", 1), ("CY2", "CG", 1), ("CG", "OG", 2),
+    ],
+}
+
+RESIDUES = {r["name"]: r for r in (TET, TDP, DNL, DNH, DNP, CMS, CDB)}
 
 # Standard atomic masses, enough for the elements present.
-MASS = {"H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999, "P": 30.974}
+MASS = {"H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999, "P": 30.974, "S": 32.06}
 # Expected heavy-atom valences.  Aromatic bonds count as 1.5 for the check.
-VALENCE = {"C": 4, "N": 3, "O": 2, "P": 5}
+VALENCE = {"C": 4, "N": 3, "O": 2, "P": 5, "S": 2}
 
 
 def element_of(name: str) -> str:
@@ -422,5 +539,30 @@ if __name__ == "__main__":
           f"(protein CB through to the bridging O on the DNA phosphate)")
     bad += abs(arm_tdp - want_tdp) >= 0.05
     bad += abs(mass(DNL) - want_dnl) >= 0.05
+
+    # The ubiquitin crosslinker is a purchased reagent with a published formula, so the
+    # split into CMS + CDB can be checked against it rather than merely asserted.  Drop
+    # the atoms that do NOT come from DBCO-maleimide -- the cysteine's own backbone and
+    # side chain, the three triazole nitrogens the azide brought in, and the arm running
+    # from the triazole out to the DNA -- and what remains must be exactly C25H21N3O4.
+    # One hydrogen moves in the reaction: the maleimide's C=C picks up the thiol's H.
+    not_crosslinker = {"CMS": {"N", "CA", "C", "O", "CB", "SG"},
+                       "CDB": {"NJ1", "NJ2", "NJ3", "CY1", "CY2", "CG", "OG"}}
+    tally = {}
+    for nm in ("CMS", "CDB"):
+        r, drop = RESIDUES[nm], not_crosslinker[nm]
+        for a in r["heavy"]:
+            if a not in drop:
+                tally[element_of(a)] = tally.get(element_of(a), 0) + 1
+        for parent, hs in r["hydrogens"].items():
+            if parent not in drop:
+                tally["H"] = tally.get("H", 0) + len(hs) - (
+                    1 if (nm == "CMS" and parent == "CS3") else 0)
+    got = "".join(f"{e}{tally[e]}" for e in ("C", "H", "N", "O") if e in tally)
+    ok = got == "C25H21N3O4"
+    print(f"CMS+CDB minus protein, azide and DNA arm = {got}   "
+          f"expected DBCO-maleimide C25H21N3O4   {'OK' if ok else 'MISMATCH'}")
+    bad += (not ok)
+
     print(f"\n{'FAILED: ' + str(bad) + ' problem(s)' if bad else 'all definitions consistent'}")
     sys.exit(1 if bad else 0)

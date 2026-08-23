@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 import barrel  # noqa: E402
 import chromophore  # noqa: E402
 import mechanics  # noqa: E402
+import sites  # noqa: E402
 
 CLAMP_RE = re.compile(r"^(?P<base>.+?)_(?P<f>[\d.]+)pN$")
 
@@ -98,6 +99,13 @@ def main():
             flat("barrel.", b, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  barrel failed: {type(e).__name__}: {e}")
+        try:
+            sc = sites.analyse(traj, top, rmap, args.sites, pre, args.stride, skip)
+            # DSSP is a per-residue dict of fractions; keep it in the per-run JSON and
+            # out of the flat CSV, which would otherwise gain 84 columns of mostly zeros.
+            flat("site.", {k: v for k, v in sc.items() if k != "dssp"}, row)
+        except Exception as e:                              # noqa: BLE001
+            print(f"  sites failed: {type(e).__name__}: {e}")
         rows.append(row)
 
     if not rows:

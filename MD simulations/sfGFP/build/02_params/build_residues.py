@@ -59,6 +59,13 @@ MC = {
     "DNH": {"pre_head": "c", "post_tail": None, "aa": False},
     # DNP's head phosphorus bonds the nucleotide's O3', which OL15 types OS.
     "DNP": {"pre_head": "OS", "post_tail": None, "aa": False},
+    # The ubiquitin arm.  CMS is an ordinary amino acid as far as its backbone goes; its
+    # extra amide nitrogen is a side-chain terminus, not a main-chain one.  CDB is a
+    # carbonyl at both ends: its head bonds CMS's amide nitrogen and its far carbonyl
+    # bonds DNL's or DNP's, and both of those nitrogens are GAFF type ns -- the same
+    # amide bond the sfGFP carbamate already needed, so junction.frcmod covers it.
+    "CMS": {"pre_head": "C", "post_tail": "N", "aa": True},
+    "CDB": {"pre_head": "ns", "post_tail": None, "aa": False},
 }
 
 
@@ -157,23 +164,33 @@ def harmonise_backbone(prepin: Path) -> dict:
             "residue_total_charge_after": round(total, 6)}
 
 
-# GAFF type -> element.  Only the multi-letter halogen/metal types are ambiguous;
-# everything else is keyed by its first character.
-_GAFF_MULTI = {"cl": "Cl", "br": "Br", "cu": "Cu", "fe": "Fe", "zn": "Zn",
-               "mg": "Mg", "na": "Na", "li": "Li", "ca": "C", "cc": "C", "cd": "C",
-               "ce": "C", "cf": "C", "cg": "C", "ch": "C", "cp": "C", "cq": "C",
-               "cx": "C", "cy": "C", "cu1": "Cu", "cs": "C", "c1": "C", "c2": "C",
-               "c3": "C", "c5": "C", "c6": "C", "ni": "Ni", "co": "Co", "ns": "N"}
+# GAFF2 type -> element.
+#
+# GAFF2's own types are lower case and, with exactly two exceptions, the first character
+# is the element: c/ca/cc/cp/cx/c1..c6 are carbon, n/na/nb/nh/ns/n1..n4 nitrogen,
+# o/oh/os oxygen, s/sh/ss/s2..s6 sulfur, p2..p5/pb/px phosphorus, h/ha/hc/hn hydrogen.
+# The exceptions are cl and br.  Amber's metal and ion types, by contrast, are
+# capitalised (Na+, MG, Cl-, Zn) and never appear in a GAFF prepin for an organic
+# residue, so there is no clash to resolve.
+#
+# The earlier version of this table listed "na": "Na", "ni": "Ni", "co": "Co" as
+# ambiguous metals.  That is wrong for a GAFF prepin and it over-fired: the triazole
+# nitrogen of the DBCO adduct is typed na -- GAFF2's sp2 three-substituent nitrogen --
+# and the check rejected a correct residue as containing sodium.  The check exists
+# because antechamber infers elements from atom *names*, which once turned six carbons
+# named CL1..CL6 into chlorines with fourteen invented parameters, so it is worth
+# keeping; it just has to be right in both directions.
+_GAFF_TWO_LETTER = {"cl": "Cl", "br": "Br"}
 
 
 def element_from_gaff(t: str) -> str:
-    """Element implied by a GAFF atom type."""
+    """Element implied by a GAFF2 atom type."""
     tl = t.lower()
-    if tl in _GAFF_MULTI:
-        return _GAFF_MULTI[tl]
+    if tl in _GAFF_TWO_LETTER:
+        return _GAFF_TWO_LETTER[tl]
     if tl in ("f", "i"):
         return tl.upper()
-    return t[0].upper()
+    return tl[0].upper()
 
 
 def assert_elements(prepin: Path, res: dict) -> dict:
@@ -252,6 +269,13 @@ def write_mc(name: str, cap_atoms, path: Path):
         out.append(f"TAIL_NAME {res['tail']}")
         out += [f"MAIN_CHAIN {a}" for a in main_chain_path(res)]
     elif res.get("main_chain"):
+        # MAIN_CHAIN names the atoms between head and tail, so a declared list that
+        # starts at the head is a plausible mistake with a confusing symptom -- prepgen
+        # emits a tree in which the head is its own parent.  Drop it and say so.
+        if res["main_chain"][0] == res["head"]:
+            print(f"  note: {res['name']}'s main_chain starts at its head "
+                  f"{res['head']}; MAIN_CHAIN lists interior atoms, so it is dropped")
+            res = dict(res, main_chain=res["main_chain"][1:])
         # A tail-less residue gets no MAIN_CHAIN from the branch above, and prepgen
         # then guesses the tree.  That guess is what once made DNL's bridging oxygen
         # a child of its nitrogen -- right atoms, right charge, wrong topology -- so
