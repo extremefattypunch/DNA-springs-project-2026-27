@@ -523,33 +523,50 @@ Over residues 128–155, secondary structure is identical in WT, 2× Tet2-Et and
 site 133 is coil in every case (0 % β) and site 149 is 100 % β in every case, with His148
 at 64–79 % β and no systematic trend.
 
-### What does change: one backbone dihedral, and one stacking interaction
+### What does change: a backbone dihedral, and a stacking interaction
 
-| system | site 133 (φ, ψ) | site 149 (φ, ψ) | Tyr200 contacts at 149 |
+Circular means over all replicates (3 for WT and Tet2-Et, 9 for the clicked control,
+6 per chimera; first 5 ns of each discarded):
+
+| system | site 133 (φ, ψ) | site 149 (φ, ψ) | ring–Tyr200 contacts at 149 |
 |---|---|---|---|
-| WT (Asp133, Asn149) | **+57.7, +12.4** | −126.6, +139.9 | — |
-| 2× Tet2-Et | **+74.3, +4.8** | −134.4, +119.7 | **19.0 / frame** |
-| clicked (TDP) | **+61.0, +14.2** | −115.1, +130.4 | **0.5 / frame** |
+| WT (Asp133, Asn149) | **+56.9, +16.3** | −126.6, +137.2 | — |
+| 2× Tet2-Et | **+74.4, +2.4** | −125.5, +124.1 | 10.5 ± 9.5 |
+| clicked, no DNA | **+61.3, +13.3** | −113.7, +131.5 | 0.68 ± 0.4 |
+| 27 bp chimera | +63.1, +9.5 | −112.3, +132.5 | 0.96 ± 0.4 |
+| 40 bp chimera | +62.9, +9.9 | −106.8, +125.3 | 8.4 ± 2.5 |
+| 40 bp nicked | +62.9, +10.2 | −111.8, +120.1 | 9.6 ± 1.9 |
 
-*(one replicate each, first 5 ns discarded; circular statistics)*
+**Site 133 is the clean result.** Asp133 natively occupies the **left-handed α region** —
+positive φ — which aspartate, asparagine and glycine commonly adopt and which a
+phenylalanine-shaped side chain tolerates poorly. Tet2-Et *is* a phenylalanine
+derivative, so it pushes φ out by 17.5° and ψ by 14°; clicking gives most of it back. The
+replicate spread is tiny (WT ±0.8°, Tet2-Et ±0.5°), so this is not noise. The ring at
+site 133 never touches Tyr200 in any system.
 
-**Site 133.** Asp133 natively occupies the **left-handed α region** — positive φ — which
-is a conformation aspartate, asparagine and glycine commonly adopt and which a
-phenylalanine-shaped side chain tolerates poorly. Tet2-Et *is* a phenylalanine derivative,
-so it pushes φ out by 17° and ψ by 8°. Clicking hands it back to essentially WT. Site 149
-is ordinary β and barely moves.
+**Site 149 stacks on Tyr200, but not reproducibly.** I first measured this on one
+replicate and got 19 contacts per frame, which overstated it. Across three replicates the
+unclicked tetrazine gives 10.5 ± 9.5 — the individual values are 20.0, 10.4 and 0.9, so
+the ring samples both stacked and unstacked states and three replicates cannot pin the
+occupancy. What *is* tight is the clicked control at 0.68 ± 0.4 over nine replicates. And
+the 40 bp chimeras stack again (8.4, 9.6), so this is not simply "clicking releases it" —
+the ring at 149 can stack, and whether it does depends on the construct.
 
-**Site 149, and this is the larger effect.** The **unclicked tetrazine at 149 is pinned
-flat against Tyr200** — 19 heavy-atom contacts per frame — and clicking releases it to 0.5.
-The ring at site 133 never touches Tyr200 at all. So the unclicked intermediate is held
-against a neighbour that the clicked adduct cannot reach, and that pulls the site in.
+**Both variables track the contraction.** Across all 30–33 replicates that have both
+measurements:
 
-### This is also the answer to #3
+| predictor of Cβ–Cβ | Pearson r | p | slope |
+|---|---|---|---|
+| Tyr200 contacts at 149 | −0.68 | 5×10⁻⁵ | −38 mÅ per contact |
+| φ at site 133 | −0.59 | 3×10⁻⁴ | −39 mÅ per degree |
+| both together | R² = 0.55 | | −22 mÅ/deg and −29 mÅ/contact |
 
-The 0.647 Å that clicking recovers is not a mysterious chemistry offset: it is mostly
-Tyr200 letting go. That matters because the retracted claim in #3 was built on using the
-unclicked protein as the zero. The artefact had a mechanism, and the mechanism is a
-stacking interaction of the unclicked intermediate — nothing to do with the spring.
+So the contraction you noticed tracks **two local structural variables and not secondary
+structure**, and the two are partly independent — together they account for a bit over
+half the variance in Cβ–Cβ across every system that has these residues. I would call that
+suggestive rather than causal: these are correlations across constructs that differ
+chemically, so part of the association is simply that both variables differ between the
+unclicked and clicked states.
 
 ### Which sites tolerate Tet2-Et
 
@@ -559,12 +576,24 @@ supports:
 1. **Avoid positive-φ positions.** Sites in the left-handed α region are occupied by
    Asp/Asn/Gly for a reason, and a bulky aromatic side chain does not fit there. Site 133
    is exactly such a position and is the one that distorts.
-2. **Avoid positions with an aromatic neighbour.** The unclicked tetrazine will stack on
-   it, and the resulting distortion **disappears on clicking** — which means it will look
-   like a spring effect to anyone using the unclicked protein as a reference. That is
-   precisely how the point-3 artefact arose.
-3. **Ordinary β and α positions with no aromatic neighbour are fine.** Site 149's backbone
-   moves by less than 10° and its secondary structure is unchanged.
+2. **Treat an aromatic neighbour as a liability.** The ring at site 149 stacks on Tyr200
+   in some constructs and not others, and the amount it does correlates with the
+   contraction. That is a variable you do not control and cannot see without measuring
+   it, and — critically — it **differs between the unclicked and clicked states**, so it
+   will masquerade as a mechanical effect for anyone using the unclicked protein as a
+   reference. That is exactly how the point-3 artefact arose.
+3. **Ordinary β and α positions with no aromatic neighbour should be fine.** Site 149's
+   backbone moves by less than 13° and its secondary structure is unchanged; what makes
+   it awkward is the neighbour, not the position.
+
+### How this connects back to #3
+
+The 0.647 Å that clicking recovers is not an inexplicable chemistry offset. Across every
+replicate that carries these residues, Cβ–Cβ tracks the φ angle at site 133 and the
+stacking at site 149, and together those two account for a little over half its variance.
+Whatever its precise decomposition, the offset is **local side-chain and backbone
+structure at the modified sites**, not anything the spring does — which is why using the
+unclicked protein as the zero produced a spurious force response.
 
 ---
 

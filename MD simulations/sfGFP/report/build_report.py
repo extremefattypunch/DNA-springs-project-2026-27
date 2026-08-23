@@ -585,6 +585,34 @@ def build(args):
     tw = ext.get("tet_vs_wt") or {}
     sw = ext.get("strongest_vs_weakest_spring") or {}
     chim_slope = ext.get("chimera_slope_A_per_pN")
+    mc = ext.get("matched_control") or {}
+    vsm = ext.get("vs_matched_control") or {}
+    unclicked_ref = ext.get("zero_force_ref") or {}
+
+    def _row(key, force):
+        v = vsm.get(key)
+        if not v:
+            return ""
+        sig = ("<strong>yes</strong>" if v.get("p_bonferroni", 1) < 0.05 else "no")
+        # the label comes from findings.json, so this file needs no style import
+        return (f"<tr><td>{force:.2f}</td><td>{v.get('label', key)}</td>"
+                f"<td>{v['delta']:+.3f}</td><td>{v['t']:+.2f}</td>"
+                f"<td>{v['p']:.3f}</td><td>{v.get('p_bonferroni', float('nan')):.3f}</td>"
+                f"<td>{sig}</td></tr>")
+    _forces = {k: (f["springs"].get(k, {}).get("force_pN", {}) or {}).get("mean", 0.0)
+               for k in ("S5_spring40nick", "S4_spring40", "S3_spring27")}
+    matched_rows = "\n".join(_row(k, v) for k, v in
+                              sorted(_forces.items(), key=lambda kv: kv[1]))
+
+    con = f.get("contacts") or {}
+    contact_rows = "\n".join(
+        f"<tr><td>{v['label']}</td>"
+        f"<td>{v['atoms_within_4.5A']['mean']:.1f} &plusmn; "
+        f"{v['atoms_within_4.5A'].get('sd', 0):.1f}</td>"
+        f"<td>{100 * v['frames_with_contact']:.0f}%</td>"
+        f"<td>{v['residues_touched']:.0f}</td></tr>"
+        for v in con.values())
+    have_contacts = bool(contact_rows)
     bistable = [n for n, v in f["hbonds"].items() if v["bistable"]]
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
@@ -594,6 +622,7 @@ def build(args):
     cite_eddins = cite("eddins", "blizzard"); cite_pedelacq = cite("pedelacq")
     cite_ormo = cite("ormo"); cite_labms = cite("labms", "eddins")
     cite_spring = cite("zocchi_book", "qu", "tseng2013")
+    cite_qu = cite("qu")
     cite_tau = cite("tseng2013", "qu"); cite_tseng2021 = cite("tseng2021")
     cite_zocchi = cite("zocchi_book"); cite_niwa = cite("niwa")
     cite_brejc = cite("brejc"); cite_choi = cite("choi2007")
@@ -648,10 +677,14 @@ def build(args):
   <figure><img src="{anim3}" alt="The chromophore and its hydrogen-bond partners" />
     <figcaption><strong>Inside the barrel.</strong> The chromophore in green with the
     side chains lining its cavity, and dashed measures on the three hydrogen bonds that
-    hold it planar: His148 and Thr203 to the phenolate oxygen, Arg96 to the
-    imidazolinone carbonyl. The barrel is drawn transparent so the cavity shows through.
-    Watch His148 — it is the mobile one of the three, and the residue the spring pulls
-    across.</figcaption></figure>
+    hold it <em>from twisting</em>: His148 and Thr203 to the phenolate oxygen, Arg96 to
+    the imidazolinone carbonyl. The barrel is drawn transparent so the cavity shows
+    through. What these bonds resist is <strong>rotation, not bending</strong> — the
+    chromophore loses its quantum yield by twisting about the two exocyclic bonds of the
+    methine bridge, which opens a non-radiative decay channel{cite_niwa}, and holding the
+    two ring systems coplanar is what suppresses it. Watch His148: it is the mobile one
+    of the three, and the residue nearest the two attachment
+    sites.</figcaption></figure>
   <div class="col">
     <p>The attachment sites are <strong>Asp133</strong> and <strong>Asn149</strong> in
     2B3P’s numbering — D134 and N150 in the construct’s own, which runs one higher.
@@ -720,11 +753,68 @@ def build(args):
     timescale. Bending is spread evenly at 3–8° per step with no localised spike
     (figure 4), and of 27–40 base pairs only
     {min(v['bp_open']['mean'] for v in sp.values()):.2f}–{max(v['bp_open']['mean'] for v in sp.values()):.2f}
-    are open at any instant — the duplex is intact. Either a kink needs longer than
-    45 ns to nucleate, or at these lengths the strain is genuinely taken up as
-    distributed elastic bending. Until that is settled the forces should be read as
-    model-dependent numbers, consistent with the model’s inputs rather than confirming
-    its mechanism.</p>
+    are open at any instant — the duplex is intact. Three explanations are possible: the
+    force field resists kinking, the timescale is too short, or the model puts the
+    kinking threshold in the wrong place. The literature answers fairly clearly, and it
+    is mostly the last two.</p>
+
+    <h4>The curvature we impose is below where all-atom MD nucleates kinks</h4>
+    <p>Our radius of 31–34 Å is 5.7–6.3° per base-pair step, equivalent to a 57–63 bp
+    minicircle. (For scale: that is about 25% <em>tighter</em> in radius than nucleosomal
+    DNA, which runs at ~42 Å and ~4.6°/bp — not "roughly nucleosomal", as an earlier
+    version of this page said.) Converting each published criterion to a threshold radius
+    through <em>R</em> = <em>B</em>/τ<sub>c</sub>:</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>source</th><th>criterion</th><th>threshold R</th><th>°/bp</th></tr></thead>
+      <tbody>
+      <tr><td>Zocchi, nicked{cite_qu}</td><td>τ<sub>c</sub> = 27 pN nm</td><td>76 Å</td><td>2.6</td></tr>
+      <tr><td>Zocchi, intact{cite_zocchi}</td><td>τ<sub>c</sub> = 31 pN nm</td><td>66 Å</td><td>3.0</td></tr>
+      <tr><td>Vologodskii &amp; Frank-Kamenetskii 2013; Du 2008</td><td>nuclease probing</td><td>35–40 Å</td><td>4.9–5.6</td></tr>
+      <tr><td>Fields, Meyer &amp; Cohen 2013</td><td>FRET “molecular vice”, WLC linear to 7°/bp</td><td>≤28 Å</td><td>7</td></tr>
+      <tr><td>Curuksu <em>et al.</em> 2009</td><td>umbrella sampling, same force-field family</td><td>21–23 Å</td><td><strong>8.6–9.3</strong></td></tr>
+      <tr class="hi"><td><strong>this work</strong></td><td>bent duplex in the chimera</td><td><strong>31–34 Å</strong></td><td><strong>5.7–6.3</strong></td></tr>
+      </tbody></table></div>
+
+    <p>Zocchi’s τ<sub>c</sub> is the most kink-friendly estimate in the field: it places
+    the softening transition at a <em>gentler</em> bend than a nucleosome, where every
+    independent estimate is 1.3–2.7× stiffer. The one directly comparable calculation —
+    Curuksu <em>et al.</em>’s umbrella sampling on a bent linear duplex in the same
+    force-field family — finds type II kinks only above 8.6–9.3° per step, <strong>40–60%
+    more curvature than we impose</strong>. On that criterion, not seeing a kink is the
+    expected result rather than an anomaly.</p>
+
+    <h4>45 ns is short by two to five orders of magnitude</h4>
+    <p>Base-pair lifetimes measured by NMR imino exchange are 1–40 ms, so the per-pair
+    opening rate is ~10²–10³ s⁻¹. For ~30 pairs in parallel across our 270 ns of aggregate
+    sampling the <em>expected</em> number of opening events is 8×10⁻⁴ to 8×10⁻³. Seeing
+    none is what unstressed kinetics predicts before bending is considered at all.
+    Turning that around converts a null result into a bound: these data are consistent
+    with a stress-induced reduction of the opening barrier of <strong>up to about
+    5 k<sub>B</sub>T</strong>, and cannot support more. Independently, published kink free
+    energies of 12–22 k<sub>B</sub>T imply waiting times of microseconds to hundreds of
+    milliseconds.</p>
+    <p>Published calibration points agree: kinks appear at 80–800 ns in nucleosomal loops
+    held far more tightly than ours, and at 20–25 ns in 65 bp <em>closed</em> minicircles
+    — but a 90 bp minicircle run for <strong>11 µs</strong> at R ≈ 49 Å showed no kinks
+    and no base-pair-level distortion at all.</p>
+
+    <h4>The force field, honestly</h4>
+    <p>There is a documented bias, and OL15 is specifically implicated: backbone-dihedral
+    refinements favour B-form geometry even in non-helical contexts, and all AMBER
+    variants overestimate persistence length with OL15 the stiffest of them. Twist-bend
+    kinks also require local <em>under</em>twisting, and the OL family was tuned to
+    increase twist. So OL15 is plausibly the least kink-prone reasonable choice, and that
+    deserves saying. But the magnitude is not enough to rescue the model: parmbsc0 and
+    parmbsc1 are softer and also fail to kink at comparable curvature on 20–240× longer
+    runs; parmbsc1’s free-energy landscape is <em>sub</em>-harmonic, i.e. more deformable
+    than elasticity predicts; and CHARMM36, the alternative, has the opposite pathology of
+    spurious base-pair disruption. No head-to-head comparison of kinking propensity across
+    these force fields in a sharply bent duplex has been published — that is a real gap.</p>
+
+    <p><strong>So the forces above remain model-dependent numbers.</strong> They are
+    consistent with the model’s inputs; they do not confirm its mechanism. That is why
+    the force is now also measured directly, below.</p>
   </div>
 </section>
 
@@ -756,33 +846,63 @@ def build(args):
       <th>replicate range</th><th>n</th><th>Δ vs 0 pN</th></tr></thead>
       <tbody>{ladder_rows}</tbody></table></div>
 
-    <h3>The spring moves the sites more than an equivalent axial pull</h3>
-    <p>Ranked by the force their own spring delivers, the three chimeras sit
-    {s40n['extension_A']['mean'] - zero:+.2f}, {s40['extension_A']['mean'] - zero:+.2f}
-    and {s27['extension_A']['mean'] - zero:+.2f} Å from the zero-force clamp —
-    monotonic in force, a slope of {chim_slope:.2f} Å pN⁻¹, more than ten times the
-    axial-clamp slope. That is what Zocchi argues throughout his work{cite_zocchi}: forces applied at
-    different places elicit <em>different responses</em>, not different magnitudes of one
-    response. A spring anchored through two flexible tethers applies a couple and a
-    shear as well as an extension, and the barrel evidently answers those more readily
-    than a pure pull along Cβ–Cβ.</p>
-    <p>With three replicates the strongest-against-weakest comparison reaches
-    t = {sw.get('t', 0):.1f} on 4 degrees of freedom — <strong>not significant</strong>.
-    This is a trend of the right sign and a plausible size, not a measurement.</p>
+    <h3>The spring does <em>not</em> move the sites more than an axial pull</h3>
 
-    <div class="note flag"><div class="h">The comparison is confounded — and the fix is
-      running</div>
-      <p>Installing the two Tet2-Et residues moves the sites by
-      {tw.get('delta', 0):+.2f} Å on its own (t = {tw.get('t', 0):.1f},
-      {'resolved' if tw.get('resolved') else 'not resolved'}) — comparable to or larger
-      than any spring effect above. The clamp ladder runs on that unclicked protein, so
-      it is <em>not</em> the right zero for a chimera built from the clicked adduct,
-      which differs by the whole sTCO cage plus a six-carbon arm. A clicked-but-unloaded
-      control (<code>S2_clicked</code>), axial clamps on that same topology set to the
-      two extreme measured spring forces, and three further replicates of every chimera
-      are in the queue. A chimera minus that control is what isolates the load; until
-      then the Δ-extension column should be read as an upper limit on the spring’s
-      effect, not an estimate of it.</p></div>
+    <div class="note flag"><div class="h">Retraction</div>
+      <p>An earlier version of this page said the three chimeras sat +0.19, +0.52 and
+      +0.59 Å from the zero-force clamp, monotonic in force at 0.13 Å pN⁻¹, and
+      attributed the excess over a pure axial pull to a couple and a shear delivered
+      through the two flexible tethers. <strong>That claim is withdrawn.</strong> It used
+      the <em>unclicked</em> protein as its zero. Every chimera is clicked, and clicking
+      alone moves the sites {tw.get('delta', 0):+.2f} Å — fifteen to thirty times any
+      force effect. The physical argument was also unsound: at equilibrium a couple does
+      no net work, and along Cβ–Cβ only the component of force along that coordinate can
+      displace the mean. Thanks to Doeke Hekstra for catching both.</p></div>
+
+    <p>The right zero is the clicked, unloaded protein: same tether chemistry, same two
+    modified residues, no DNA. Against it, every chimera sits <em>at or below</em> the
+    control — the springs compress the attachment sites or leave them alone. Nothing
+    survives a Bonferroni correction for the three comparisons.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>modelled force (pN)</th><th>system</th><th>Δ vs clicked control (Å)</th>
+      <th>t</th><th>p</th><th>p (×3)</th><th>resolved</th></tr></thead>
+      <tbody>{matched_rows}</tbody></table></div>
+
+    <p>The two baselines, for comparison: the clicked control sits at
+    {mc.get('mean', float('nan')):.3f} ± {mc.get('sem', float('nan')):.3f} Å and the
+    unclicked protein the old claim used at
+    {unclicked_ref.get('mean', float('nan')):.3f} ±
+    {unclicked_ref.get('sem', float('nan')):.3f} Å.</p>
+
+    <h3>What the axial clamp measures instead: the barrel's stiffness</h3>
+    <p>Clamping the same two Cβ at 0, 2.35 and 4.88 pN on the clicked topology gives a
+    straight line at 6.9 mÅ pN⁻¹ (r² = 0.998), i.e. <strong>κ ≈ 350 k<sub>B</sub>T
+    nm⁻²</strong>. The longer six-point ladder on the unclicked protein is noisier
+    (r² = 0.18) and gives ≈ 230 k<sub>B</sub>T nm⁻². Both say the barrel along this
+    coordinate is <strong>two to three and a half times stiffer</strong> than the
+    ~100 k<sub>B</sub>T nm⁻² Zocchi uses as a generic protein spring constant{cite_zocchi}.
+    At 350 k<sub>B</sub>T nm⁻² a 4 pN spring moves the sites 0.03 Å — which is the whole
+    reason this cannot be measured by watching an equilibrium distance in 50 ns.</p>
+
+    <h3>The spring is not acting at a distance — it is touching the protein</h3>
+    <p>If the chimeras differ from a matched axial pull, the difference cannot be a
+    couple, for the reason above. The obvious alternative is that the duplex is a large
+    charged object tethered two nanometres from the barrel and leaning on it.
+    {"That is what it does:" if have_contacts else "Measuring it directly:"}</p>
+    {'<div class="tbl-wrap"><table><thead><tr><th>system</th>'
+     '<th>protein heavy atoms within 4.5 Å</th><th>frames in contact</th>'
+     '<th>residues touched</th></tr></thead><tbody>' + contact_rows +
+     '</tbody></table></div>' if have_contacts else
+     '<p class="muted">Contact analysis pending the current round of runs.</p>'}
+    <p>The duplex is in contact with the protein in essentially every frame of every
+    replicate. Note also that the <em>most</em> compressed system is the nicked one,
+    which delivers the <em>least</em> force: a nick makes the duplex floppier, so it lies
+    against the barrel more readily. That ordering is what a contact mechanism predicts
+    and the opposite of what a force mechanism predicts. It is also the conclusion the
+    companion ubiquitin study reaches from the other direction{cite_boral} — a control
+    bearing two separate short strands reproduced most of the circular chimera's NMR
+    spectrum, pointing at local protein–DNA interaction rather than spring action.</p>
   </div>
 </section>
 

@@ -264,6 +264,83 @@ def fig_bend(runs, out):
     return "fig4_dna_bend"
 
 
+def fig_ramachandran(runs, outdir):
+    """phi/psi at the two modified sites, WT against Tet2-Et against clicked.
+
+    A scatter is the right form here because the claim is about *where in the
+    Ramachandran plane* a residue sits, and the interesting fact -- that site 133 lives
+    at positive phi, in the left-handed alpha region -- is a statement about position,
+    not about a mean.  The generously drawn regions are the conventional ones; they are
+    guides, not contours from a database.
+    """
+    sysdirs = {"S0_wt": "wild type", "S1_tet": "2x Tet2-Et (unclicked)",
+               "S2_clicked": "clicked adduct"}
+    data = {}
+    for s in sysdirs:
+        for f in sorted(Path(runs).glob(f"{s}/rep*/03_production/analysis_sites.csv")):
+            d = pd.read_csv(f)
+            for site in (133, 149):
+                a, b = f"phi_{site}_deg", f"psi_{site}_deg"
+                if a in d and b in d:
+                    data.setdefault((s, site), []).append(d[[a, b]].to_numpy())
+    if not data:
+        print("  ramachandran: no site CSVs yet"); return None
+    for k in data:
+        data[k] = np.vstack(data[k])
+
+    fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.9), sharex=True, sharey=True)
+    regions = [(-180, -30, -75, 30, r"$\beta$ / PPII"),
+               (-160, -40, -70, -5, None),
+               (-100, -30, -80, -5, r"right-handed $\alpha$"),
+               (25, 100, -20, 90, r"left-handed $\alpha$")]
+    for ax, site in zip(axes, (133, 149)):
+        for x0, x1, y0, y1, lab in regions:
+            ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fc=VS.GRID,
+                                       ec="none", zorder=0, alpha=0.55))
+            if lab:
+                ax.text(x0 + 3, y1 - 6, lab, fontsize=7.5, color=VS.INK_MUTED,
+                        va="top", zorder=1)
+        for i, (s, label) in enumerate(sysdirs.items()):
+            v = data.get((s, site))
+            if v is None:
+                continue
+            ax.scatter(v[:, 0], v[:, 1], s=4, alpha=0.20, lw=0,
+                       color=VS.SERIES[i], zorder=2)
+            # circular mean, so a residue near the wrap does not average to nonsense
+            mx = np.degrees(np.arctan2(np.sin(np.radians(v[:, 0])).mean(),
+                                       np.cos(np.radians(v[:, 0])).mean()))
+            my = np.degrees(np.arctan2(np.sin(np.radians(v[:, 1])).mean(),
+                                       np.cos(np.radians(v[:, 1])).mean()))
+            ax.plot(mx, my, "o", ms=9, mfc=VS.SERIES[i], mec="white", mew=1.8,
+                    zorder=4)
+            ax.annotate(f"{label}\n{mx:+.0f}, {my:+.0f}", (mx, my),
+                        xytext=(10, -4 + 22 * (1 - i)), textcoords="offset points",
+                        fontsize=8, color=VS.SERIES[i], zorder=5)
+        ax.axhline(0, color=VS.INK_MUTED, lw=0.6, zorder=1)
+        ax.axvline(0, color=VS.INK_MUTED, lw=0.6, zorder=1)
+        ax.set_xlim(-180, 180); ax.set_ylim(-180, 180)
+        ax.set_xticks([-180, -90, 0, 90, 180]); ax.set_yticks([-180, -90, 0, 90, 180])
+        ax.set_xlabel(r"$\phi$ (degrees)")
+        ax.set_title(f"site {site}", fontsize=10)
+    axes[0].set_ylabel(r"$\psi$ (degrees)")
+    fig.suptitle("Backbone conformation at the two modified sites", fontsize=11.5)
+    fig.tight_layout()
+    out = Path(outdir) / "ramachandran.png"
+    fig.savefig(out, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    rows = [{"system": s, "site": site,
+             "phi_deg": float(np.degrees(np.arctan2(
+                 np.sin(np.radians(v[:, 0])).mean(),
+                 np.cos(np.radians(v[:, 0])).mean()))),
+             "psi_deg": float(np.degrees(np.arctan2(
+                 np.sin(np.radians(v[:, 1])).mean(),
+                 np.cos(np.radians(v[:, 1])).mean()))),
+             "frames": len(v)}
+            for (s, site), v in sorted(data.items())]
+    pd.DataFrame(rows).to_csv(out.with_suffix(".csv"), index=False)
+    return "ramachandran"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", default="analysis/summary.csv")
@@ -274,7 +351,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(a.summary)
     made = [fig_force_response(df, out), fig_rmsf(df, a.runs, out),
-            fig_hbonds(df, out), fig_bend(a.runs, out)]
+            fig_hbonds(df, out), fig_bend(a.runs, out),
+             fig_ramachandran(a.runs, out)]
     made = [m for m in made if m]
     print("wrote: " + ", ".join(f"{m}.png" for m in made))
     (out / "figures.json").write_text(json.dumps(made, indent=2))

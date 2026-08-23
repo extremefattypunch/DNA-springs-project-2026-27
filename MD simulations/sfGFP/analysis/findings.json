@@ -614,6 +614,21 @@
         31.487
       ]
     },
+    "zero_force_ref_note": "UNCLICKED protein at 0 pN -- not a valid baseline for a chimera; kept only because the clamp ladder runs on it",
+    "matched_control": {
+      "mean": 32.27433333333334,
+      "sd": 0.15936227073348752,
+      "sem": 0.09200784990664905,
+      "min": 32.144,
+      "max": 32.452,
+      "n": 3,
+      "values": [
+        32.452,
+        32.144,
+        32.227
+      ]
+    },
+    "matched_control_note": "clicked, unloaded (S2_clicked at 0 pN) -- the right zero for a chimera",
     "S0_wt": {
       "label": "WT sfGFP",
       "mean": 32.24466666666667,
@@ -716,14 +731,157 @@
     "tet_vs_wt": {
       "delta": -0.6173333333333311,
       "t": -9.813099842521243,
+      "dof": 2.5320471642726505,
+      "p": 0.004432630963923684,
+      "n": [
+        3,
+        3
+      ],
       "resolved": true
     },
     "strongest_vs_weakest_spring": {
       "delta": 0.4396666666666711,
       "t": 3.0104662929204586,
+      "dof": 9.819280816863504,
+      "p": 0.013366687766348294,
+      "n": [
+        6,
+        6
+      ],
       "resolved": true
     },
+    "vs_matched_control": {
+      "S3_spring27": {
+        "delta": 0.021333333333330984,
+        "t": 0.16042660008891088,
+        "dof": 5.919470346926056,
+        "p": 0.8778794550648784,
+        "n": [
+          6,
+          3
+        ],
+        "resolved": false,
+        "p_bonferroni": 1.0,
+        "label": "27 bp"
+      },
+      "S4_spring40": {
+        "delta": -0.2049999999999983,
+        "t": -1.6757169715264275,
+        "dof": 5.05792095755938,
+        "p": 0.1539722345942595,
+        "n": [
+          6,
+          3
+        ],
+        "resolved": false,
+        "p_bonferroni": 0.4619167037827785,
+        "label": "40 bp"
+      },
+      "S5_spring40nick": {
+        "delta": -0.4183333333333401,
+        "t": -2.916296501254533,
+        "dof": 6.497066376057058,
+        "p": 0.024425903773384893,
+        "n": [
+          6,
+          3
+        ],
+        "resolved": true,
+        "p_bonferroni": 0.07327771132015468,
+        "label": "40 bp, nicked"
+      }
+    },
     "chimera_slope_A_per_pN": 0.16542070901167333
+  },
+  "sites": {
+    "S0_wt": {
+      "label": "WT sfGFP",
+      "133": {
+        "residue": "ASP",
+        "phi": 56.86,
+        "psi": 16.31
+      },
+      "149": {
+        "residue": "ASN",
+        "phi": -126.57,
+        "psi": 137.18
+      }
+    },
+    "S1_tet": {
+      "label": "2\u00d7 Tet2-Et, unloaded",
+      "133": {
+        "residue": "TET",
+        "phi": 74.36,
+        "psi": 2.43,
+        "Tyr200_contacts_per_frame": 0.0
+      },
+      "149": {
+        "residue": "TET",
+        "phi": -125.52,
+        "psi": 124.11,
+        "Tyr200_contacts_per_frame": 10.46
+      }
+    },
+    "S2_clicked": {
+      "label": "clicked, no DNA",
+      "133": {
+        "residue": "TDP",
+        "phi": 61.32,
+        "psi": 13.27,
+        "Tyr200_contacts_per_frame": 0.0
+      },
+      "149": {
+        "residue": "TDP",
+        "phi": -113.66,
+        "psi": 131.48,
+        "Tyr200_contacts_per_frame": 0.68
+      }
+    },
+    "S3_spring27": {
+      "label": "27 bp spring",
+      "133": {
+        "residue": "TDP",
+        "phi": 63.09,
+        "psi": 9.45,
+        "Tyr200_contacts_per_frame": 0.0
+      },
+      "149": {
+        "residue": "TDP",
+        "phi": -112.28,
+        "psi": 132.49,
+        "Tyr200_contacts_per_frame": 0.96
+      }
+    },
+    "S4_spring40": {
+      "label": "40 bp spring",
+      "133": {
+        "residue": "TDP",
+        "phi": 62.91,
+        "psi": 9.87,
+        "Tyr200_contacts_per_frame": 0.0
+      },
+      "149": {
+        "residue": "TDP",
+        "phi": -106.82,
+        "psi": 125.31,
+        "Tyr200_contacts_per_frame": 8.37
+      }
+    },
+    "S5_spring40nick": {
+      "label": "40 bp nicked",
+      "133": {
+        "residue": "TDP",
+        "phi": 62.95,
+        "psi": 10.16,
+        "Tyr200_contacts_per_frame": 0.0
+      },
+      "149": {
+        "residue": "TDP",
+        "phi": -111.85,
+        "psi": 120.13,
+        "Tyr200_contacts_per_frame": 9.56
+      }
+    }
   },
   "hbonds": {
     "His148 ND1-H -> chromophore phenolate": {

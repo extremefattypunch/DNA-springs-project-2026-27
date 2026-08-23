@@ -13,6 +13,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+from scipy import stats
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
@@ -21,7 +22,6 @@ SPRINGS = [("S3_spring27", "27 bp"), ("S4_spring40", "40 bp"),
 PROTEINS = [("S0_wt", "WT sfGFP"), ("S1_tet", "2× Tet2-Et, unloaded"),
             ("S2_clicked", "clicked, no DNA"), ("S3_spring27", "27 bp spring"),
             ("S4_spring40", "40 bp spring"), ("S5_spring40nick", "40 bp nicked")]
-T95_DF4 = 2.776          # two-sided 95% t for 4 degrees of freedom (n=3 vs n=3)
 
 
 def agg(sub, col):
@@ -35,17 +35,26 @@ def agg(sub, col):
 
 
 def welch(a, b):
-    """Two-sample t and whether it clears 95% with these tiny n."""
+    """Welch's two-sample t, with a p-value and the Welch-Satterthwaite d.o.f.
+
+    Actually Welch's now: the previous version pooled the two variances, which is
+    Student's test and assumes equal variance -- not safe when one group is three
+    replicates of one construct and the other is six of another.  It also returned no
+    p-value, so comparisons could only be called resolved or not against a fixed
+    critical t for 4 degrees of freedom, which is wrong whenever the group sizes differ.
+    """
     a, b = np.asarray(a, float), np.asarray(b, float)
     if len(a) < 2 or len(b) < 2:
         return None
-    sp = np.sqrt(((len(a) - 1) * a.var(ddof=1) + (len(b) - 1) * b.var(ddof=1))
-                 / (len(a) + len(b) - 2))
-    if sp == 0:
+    va, vb = a.var(ddof=1) / len(a), b.var(ddof=1) / len(b)
+    if va + vb == 0:
         return None
-    t = (a.mean() - b.mean()) / (sp * np.sqrt(1 / len(a) + 1 / len(b)))
+    t = (a.mean() - b.mean()) / np.sqrt(va + vb)
+    dof = (va + vb) ** 2 / (va ** 2 / (len(a) - 1) + vb ** 2 / (len(b) - 1))
+    p = float(2.0 * stats.t.sf(abs(t), dof))
     return {"delta": float(a.mean() - b.mean()), "t": float(t),
-            "resolved": bool(abs(t) > T95_DF4)}
+            "dof": float(dof), "p": p, "n": [len(a), len(b)],
+            "resolved": bool(p < 0.05)}
 
 
 def main(summary=None, out=None):
@@ -103,9 +112,23 @@ def main(summary=None, out=None):
                 if k + tcrit * se > 0 else None})
         f["clamp"][base] = entry
 
-    # ---- protein extension, every system, against the matched zero-force control ----
-    zero = df[(df.system == "S6_clamp") & (df.clamp_pN == 0)]
-    f["extension"] = {"zero_force_ref": agg(zero, "mech.anchor_CB_CB_A.mean")}
+    # ---- protein extension, against the MATCHED control ----
+    # The zero has to be the clicked, unloaded protein.  Using the unclicked one, which
+    # is what the clamp ladder runs on, is what produced the retracted claim that the
+    # springs extend the attachment sites: installing the two Tet2-Et residues moves the
+    # sites 0.62 A on its own and clicking gives it back, so every chimera looks ~0.65 A
+    # "extended" from the chemistry alone -- 15 to 30 times any force effect.  Both
+    # references are recorded, and which is which is stated in the key.
+    unclicked = df[(df.system == "S6_clamp") & (df.clamp_pN == 0)]
+    clicked = df[(df.system == "S2_clicked") & (df.clamp_pN.fillna(0) == 0)]
+    f["extension"] = {
+        "zero_force_ref": agg(unclicked, "mech.anchor_CB_CB_A.mean"),
+        "zero_force_ref_note": "UNCLICKED protein at 0 pN -- not a valid baseline for a "
+                               "chimera; kept only because the clamp ladder runs on it",
+        "matched_control": agg(clicked, "mech.anchor_CB_CB_A.mean"),
+        "matched_control_note": "clicked, unloaded (S2_clicked at 0 pN) -- the right "
+                                "zero for a chimera",
+    }
     for k, nm in PROTEINS:
         sub = df[df.system == k]
         if len(sub):
@@ -119,6 +142,19 @@ def main(summary=None, out=None):
     w2 = welch(df[df.system == "S3_spring27"]["mech.anchor_CB_CB_A.mean"].values,
                df[df.system == "S5_spring40nick"]["mech.anchor_CB_CB_A.mean"].values)
     f["extension"]["strongest_vs_weakest_spring"] = w2
+    # Each chimera against the matched control, with a Bonferroni correction for the
+    # three comparisons -- without it a single p = 0.02 out of three looks decisive.
+    base = clicked["mech.anchor_CB_CB_A.mean"].values
+    f["extension"]["vs_matched_control"] = {}
+    for k, nm in SPRINGS:
+        sub_k = df[df.system == k]["mech.anchor_CB_CB_A.mean"].values
+        if not len(sub_k) or not len(base):
+            continue
+        w3 = welch(sub_k, base)
+        w3["p_bonferroni"] = min(1.0, w3["p"] * len(SPRINGS)) if "p" in w3 else None
+        w3["label"] = nm
+        f["extension"]["vs_matched_control"][k] = w3
+
     if f["springs"]:
         fs = [f["springs"][k]["force_pN"]["mean"] for k, _ in SPRINGS
               if k in f["springs"]]
@@ -126,6 +162,54 @@ def main(summary=None, out=None):
               if k in f["springs"]]
         if len(fs) > 2:
             f["extension"]["chimera_slope_A_per_pN"] = float(np.polyfit(fs, es, 1)[0])
+
+    # ---- backbone conformation at the two modified sites ----
+    # Circular means across replicates, because these are angles: site 133 sits near
+    # +60 deg, and a residue that occasionally samples the other side of the branch cut
+    # would otherwise drag the mean somewhere it never visits.
+    if "site.phi_133.mean" in df.columns:
+        f["sites"] = {}
+        for k, nm in PROTEINS:
+            s = df[df.system == k]
+            if not len(s):
+                continue
+            entry = {"label": nm}
+            for site in (133, 149):
+                rn = s.get(f"site.resname_{site}")
+                d = {"residue": (rn.iloc[0] if rn is not None and len(rn) else None)}
+                for ang in ("phi", "psi"):
+                    c = f"site.{ang}_{site}.mean"
+                    if c not in s or s[c].isna().all():
+                        continue
+                    v = np.radians(s[c].dropna().values)
+                    d[ang] = round(float(np.degrees(np.arctan2(
+                        np.sin(v).mean(), np.cos(v).mean()))), 2)
+                st = f"site.stack_Tyr200_{site}.contacts_per_frame"
+                if st in s and not s[st].isna().all():
+                    d["Tyr200_contacts_per_frame"] = round(
+                        float(s[st].dropna().mean()), 2)
+                entry[str(site)] = d
+            f["sites"][k] = entry
+
+    # ---- how much of the protein the DNA is actually touching ----
+    # This is the measurement that decides between "the spring applies a force" and
+    # "the DNA leans on the barrel", and the second is what the data supports.
+    if "contact.atoms_in_contact_mean" in df.columns:
+        f["contacts"] = {}
+        for k, nm in SPRINGS + [("C1_ss50", "50 nt ssDNA spring"),
+                                ("C2_ssarms", "two 25 nt arms"),
+                                ("L3_loop27", "closed loop, 27 bp"),
+                                ("L4_loop40", "closed loop, 40 bp"),
+                                ("L5_loop40nick", "closed loop, 40 bp nicked")]:
+            s = df[df.system == k]
+            s = s[s["contact.atoms_in_contact_mean"].notna()]
+            if not len(s):
+                continue
+            f["contacts"][k] = {
+                "label": nm,
+                "atoms_within_4.5A": agg(s, "contact.atoms_in_contact_mean"),
+                "frames_with_contact": float(s["contact.frames_with_contact"].mean()),
+                "residues_touched": float(s["contact.residues_ever_touched"].mean())}
 
     # ---- chromophore ----
     hb_cols = [c for c in df.columns
