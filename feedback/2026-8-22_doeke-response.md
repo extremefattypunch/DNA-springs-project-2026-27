@@ -123,8 +123,8 @@ mechanics-only control (2021 Methods chapter, §4.5.3) — hybridise with two ha
 cDNAs rather than one, which changes the spring's bending stiffness while leaving the DNA
 content and every contact with the protein identical.
 
-**Status.** L3/L4/L5 built with 0 problems and integral charge; 3 replicates × 50 ns each
-**[running]**.
+**Status.** L3/L4/L5 built with 0 problems and integral charge; **3 replicates × 50 ns
+each, finished**.
 
 ---
 
@@ -439,7 +439,9 @@ you what the force field says, not what DNA does.
 
 **Caveats.** These windows have 5–15 ns each so far and the replicate scatter is real —
 the 82 Å point disagrees between stiffnesses (14 vs 24 pN) and needs more sampling. The
-full runs are 30–40 ns × 2 **[running]**, and the numbers above will be updated. Also,
+full runs are now **complete at 30 ns × 2 per window**, including three deeper windows
+added afterwards, so the numbers above will tighten slightly when the table is regenerated.
+Also,
 this measures the force between the duplex's own ends under a stiff restraint, which is
 the right analogue of the model's *f*(*x*); how much of it reaches Cβ–Cβ in the chimera
 depends on the tether geometry, and #3 says: not much, and not in the direction a pure
@@ -801,15 +803,19 @@ DBCO-Ub stage, that is the most interesting missing rung, and it is the obvious 
 
 ---
 
-## What is running
+## What has run
 
-| set | systems | replicates × length |
-|---|---|---|
-| corrected closed-loop chimeras | L3_loop27, L4_loop40, L5_loop40nick | 3 × 50 ns |
-| ssDNA and non-circular control | C1_ss50, C2_ssarms | 3 × 50 ns |
-| force–extension, stiff | 27/40/40-nick × 6 windows | 2 × 30 ns |
-| force–extension, soft | 27/40/40-nick × 6 windows | 2 × 40 ns |
-| ubiquitin | U0–U4 | 3 × 50 ns |
+**3,971 ns over 81 replicates**, of which 1,421 ns is new since the last version of this
+document.
+
+| set | systems | replicates × length | state |
+|---|---|---|---|
+| corrected closed-loop chimeras | L3_loop27, L4_loop40, L5_loop40nick | 3 × 50 ns | done |
+| ssDNA spring and non-circular control | C1_ss50, C2_ssarms | 3 × ~40 ns | done |
+| ubiquitin | U0_apo, U1_clicked, U2_ss50, U3_ds50, U4_ssarms | 3 × 40–50 ns | done |
+| force–extension, two stiffnesses | 27/40/40-nick, 6 windows each | 2 × 30–40 ns | done |
+| deeper compression, for the kink threshold | 27 bp at 44/38/32 Å, two stiffnesses | 2 × 30 ns | done |
+| seeded type II kinks | 3 positions in a 27-mer | 2 × 30 ns | queued |
 
 The existing 2,550 ns is kept and reused, reframed as what it actually is: a two-arm,
 non-circularising construct — Zocchi's pre-ligation chimera, and the closest analogue we
