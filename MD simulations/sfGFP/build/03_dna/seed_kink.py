@@ -72,6 +72,13 @@ BASE_ATOMS = {
     "H21", "H22", "H61", "H62", "H71", "H72", "H73", "H51", "H52", "H53",
 }
 PURINES = {"DA", "DG"}
+# Any two atoms in different residues closer than this are overlapping, not contacting:
+# a real stacking contact is 3.3-3.6 A and a hydrogen bond 1.8-2.0, so 1.5 flags only
+# genuine interpenetration.  A handful can be relaxed away; sixty cannot.
+CLASH_A = 1.5
+MAX_CLASHES = 4
+WC_BROKEN_A = 4.0     # the central pair counts as broken beyond this
+WC_PAIRED_A = 3.2     # the flanking pairs must still be within this
 
 
 def rodrigues(axis, angle):
@@ -102,6 +109,37 @@ def bp_frame(res, a, b, i, n_bp):
     return centre, long_axis, z
 
 
+def count_clashes(res):
+    """Inter-residue atom pairs closer than CLASH_A."""
+    from scipy.spatial import cKDTree
+    items = [(key, nm, at["xyz"]) for key, r in res.items() for nm, at in r.items()]
+    xyz = np.array([x for _, _, x in items])
+    who = [k for k, _, _ in items]
+    tree = cKDTree(xyz)
+    return sum(1 for i, j in tree.query_pairs(CLASH_A, output_type="ndarray")
+               if who[i] != who[j])
+
+
+def wc_distance(res, a, b, i, n_bp):
+    r1, r2 = res.get((a, i)), res.get((b, n_bp + 1 - i))
+    if r1 is None or r2 is None:
+        return None
+    n1 = "N1" if next(iter(r1.values()))["resn"].rstrip("35") in PURINES else "N3"
+    n2 = "N1" if next(iter(r2.values()))["resn"].rstrip("35") in PURINES else "N3"
+    if n1 not in r1 or n2 not in r2:
+        return None
+    return float(np.linalg.norm(r1[n1]["xyz"] - r2[n2]["xyz"]))
+
+
+def motif(res, a, b, step, n_bp):
+    """Is this still a type II kink?  central pair broken, flanking pairs intact."""
+    c = wc_distance(res, a, b, step, n_bp)
+    f1 = wc_distance(res, a, b, step - 1, n_bp)
+    f2 = wc_distance(res, a, b, step + 1, n_bp)
+    flank = max(x for x in (f1, f2) if x is not None) if (f1 or f2) else None
+    return {"central": c, "flank": flank}
+
+
 def seed(atoms, step: int, roll_deg: float, propeller_deg: float):
     """Roll everything past `step`, then break the pair AT `step` with a propeller."""
     res = residues(atoms)
@@ -129,43 +167,126 @@ def seed(atoms, step: int, roll_deg: float, propeller_deg: float):
     # the two junctions are ~18 A apart across the helix, so a roll moves them in different
     # directions and a single shift can only fix their average.  Putting the axis through
     # them removes the problem rather than patching it.
-    up_a, dn_a = res[(a, step)].get(PRIME3), res[(a, step + 1)].get("P")
-    up_b, dn_b = res[(b, n_bp - step)].get(PRIME3), res[(b, n_bp + 1 - step)].get("P")
-    if all(x is not None for x in (up_a, dn_a, up_b, dn_b)):
-        j_a = 0.5 * (up_a["xyz"] + dn_a["xyz"])       # strand A's junction midpoint
-        j_b = 0.5 * (up_b["xyz"] + dn_b["xyz"])       # strand B's
-        pivot, axis = j_a, (j_b - j_a)
-        report["roll_axis"] = "through both O3'-P junctions"
-    else:
-        pivot, axis = centre, long_axis
-        report["roll_axis"] = "base-pair long axis (junction atoms not found)"
-    R = rodrigues(axis, math.radians(roll_deg))
+    # The bend is split across the TWO steps flanking the central pair, half at each,
+    # rather than dumped on one.  That is the motif as described -- three base pairs with
+    # the broken one acting as the hinge and sitting in the wedge -- and it is also what
+    # makes the seed buildable: putting the whole 85 deg on a single step closes that
+    # groove completely and drove the two flanking bases on one strand to 0.4 A of each
+    # other.  Two half-rolls of 42.5 deg leave room for the broken pair between them.
+    def junction_axis(k):
+        """Pivot and direction for the step between base pairs k and k+1."""
+        ua, da = res[(a, k)].get(PRIME3), res[(a, k + 1)].get("P")
+        ub, db = res[(b, n_bp - k)].get(PRIME3), res[(b, n_bp + 1 - k)].get("P")
+        if not all(x is not None for x in (ua, da, ub, db)):
+            return None, None
+        ja = 0.5 * (ua["xyz"] + da["xyz"])
+        jb = 0.5 * (ub["xyz"] + db["xyz"])
+        return ja, (jb - ja)
+
     moved = 0
-    for i in range(step + 1, n_bp + 1):
-        for key in ((a, i), (b, n_bp + 1 - i)):
-            for at in res[key].values():
-                at["xyz"] = pivot + R @ (at["xyz"] - pivot)
-                moved += 1
+    for k, first_moving in ((step - 1, step), (step, step + 1)):
+        pivot, axis = junction_axis(k)
+        if pivot is None:
+            pivot, axis = centre, long_axis
+        R = rodrigues(axis, math.radians(roll_deg / 2.0))
+        for i in range(first_moving, n_bp + 1):
+            for key in ((a, i), (b, n_bp + 1 - i)):
+                for at in res[key].values():
+                    at["xyz"] = pivot + R @ (at["xyz"] - pivot)
+                    moved += 1
+    report["roll_axis"] = ("half at each of the two steps flanking the broken pair, "
+                           "about the axis through both O3'-P junctions")
     report["atoms_rolled"] = moved
 
-    # ---- 2. the propeller, breaking the central pair ----
-    # Applied to the pyrimidine of the pair, arbitrarily but consistently: it is the
-    # smaller base, so swinging it disturbs less of the surrounding stack, and the
-    # literature motif has the broken bases stacking on their 5' neighbours either way.
+    # ---- 1c. rise: open the wedge the roll closes ----
+    # A large roll at a step necessarily drives the base edges together on the closing
+    # side -- at 3.4 A rise and ~4 A of base reaching out from the axis, 42 deg closes
+    # more than the whole gap.  Real kinks accommodate this by sliding and rising as well
+    # as rolling ("kink-and-slide"), and no amount of rotating the bases about their own
+    # glycosidic bonds substitutes for it: the colliding atoms are anchored to backbones
+    # whose separation the rotation does not change.
+    #
+    # So translate the two halves apart along the local helical axis until the clashes
+    # clear.  This DOES stretch the two O3'-P bonds at the junction, and that is the right
+    # trade: a stretched covalent bond is something minimisation pulls straight back in,
+    # whereas two rings threaded through each other is something it relaxes INTO and
+    # cannot escape -- which is exactly what produced a guanine ring at 2.66 A and NaN
+    # coordinates six minutes into production.
+    rise_used = 0.0
+    for rise in np.arange(0.0, 12.01, 0.25):
+        if rise > 0:
+            for i in range(step, n_bp + 1):
+                for key in ((a, i), (b, n_bp + 1 - i)):
+                    for at in res[key].values():
+                        at["xyz"] = at["xyz"] + 0.125 * z
+            for i in range(step + 1, n_bp + 1):
+                for key in ((a, i), (b, n_bp + 1 - i)):
+                    for at in res[key].values():
+                        at["xyz"] = at["xyz"] + 0.125 * z
+        rise_used = rise
+        if count_clashes(res) <= MAX_CLASHES:
+            break
+    report["rise_A"] = round(float(rise_used), 2)
+
+    # ---- 2. break the central pair: BOTH bases swing out of the stack ----
+    # The motif is not a wedge inserted into an intact helix.  The central pair leaves the
+    # stack -- "its bases stack on their 5' neighbours" -- and the two flanking pairs
+    # close up on each other at an angle.  So both bases rotate about their own glycosidic
+    # bonds, not just one; leaving the purine in place is what kept colliding with the
+    # flanking base on that strand.
+    #
+    # The two angles are chosen by a small search rather than asserted, because which way
+    # each base should swing depends on the local sequence and on the sign of the roll,
+    # and there is no reason to guess.  The search is constrained so it cannot return
+    # something that is not a kink: the central pair must be broken, both flanking pairs
+    # must still be paired, and the bend must survive.  Among the candidates that qualify
+    # it takes the one with fewest clashes.
+    def rotate_base(residue, angle):
+        nm_ = next(iter(residue.values()))["resn"].rstrip("35")
+        gly = "N9" if nm_ in PURINES else "N1"
+        if "C1'" not in residue or gly not in residue:
+            return 0
+        q0, q1 = residue["C1'"]["xyz"], residue[gly]["xyz"]
+        Rq = rodrigues(q1 - q0, math.radians(angle))
+        n = 0
+        for name, at in residue.items():
+            if name in BASE_ATOMS:
+                at["xyz"] = q1 + Rq @ (at["xyz"] - q1)
+                n += 1
+        return n
+
     ra, rb = res[(a, step)], res[(b, n_bp + 1 - step)]
-    pick = rb if next(iter(rb.values()))["resn"].rstrip("35") not in PURINES else ra
-    nm = next(iter(pick.values()))["resn"].rstrip("35")
-    glyco = "N9" if nm in PURINES else "N1"
-    if "C1'" not in pick or glyco not in pick:
-        sys.exit(f"cannot find the glycosidic bond of the central pair ({nm})")
-    p0, p1 = pick["C1'"]["xyz"], pick[glyco]["xyz"]
-    Rp = rodrigues(p1 - p0, math.radians(propeller_deg))
-    spun = 0
-    for name, at in pick.items():
-        if name in BASE_ATOMS:
-            at["xyz"] = p1 + Rp @ (at["xyz"] - p1)
-            spun += 1
-    report["base_rotated"] = {"residue": nm, "atoms": spun, "about": f"C1'-{glyco}"}
+    saved = ({k: v["xyz"].copy() for k, v in ra.items()},
+             {k: v["xyz"].copy() for k, v in rb.items()})
+    best = None
+    for ang_a in (0.0, propeller_deg / 2, -propeller_deg / 2, propeller_deg,
+                  -propeller_deg):
+        for ang_b in (0.0, propeller_deg / 2, -propeller_deg / 2, propeller_deg,
+                      -propeller_deg):
+            for k, v in ra.items():
+                v["xyz"] = saved[0][k].copy()
+            for k, v in rb.items():
+                v["xyz"] = saved[1][k].copy()
+            na = rotate_base(ra, ang_a)
+            nb = rotate_base(rb, ang_b)
+            m = motif(res, a, b, step, n_bp)
+            if m["central"] is None or m["central"] <= WC_BROKEN_A:
+                continue
+            if m["flank"] is None or m["flank"] > WC_PAIRED_A:
+                continue
+            nclash = count_clashes(res)
+            if best is None or nclash < best[0]:
+                best = (nclash, ang_a, ang_b, na, nb)
+    if best is None:
+        sys.exit("no combination of base rotations both breaks the central pair and "
+                 "leaves the flanking pairs intact -- check the step index")
+    for k, v in ra.items():
+        v["xyz"] = saved[0][k].copy()
+    for k, v in rb.items():
+        v["xyz"] = saved[1][k].copy()
+    rotate_base(ra, best[1]); rotate_base(rb, best[2])
+    report["base_rotations_deg"] = {"strand_A": best[1], "strand_B": best[2]}
+    report["search"] = f"least-clashing of 25 combinations that still form the motif"
 
     # ---- did the seed do what we asked? ----
     res = residues(atoms)
@@ -190,6 +311,40 @@ def seed(atoms, step: int, roll_deg: float, propeller_deg: float):
            for ch in (a, b) for i in range(1, n_bp)
            if PRIME3 in res[(ch, i)] and "P" in res[(ch, i + 1)]]
     report["O3prime_P"] = [round(float(np.mean(dev)), 3), round(float(np.max(dev)), 3)]
+
+    # ---- refuse to write a structure that is already wrecked ----
+    # Seeding into an ALREADY BENT duplex folds the arc onto itself: an 85 deg roll on top
+    # of a 122 deg arc drove the downstream half into the upstream half, leaving 60 atom
+    # pairs closer than 1.5 A with the worst at 0.58 A.  Minimisation cannot undo that --
+    # it relaxes into whatever tangle it is handed, and here it left a guanine ring bond
+    # stretched to 2.66 A, which then produced NaN coordinates six minutes into production
+    # on all six runs.  Cheaper to check here.
+    from scipy.spatial import cKDTree
+    xyz = np.array([a["xyz"] for a in atoms])
+    who = [(a["chain"], a["resi"]) for a in atoms]
+    tree = cKDTree(xyz)
+    clashes = [(float(np.linalg.norm(xyz[i] - xyz[j])), i, j)
+               for i, j in tree.query_pairs(CLASH_A, output_type="ndarray")
+               if who[i] != who[j]]
+    clashes.sort()
+    report["clashes_under_%.1fA" % CLASH_A] = len(clashes)
+    if clashes:
+        i, j = clashes[0][1], clashes[0][2]
+        report["worst_clash"] = {
+            "distance_A": round(clashes[0][0], 2),
+            "between": f"{who[i][0]}{who[i][1]}.{atoms[i]['name']}"
+                       f" and {who[j][0]}{who[j][1]}.{atoms[j]['name']}"}
+    if len(clashes) > MAX_CLASHES:
+        sys.exit(
+            f"{len(clashes)} inter-residue atom pairs are closer than {CLASH_A} A "
+            f"(worst {clashes[0][0]:.2f} A, {report['worst_clash']['between']}).\n"
+            "That is a wrecked structure, not a seed.  Two usual causes: seeding into a "
+            "duplex that is ALREADY bent, where an 85 deg roll on top of an existing arc "
+            "folds the helix into itself (use build/03_dna/straight_*.pdb and impose the "
+            "compression afterwards with the harmonic restraint); or a step whose local "
+            "sequence simply will not accommodate the motif, in which case try an "
+            "adjacent one -- the position along the duplex is what matters, not the "
+            "particular step.")
     return report
 
 
@@ -211,9 +366,12 @@ def main():
     print(f"seeded a kink at base pair {rep['step']} of {rep['n_bp']}")
     print(f"  rolled {rep['atoms_rolled']} atoms by {a.roll:+.0f} deg about an axis "
           f"{rep.get('roll_axis','')}")
-    print(f"  spun {rep['base_rotated']['atoms']} base atoms of "
-          f"{rep['base_rotated']['residue']} by {a.propeller:+.0f} deg about "
-          f"{rep['base_rotated']['about']}")
+    br = rep.get("base_rotations_deg", {})
+    print(f"  both central bases swung out of the stack: strand A "
+          f"{br.get('strand_A', 0):+.0f} deg, strand B {br.get('strand_B', 0):+.0f} deg "
+          f"({rep.get('search','')})")
+    print(f"  rise opened at the kink: {rep.get('rise_A', 0):.2f} A; "
+          f"residual clashes under 1.5 A: {rep.get('clashes_under_1.5A', 0)}")
     print(f"  N1-N3 at pairs {list(rep['N1_N3_A'])}: "
           f"{list(rep['N1_N3_A'].values())} A  (paired is ~2.8, broken is >4)")
     print(f"  local bend across the motif: {rep['local_bend_deg']} deg")

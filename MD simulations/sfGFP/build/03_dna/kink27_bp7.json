@@ -3,21 +3,27 @@
   "n_bp": 27,
   "roll_deg": -85.0,
   "propeller_deg": 120.0,
-  "roll_axis": "through both O3'-P junctions",
-  "atoms_rolled": 817,
-  "base_rotated": {
-    "residue": "DC",
-    "atoms": 8,
-    "about": "C1'-N1"
+  "roll_axis": "half at each of the two steps flanking the broken pair, about the axis through both O3'-P junctions",
+  "atoms_rolled": 1681,
+  "rise_A": 3.25,
+  "base_rotations_deg": {
+    "strand_A": -120.0,
+    "strand_B": 0.0
   },
+  "search": "least-clashing of 25 combinations that still form the motif",
   "N1_N3_A": {
     "6": 2.85,
-    "7": 4.75,
+    "7": 7.2,
     "8": 2.88
   },
-  "local_bend_deg": 90.8,
+  "local_bend_deg": 114.4,
   "O3prime_P": [
-    1.64,
-    2.161
-  ]
+    1.676,
+    2.877
+  ],
+  "clashes_under_1.5A": 2,
+  "worst_clash": {
+    "distance_A": 1.27,
+    "between": "B20.C5 and B21.C4"
+  }
 }
