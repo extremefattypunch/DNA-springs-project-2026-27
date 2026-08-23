@@ -11,11 +11,19 @@ things about its output have to be normalised before Amber will take it:
 * the complementary strand is numbered **-N..-1**, which silently breaks any
   residue-number filter written for a 1..N chain.
 
-Both strands run 5'->3' with ascending number, and the two 5' ends sit at opposite
-ends of the duplex, each carrying a phosphate whose fourth valence is free.  That is
-exactly the Zocchi attachment geometry -- one 5' end to each protein site -- and it
-means the linker's bridging oxygen can take the structural role of the preceding
-residue's O3' with no phosphate surgery.
+Both strands run 5'->3' with ascending number, and the two 5' ends sit at opposite ends
+of the duplex.  An earlier version of this file called that "exactly the Zocchi
+attachment geometry -- one 5' end to each protein site", and it is not: the experiment
+modifies ONE strand at both its 5' and 3' ends and adds the complement unmodified, which
+is what makes the chimera a covalent circle.  Attaching one 5' end to each site leaves
+every tether bond a bridge in the bond graph, so no cycle exists and the loop is held
+shut by base pairing alone.
+
+So the strand carrying the linkers keeps its 5' phosphate at nucleotide 1, whose fourth
+valence the 5' linker's bridging oxygen takes over -- no phosphate surgery there -- while
+its 3' end is bonded by DNP, which brings a phosphate of its own.  The complement gets
+ordinary DA5/DA3 termini and its nucleotide 1 loses its phosphate, because Amber's 5'
+templates do not carry one.
 
 Bending
 -------

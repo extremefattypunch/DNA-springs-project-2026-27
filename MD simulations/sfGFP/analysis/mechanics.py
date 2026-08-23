@@ -10,20 +10,31 @@ Three measurements, and one inference that ties them to Zocchi's model.
    3 A.  Predicted displacements are 0.1-3 A, so this is measured against matched
    controls with error bars, never as a single-trajectory difference.
 
-2. **Spring extension** -- the 5'P-to-5'P distance across the duplex.  This is
-   exactly the variable x that Zocchi's f(x) takes, so the force the spring delivers
-   can be evaluated from the simulation's own geometry rather than assumed.
+2. **Spring extension** -- the distance across the duplex between the two nucleotide
+   atoms the linkers are actually bonded to, found from the bond graph.  For the
+   corrected build that is one strand's 5' P and its own 3' O3'; for the superseded
+   two-arm build it was the 5' P of each strand.  This is the variable x that Zocchi's
+   f(x) takes, so a force can be evaluated from the simulation's own geometry -- but it
+   is still a MODELLED force.  The measured one comes from the bare-duplex
+   force-extension runs, and the two differ by a factor of five.
 
 3. **Where the duplex gives** -- per-base-pair bend angle from local helical-axis
    vectors, plus Watson-Crick hydrogen-bond distances.  A kink shows up as a bend
    spike; melting shows up as base pairs opening.  Whether the duplex relieves its
    strain this way is the softening transition the whole model rests on.
 
-The inference: the force-clamp ladder gives extension as a function of *known*
-applied force on the same topology.  Reading a chimera's measured extension against
-that curve yields the tension its spring is really delivering, which can then be
-compared with f(x) evaluated at the measured x.  Two independent routes to the same
-number is the point -- one structural, one from the analytic model.
+The inference that used to be drawn here was wrong, and it is worth recording why.  The
+force-clamp ladder gives extension as a function of *known* applied force -- but on
+S1_tet's topology, the UNCLICKED protein.  Every chimera carries the clicked adduct, and
+clicking alone moves the sites by 0.65 A, fifteen to thirty times any force effect.  So
+reading a chimera's extension against that ladder does not yield its tension; it yields
+the chemistry difference, and doing so produced a published claim that had to be
+retracted.
+
+What the ladder does measure is the barrel's stiffness along Cb-Cb: 230-350 kT/nm^2, two
+to three and a half times the ~100 Zocchi uses generically.  At that stiffness even a
+30 pN spring moves the sites ~0.2 A.  A chimera's zero is S2_clicked -- same chemistry,
+no DNA -- and against it all three chimeras sit at or below zero.
 """
 from __future__ import annotations
 

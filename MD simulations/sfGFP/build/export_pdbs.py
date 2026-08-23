@@ -278,11 +278,26 @@ Every construct in the study, as coordinates you can open anywhere. Written by
 | `S0_wt_*.pdb` | wild-type sfGFP |
 | `S1_tet_*.pdb` | two Tet2-Et residues at 133/149, unclicked — the fluorometry sample |
 | `S2_clicked_*.pdb` | both tethers clicked, no DNA — the unloaded control |
-| `S3_spring27_*.pdb` | the chimera with a 27 bp spring (~4.9 pN) |
-| `S4_spring40_*.pdb` | the chimera with a 40 bp spring (~3.0 pN) |
-| `S5_spring40nick_*.pdb` | the same, nicked at the centre (~2.4 pN) |
-| `dna_spring_*.pdb` | the isolated duplexes, bent, before assembly |
-| `residue_*_model.mol2` | the four custom residues as parameterised, with bond orders |
+| `S3_spring27_*.pdb` | 27 bp spring, **two-arm** construct — superseded, see below |
+| `S4_spring40_*.pdb` | 40 bp, two-arm construct — superseded |
+| `S5_spring40nick_*.pdb` | the same, nicked at the centre — superseded |
+| `L3_loop27_*.pdb` | **27 bp spring, closed covalent loop — the corrected construct** |
+| `L4_loop40_*.pdb` | 40 bp, closed loop |
+| `L5_loop40nick_*.pdb` | 40 bp closed loop, complement nicked at the centre |
+| `C1_ss50_*.pdb` | 50 nt single-stranded spring, closed loop |
+| `C2_ssarms_*.pdb` | two 25 nt single strands — the non-circular control |
+| `D_27bp_*.pdb`, `D_40bp*_*.pdb` | the duplexes alone, for the force–extension runs |
+| `U0_apo_*.pdb` … `U4_ssarms_*.pdb` | ubiquitin F45W/T9C/K63C in five states |
+| `dna_spring_*.pdb` | the isolated duplexes and strands, bent, before assembly |
+| `residue_*_model.mol2` | the seven custom residues as parameterised, with bond orders |
+
+**Superseded, and why they are still here.** `S3`/`S4`/`S5` carry a linker on the 5′ end
+of *each of two different* strands. That loads the duplex but is not the experiment,
+which modifies **one** strand at both ends: with a linker on each of two strands every
+tether bond is a bridge in the bond graph, so no covalent cycle exists and the "loop" is
+closed by base pairing alone. The `L` systems are the corrected builds. `S3`–`S5` are kept
+because that two-arm construct is Zocchi's own pre-ligation chimera and the closest thing
+we have to a non-circular control.
 
 `_start` is the equilibrated structure at the beginning of production; `_final` is the
 last frame of the longest run. Solvent is stripped — the solvated systems are 44k–121k
@@ -294,8 +309,10 @@ Residues use **2B3P numbering**, so the attachment sites are `Asp133` and `Asn14
 (D134/N150 in the construct's own numbering, which runs one higher). Chains: `A` the
 protein, `C`/`D` the two DNA strands, `E`/`F` the capped tethers in `S2_clicked`.
 The linker residues are `TDP` (the clicked Tet2-Et/sTCO adduct, part of the protein
-chain) and `DNL` (the amino-C6 arm, leading each DNA strand); `TET` is the unclicked
-tetrazine and `DNH` the tether capped as a free alcohol. `CRO` is the chromophore.
+chain), `DNL` (the 5′ amino-C6 arm) and `DNP` (the 3′ amino-modifier arm, which carries
+a phosphate of its own); `TET` is the unclicked tetrazine and `DNH` the tether capped as
+a free alcohol. `CRO` is the chromophore. The ubiquitin files instead use `CMS` (cysteine
+with the maleimide thioether) and `CDB` (the DBCO cage and its SPAAC triazole).
 
 CONECT records are included for every bond involving those residues. Keep them — no
 viewer has a template for the fused bicyclononane cage, and distance-based bond
@@ -325,11 +342,21 @@ ChimeraX:
     show :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB atoms; style :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB stick
     color /A grey; color /C,D,E,F cornflowerblue; color :TET,TDP,DNL,DNP,DNH,CMS,CDB orange; color :CRO green
 
-To measure the spring the way the analysis does — the distance between the two 5′
-phosphates, which is what sets the force:
+To measure the spring the way the analysis does — the distance between the two atoms the
+linkers are actually bonded to. For the corrected builds (`L*`, `C1`, `U2`, `U3`) both are
+on the **same** strand, chain C:
 
-    # PyMOL
+    # PyMOL, closed-loop constructs
+    distance span, chain C and resi 1 and name P, chain C and name O3\' and \
+        not (chain C and resi 1-49)
+
+For the superseded two-arm builds (`S3`–`S5`) it was one 5′ phosphate on each strand:
+
     distance span, chain C and resi 1 and name P, chain D and resi 1 and name P
+
+Note that this distance is what Zocchi's *f(x)* is evaluated at, so it gives a **modelled**
+force. The measured one comes from the bare-duplex `D_*` runs and is about five times
+larger, because the duplex never yields into the kinked state the model assumes.
 
 And the deformation coordinate:
 

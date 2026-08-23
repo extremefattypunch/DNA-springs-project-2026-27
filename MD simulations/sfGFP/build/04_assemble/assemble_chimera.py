@@ -3,15 +3,20 @@
 
 Geometry, in order
 ------------------
-1. The two attachment sites A = CB(Asp133) and B = CB(Asn149) are 31.3 A apart.  The
-   duplex's own 5'P-to-5'P distance D is fixed by how far it was bent.  Target
-   phosphate positions are placed symmetrically:
+1. The two attachment sites A and B -- CB of the two modified residues, 31.3 A apart in
+   sfGFP and 24.8 A in ubiquitin.  The duplex's own ANCHOR separation D is fixed by how
+   far it was bent, and the anchors are the two atoms on ONE strand that the linkers bond:
+   the 5' P of nucleotide 1 and the 3' O3' of nucleotide N.  (It used to be the 5'P of
+   each of two strands, which is the construction error this build corrects.)  Target
+   positions are placed outboard of the two C-beta:
 
-       P_A = A - a*u + b*n        P_B = B + a*u + b*n
-       u = unit(B - A),  a = (D - |AB|)/2,  n = outward surface normal
+       t_A = A - a_A*u + b*n      t_B = B + a_B*u + b*n
+       u = unit(B - A),  n = outward surface normal
 
-   The u components differ by |AB| + 2a = D by construction, and the n components
-   cancel, so the target separation matches the duplex exactly for any b.  b then
+   with a_A + a_B = D - |AB| so the separation matches the duplex, and a_A, a_B chosen so
+   each arm uses the same fraction of its OWN reach.  The two offsets are not equal:
+   the 3' arm is about 3 A longer than the 5' one, so the symmetric a = (D - |AB|)/2 that
+   this file used before is only right when both arms are the same molecule.  b then
    lifts both attachment points off the protein surface -- without it the tethers
    would have to run flat along the barrel -- and is capped so that each tether's
    span stays inside its reach.

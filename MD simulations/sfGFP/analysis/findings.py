@@ -17,11 +17,37 @@ from scipy import stats
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
-SPRINGS = [("S3_spring27", "27 bp"), ("S4_spring40", "40 bp"),
-           ("S5_spring40nick", "40 bp, nicked")]
-PROTEINS = [("S0_wt", "WT sfGFP"), ("S1_tet", "2× Tet2-Et, unloaded"),
-            ("S2_clicked", "clicked, no DNA"), ("S3_spring27", "27 bp spring"),
-            ("S4_spring40", "40 bp spring"), ("S5_spring40nick", "40 bp nicked")]
+# Two families, each with its OWN zero-force control, because a chimera has to be
+# compared against a protein carrying the same tether chemistry and nothing else.  For
+# sfGFP that is S2_clicked; for ubiquitin it is U1_clicked.  Comparing a ubiquitin
+# chimera against the sfGFP control would be meaningless, and comparing either against
+# an unclicked protein is the mistake that produced the retracted claim.
+FAMILIES = {
+    "sfGFP": {
+        "control": "S2_clicked",
+        "springs": [
+            # the superseded two-arm builds, kept and reported as what they are
+            ("S3_spring27", "27 bp, two-arm"), ("S4_spring40", "40 bp, two-arm"),
+            ("S5_spring40nick", "40 bp nicked, two-arm"),
+            # the corrected closed-loop builds
+            ("L3_loop27", "27 bp, closed loop"), ("L4_loop40", "40 bp, closed loop"),
+            ("L5_loop40nick", "40 bp nicked, closed loop"),
+            ("C1_ss50", "50 nt ssDNA, closed loop"), ("C2_ssarms", "two 25 nt arms"),
+        ],
+        "proteins": [("S0_wt", "WT sfGFP"), ("S1_tet", "2× Tet2-Et, unloaded"),
+                     ("S2_clicked", "clicked, no DNA")],
+    },
+    "ubiquitin": {
+        "control": "U1_clicked",
+        "springs": [("U2_ss50", "50 nt ssDNA, closed loop"),
+                    ("U3_ds50", "50 bp dsDNA, closed loop"),
+                    ("U4_ssarms", "two 25 nt arms")],
+        "proteins": [("U0_apo", "ubiquitin, apo"),
+                     ("U1_clicked", "ubiquitin, clicked, no DNA")],
+    },
+}
+SPRINGS = [s for f in FAMILIES.values() for s in f["springs"]]
+PROTEINS = [s for f in FAMILIES.values() for s in f["proteins"] + f["springs"]]
 
 
 def agg(sub, col):
@@ -144,16 +170,28 @@ def main(summary=None, out=None):
     f["extension"]["strongest_vs_weakest_spring"] = w2
     # Each chimera against the matched control, with a Bonferroni correction for the
     # three comparisons -- without it a single p = 0.02 out of three looks decisive.
-    base = clicked["mech.anchor_CB_CB_A.mean"].values
     f["extension"]["vs_matched_control"] = {}
-    for k, nm in SPRINGS:
-        sub_k = df[df.system == k]["mech.anchor_CB_CB_A.mean"].values
-        if not len(sub_k) or not len(base):
+    for fam, spec in FAMILIES.items():
+        ctrl = df[(df.system == spec["control"]) & (df.clamp_pN.fillna(0) == 0)]
+        base = ctrl["mech.anchor_CB_CB_A.mean"].dropna().values
+        if not len(base):
             continue
-        w3 = welch(sub_k, base)
-        w3["p_bonferroni"] = min(1.0, w3["p"] * len(SPRINGS)) if "p" in w3 else None
-        w3["label"] = nm
-        f["extension"]["vs_matched_control"][k] = w3
+        present = [(k, nm) for k, nm in spec["springs"]
+                   if len(df[df.system == k]["mech.anchor_CB_CB_A.mean"].dropna())]
+        # Bonferroni over the comparisons actually made in THIS family, not over a
+        # global count -- correcting an sfGFP comparison for ubiquitin's tests would be
+        # both wrong and conveniently conservative.
+        for k, nm in present:
+            arr = df[df.system == k]["mech.anchor_CB_CB_A.mean"].dropna().values
+            w3 = welch(arr, base)
+            if w3 is None:
+                continue
+            w3["p_bonferroni"] = min(1.0, w3["p"] * len(present))
+            w3["label"] = nm
+            w3["family"] = fam
+            w3["control"] = spec["control"]
+            w3["n_comparisons_in_family"] = len(present)
+            f["extension"]["vs_matched_control"][k] = w3
 
     if f["springs"]:
         fs = [f["springs"][k]["force_pN"]["mean"] for k, _ in SPRINGS
