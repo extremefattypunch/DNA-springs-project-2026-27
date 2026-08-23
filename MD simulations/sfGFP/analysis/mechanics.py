@@ -215,13 +215,45 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
                   f"modelled f = {np.nanmean(f):.2f} +/- {np.nanstd(f):.2f} pN, "
                   f"E = {np.nanmean(e):.2f} kT ({summary['spring']['regime']})")
         else:
-            # One strand is the opposite animal: an entropic chain that PULLS its ends
-            # together when stretched past its natural size.  Handing it Spring(), which
-            # describes a rod under compression, would report a push where the physics
-            # gives a pull -- so it gets its own model and its own sign, and the key is
-            # named differently so nothing downstream can average the two together.
-            ss = SsSpring(n_units)
-            ten = np.array([ss.tension(x / 10.0) for x in d])
+            # Is this really ONE chain?  The two-arm control is written as a single chain
+            # with a break in the middle, so a naive residue count calls it a 50-mer when
+            # it is two 25-mers -- and a worm-like chain of the wrong length gives a
+            # confidently wrong tension.  Walk the backbone and find out.
+            resl = strands[0][1]
+            breaks = []
+            for w in range(len(resl) - 1):
+                o3 = next((x.index for x in resl[w].atoms if x.name == "O3'"), None)
+                pp = next((x.index for x in resl[w + 1].atoms if x.name == "P"), None)
+                if o3 is None or pp is None:
+                    breaks.append(w + 1)
+                    continue
+                gap = float(md.compute_distances(t[:1], np.array([[o3, pp]]),
+                                                 periodic=False)[0, 0]) * 10.0
+                if gap > 2.5:
+                    breaks.append(w + 1)
+            pieces = len(breaks) + 1
+            if pieces > 1:
+                # Two arms attached at one end each: there is no single chain spanning the
+                # sites, so no chain tension to report.  The end-to-end distance between
+                # the two attachment points is still meaningful and is kept; the
+                # worm-like-chain model is not applied, rather than applied to a length
+                # that does not exist.
+                summary["ss_spring"] = {
+                    "kind": f"{pieces} separate single strands (not one chain)",
+                    "model": "none -- a WLC across a chain break would be meaningless",
+                    "n_nt_total": n_units, "pieces": pieces,
+                    "break_after_nt": breaks,
+                    "x_mean_A": round(float(d.mean()), 3),
+                    "x_sd_A": round(float(d.std()), 3),
+                    "tension_pN_mean": None,
+                    "state": "two arms, no chain spanning the sites"}
+                print(f"  DNA is {pieces} separate strands (break after nt {breaks}); "
+                      f"anchor-to-anchor {d.mean():.2f} A, no chain tension to report")
+                ss = None
+            else:
+                ss = SsSpring(n_units)
+            if ss is not None:
+                    ten = np.array([ss.tension(x / 10.0) for x in d])
             rows["ss_tension_pN"] = ten
             summary["ss_spring"] = {
                 "kind": "ssDNA worm-like chain (pulls)",

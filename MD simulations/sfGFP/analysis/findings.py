@@ -90,17 +90,39 @@ def main(summary=None, out=None):
          "systems_present": sorted(set(df.system))}
 
     # ---- springs ----
-    f["springs"] = {}
+    # Two kinds, and they must not be mixed.  A duplex is an elastic rod that pushes its
+    # ends apart and gets Zocchi's f(x); a single strand is an entropic chain that pulls
+    # them together and gets Marko-Siggia.  mechanics.py writes them under different keys
+    # for exactly that reason, so a system with no mech.spring.* block is not missing data
+    # -- it is a single strand, and it belongs in ss_springs.
+    f["springs"], f["ss_springs"] = {}, {}
     for k, nm in SPRINGS:
         sub = df[df.system == k]
         if not len(sub):
             continue
+        if "mech.ss_spring.n_nt" in sub and sub["mech.ss_spring.n_nt"].notna().any():
+            f["ss_springs"][k] = {
+                "label": nm,
+                "n_nt": int(sub["mech.ss_spring.n_nt"].dropna().iloc[0]),
+                "contour_nm": float(sub["mech.ss_spring.contour_nm"].dropna().iloc[0]),
+                "persistence_nm": float(
+                    sub["mech.ss_spring.persistence_nm"].dropna().iloc[0]),
+                "natural_rms_nm": float(
+                    sub["mech.ss_spring.natural_rms_end_to_end_nm"].dropna().iloc[0]),
+                "state": str(sub["mech.ss_spring.state"].dropna().iloc[0]),
+                "x_A": agg(sub, "mech.ss_spring.x_mean_A"),
+                "tension_pN": agg(sub, "mech.ss_spring.tension_pN_mean"),
+                "extension_A": agg(sub, "mech.anchor_CB_CB_A.mean"),
+            }
+            continue
+        if "mech.spring.n_bp" not in sub or sub["mech.spring.n_bp"].isna().all():
+            continue
         f["springs"][k] = {
-            "label": nm, "n_bp": int(sub["mech.spring.n_bp"].iloc[0]),
-            "nicked": bool(sub["mech.spring.nicked"].iloc[0]),
-            "tau_c": float(sub["mech.spring.tau_c_pN_nm"].iloc[0]),
-            "regime": str(sub["mech.spring.regime"].iloc[0]),
-            "contour_nm": float(sub["mech.spring.contour_nm"].iloc[0]),
+            "label": nm, "n_bp": int(sub["mech.spring.n_bp"].dropna().iloc[0]),
+            "nicked": bool(sub["mech.spring.nicked"].dropna().iloc[0]),
+            "tau_c": float(sub["mech.spring.tau_c_pN_nm"].dropna().iloc[0]),
+            "regime": str(sub["mech.spring.regime"].dropna().iloc[0]),
+            "contour_nm": float(sub["mech.spring.contour_nm"].dropna().iloc[0]),
             "x_A": agg(sub, "mech.spring.x_mean_A"),
             "x_wander_A": agg(sub, "mech.spring.x_sd_A"),
             "force_pN": agg(sub, "mech.spring.force_pN_mean"),
@@ -157,9 +179,12 @@ def main(summary=None, out=None):
     }
     for k, nm in PROTEINS:
         sub = df[df.system == k]
-        if len(sub):
-            f["extension"][k] = {"label": nm,
-                                 **agg(sub, "mech.anchor_CB_CB_A.mean")}
+        # agg returns None when the column is entirely absent or NaN, which happens for
+        # any system with no protein -- the bare duplexes.  Spreading None into a dict
+        # raises, so ask first.
+        a_ = agg(sub, "mech.anchor_CB_CB_A.mean") if len(sub) else None
+        if a_:
+            f["extension"][k] = {"label": nm, **a_}
     # does the ncAA substitution alone move the sites?
     w = welch(df[df.system == "S1_tet"]["mech.anchor_CB_CB_A.mean"].values,
               df[df.system == "S0_wt"]["mech.anchor_CB_CB_A.mean"].values)
