@@ -32,6 +32,12 @@ import numpy as np
 import pandas as pd
 
 CONTACT_A = 4.5
+# A contact occupancy is a mean over frames, and a mean does not need every frame.  The
+# neighbour search runs once per frame from Python, so the cost grows with trajectory
+# length -- 145 s per replicate over 146 of them is six hours to answer a question that
+# 120 evenly spaced frames answer to better than a percent.  Capping the frame count makes
+# the cost per replicate constant.
+MAX_FRAMES = 120
 NUCLEOTIDES = ("DA", "DT", "DG", "DC")
 LINKERS = ("DNL", "DNP", "DNH")
 NON_SOLUTE = ("WAT", "HOH", "Na+", "Cl-", "MG", "K+")
@@ -69,6 +75,9 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
     t = md.load(str(traj), top=str(top_path), stride=stride)
     if skip and len(t) > skip:
         t = t[skip:]
+    n_all = len(t)
+    if n_all > MAX_FRAMES:
+        t = t[:: int(np.ceil(n_all / MAX_FRAMES))]
     resmap = load_map(resmap_path)
     dna, prot, owner = split_atoms(t, resmap)
     if len(dna) == 0 or len(prot) == 0:
@@ -86,7 +95,8 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
     n = len(t)
     ranked = sorted(tally.items(), key=lambda kv: -kv[1])
     out = {
-        "has_dna": True, "frames": n, "cutoff_A": CONTACT_A,
+        "has_dna": True, "frames": n, "frames_available": n_all,
+        "cutoff_A": CONTACT_A,
         "atoms_in_contact_mean": round(float(per_frame.mean()), 2),
         "atoms_in_contact_sd": round(float(per_frame.std()), 2),
         "frames_with_contact": round(float((per_frame > 0).mean()), 4),
