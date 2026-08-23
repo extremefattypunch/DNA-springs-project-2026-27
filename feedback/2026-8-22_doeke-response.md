@@ -506,14 +506,13 @@ nucleosomal"; I then "corrected" that to 31–34 Å and ~25 % tighter than nucle
 31–34 Å figure was wrong** — I had carried it over without checking it against the
 trajectories. The numbers above are what the bend analysis actually reports, and at 37–41 Å
 against the nucleosome's 42 Å the original wording was closer to right than my correction
-was. The conclusion is unaffected in direction and slightly strengthened in degree: we sit
-at about **56 % of the curvature at which all-atom MD nucleates kinks**, not somewhat below
-it.
+was. The conclusion is unaffected in direction and slightly strengthened in degree — and
+the next section replaces the comparison entirely, by measuring where *this* force field
+kinks rather than borrowing a threshold.
 
 ### We measured the threshold instead of arguing about it
 
-Everything above is other people's numbers. The compression windows let us put our own
-against them: hold the bare 27 bp duplex at a series of separations, from its contour
+The compression windows do this directly: hold the bare 27 bp duplex at a series of separations, from its contour
 length down to 64 % compression, and ask at what curvature *this* force field starts
 breaking base pairs. Two replicates per window, 12–30 ns each, and the criterion was
 fixed in advance — an **internal** pair (not the terminal two, which fray in anything)
@@ -544,7 +543,8 @@ threshold rather than about whether the force field is capable of it at all.
 *et al.*'s umbrella sampling puts type II kink nucleation above 8.6–9.3°/bp. Ours is a
 little lower, which is what you would expect from an unbiased run with a stiff restraint
 rather than a biased scan, but it is the same regime — and it is a long way from Zocchi's
-τ_c, which places the transition at 2.6–3.0°/bp.
+τ_c, which places the transition at 2.6–3.0°/bp. The section after next puts our number
+against every published estimate.
 
 **Our chimera is at 4.8–5.2°/bp, below the threshold we measure ourselves.** That is the
 answer. Not seeing a kink in the chimera is not a force-field limitation and not
