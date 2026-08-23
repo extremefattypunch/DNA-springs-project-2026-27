@@ -57,6 +57,8 @@ MC = {
     # nucleotide's phosphorus (Amber DNA type P).
     "DNL": {"pre_head": "c", "post_tail": "P", "aa": False},
     "DNH": {"pre_head": "c", "post_tail": None, "aa": False},
+    # DNP's head phosphorus bonds the nucleotide's O3', which OL15 types OS.
+    "DNP": {"pre_head": "OS", "post_tail": None, "aa": False},
 }
 
 
@@ -249,6 +251,12 @@ def write_mc(name: str, cap_atoms, path: Path):
     if res.get("tail"):
         out.append(f"TAIL_NAME {res['tail']}")
         out += [f"MAIN_CHAIN {a}" for a in main_chain_path(res)]
+    elif res.get("main_chain"):
+        # A tail-less residue gets no MAIN_CHAIN from the branch above, and prepgen
+        # then guesses the tree.  That guess is what once made DNL's bridging oxygen
+        # a child of its nitrogen -- right atoms, right charge, wrong topology -- so
+        # a residue with no tail may state its main chain explicitly instead.
+        out += [f"MAIN_CHAIN {a}" for a in res["main_chain"]]
     out.append(f"PRE_HEAD_TYPE {cfg['pre_head']}")
     if cfg.get("post_tail"):
         out.append(f"POST_TAIL_TYPE {cfg['post_tail']}")
@@ -319,7 +327,8 @@ def build_one(name: str, outdir: Path, args) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--outdir", default=str(HERE))
-    ap.add_argument("--residues", nargs="+", default=["TET", "TDP", "DNL"])
+    ap.add_argument("--residues", nargs="+",
+                    default=["TET", "TDP", "DNL", "DNH", "DNP"])
     ap.add_argument("--force", action="store_true", help="redo the AM1-BCC step")
     for tool in ("antechamber", "prepgen", "parmchk2"):
         ap.add_argument(f"--{tool}", default=shutil.which(tool) or tool)

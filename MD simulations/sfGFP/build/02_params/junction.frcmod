@@ -12,24 +12,46 @@ Junction parameters where GAFF2 residues meet the Amber DNA backbone.
 # The junction is therefore described exactly as a C5'-O5'-P linkage is, which is
 # the same chemistry: an alkyl ester of a phosphodiester.
 #
+# The DNP linker makes the mirror-image junction at the strand's 3' end, and it is
+# not a mirror image chemically: a 3' amino-modifier is installed as a phosphoramidite
+# and so brings its own phosphate.  There the *phosphorus* is GAFF2's (p5) and the
+# *oxygen* is Amber's (the nucleotide's O3', type OS), the opposite way round from the
+# 5' junction.  Both patterns are needed and neither force field has either.
+#
 # Provenance, parm10.dat:
 #   OS-P     230.0  1.610      JCC,7,(1986),230; NA PHOSPHATES
 #   CT-OS-P  100.0  120.50
 #   O2-P-OS  100.0  108.23
 #   OS-P-OS   45.0  102.60
 #   X-OS-P-X    3   0.75  0.0  3.
+# and from frcmod.DNA.OL15, for the sugar carbon OL15 types C7 rather than CT:
+#   C7-OS-P  100.0  120.50
+#
+# One deliberate choice at the 3' junction: GAFF2 does carry its own os-p5 bond
+# (387.59, 1.6182), so the P-O bond there could have been taken from either force
+# field.  Amber's OS-P (230.0, 1.610) is used instead, because this bond *is* the
+# phosphodiester that would join nucleotide N to nucleotide N+1 in an unmodified
+# strand -- the modification changes what comes after the phosphate, not the linkage
+# to the sugar -- so the 3' terminus should stretch exactly like an internal step.
+# The two candidates differ by 0.008 A in r_eq, so the choice is immaterial to the
+# geometry; it matters only for consistency of the backbone stiffness.
 MASS
 
 BOND
 os-P  230.0     1.610
+OS-p5 230.0     1.610
 
 ANGLE
 c3-os-P    100.0     120.500
 os-P -O2   100.0     108.230
 os-P -OS    45.0     102.600
+C7-OS-p5   100.0     120.500
+OS-p5-o    100.0     108.230
+OS-p5-os    45.0     102.600
 
 DIHE
 X -os-P -X    3    0.75          0.0             3.
+X -OS-p5-X    3    0.75          0.0             3.
 #
 # The carbamate that joins TDP to DNL is a c-ns bond.  GAFF2 gives explicit torsions
 # for several c-ns cases (c3-c-ns-c3 and friends) but has no generic X-c-ns-X and

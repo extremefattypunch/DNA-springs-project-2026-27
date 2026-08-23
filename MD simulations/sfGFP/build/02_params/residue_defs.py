@@ -55,8 +55,8 @@ Both residue cuts sit at amide-like bonds (the carbamate C-N, and the
 carbamate's own ester oxygen stays with TDP), never through the conjugated ring
 system.  DNL's bridging oxygen takes the structural role of the preceding
 nucleotide's O3', so nucleotide 1 uses the *internal* DA/DT/DG/DC template and
-keeps its -1 phosphate: no phosphate charge surgery is needed, and both custom
-residues are neutral.
+keeps its -1 phosphate.  The charges are not all neutral: DNL carries -0.3079 and
+DNP -0.6921, the two shares Amber splits between a strand's 5' and 3' ends.
 
 Stereochemistry
 ---------------
@@ -233,7 +233,66 @@ DNH = {
     ],
 }
 
-RESIDUES = {r["name"]: r for r in (TET, TDP, DNL, DNH)}
+# ---------------------------------------------------------------------------
+# DNP -- the 3'-amino-modifier arm, for the corrected same-strand attachment
+# ---------------------------------------------------------------------------
+# The experiment modifies ONE strand at both ends and leaves the complement
+# untouched; that is what closes the covalent loop and what stops one chimera
+# base-pairing with another to form the dimers Zocchi showed are favourable.  Our
+# first build put a linker on the 5' end of each of the two strands, which loads the
+# duplex mechanically but leaves the "loop" closed only by base pairing -- every
+# tether bond is a bridge in the bond graph, not part of a cycle.
+#
+# A 3' modifier is not a mirror image of DNL: it brings its own phosphate, because
+# it is installed as a phosphoramidite on the 3'-OH.  So unlike DNL it is charged,
+# and its head is the phosphorus rather than the nitrogen.
+#
+#     nt(N)-O3' -- P(=O)(O-) -- O -- (CH2)7 -- NH -- C(=O)... [TDP side]
+#                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#                  this residue
+#
+# Net charge -0.6921, and DNL keeps its -0.3079.  The modified strand carries 28
+# phosphates (nucleotide 1's, the 26 internal ones, and this residue's), so its
+# residues must sum to -28:  -0.3079 + 27*(-1) + q = -28  =>  q = -0.6921.  That is
+# exactly the share Amber's 3'-terminal DA3/DG3/DC3/DT3 templates carry, which is
+# fitting -- this residue is what replaces them.
+#
+# Named DNP, not DN3: three places in the analysis do name.rstrip("35") to strip
+# Amber's terminal-variant suffixes, so "DN3" would become "DN" and fall out of the
+# nucleic-acid lists, and build_system's compatible() treats X3/X5 as a legal tleap
+# rename.  A trailing digit here is a silent-failure waiting to happen.
+DNP = {
+    "name": "DNP",
+    "description": "3'-amino-modifier C7 arm: its own phosphate on the strand's 3' "
+                   "oxygen, through a heptyl spacer to the carbamate nitrogen",
+    "smiles_capped": r"COP(=O)([O-])OCCCCCCCNC(C)=O",
+    "net_charge": -0.6921,
+    "head": "P", "tail": None,
+    "formal_charges": {"OP2": -1},
+    "extra_bond": {"this_atom": "N", "partner_residue": "TDP",
+                   "partner_atom": "CN"},
+    # main_chain is given explicitly because prepgen is only handed MAIN_CHAIN lines
+    # when a residue has a tail, and this one does not.  Without them prepgen guesses
+    # the tree, and for a chain hanging off a four-substituent phosphorus that guess
+    # is not safe -- the same condition that once made DNL's bridging oxygen a child
+    # of its nitrogen.
+    "main_chain": ["OL", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "N"],
+    "heavy": ["P", "OP1", "OP2", "OL",
+              "C1", "C2", "C3", "C4", "C5", "C6", "C7", "N"],
+    "hydrogens": {
+        "N": ["HN"],
+        "C1": ["H11", "H12"], "C2": ["H21", "H22"], "C3": ["H31", "H32"],
+        "C4": ["H41", "H42"], "C5": ["H51", "H52"], "C6": ["H61", "H62"],
+        "C7": ["H71", "H72"],
+    },
+    "bonds": [
+        ("P", "OP1", 2), ("P", "OP2", 1), ("P", "OL", 1), ("OL", "C1", 1),
+        ("C1", "C2", 1), ("C2", "C3", 1), ("C3", "C4", 1), ("C4", "C5", 1),
+        ("C5", "C6", 1), ("C6", "C7", 1), ("C7", "N", 1),
+    ],
+}
+
+RESIDUES = {r["name"]: r for r in (TET, TDP, DNL, DNH, DNP)}
 
 # Standard atomic masses, enough for the elements present.
 MASS = {"H": 1.008, "C": 12.011, "N": 14.007, "O": 15.999, "P": 30.974}
@@ -304,8 +363,13 @@ def validate(res: dict) -> list[str]:
         if a in val:
             val[a] += n
 
+    # A formally charged atom has a different valence: a carboxylate/phosphate O(-)
+    # takes one bond, not two, and an ammonium N(+) takes four, not three.  Without
+    # this the anionic phosphate oxygen of DNP fails the check by a whole bond, which
+    # the +/-0.6 aromatic tolerance cannot absorb.
+    formal = res.get("formal_charges", {})
     for a in heavy:
-        want = VALENCE[element_of(a)]
+        want = VALENCE[element_of(a)] + formal.get(a, 0)
         got = val[a]
         # aromatic rings give x.5 sums; accept within 0.6 of the target
         if abs(got - want) > 0.6:

@@ -159,7 +159,8 @@ def verify(atoms, n_bp) -> dict:
     tw = np.degrees(np.arccos(np.clip((vp[:-1] * vp[1:]).sum(axis=1), -1, 1)))
     rep["twist_deg"] = [round(float(tw.mean()), 2), round(float(tw.std()), 2)]
 
-    # both 5' ends must be at opposite ends of the duplex
+    # In an antiparallel duplex the two 5' ends sit at opposite ends of the helix.
+    # This is a numbering sanity check only -- it is no longer where the linkers go.
     za = (res[(a, 1)]["P"]["xyz"] - c0) @ axis
     zb = (res[(b, 1)]["P"]["xyz"] - c0) @ axis
     rep["five_prime_z_A"] = [round(float(za), 2), round(float(zb), 2)]
@@ -167,6 +168,20 @@ def verify(atoms, n_bp) -> dict:
         sys.exit("both 5' ends are at the same end of the duplex")
     rep["five_prime_separation_A"] = round(
         float(np.linalg.norm(res[(a, 1)]["P"]["xyz"] - res[(b, 1)]["P"]["xyz"])), 2)
+
+    # The construct attaches BOTH linkers to one strand -- 5' of nucleotide 1 and 3' of
+    # nucleotide N of chain A -- so that the chimera is a closed covalent loop and cannot
+    # swap arms with another chimera to form a dimer.  That is the span the protein has
+    # to bridge, and unlike the 5'-5' distance it depends on where the bend points:
+    # both anchors sit ~9 A off the axis and are (N-1)*34 deg apart in azimuth, so
+    # bending toward them shortens the span and bending away lengthens it.
+    for nm, key in (("5' P of nucleotide 1", (a, 1)), (f"3' O3' of nucleotide {n_bp}",
+                                                       (a, n_bp))):
+        want = "P" if "5'" in nm else PRIME3
+        if want not in res[key]:
+            sys.exit(f"chain {a} has no {want} at the {nm} -- cannot attach a linker")
+    rep["same_strand_anchor_separation_A"] = round(float(np.linalg.norm(
+        res[(a, 1)]["P"]["xyz"] - res[(a, n_bp)][PRIME3]["xyz"])), 2)
     return rep, ctr, axis, c0
 
 
@@ -186,16 +201,8 @@ def radius_for_chord(L: float, chord: float) -> float:
     return 0.5 * (lo + hi)
 
 
-def bend(atoms, ctr, axis, c0, n_bp, chord: float, bend_azimuth_deg: float = 0.0):
-    """Map the straight helical axis onto a circular arc of the required radius."""
-    res = residues(atoms)
-    a, b = sorted({c for c, _ in res})
-    z = (ctr - c0) @ axis
-    L = float(z[-1] - z[0])
-    R = radius_for_chord(L, chord)
-    theta = L / R
-
-    # local frame: e3 along the axis, e1 the bend direction, e2 = e3 x e1
+def local_frame(axis, bend_azimuth_deg: float):
+    """Rows e1, e2, axis: a right-handed frame whose e1 is the bend direction."""
     tmp = np.array([1.0, 0.0, 0.0])
     if abs(tmp @ axis) > 0.9:
         tmp = np.array([0.0, 1.0, 0.0])
@@ -205,7 +212,89 @@ def bend(atoms, ctr, axis, c0, n_bp, chord: float, bend_azimuth_deg: float = 0.0
     phi0 = math.radians(bend_azimuth_deg)
     e1, e2 = math.cos(phi0) * e1 + math.sin(phi0) * e2, \
              -math.sin(phi0) * e1 + math.cos(phi0) * e2
-    M = np.stack([e1, e2, axis])          # lab -> local (rows are the basis)
+    return np.stack([e1, e2, axis])       # lab -> local (rows are the basis)
+
+
+def bp_map(s: float, z0: float, R: float, M, c0):
+    """The rigid transform base pair i undergoes, as a function applied to one point.
+
+    Factored out of bend() so a candidate (R, azimuth) can be scored on the two anchor
+    atoms alone instead of transforming every atom in the duplex.
+    """
+    phi = s / R
+    axis_point = np.array([0.0, 0.0, z0 + s])
+    arc_point = np.array([R * (1 - math.cos(phi)), 0.0, z0 + R * math.sin(phi)])
+    c, sn = math.cos(phi), math.sin(phi)
+    Ry = np.array([[c, 0.0, sn], [0.0, 1.0, 0.0], [-sn, 0.0, c]])
+    return lambda x: c0 + M.T @ (arc_point + Ry @ (M @ (x - c0) - axis_point))
+
+
+def solve_bend(atoms, ctr, axis, c0, n_bp, target: float,
+               azimuth_step: float = 2.0):
+    """Find (radius, azimuth) putting the two same-strand anchors `target` A apart.
+
+    The old code bisected on radius alone, which is valid only for the cross-strand
+    5'P-5'P distance: that pair is nearly diametrically opposite, so its separation
+    barely depends on which way the helix bends.  The two same-strand anchors are a
+    different matter -- at 27 bp they sit 71.1 A apart for one bend direction and
+    54.3 A apart for another at the *same* radius.  Radius alone therefore does not
+    determine the span, and for some azimuths no radius reaches the target at all.
+    So scan azimuth and, at each, bisect on radius; keep the solution that reaches the
+    target with the gentlest curvature, since curvature is what strains the backbone.
+    """
+    res = residues(atoms)
+    a = sorted({c for c, _ in res})[0]
+    z = (ctr - c0) @ axis
+    z0, L = float(z[0]), float(z[-1] - z[0])
+    p5 = res[(a, 1)]["P"]["xyz"]                     # moves with base pair 1
+    o3 = res[(a, n_bp)][PRIME3]["xyz"]               # moves with base pair n_bp
+    s5, s3 = 0.0, float(z[n_bp - 1] - z0)
+
+    def span(R, az):
+        M = local_frame(axis, az)
+        return float(np.linalg.norm(bp_map(s5, z0, R, M, c0)(p5)
+                                    - bp_map(s3, z0, R, M, c0)(o3)))
+
+    straight = span(1e7, 0.0)
+    if target > straight + 1e-6:
+        sys.exit(f"target anchor span {target:.2f} A exceeds the straight duplex's "
+                 f"{straight:.2f} A: a {n_bp} bp spring is too short for these sites")
+    best = None
+    for az in np.arange(0.0, 360.0, azimuth_step):
+        # bisect R between a full circle and effectively straight.  span() is not
+        # guaranteed monotonic in R for every azimuth, so require a sign change first
+        # and skip the azimuth if there is none -- rather than returning a bisection
+        # artefact from a bracket that never contained a root.
+        lo, hi = L / (2 * math.pi), 1e7
+        flo, fhi = span(lo, az) - target, span(hi, az) - target
+        if flo * fhi > 0:
+            continue
+        for _ in range(80):
+            mid = math.sqrt(lo * hi)                 # geometric: R spans decades
+            if (span(mid, az) - target) * flo > 0:
+                lo = mid
+            else:
+                hi = mid
+        R = math.sqrt(lo * hi)
+        if best is None or R > best[0]:              # gentlest curvature wins
+            best = (R, float(az), span(R, az))
+    if best is None:
+        sys.exit(f"no (radius, azimuth) reaches an anchor span of {target:.2f} A")
+    return {"radius_A": round(best[0], 2), "azimuth_deg": best[1],
+            "anchor_span_A": round(best[2], 2), "target_A": round(target, 2),
+            "straight_anchor_span_A": round(straight, 2),
+            "azimuth_step_deg": azimuth_step}
+
+
+def bend(atoms, ctr, axis, c0, n_bp, radius: float, bend_azimuth_deg: float = 0.0):
+    """Map the straight helical axis onto a circular arc of the given radius."""
+    res = residues(atoms)
+    a, b = sorted({c for c, _ in res})
+    z = (ctr - c0) @ axis
+    L = float(z[-1] - z[0])
+    R = radius
+    theta = L / R
+    M = local_frame(axis, bend_azimuth_deg)
 
     # Each base pair rotates about the point where its own plane crosses the *helical
     # axis*, not about its centre.  Base-pair centres spiral around the axis at ~1.9 A,
@@ -216,16 +305,10 @@ def bend(atoms, ctr, axis, c0, n_bp, chord: float, bend_azimuth_deg: float = 0.0
     # which is the property to test against.
     z0 = float(z[0])
     for i in range(1, n_bp + 1):
-        s = float(z[i - 1] - z0)
-        phi = s / R
-        axis_point = np.array([0.0, 0.0, z0 + s])         # on the straight axis
-        arc_point = np.array([R * (1 - math.cos(phi)), 0.0, z0 + R * math.sin(phi)])
-        c, sn = math.cos(phi), math.sin(phi)
-        Ry = np.array([[c, 0.0, sn], [0.0, 1.0, 0.0], [-sn, 0.0, c]])
+        f = bp_map(float(z[i - 1] - z0), z0, R, M, c0)
         for key in ((a, i), (b, n_bp + 1 - i)):
             for at in res[key].values():
-                loc = M @ (at["xyz"] - c0)                # into the local frame
-                at["xyz"] = c0 + M.T @ (arc_point + Ry @ (loc - axis_point))
+                at["xyz"] = f(at["xyz"])
 
     # report the strain the backbone had to absorb
     res = residues(atoms)
@@ -236,32 +319,54 @@ def bend(atoms, ctr, axis, c0, n_bp, chord: float, bend_azimuth_deg: float = 0.0
                                       - res[(ch, i + 1)]["P"]["xyz"]))
     dev = np.array(dev)
     new_span = float(np.linalg.norm(res[(a, 1)]["P"]["xyz"] - res[(b, 1)]["P"]["xyz"]))
+    anchor = float(np.linalg.norm(res[(a, 1)]["P"]["xyz"]
+                                 - res[(a, n_bp)][PRIME3]["xyz"]))
     return {"contour_A": round(L, 2), "radius_A": round(R, 2),
             "arc_deg": round(math.degrees(theta), 1),
-            "target_chord_A": round(chord, 2),
+            "anchor_span_after_A": round(anchor, 2),
             "five_prime_separation_after_A": round(new_span, 2),
             "O3prime_P_after": [round(float(dev.mean()), 3), round(float(dev.std()), 3),
                                 round(float(dev.max()), 3)],
             "bend_azimuth_deg": bend_azimuth_deg}
 
 
-def write_pdb(atoms, path: Path, nick_after: int | None = None):
-    """Write with Amber-friendly naming.  A nick is expressed as 3'/5' termini."""
+FIVE_PRIME_PHOSPHATE = ("P", "OP1", "OP2")
+
+
+def write_pdb(atoms, path: Path, nick_after: int | None = None,
+              nick_chain: str | None = None, bare_five_prime=()):
+    """Write with Amber-friendly naming.  A nick is expressed as 3'/5' termini.
+
+    `nick_chain` defaults to the *complementary* strand, not the first one.  That is a
+    consequence of closing the loop: the modified strand is the loop, so a nick in it
+    would cut the chimera open and we would be back to the two-arm construct.  Nicking
+    the complement instead is Zocchi's own recommended mechanics-only control -- hybridise
+    with two half-length cDNAs rather than one -- because it changes the spring's bending
+    stiffness while leaving the DNA content and every contact with the protein identical.
+
+    `bare_five_prime` lists chains whose nucleotide 1 must lose its phosphate, because
+    Amber's DA5/DC5/DG5/DT5 templates have none.  The modified strand keeps its
+    phosphate: DNL bonds to it, so that nucleotide takes an internal template.
+    """
     res = residues(atoms)
     chains = sorted({c for c, _ in res})
     n_bp = max(n for _, n in res)
+    nick_chain = nick_chain or chains[-1]
     lines, serial = [], 1
     for ch in chains:
         for i in range(1, n_bp + 1):
             rname = res[(ch, i)][next(iter(res[(ch, i)]))]["resn"]
-            if nick_after is not None and ch == chains[0]:
+            if nick_after is not None and ch == nick_chain:
                 if i == nick_after:
                     rname += "3"          # 3'-OH terminus before the nick
                 elif i == nick_after + 1:
                     rname += "5"          # 5'-OH terminus after it
             for at in res[(ch, i)].values():
-                if nick_after is not None and ch == chains[0] and i == nick_after + 1 \
-                        and at["name"] in ("P", "OP1", "OP2"):
+                if ch in bare_five_prime and i == 1 \
+                        and at["name"] in FIVE_PRIME_PHOSPHATE:
+                    continue              # DA5 and friends carry no 5' phosphate
+                if nick_after is not None and ch == nick_chain and i == nick_after + 1 \
+                        and at["name"] in FIVE_PRIME_PHOSPHATE:
                     continue              # the nicked strand loses that phosphate
                 nm = at["name"]
                 fld = f" {nm:<3}" if len(nm) < 4 else nm
@@ -270,7 +375,7 @@ def write_pdb(atoms, path: Path, nick_after: int | None = None):
                     f"{at['xyz'][0]:8.3f}{at['xyz'][1]:8.3f}{at['xyz'][2]:8.3f}"
                     f"{1.00:6.2f}{0.00:6.2f}          {at['elem']:>2}")
                 serial += 1
-            if nick_after is not None and ch == chains[0] and i == nick_after:
+            if nick_after is not None and ch == nick_chain and i == nick_after:
                 lines.append(f"TER   {serial:5d}")
                 serial += 1
         lines.append(f"TER   {serial:5d}")
@@ -283,12 +388,19 @@ def main():
     here = Path(__file__).resolve().parent
     ap.add_argument("--n-bp", type=int, required=True)
     ap.add_argument("--span-A", type=float, required=True,
-                    help="required 5'P-to-5'P distance in angstrom")
+                    help="required distance in angstrom between the two linker anchors "
+                         "on the MODIFIED strand: the 5' P of nucleotide 1 and the "
+                         "3' O3' of nucleotide N")
     ap.add_argument("--sequence", default=None,
                     help="default: the centre n-bp of Zocchi's verified 60mer")
     ap.add_argument("--nick-after", type=int, default=None,
-                    help="nick the first strand after this residue (centre = n/2)")
-    ap.add_argument("--azimuth", type=float, default=0.0)
+                    help="nick the COMPLEMENTARY strand after this residue "
+                         "(centre = n/2); nicking the modified strand would open "
+                         "the covalent loop")
+    ap.add_argument("--azimuth", type=float, default=None,
+                    help="override the solved bend azimuth (degrees)")
+    ap.add_argument("--radius", type=float, default=None,
+                    help="override the solved bend radius (angstrom)")
     ap.add_argument("--outdir", default=str(here))
     ap.add_argument("--pymol", default=None)
     args = ap.parse_args()
@@ -313,17 +425,31 @@ def main():
           f"off-axis rms {rep['straightness_rms_A']} A")
     print(f"  5' ends at z = {rep['five_prime_z_A']} A, separation "
           f"{rep['five_prime_separation_A']} A")
+    print(f"  same-strand anchors (5'P nt1 -> 3'O3' nt{args.n_bp}) "
+          f"{rep['same_strand_anchor_separation_A']} A when straight")
 
-    brep = bend(atoms, ctr, axis, c0, args.n_bp, args.span_A, args.azimuth)
+    srep = solve_bend(atoms, ctr, axis, c0, args.n_bp, args.span_A)
+    R = args.radius if args.radius is not None else srep["radius_A"]
+    az = args.azimuth if args.azimuth is not None else srep["azimuth_deg"]
+    print(f"  solved: R = {srep['radius_A']} A at azimuth {srep['azimuth_deg']:.0f} deg "
+          f"gives an anchor span of {srep['anchor_span_A']} A "
+          f"(target {srep['target_A']})")
+    if args.radius is not None or args.azimuth is not None:
+        print(f"  OVERRIDE: using R = {R} A, azimuth {az} deg")
+
+    brep = bend(atoms, ctr, axis, c0, args.n_bp, R, az)
+    brep["solve"] = srep
     print(f"  bent to R = {brep['radius_A']} A ({brep['arc_deg']} deg of arc); "
-          f"5'-5' now {brep['five_prime_separation_after_A']} A "
-          f"(target {brep['target_chord_A']})")
+          f"anchor span now {brep['anchor_span_after_A']} A "
+          f"(5'-5' {brep['five_prime_separation_after_A']} A)")
     print(f"  backbone strain: O3'-P {brep['O3prime_P_after'][0]} +/- "
           f"{brep['O3prime_P_after'][1]} A (max {brep['O3prime_P_after'][2]}); "
           f"ideal is 1.61")
 
     pdb = out / f"spring_{tag}.pdb"
-    write_pdb(atoms, pdb, nick_after=args.nick_after)
+    chains = sorted({c for c, _ in residues(atoms)})
+    write_pdb(atoms, pdb, nick_after=args.nick_after, nick_chain=chains[-1],
+              bare_five_prime=(chains[-1],))
     (out / f"spring_{tag}.json").write_text(json.dumps(
         {"sequence": seq, "straight": rep, "bend": brep,
          "nick_after": args.nick_after}, indent=2))

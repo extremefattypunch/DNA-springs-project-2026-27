@@ -1,13 +1,18 @@
 [
   {
-    "residue": "DNH",
-    "description": "5'-amino-C6 arm terminated as a free alcohol: the clicked, unloaded control for the chimeras",
-    "smiles_from_tables": "CC(=O)NCCCCCCO",
-    "formula": "C6H14NO",
-    "mass_Da": 116.184,
-    "net_charge": 0,
-    "model_formal_charge": 0,
+    "residue": "DNP",
+    "description": "3'-amino-modifier C7 arm: its own phosphate on the strand's 3' oxygen, through a heptyl spacer to the carbamate nitrogen",
+    "smiles_from_tables": "COP(=O)([O-])OCCCCCCCNC(C)=O",
+    "formula": "C7H15NO3P",
+    "mass_Da": 192.175,
+    "net_charge": -0.6921,
+    "model_formal_charge": -1,
     "cap_atoms": [
+      "O3C",
+      "C3C",
+      "H3A",
+      "H3B",
+      "H3C",
       "CAY",
       "OAY",
       "CAZ",
@@ -15,10 +20,10 @@
       "HZ2",
       "HZ3"
     ],
-    "atoms_in_residue": 22,
+    "atoms_in_residue": 27,
     "charge_method": "AM1-BCC (GAFF2 types)",
     "element_check": {
-      "atoms_checked": 22,
+      "atoms_checked": 27,
       "element_mismatches": 0
     },
     "frcmod_audit": {

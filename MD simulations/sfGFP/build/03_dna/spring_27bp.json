@@ -24,20 +24,29 @@
       -45.69,
       45.69
     ],
-    "five_prime_separation_A": 91.67
+    "five_prime_separation_A": 91.67,
+    "same_strand_anchor_separation_A": 91.22
   },
   "bend": {
     "contour_A": 87.78,
-    "radius_A": 31.49,
-    "arc_deg": 159.7,
-    "target_chord_A": 62.0,
-    "five_prime_separation_after_A": 57.31,
+    "radius_A": 41.34,
+    "arc_deg": 121.7,
+    "anchor_span_after_A": 66.0,
+    "five_prime_separation_after_A": 67.33,
     "O3prime_P_after": [
-      1.679,
-      0.417,
-      2.336
+      1.647,
+      0.326,
+      2.161
     ],
-    "bend_azimuth_deg": 0.0
+    "bend_azimuth_deg": 224.0,
+    "solve": {
+      "radius_A": 41.34,
+      "azimuth_deg": 224.0,
+      "anchor_span_A": 66.0,
+      "target_A": 66.0,
+      "straight_anchor_span_A": 91.22,
+      "azimuth_step_deg": 2.0
+    }
   },
   "nick_after": null
 }

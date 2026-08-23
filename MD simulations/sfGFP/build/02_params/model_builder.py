@@ -33,14 +33,22 @@ PHOSPHATE_CAP = [("C", "P", "P", 1), ("P", "OP1", "O", 2), ("P", "OP2", "O", 1),
                  ("C5C", "H5A", "H", 1), ("C5C", "H5B", "H", 1), ("C5C", "H5C", "H", 1)]
 
 # Which caps each residue gets, and to which of its own atoms they attach.
+# DNP's head phosphorus stands in for the nucleotide's O3'-C3', so it is capped with
+# a methyl ester; its nitrogen is capped with an acetyl, standing in for the carbamate
+# carbonyl it will bond to -- the same role ACETYL_CAP plays at DNL's head.
+O3PRIME_CAP = [("C", "O3C", "O", 1), ("O3C", "C3C", "C", 1),
+               ("C3C", "H3A", "H", 1), ("C3C", "H3B", "H", 1),
+               ("C3C", "H3C", "H", 1)]
+
 CAP_PLAN = {
     "TET": [("head", ACE_CAP), ("tail", NME_CAP)],
     "TDP": [("head", ACE_CAP), ("tail", NME_CAP), ("extra", NMETHYL_CAP)],
     "DNL": [("head", ACETYL_CAP), ("tail", PHOSPHATE_CAP)],
     # DNH's alcohol needs no cap on that end -- it *is* the terminus.
     "DNH": [("head", ACETYL_CAP)],
+    "DNP": [("head", O3PRIME_CAP), ("extra", ACETYL_CAP)],
 }
-FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1, "DNH": 0}
+FORMAL_CHARGE = {"TET": 0, "TDP": 0, "DNL": -1, "DNH": 0, "DNP": -1}
 
 
 def build(name: str, outdir: Path, seed: int = 0xC0FFEE):
@@ -83,6 +91,11 @@ def build(name: str, outdir: Path, seed: int = 0xC0FFEE):
         # the first cap atom bonds to the residue's anchor, later ones to each other
         # (handled above by treating "C" as "the anchor")
 
+    # Formal charges come from the residue table rather than a name test: DNL's
+    # anionic oxygen belongs to a *cap*, DNP's to the residue itself, and hard-coding
+    # one residue's name would silently skip the other.
+    for nm, q in res.get("formal_charges", {}).items():
+        rw.GetAtomWithIdx(idx[nm]).SetFormalCharge(q)
     if name == "DNL":
         rw.GetAtomWithIdx(idx["OP2"]).SetFormalCharge(-1)
 
