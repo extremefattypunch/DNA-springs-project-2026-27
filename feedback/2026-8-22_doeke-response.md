@@ -662,17 +662,30 @@ had to the preprint's non-circular control. Comparing it against the rebuilt clo
 is a direct test of circular versus not, at no extra compute, and it is a cleaner one than
 anything I had planned.
 
-## Corrections that will be made to the public report
+## Corrections made to the public report
 
-1. Retract the point-3 claim and replace it with the matched-control comparison and the
-   contact measurement.
-2. State that the old runs are the two-arm construct, and present the closed-loop rebuild
-   as the model of the experiment.
-3. Reword the chromophore caption to torsion, with the measured numbers.
-4. Fix the five references; cite the book by page.
-5. Add the direct force measurement alongside the analytic one, with both written out.
-6. Add the kinking discussion, with the curvature comparison table and the timescale
-   arithmetic.
-7. Add the Ramachandran and Tyr200 result, and the guidance on which sites tolerate
-   Tet2-Et.
-8. Say plainly, wherever a force is quoted, whether it is modelled or measured.
+All of these are done and republished at
+<https://extremefattypunch.github.io/DNA-springs-project-2026-27/>:
+
+1. The point-3 claim is retracted on the page, and replaced by the matched-control
+   comparison, the barrel stiffness, and the contact measurement.
+2. Figure 1's caption carried the same claim — it said the chimeras "sit well above that
+   line, so the spring is not equivalent to pulling along the same axis". It now says the
+   offsets on that panel are against the wrong zero, and points at the matched-control
+   table instead.
+3. The chromophore caption says rotation, and says why.
+4. The five references are fixed, and the book is cited by page for every equation used.
+5. A new section, *What the modification itself does*, carries the point-9 result and the
+   Ramachandran figure.
+6. The kinking section gains the curvature comparison, the timescale arithmetic, and the
+   paragraph on OL15's documented bias.
+7. Everywhere a force is quoted, the page now says whether it is modelled or measured.
+
+Still to land, when the current runs finish: the closed-loop chimeras as the model of the
+experiment (with the old runs reframed as the two-arm construct), the measured *f*(*x*)
+laid over Zocchi's curve, the ssDNA and two-arm controls, the kink search in the
+compression windows, and the ubiquitin set.
+
+One thing I could not do automatically: GitHub does not create a wiki repository until
+someone makes the first page in the web UI, so the rewritten landing page is staged at
+`docs/wiki/Home.md` and needs pasting once.
