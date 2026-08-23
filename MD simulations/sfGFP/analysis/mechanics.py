@@ -37,6 +37,7 @@ import pandas as pd
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import geometry  # noqa: E402
 from spring_model import KT, TAU_C_CONTINUOUS, TAU_C_NICKED, Spring  # noqa: E402
 
 WC = {("DA", "DT"): [("N1", "N3"), ("N6", "O4")],
@@ -105,7 +106,16 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
 
     # --- 1. protein extension ---
     i, j = anchor_atoms(top, resmap, sites)
-    ext = md.compute_distances(t, np.array([[i, j]]))[:, 0] * 10.0
+    # Both of the long-range distances in this module go through geometry.long_distance,
+    # which picks the periodic convention from the topology and then checks its own
+    # reasoning.  mdtraj minimum-images by default, and that is correct for a hydrogen
+    # bond and wrong for anything longer than half the cell's smallest width -- 38-48 A
+    # in these truncated octahedra.  This pair is ~32 A so both conventions agree, but it
+    # is routed through the same code so that the assertion covers it too: if a future
+    # box shrinks or a future site pair is farther apart, this fails loudly.
+    mols = geometry.molecule_ids(top)
+    ext, ext_pbc = geometry.long_distance(t, i, j, "anchor CB-CB", mols)
+    summary["pbc"] = {"anchor_CB_CB": ext_pbc}
     rows["anchor_CB_CB_A"] = ext
     summary["anchor_CB_CB_A"] = {"mean": round(float(ext.mean()), 3),
                                  "sd": round(float(ext.std()), 3),
@@ -151,8 +161,16 @@ def analyse(traj, top_path, resmap_path, sites, out_prefix, stride=1,
             "topology": "closed covalent loop" if one_strand else "two separate arms"}
         print(f"  attachment: {summary['attachment']['atoms']} -> "
               f"{summary['attachment']['topology']}")
-        d = md.compute_distances(
-            t, np.array([[attach[0][0], attach[1][0]]]))[:, 0] * 10.0
+        # THIS is the one the convention actually mattered for.  The spring's ends are
+        # 60-75 A apart in a box whose minimum image is only good to ~42 A, so the default
+        # gave a value that flipped between periodic images from frame to frame: for
+        # S3_spring27 it read 53.8 A against a true 70.0, and for the closed loop 45.4
+        # against 71.2.  Every force this project quoted from Zocchi's f(x) was evaluated
+        # at one of those.  Both ends are on the same covalently connected molecule, so
+        # the raw coordinates are contiguous and are the honest answer.
+        d, spring_pbc = geometry.long_distance(
+            t, attach[0][0], attach[1][0], "spring end-to-end", mols)
+        summary["pbc"]["spring_end_to_end"] = spring_pbc
         rows["spring_end_to_end_A"] = d
         n_bp = len(strands[0][1])
         tau = TAU_C_NICKED if nicked else TAU_C_CONTINUOUS

@@ -34,11 +34,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import mdtraj as md
 import numpy as np
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import geometry  # noqa: E402
 
 # 1 pN = 0.60221408 kJ/mol/nm, the same conversion the engine's force clamp uses.
 KJ_PER_MOL_NM_TO_PN = 1.0 / 0.60221408
@@ -135,7 +139,14 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     t = t[skip:]
     top = t.topology
 
-    r = md.compute_distances(t, np.array([[i, j]]))[:, 0] * 10.0     # angstrom
+    # The restraint OpenMM applied used the true, unwrapped separation
+    # (setUsesPeriodicBoundaryConditions(False) on unwrapped internal coordinates), so the
+    # simulation is right whatever this analysis does.  But the windows run from 50 to
+    # 128 A in a box whose minimum image is only good to ~38 A, and mdtraj minimum-images
+    # by default -- which is what produced the nonsensical -89 and -178 pN in the first
+    # pass.  Both clamp atoms are on the same strand, hence the same molecule, so the raw
+    # coordinates are contiguous and give the separation the restraint actually saw.
+    r, pbc = geometry.long_distance(t, i, j, f"restraint pair (window x0={x0} A)")
     # Correlation time from the lag-1 autocorrelation, so the error bar reflects the
     # number of INDEPENDENT samples rather than the number of frames.
     d = r - r.mean()
@@ -151,6 +162,7 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     resmap = load_map(resmap_path)
     strands = dna_strands(top, resmap)
     out = {"x0_A": x0, "k_kJ_mol_nm2": k, "frames": len(t), "skip_ns": skip_ns,
+           "pbc": pbc,
            "mean_r_A": round(float(r.mean()), 3), "sd_r_A": round(float(r.std()), 3),
            "sem_r_A": round(sem, 4), "lag1_rho": round(rho, 4),
            "independent_samples": round(float(n_ind), 1),
