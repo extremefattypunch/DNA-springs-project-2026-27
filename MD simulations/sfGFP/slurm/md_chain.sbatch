@@ -2,11 +2,20 @@
 # One system, one replicate: minimise -> equilibrate -> produce, restart-safe.
 #
 # Resource notes (why these numbers):
-#  * --gres names the A100-80GB GRES type explicitly. gpu_requeue and
-#    serial_requeue also hand out a100_1g.5gb / a100_3g.20gb MIG slices and
-#    16 GB V100s; any of them would *run* these systems, but the throughput
-#    spread across them is several-fold and would make replicates
-#    incomparable in wall-clock planning.
+#  * PARTITION: gpu_test by default, and this is not a detail.  `scontrol show
+#    partition` gives TRESBillingWeights Gres/gpu=836.5 on `gpu` and Gres/gpu=0 on
+#    `gpu_test` -- the billed partition charges the whole lab's fairshare and the test
+#    one is free.  230 GPU-hours of this project's exploratory sweeps went onto `gpu`
+#    in a single day and exhausted the lab's allocation, which is a cost borne by
+#    everyone else in it.  Development, parameter scans and anything you might rerun
+#    belong on gpu_test.  Move to `gpu` only for a final production set you are
+#    confident in, and check `sshare -U -u $USER` before you do.
+#  * The trade is a 12 h wall limit and a100_3g.20gb MIG slices rather than whole
+#    80 GB cards -- roughly a third of the throughput.  50 ns of a 120k-atom system
+#    still fits; the restart machinery below covers anything that does not.
+#  * --gres is therefore generic.  It used to name the A100-80GB type explicitly to keep
+#    replicate throughput comparable, which is a real concern on a mixed pool but not
+#    one worth an entire lab's fairshare.
 #  * --cpus-per-task=4 is plenty: OpenMM's CUDA platform uses one worker thread
 #    plus PME bookkeeping. Asking for more only delays scheduling.
 #  * 3-day cap is the partition maximum on gpu/gpu_requeue. The lab's older
@@ -16,13 +25,13 @@
 #SBATCH --job-name=sfgfp-md
 #SBATCH --output=slurm/logs/md_%x_%A_%a.out
 #SBATCH --error=slurm/logs/md_%x_%A_%a.err
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:nvidia_a100-sxm4-80gb:1
+#SBATCH --partition=gpu_test
+#SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
-#SBATCH --time=1-00:00:00
+#SBATCH --time=12:00:00
 #SBATCH --requeue
 #SBATCH --open-mode=append
 set -euo pipefail
