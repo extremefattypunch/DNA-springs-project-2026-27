@@ -1,0 +1,76 @@
+{
+  "protein": "build/01_protein/sfgfp_prepped.pdb",
+  "dna": "build/03_dna/spring_50nt.pdb",
+  "sites": [
+    133,
+    149
+  ],
+  "linkers": {
+    "133": "DNL",
+    "149": "DNP"
+  },
+  "tether": {
+    "DNL": {
+      "cyclopropane_sides_A": [
+        1.516,
+        1.515,
+        1.512
+      ],
+      "azadiene_torsion_deg": 171.87,
+      "linker": "DNL",
+      "dna_atom": "OL*",
+      "CB_to_dna_atom_A": 17.28,
+      "n_rotatable_bonds": 14
+    },
+    "DNP": {
+      "cyclopropane_sides_A": [
+        1.508,
+        1.516,
+        1.511
+      ],
+      "azadiene_torsion_deg": 152.96,
+      "linker": "DNP",
+      "dna_atom": "P*",
+      "CB_to_dna_atom_A": 22.65,
+      "n_rotatable_bonds": 17
+    }
+  },
+  "reach_A": {
+    "133": 22.34,
+    "149": 25.48
+  },
+  "sites_CB_CB_A": 31.3,
+  "duplex_anchor_span_A": 65.99,
+  "a_offsets_A": [
+    15.67,
+    19.02
+  ],
+  "b_offset_A": 11.87,
+  "duplex_spin_deg": 75,
+  "arm_reports": {
+    "133": {
+      "score": 21.808,
+      "dna_atom": "OL*",
+      "to_target_A": 1.614,
+      "bond_objective": 1.61,
+      "clash": 43.617,
+      "bond_length_A": 1.614,
+      "linker": "DNL"
+    },
+    "149": {
+      "score": 20.417,
+      "dna_atom": "P*",
+      "to_target_A": 1.61,
+      "bond_objective": 1.61,
+      "clash": 40.835,
+      "bond_length_A": 1.61,
+      "linker": "DNP"
+    }
+  },
+  "waters_kept": 317,
+  "waters_dropped": 10,
+  "tleap_bonds": [
+    "131@CN:232@N",
+    "147@CN:283@N"
+  ]
+}

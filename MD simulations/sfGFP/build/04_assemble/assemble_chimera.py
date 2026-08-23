@@ -208,7 +208,8 @@ def main():
         dres.setdefault((a["chain"], a["resi"]), {})[a["name"]] = a
     dchains = sorted({c for c, _ in dres})
     n_bp = max(r for _, r in dres)
-    mod, comp = dchains[0], dchains[1]          # modified strand, complement
+    mod = dchains[0]                             # the strand carrying both linkers
+    comp = dchains[1] if len(dchains) > 1 else None   # None for an ssDNA spring
     # BOTH anchors are on the modified strand: its 5' phosphate and its 3' O3'.  This
     # is the whole point of the correction -- with a linker on each of two different
     # strands the tether bonds are bridges in the bond graph and no covalent cycle
@@ -322,7 +323,7 @@ def main():
     lines.append(f"TER   {serial:5d}")
     serial += 1
 
-    dna_chain_ids = {mod: "C", comp: "D"}
+    dna_chain_ids = {mod: "C"} if comp is None else {mod: "C", comp: "D"}
 
     def write_linker(site, resi):
         """One linker residue, its atoms being the star-tagged half of the arm."""
@@ -350,20 +351,33 @@ def main():
         for nm, at in dres[(mod, i)].items():
             lines.append(fmt(serial, nm, rn, "C", i, at["xyz"], at["elem"]))
             serial += 1
+        # A nick inside the modified strand is the non-circular control, and it has to
+        # be passed to tleap as a real chain break -- a 3'-OH residue followed by TER --
+        # or tleap will happily bond across it and hand back the circle we were trying
+        # not to build.  build_dna.py has already named the flanking residues DX3/DX5
+        # and stripped the downstream phosphate.
+        if rn.endswith("3") and i < n_bp:
+            lines.append(f"TER   {serial:5d}")
+            serial += 1
     write_linker(args.sites[1], n_bp + 1)
     lines.append(f"TER   {serial:5d}")
     serial += 1
 
     # The complement carries no linker at all.  Its own 5'/3' termini were already
-    # written as DA5/DA3-style names by build_dna.py, phosphate stripped.
-    for i in range(1, n_bp + 1):
-        ordinal += 1
-        rn = next(iter(dres[(comp, i)].values()))["resn"]
-        for nm, at in dres[(comp, i)].items():
-            lines.append(fmt(serial, nm, rn, "D", i, at["xyz"], at["elem"]))
-            serial += 1
-    lines.append(f"TER   {serial:5d}")
-    serial += 1
+    # written as DA5/DA3-style names by build_dna.py, phosphate stripped.  An ssDNA
+    # spring has no complement to write.
+    if comp is not None:
+        for i in range(1, n_bp + 1):
+            ordinal += 1
+            rn = next(iter(dres[(comp, i)].values()))["resn"]
+            for nm, at in dres[(comp, i)].items():
+                lines.append(fmt(serial, nm, rn, "D", i, at["xyz"], at["elem"]))
+                serial += 1
+            if rn.endswith("3") and i < n_bp:
+                lines.append(f"TER   {serial:5d}")
+                serial += 1
+        lines.append(f"TER   {serial:5d}")
+        serial += 1
 
     # crystal waters, minus any that the DNA or tethers now occupy
     newxyz = np.array([a.xyz[i] for a in arms.values()

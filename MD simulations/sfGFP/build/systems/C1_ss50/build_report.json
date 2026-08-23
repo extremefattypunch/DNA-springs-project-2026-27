@@ -1,0 +1,59 @@
+{
+  "system": "C1_ss50",
+  "solute_pdb": "/n/lab_storage/hekstra_lab/people/ian_poon/DNA-springs-project-2026-27/MD simulations/sfGFP/build/04_assemble/ss50.pdb",
+  "pad_A": 12.0,
+  "waters_pass1": 43669,
+  "nacl_pairs": 118,
+  "mgcl2": 4,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.005,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [
+    "131@CN:232@N",
+    "147@CN:283@N"
+  ],
+  "atoms": 136685,
+  "residues": 44269,
+  "bonds": 136555,
+  "net_charge": -3.1e-05,
+  "box": [
+    124.757,
+    124.757,
+    124.757,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 43682,
+  "ions": {
+    "Na+": 174,
+    "Cl-": 126,
+    "MG": 4
+  },
+  "expected_residues": {
+    "CRO": 1,
+    "TDP": 2,
+    "DNL": 1,
+    "DNP": 1
+  },
+  "bonds_verified": [
+    "131@CN:232@N",
+    "147@CN:283@N"
+  ],
+  "covalent_loop": {
+    "tested": true,
+    "residue": "TDP",
+    "residue_indices": [
+      130,
+      146
+    ],
+    "backbone_bonds_cut": 2,
+    "closed": true,
+    "atoms_reached": 1431,
+    "expected": "closed"
+  },
+  "dihedrals": 23389,
+  "angles": 9994,
+  "problems": []
+}

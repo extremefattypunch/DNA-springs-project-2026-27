@@ -334,7 +334,7 @@ FIVE_PRIME_PHOSPHATE = ("P", "OP1", "OP2")
 
 
 def write_pdb(atoms, path: Path, nick_after: int | None = None,
-              nick_chain: str | None = None, bare_five_prime=()):
+              nick_chain: str | None = None, bare_five_prime=(), keep_chains=None):
     """Write with Amber-friendly naming.  A nick is expressed as 3'/5' termini.
 
     `nick_chain` defaults to the *complementary* strand, not the first one.  That is a
@@ -352,6 +352,8 @@ def write_pdb(atoms, path: Path, nick_after: int | None = None,
     chains = sorted({c for c, _ in res})
     n_bp = max(n for _, n in res)
     nick_chain = nick_chain or chains[-1]
+    if keep_chains is not None:
+        chains = [c for c in chains if c in keep_chains]
     lines, serial = [], 1
     for ch in chains:
         for i in range(1, n_bp + 1):
@@ -397,6 +399,15 @@ def main():
                     help="nick the COMPLEMENTARY strand after this residue "
                          "(centre = n/2); nicking the modified strand would open "
                          "the covalent loop")
+    ap.add_argument("--single-strand", action="store_true",
+                    help="write only the modified strand: an ssDNA spring.  The duplex "
+                         "is still built and bent first, so the single strand starts as "
+                         "a stacked helical strand with its two anchors the right "
+                         "distance apart; MD then lets it collapse.")
+    ap.add_argument("--nick-modified-strand", action="store_true",
+                    help="put the nick in the MODIFIED strand instead, cutting the loop "
+                         "into two separate arms.  This is the non-circular control: "
+                         "same DNA, same sites, same chemistry, no covalent circle.")
     ap.add_argument("--azimuth", type=float, default=None,
                     help="override the solved bend azimuth (degrees)")
     ap.add_argument("--radius", type=float, default=None,
@@ -413,7 +424,9 @@ def main():
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
     seq = args.sequence or centre_slice(ZOCCHI_60MER, args.n_bp)
-    tag = f"{args.n_bp}bp" + ("_nick" if args.nick_after else "")
+    tag = (f"{args.n_bp}" + ("nt" if args.single_strand else "bp")
+           + ("_nick" if args.nick_after else "")
+           + ("mod" if (args.nick_after and args.nick_modified_strand) else ""))
     print(f"=== {tag}: {seq} ===")
 
     raw = run_fnab(seq, out / f"straight_{tag}.pdb", pymol)
@@ -448,8 +461,13 @@ def main():
 
     pdb = out / f"spring_{tag}.pdb"
     chains = sorted({c for c, _ in residues(atoms)})
-    write_pdb(atoms, pdb, nick_after=args.nick_after, nick_chain=chains[-1],
-              bare_five_prime=(chains[-1],))
+    nick_chain = chains[0] if args.nick_modified_strand else chains[-1]
+    write_pdb(atoms, pdb, nick_after=args.nick_after, nick_chain=nick_chain,
+              bare_five_prime=(chains[-1],),
+              keep_chains=(chains[0],) if args.single_strand else None)
+    print(f"  wrote {'the modified strand only' if args.single_strand else 'both strands'}"
+          + (f", nick in chain {nick_chain} after {args.nick_after}"
+             if args.nick_after else ""))
     (out / f"spring_{tag}.json").write_text(json.dumps(
         {"sequence": seq, "straight": rep, "bend": brep,
          "nick_after": args.nick_after}, indent=2))

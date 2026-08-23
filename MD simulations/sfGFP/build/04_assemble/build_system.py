@@ -236,17 +236,25 @@ def validate(out: Path, report: dict, args) -> dict:
             problems.append(f"bond {spec} is missing from the prmtop")
     report["bonds_verified"] = sorted(made)
 
-    # the construct must be a covalent circle, not two arms held shut by base pairing
-    if args.expect_loop:
-        loop = covalent_loop(p, args.expect_loop)
+    # The circular constructs must be covalent circles, and the non-circular controls
+    # must NOT be -- a control that quietly closed would look like a null result.
+    # Both directions are therefore asserted rather than assumed.
+    want = args.expect_loop or args.expect_open_loop
+    if want:
+        loop = covalent_loop(p, want)
+        loop["expected"] = "closed" if args.expect_loop else "open"
         report["covalent_loop"] = loop
         if not loop.get("tested"):
             problems.append(f"could not test the covalent loop: {loop.get('why')}")
-        elif not loop["closed"]:
+        elif args.expect_loop and not loop["closed"]:
             problems.append(
                 "no covalent cycle: cutting CA-CB at both modified residues "
                 "disconnects them, so each tether is a bridge and the loop is closed "
                 "by base pairing alone -- this is the topology error in the first build")
+        elif args.expect_open_loop and loop["closed"]:
+            problems.append(
+                "this system is supposed to be the NON-circular control, but a covalent "
+                "cycle joins the two modified residues: the chain break did not take")
 
     # a missing dihedral type would show up as a zero-parameter term
     report["dihedrals"] = len(p.dihedrals)
@@ -371,6 +379,9 @@ def main():
                     help="inter-residue bonds as RESI@ATOM:RESI@ATOM using the "
                          "solute PDB's own residue numbering (1-based ordinal)")
     ap.add_argument("--expect-residue", nargs="*", default=["CRO"])
+    ap.add_argument("--expect-open-loop", default=None, metavar="RESNAME",
+                    help="assert the opposite of --expect-loop: the two modified "
+                         "residues must NOT be joined by a covalent cycle")
     ap.add_argument("--expect-loop", default=None, metavar="RESNAME",
                     help="name of the modified residue (exactly two expected); assert "
                          "a covalent cycle joins their C-beta without using the "

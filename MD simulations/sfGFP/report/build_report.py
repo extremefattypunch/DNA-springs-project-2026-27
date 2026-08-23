@@ -191,9 +191,10 @@ REFS = [
      "acid. <i>J Am Chem Soc</i> <b>137</b>, 10044–10047 (2015).",
      "https://doi.org/10.1021/jacs.5b03275",
      "The tetrazine amino acid scaffold Tet2-Et is built on, and the sTCO kinetics."),
-    ("zocchi_book", "Zocchi G. <i>Molecular Machines: A Materials-Science Approach.</i> "
-     "Princeton University Press (2018).",
-     "https://doi.org/10.2307/j.ctvc77hpc",
+    ("zocchi_book", "Zocchi G. <i>Molecular Machines: A Materials Science Approach.</i> "
+     "Princeton University Press, Princeton NJ (2018). ISBN 978-0-691-17386-3 "
+     "(hardcover); 978-1-4008-9006-4 (ebook).",
+     "https://doi.org/10.23943/9781400890064",
      "The DNA-spring concept and the whole mechanical model: Eqs. 2.188–2.206 for the "
      "kinked rod, Eq. 3.52 for the force, and the ~100 k<sub>B</sub>T nm⁻² protein "
      "stiffness with its softening transition."),
@@ -204,24 +205,24 @@ REFS = [
      "here, and the measurement of the critical bending torque."),
     ("tseng2013", "Tseng C-Y, Zocchi G. Mechanical control of Renilla luciferase. "
      "<i>J Am Chem Soc</i> <b>135</b>, 11879–11886 (2013).",
-     "https://doi.org/10.1021/ja4045532",
+     "https://doi.org/10.1021/ja4043565",
      "Eq. 6 as implemented, τ<sub>c</sub> = 27 pN nm for a nicked rod, and the "
      "1.5 / 2.4 pN values the implementation is tested against."),
     ("tseng2021", "Tseng C-Y, Wang A, Zocchi G. Protein–DNA chimeras: synthesis and "
      "applications. <i>Methods Enzymol</i> <b>647</b>, 257–281 (2021).",
-     "https://doi.org/10.1016/bs.mie.2020.11.005",
+     "https://doi.org/10.1016/bs.mie.2020.09.010",
      "The verified oligonucleotide sequences used for the springs, and the measured "
      "energy split E<sub>tot</sub> 9.1 = E<sub>DNA</sub> 6.6 + E<sub>enzyme</sub> "
      "2.5 k<sub>B</sub>T."),
     ("choi2007", "Choi B, Zocchi G. Guanylate kinase, induced fit, and the allosteric "
      "spring probe. <i>Biophys J</i> <b>92</b>, 1651–1658 (2007).",
-     "https://doi.org/10.1529/biophysj.106.092049",
+     "https://doi.org/10.1529/biophysj.106.092866",
      "The earlier worm-like-chain force estimate of ~10 pN, which that paper itself "
      "labels an upper bound and which is deliberately <i>not</i> used here."),
     ("boral", "Boral S, Schnebly J, Gamada D, Gardner KH, Hekstra DR. Conformational "
      "changes induced in ubiquitin by circular protein–DNA chimeras. "
      "<i>bioRxiv</i> 2026.07.05.736590 (2026).",
-     "https://doi.org/10.1101/2026.07.05.736590",
+     "https://doi.org/10.64898/2026.07.05.736590",
      "The companion experiment in this lab: the ~4 pN estimate for a 50-mer spring, "
      "and the buffer and salt conditions matched in the simulations."),
     ("maier", "Maier JA, Martinez C, Kasavajhala K, Wickstrom L, Hauser KE, Simmerling C. "
