@@ -1,8 +1,18 @@
 # Response to Doeke's comments of 22 August 2026
 
 Ian Poon — sfGFP–DNA spring simulations
-Written 23 August 2026. Numbers marked **[running]** come from simulations that were
-still finishing when this was written; everything else is final.
+Written 23 August 2026, revised the same day. Numbers marked **[running]** come from
+simulations still finishing; everything else is final.
+
+> **Revised after sending.** Setting up the direct force measurement turned up a
+> periodic-boundary bug that had corrupted every spring end-to-end distance in the
+> project, and with it every modelled force. #6 carries the corrected numbers and the
+> full disclosure. It does **not** touch the retraction in #3, the protein stiffness, the
+> point-9 correlations or the contact measurement — all four rest on a ~32 Å distance
+> below every box's minimum-image limit, where the two conventions agree to 0.00000 Å on
+> all eight systems. I also corrected a claim of my own in #7: I had called 6.9 nm a
+> 27-mer's ssDNA "contour length" when it is its natural rms end-to-end, which made a
+> matched strand look taut.
 
 ---
 
@@ -18,9 +28,9 @@ and one turned out to have a sharper answer than the hypothesis it came with.
 | 3 | Simulate a non-circular control; the couple/shear argument is confused | **Claim retracted.** Your physics is right and mine was wrong. Rebuilt against a matched control; the effect inverts sign |
 | 4 | Chromophore: bend or rotate? | **Rotate.** Caption reworded, with the measured torsions |
 | 5 | The book DOI does not resolve | **Right, and four others were also wrong** — two of them resolved to unrelated papers |
-| 6 | Is the force modelled or measured? | It was modelled. Now measured directly from the force field as well; both calculations written out in full |
+| 6 | Is the force modelled or measured? | It was modelled. Now **measured** too — and the two disagree by 5×, for a reason that is #8. Both written out; a PBC bug found and fixed along the way |
 | 7 | ssDNA chimera? | Built and running, 50 nt, plus a two-arm control that holds DNA content exactly fixed |
-| 8 | "It does not kink" — force field, timescale, or model? | Mostly **model and timescale**. Literature reviewed; our curvature is 40–60 % below the threshold at which all-atom MD nucleates kinks |
+| 8 | "It does not kink" — force field, timescale, or model? | Mostly **model and timescale**. Our curvature is 40–60 % below where all-atom MD nucleates kinks — and the measured force independently confirms the duplex is on the *unyielded* branch |
 | 9 | Do the Et-tet residues change local secondary structure? | **No** — DSSP is identical. But there is a real local effect, and it is a different one |
 
 Two of these connect: the mechanism behind #9 is also the artefact behind #3.
@@ -562,6 +572,25 @@ kinking may itself be a force-field artefact, in the opposite direction from you
 There is one genuine gap: **no published head-to-head comparison of kinking propensity
 across bsc0/bsc1/OL15/OL21/CHARMM36 in a sharply bent duplex exists**, as far as I can
 find. That is the control your question implies and nobody has run it.
+
+### The measured force says the same thing, independently
+
+This is the part that persuaded me. If the duplex never yields it stays on the elastic
+branch, and an unyielded rod under compression sustains its Euler buckling load,
+π²*B*/*L*² = 24.9 pN for a 27-mer. The directly measured force at the separation the
+chimera sits at is **33 pN**; Zocchi's kinked branch gives **6.3 pN** (see #6). The
+measurement lands on the unyielded value, four to five times the kinked one.
+
+So two quite different observables — the shape of the bend profile and the magnitude of
+the delivered force — agree that this duplex has not yielded. That is more convincing than
+either alone, and it means the model's few-pN forces are not merely uncorroborated here:
+they are *inconsistent* with what the same force field delivers, because they presuppose
+the transition it never makes.
+
+Which of the two is right about real DNA is a separate question our simulation cannot
+settle. If real DNA does yield at this curvature and ours does not because 50 ns is too
+short, then the model is right about the experiment and our force field is stuck on the
+wrong branch.
 
 ### What we are doing about it
 
