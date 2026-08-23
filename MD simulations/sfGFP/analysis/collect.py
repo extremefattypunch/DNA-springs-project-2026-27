@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 import barrel  # noqa: E402
 import chromophore  # noqa: E402
 import mechanics  # noqa: E402
+import contacts  # noqa: E402
 import sites  # noqa: E402
 
 CLAMP_RE = re.compile(r"^(?P<base>.+?)_(?P<f>[\d.]+)pN$")
@@ -99,6 +100,15 @@ def main():
             flat("barrel.", b, row)
         except Exception as e:                              # noqa: BLE001
             print(f"  barrel failed: {type(e).__name__}: {e}")
+        try:
+            ct = contacts.analyse(traj, top, rmap, pre, args.stride, skip)
+            if ct.get("has_dna"):
+                flat("contact.", {k: v for k, v in ct.items()
+                                  if not isinstance(v, list)}, row)
+                row["contact.residues_over_half"] = ";".join(
+                    ct["residues_over_half_the_time"])
+        except Exception as e:                              # noqa: BLE001
+            print(f"  contacts failed: {type(e).__name__}: {e}")
         try:
             sc = sites.analyse(traj, top, rmap, args.sites, pre, args.stride, skip)
             # DSSP is a per-residue dict of fractions; keep it in the per-run JSON and
