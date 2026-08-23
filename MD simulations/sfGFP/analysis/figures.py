@@ -265,6 +265,82 @@ def fig_bend(runs, out):
     return "fig4_dna_bend"
 
 
+
+def fig_kink_threshold(runs, outdir):
+    """Where this force field starts breaking internal base pairs.
+
+    Form: the data's job is magnitude along a continuum -- how persistently a pair stays
+    open as curvature rises -- so a dot-and-line against curvature, one measure on one
+    axis.  Deliberately NOT two y-scales with the bend angle on the right: that is the
+    single most common chart mistake and it would let a reader infer a relationship
+    between two quantities from the accident of their scaling.  The bend profile has its
+    own panel.
+
+    One series, so no legend box -- the title names it.  The two reference bands are
+    annotation rather than data and wear recessive tones with direct labels: our own
+    construct's curvature in the series hue, because it is our measurement, and the
+    published threshold in grey, because it is someone else's.
+    """
+    f = Path(runs).parent / "analysis" / "force_extension.csv"
+    if not f.exists():
+        print("  kink threshold: no force_extension.csv yet")
+        return None
+    d = pd.read_csv(f)
+    d = d[(d.system == "D_27bp") & d.get("wc.max_internal_occupancy").notna()] \
+        if "wc.max_internal_occupancy" in d else d.iloc[0:0]
+    if not len(d):
+        print("  kink threshold: no internal-opening column yet")
+        return None
+
+    L = 26 * 3.376                     # axis contour of the 27 bp duplex, angstrom
+    def per_bp(chord):
+        lo, hi = L / (2 * np.pi), 1e6
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            c = 2 * mid * np.sin(L / (2 * mid))
+            lo, hi = (mid, hi) if c < chord else (lo, mid)
+        return np.degrees(3.376 / (0.5 * (lo + hi)))
+
+    d = d.assign(deg_bp=[per_bp(float(x)) for x in d.x0_A])
+    g = d.groupby("deg_bp")["wc.max_internal_occupancy"].agg(["mean", "min", "max",
+                                                             "size"])
+    fig, ax = plt.subplots(figsize=(7.4, 4.3))
+
+    # our construct, and the published threshold -- annotation, not series
+    ax.axvspan(4.8, 5.2, color=VS.SERIES[0], alpha=0.13, lw=0, zorder=0)
+    ax.axvspan(8.6, 9.3, color=VS.GRID, alpha=0.9, lw=0, zorder=0)
+    ax.annotate("our chimera\n4.8–5.2°/bp", (5.0, 0.93), ha="center", va="top",
+                fontsize=8.5, color=VS.SERIES[0], zorder=5)
+    ax.annotate("Curuksu et al.\n8.6–9.3", (8.95, 0.93), ha="center", va="top",
+                fontsize=8.5, color=VS.INK_MUTED, zorder=5)
+
+    # individual replicates faint, the per-window mean solid: the spread is the story at
+    # the onset, where one replicate opens and the other does not
+    ax.plot(d.deg_bp, d["wc.max_internal_occupancy"], "o", ms=5, alpha=0.35,
+            color=VS.SERIES[0], lw=0, zorder=2)
+    ax.plot(g.index, g["mean"], "-o", lw=2.0, ms=8, color=VS.SERIES[0],
+            mec="white", mew=1.6, zorder=3)
+
+    first = g[g["mean"] > 0]
+    if len(first):
+        x0 = float(first.index[0])
+        ax.annotate(f"first opening\n{x0:.1f}°/bp", (x0, float(first["mean"].iloc[0])),
+                    xytext=(-6, 34), textcoords="offset points", ha="right",
+                    fontsize=8.5, color=VS.INK_2, zorder=5,
+                    arrowprops=dict(arrowstyle="-", lw=1.0, color=VS.INK_MUTED))
+    ax.set_xlabel("curvature imposed on the duplex (degrees per base-pair step)")
+    ax.set_ylabel("fraction of frames an internal\nbase pair is open")
+    ax.set_ylim(-0.04, 1.08)
+    ax.set_title("Where this force field starts breaking base pairs")
+    ax.grid(axis="y", alpha=0.6)
+    fig.tight_layout()
+    fig.savefig(Path(outdir) / "fig5_kink_threshold.png", dpi=200,
+                bbox_inches="tight")
+    g.to_csv(Path(outdir) / "fig5_kink_threshold.csv")
+    plt.close(fig)
+    return "fig5_kink_threshold"
+
+
 def fig_ramachandran(runs, outdir):
     """phi/psi at the two modified sites, WT against Tet2-Et against clicked.
 
@@ -361,7 +437,8 @@ def main():
     df = pd.read_csv(a.summary)
     made = [fig_force_response(df, out), fig_rmsf(df, a.runs, out),
             fig_hbonds(df, out), fig_bend(a.runs, out),
-             fig_ramachandran(a.runs, out)]
+             fig_ramachandran(a.runs, out),
+             fig_kink_threshold(a.runs, out)]
     made = [m for m in made if m]
     print("wrote: " + ", ".join(f"{m}.png" for m in made))
     (out / "figures.json").write_text(json.dumps(made, indent=2))

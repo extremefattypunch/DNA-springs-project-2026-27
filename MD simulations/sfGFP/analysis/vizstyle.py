@@ -13,6 +13,14 @@ needed re-validation.  Three light-mode slots (magenta, yellow, aqua) sit below 
 on a light surface, so the relief rule applies: every series is directly labelled and
 every figure ships the CSV it was drawn from.
 """
+# Validated, not chosen by eye: analysis/validate_palette.py computes the lightness band,
+# the chroma floor, adjacent-pair separation under simulated protanopia and deuteranopia,
+# the normal-vision floor, and contrast against the surface.  Result on the light surface:
+# every hard check passes (worst adjacent CVD dE 9.1 against a target of 8; worst
+# normal-vision dE 19.6 against a floor of 15).  Slots 2, 3 and 4 sit at 2.1-2.7:1 against
+# the surface, below the 3:1 minimum, which obligates a second encoding rather than being
+# dismissable -- discharged here because every panel carries direct labels and ships the
+# CSV it was drawn from.  Re-run the script if these values change.
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
           "#008300", "#4a3aa7", "#e34948"]
 SURFACE = "#fcfcfb"

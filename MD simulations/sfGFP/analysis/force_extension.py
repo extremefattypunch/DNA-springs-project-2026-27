@@ -214,6 +214,12 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
                 "internal_open": [{"bp": b, "occupancy": round(o, 3)}
                                   for b, o in internal],
                 "n_internal_open": len(internal),
+                # the headline number for the threshold plot: how much of the time the
+                # most persistent internal opening is actually open
+                "max_internal_occupancy": round(
+                    max((o for _, o in internal), default=0.0), 3),
+                "most_open_internal_bp": (max(internal, key=lambda x: x[1])[0]
+                                          if internal else None),
                 "kinked": bool(internal)}
             rows["n_open_pairs"] = (wc > WC_OPEN_A).sum(axis=1).astype(float)
 
