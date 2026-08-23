@@ -39,7 +39,7 @@ SYSDIR="build/systems/$SYS"
 # and six different physical conditions overwrite each other's trajectory.
 # The same reasoning applies to the force-extension windows: several separations run
 # off ONE topology, so x0 has to be in the directory name too.
-TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}${RESTRAINT_X0:+_x${RESTRAINT_X0}A}"
+TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}${RESTRAINT_X0:+_x${RESTRAINT_X0}A}${RESTRAINT_K:+_k${RESTRAINT_K}}"
 RUNDIR="data/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
 
@@ -54,7 +54,11 @@ if [[ -n "${RESTRAINT_X0:-}" ]]; then
     # with.  Same anchor atoms as the clamp ladder, written by the system builder.
     CLAMP_ATOMS="$(cat "$SYSDIR/clamp_atoms.txt")"
     CLAMP_ARGS=(--restraint-x0 "$RESTRAINT_X0" --clamp-atoms "$CLAMP_ATOMS")
-    echo "== harmonic window x0 = ${RESTRAINT_X0} A between atoms ${CLAMP_ATOMS}"
+    if [[ -n "${RESTRAINT_K:-}" ]]; then
+        CLAMP_ARGS+=(--restraint-k "$RESTRAINT_K")
+    fi
+    echo "== harmonic window x0 = ${RESTRAINT_X0} A, k = ${RESTRAINT_K:-default} \
+between atoms ${CLAMP_ATOMS}"
 elif [[ -n "${CLAMP_PN:-}" ]]; then
     # Force-clamp ladder: the two attachment-site atom indices are written by the
     # system builder so the physics and the topology cannot drift apart.

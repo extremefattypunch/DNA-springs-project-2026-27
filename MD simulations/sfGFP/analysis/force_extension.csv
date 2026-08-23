@@ -1,0 +1,5 @@
+system,tag,replicate,ns,x0_A,k_kJ_mol_nm2,frames,skip_ns,mean_r_A,sd_r_A,sem_r_A,lag1_rho,independent_samples,force_pN,force_sem_pN,n_strands,bend.smoothing_bp,bend.mean_per_step_deg,bend.max_step_deg,bend.max_step_index,bend.max_step_z,wc.criterion_A,wc.pairs,wc.mean_N1_N3_A,wc.worst_pair,wc.worst_pair_open_fraction,wc.pairs_open_over_10pc,wc.frames_with_any_open
+D_27bp,D_27bp_x50A,rep1,10.2,50.0,200.0,89,3.0,50.65,1.116,0.1183,0.0,89.0,21.573,3.929,2,10,7.727,12.838,10,2.17,4.0,27,3.185,DG27,0.9551,1,0.9551
+D_27bp,D_27bp_x50A,rep2,7.4,50.0,200.0,53,3.0,50.235,1.194,0.1697,0.0337,49.5,7.791,5.635,2,10,8.224,14.45,12,1.91,4.0,27,3.008,DA17,0.3208,1,0.3208
+D_27bp,D_27bp_x58A,rep1,6.6,58.0,200.0,44,3.0,55.324,2.556,0.7206,0.5554,12.6,-88.86,23.932,2,10,6.747,12.24,12,1.93,4.0,27,2.965,DG6,0.0455,0,0.0455
+D_27bp,D_27bp_x58A,rep2,5.4,58.0,200.0,28,3.0,52.649,2.93,1.3652,0.7175,4.6,-177.703,45.341,2,10,7.095,11.831,1,2.18,4.0,27,2.986,DG6,0.2143,1,0.25

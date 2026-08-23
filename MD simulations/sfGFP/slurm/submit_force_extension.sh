@@ -15,6 +15,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 NS=${NS:-30}; REPS=${REPS:-2}; DRY=0
+SOFT=${SOFT:-0}
+# k in kJ/mol/nm^2; see the note at the foot of this file.
+K=""; [[ "$SOFT" == "1" ]] && K=33
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 # x0 ladders chosen from each construct's own contour: from strongly buckled up to
@@ -32,10 +35,20 @@ for sys in D_27bp D_40bp D_40bp_nick; do
     if [[ $DRY -eq 1 ]]; then
       echo "sbatch --array=1-$REPS -J $name SYS=$sys RESTRAINT_X0=$x0 NS=$NS"
     else
-      sbatch --array="1-$REPS" -J "$name" \
-        --export=ALL,SYS="$sys",RESTRAINT_X0="$x0",NS="$NS" slurm/md_chain.sbatch
+      sbatch --array="1-$REPS" -J "$name${K:+_k$K}" \
+        --export=ALL,SYS="$sys",RESTRAINT_X0="$x0",NS="$NS"${K:+,RESTRAINT_K=$K} \
+        slurm/md_chain.sbatch
     fi
     n=$((n+1))
   done
 done
 echo "$n windows x $REPS replicates x $NS ns"
+
+# A second, SOFTER pass.  The precision of a mean force read off equilibrium
+# fluctuations goes as sqrt(k kT / N), so a softer restraint measures the force better
+# for the same sampling -- k = 33 kJ/mol/nm^2 (2 pN/A) resolves about 2.5x finer than
+# k = 200 does.  It also widens each window's spread from 1.1 A to 4.5 A, which is what
+# makes neighbouring windows overlap and a free-energy profile reconstructable at all;
+# at k = 200 with 8 A spacing they do not touch.  The stiff pass is kept because pinning
+# x tightly is exactly what the kink search wants.
+# Run as:  SOFT=1 NS=40 ./slurm/submit_force_extension.sh
