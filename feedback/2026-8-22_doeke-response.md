@@ -297,79 +297,143 @@ says so.
 
 Your reading was right: the quoted forces came from **a model**, not from the simulation.
 Specifically, Zocchi's *f*(*x*) evaluated at the end-to-end distance the simulation
-settled at. Here is that calculation written out, and then the direct measurement that
-replaces the need to trust it.
+settled at. Here is that calculation written out, then the direct measurement, and then a
+bug I found in between that changed the input to the first one.
 
 ### (a) The analytic route
 
 Zocchi treats a sharply bent duplex as an elastic rod that, past a critical torque τ_c,
-yields into a **kinked** state: two straight arms joined by a hinge that sustains a
-constant torque. Bending modulus *B* = 200 pN nm² (*ℓ*_p ≈ 50 nm at 300 K), rise
-0.33 nm/bp, τ_c = 27 pN nm nicked and 31–36 pN nm intact, k_BT = 4.11 pN nm.
-
-With *L* the contour length and *x* the end-to-end distance,
+yields into a **kinked** state: two straight arms joined by a hinge sustaining a constant
+torque. Bending modulus *B* = 200 pN nm² (ℓ_p ≈ 50 nm at 300 K), rise 0.33 nm/bp,
+τ_c = 27 pN nm nicked and 31–36 intact, k_BT = 4.11 pN nm.
 
 ```
-γ    = L τ_c / 2B                     small parameter, valid for γ < 1
-R    = (L/2)(1 − γ²/90)                arm half-length in the kinked state
-x_c  = L (1 − γ²/15)                   the yield point
+γ    = L τ_c / 2B                    small parameter, derivation assumes γ < 1
+R    = (L/2)(1 − γ²/90)              arm half-length in the kinked state
+x_c  = L (1 − γ²/15)                 the yield point
 x₀   = L (1 − LT/10B)
 
-x ≥ x_c   (unkinked, WLC-like):  f(x) = 10B/L² − T/(L−x)
-x < x_c   (kinked):              f(x) = τ_c / (2R √(1 − (x/2R)²))
+x ≥ x_c  (unkinked, WLC-like):  f(x) = 10B/L² − T/(L−x)
+x < x_c  (kinked):              f(x) = τ_c / (2R √(1 − (x/2R)²))
 ```
 
-Substituting the numbers each chimera actually settles at:
+The implementation is checked against Zocchi's own published values before being used
+here — 60-mer 1.47 vs 1.5 pN, 40-mer 2.33 vs 2.4 pN, and *E*_DNA = 6.62 vs 6.6 k_BT for
+the GK chimera — so the arithmetic is right even where the model's domain is stretched.
+One caveat that belongs with the numbers: γ = 1.12 for the 40-mer, outside the γ < 1
+condition the derivation assumes (book p. 75), so those rows are extrapolations.
 
-| system | *L* | τ_c | γ | *x* measured | regime | *f* |
-|---|---|---|---|---|---|---|
-| S3_spring27 | 8.91 nm | 34 | 0.76 | 52.4 ± 5.9 Å | kinked | **4.82 ± 0.30 pN** |
-| S4_spring40 | 13.20 nm | 34 | 1.12 | 62.5 ± 4.2 Å | kinked | **2.99 ± 0.06 pN** |
-| S5_spring40nick | 13.20 nm | 27 | 0.89 | 60.8 ± 3.9 Å | kinked | **2.34 ± 0.04 pN** |
+### A correction to the numbers I sent you
 
-Two caveats that belong with these numbers and were not in the report. First, γ = 1.12 for
-the 40-mer is outside the γ < 1 condition the derivation assumes (book p. 75), so that
-row is an extrapolation. Second, the implementation is verified against Zocchi's own
-published values before it is used here — 60-mer 1.47 vs 1.5 pN, 40-mer 2.33 vs 2.4 pN,
-and *E*_DNA = 6.62 vs 6.6 k_BT for the GK chimera — so the arithmetic is right even where
-the model's domain is stretched.
+While setting up the direct measurement I found that **every end-to-end distance this
+project had reported was wrong**, and with it every modelled force. mdtraj applies the
+minimum-image convention by default. That is right for a hydrogen bond and wrong for
+anything longer than half the cell's smallest perpendicular width — 38–48 Å in these
+truncated octahedra — and our springs' ends are 60–75 Å apart. The reported value was
+flipping between periodic images from frame to frame:
 
-### (b) The direct route — the force field's own answer
+| system | as reported | true | worst frame-wise disagreement |
+|---|---|---|---|
+| S3_spring27 | 53.8 Å | **69.7 Å** | 30.7 Å |
+| S4_spring40 | 62.5 Å | **66.4 Å** | 12.4 Å |
+| L3_loop27 | 45.4 Å | **71.3 Å** | 41.8 Å |
 
-Take the duplex alone, no protein, solvated. Hold its two ends at a fixed separation *x*
-with a harmonic restraint of known stiffness *k*. At equilibrium the restraint's mean pull
-balances whatever the molecule is pushing with, so
+The tell was in the spread all along and I did not read it: the raw distances have a
+standard deviation of 2.7–3.6 Å, the minimum-imaged ones 6.7–8.8. The nonsensical −89 and
+−178 pN in my first force-extension pass were this too, not the poor equilibration I put
+them down to.
+
+**What this does and does not touch.** The fix is in `analysis/geometry.py`, which picks
+the convention from the topology and then checks its own reasoning. Checked explicitly
+rather than assumed: the Cβ–Cβ separation of the attachment sites is ~32 Å, below every
+box's limit, and the two conventions agree to **0.00000 Å on all eight systems**. So the
+retraction in #3, the protein stiffness, the point-9 correlations and the contact
+measurement all stand exactly as sent. Watson–Crick opening, hydrogen bonds and contacts
+are short-range and were always right. What changes is the spring distances and the
+forces derived from them:
+
+| system | *L* | *x* (corrected) | modelled *f* | *E* | Euler load π²B/L² |
+|---|---|---|---|---|---|
+| S3_spring27 | 8.91 nm | 69.7 Å | 6.22 pN | 5.5 k_BT | 24.9 pN |
+| S4_spring40 | 13.20 nm | 66.4 Å | 3.04 pN | 8.5 k_BT | 11.3 pN |
+| S5_spring40nick | 13.20 nm | 63.5 Å | 2.36 pN | 6.9 k_BT | 11.3 pN |
+| L3_loop27 (closed loop) | 8.91 nm | 71.3 Å | 6.49 pN | 5.2 k_BT | 24.9 pN |
+| L4_loop40 | 13.20 nm | 72.4 Å | 3.14 pN | 8.1 k_BT | 11.3 pN |
+| L5_loop40nick | 13.20 nm | 72.2 Å | 2.47 pN | 6.4 k_BT | 11.3 pN |
+
+The ordering is unchanged and the 40-mers barely move, because in the kinked branch *f* is
+flat at small *x*/2*R*; the 27-mer changes most, from 4.76 to 6.22 pN. Worth noting
+separately: **closing the loop lets the duplex sit less compressed** — 71–72 Å against
+63–70 Å for the matched two-arm builds — which is a real mechanical difference between the
+two topologies and not something I expected.
+
+### (b) The direct route — what the force field actually says
+
+Take the duplex alone, no protein, solvated. Hold its ends at a fixed separation *x* with
+a harmonic restraint of known stiffness *k*. At equilibrium the restraint's mean pull
+balances what the molecule pushes with, so
 
 ```
 f_DNA(x) = k (⟨r⟩ − x₀)
 ```
 
-with no elasticity model anywhere in the derivation. Scanning *x*₀ traces out *f*(*x*)
-directly, and it can be laid over Zocchi's curve.
+with no elasticity model anywhere in the derivation. The restraint centre is walked from
+the built geometry to the window target over 2 ns before any frame is recorded, because
+dropping a duplex into a window 20 Å away does ~400 kJ/mol of work in one step and
+whatever base pair gave way would look exactly like the kink these runs also look for.
 
-Three constructs (27 bp, 40 bp, 40 bp nicked) × six windows from 50 Å to nearly straight.
-The restraint centre is walked from the built geometry to the window target over 2 ns
-before any frame is recorded — dropping a duplex into a window 20 Å away does ~400 kJ/mol
-of work in one step, and whatever base pair gave way under that impulse would look exactly
-like the kink these runs are also meant to detect. That ramp is working: the 27-mer went
-from 74.26 Å to 50.64 Å before recording began.
+Also worth recording: my first pass used *k* = 200 kJ mol⁻¹ nm⁻², which is 33 pN Å⁻¹ — so
+a single 1 Å thermal fluctuation reads as 33 pN and a 4 pN spring produces a 0.12 Å offset
+against a 1.11 Å spread. The precision of a mean force taken from equilibrium fluctuations
+is √(k k_BT/N) however the restraint is applied, so a **softer** spring is strictly better.
+A second pass at *k* = 33 resolves 2.5× finer. Both are reported below, and their
+agreement is the method checking itself.
 
-One thing the first pass taught me, which is worth recording because it is a real design
-error and not a detail. At *k* = 200 kJ mol⁻¹ nm⁻² the restraint is 33 pN Å⁻¹, so a single
-1 Å thermal fluctuation reads as 33 pN and the few-pN forces we want are invisible — a
-4 pN spring produces a 0.12 Å offset against a 1.11 Å spread. The precision of a mean
-force taken from equilibrium fluctuations is √(k k_BT / N) however the restraint is
-applied, so a **softer** spring is strictly better for the same sampling. A second pass at
-*k* = 33 kJ mol⁻¹ nm⁻² (5.5 pN Å⁻¹) resolves 2.5× finer and — because it widens each
-window from 1.1 Å to 2.7 Å — is also the only one of the two whose windows overlap enough
-to reconstruct a free-energy profile. Both passes are running; the stiff one is kept
-because pinning *x* tightly is what the kink search wants.
+**Result, 27 bp duplex** (2 replicates per window; the two stiffnesses are independent
+measurements of the same quantity):
 
-**Status: [running]** — 36 stiff windows at 30 ns and 36 soft ones at 40 ns. The measured
-*f*(*x*) against Zocchi's curve will go into the web report. Whatever it shows will be
-reported, including disagreement.
+| window *x*₀ | ⟨*r*⟩, *k*=33 | *f*, *k*=33 | ⟨*r*⟩, *k*=200 | *f*, *k*=200 |
+|---|---|---|---|---|
+| 50 Å | 55.0 Å | 27.4 ± 1.5 pN | 50.7 Å | 24.7 ± 2.2 pN |
+| 58 | 63.9 | 32.1 ± 1.7 | 58.9 | 28.3 ± 2.2 |
+| 66 | 72.2 | 33.9 ± 1.3 | 67.1 | 36.0 ± 2.2 |
+| 74 | 79.9 | 32.2 ± 0.9 | 74.9 | 30.8 ± 2.2 |
+| 82 | 84.6 | 14.3 ± 1.0 | 82.7 | 24.0 ± 2.0 |
+| 88 | 88.5 | 2.9 ± 1.1 | 88.2 | 5.1 ± 2.1 |
 
----
+A plateau of 25–36 pN across most of the range, collapsing to a few pN at 88 Å, which is
+the contour length — where a spring should of course deliver nothing.
+
+### The two calculations disagree by a factor of five, and the reason is point 8
+
+At the separation the chimera actually sits at, 70 Å:
+
+| | force |
+|---|---|
+| Zocchi's kinked branch | **6.3 pN** |
+| Euler buckling load, π²B/L², for an *unyielded* rod | **24.9 pN** |
+| measured, from the force field | **33.4 pN** |
+
+The measurement lands on the Euler load, not the kinked one. And that is exactly what
+should happen given #8: **the duplex never yields in this force field, so it stays on the
+elastic branch, and an unyielded rod sustains its buckling load.** Zocchi's kinked branch
+is a factor of ~4–5 lower precisely because it presupposes the yield. One fact — no kink —
+explains both the smooth bend profile and the force discrepancy, which is what makes me
+believe it rather than suspecting two separate errors.
+
+Which of the two is right about the real molecule is a different question, and the honest
+answer is that our simulation cannot settle it: if real DNA does yield at this curvature
+and ours does not because 50 ns is too short (see #8), then the model is right about the
+experiment and our force field is simply stuck on the wrong branch. The measurement tells
+you what the force field says, not what DNA does.
+
+**Caveats.** These windows have 5–15 ns each so far and the replicate scatter is real —
+the 82 Å point disagrees between stiffnesses (14 vs 24 pN) and needs more sampling. The
+full runs are 30–40 ns × 2 **[running]**, and the numbers above will be updated. Also,
+this measures the force between the duplex's own ends under a stiff restraint, which is
+the right analogue of the model's *f*(*x*); how much of it reaches Cβ–Cβ in the chimera
+depends on the tether geometry, and #3 says: not much, and not in the direction a pure
+axial pull would give.
 
 ## 7. The ssDNA chimera
 
