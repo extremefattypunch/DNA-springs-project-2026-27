@@ -132,16 +132,47 @@ def long_distance(traj, i: int, j: int, label: str = "", mols=None):
                      "frames_beyond_limit": int((raw >= 0.98 * limit).sum()),
                      "max_disagreement_A": round(float(np.abs(raw - per).max()), 3)}
 
-    if (per >= 0.98 * limit).any():
-        raise AssertionError(
-            f"{label or f'atoms {i},{j}'}: the atoms are in different molecules and their "
-            f"separation reaches the minimum-image limit ({limit:.1f} A). A frame written "
-            "with whole-molecule wrapping carries no information about which image is "
-            "meant, so there is no correct distance to return.")
-    return per, {"convention": "minimum image (separate molecules, within the limit)",
+    if not (per >= 0.98 * limit).any():
+        return per, {"convention": "minimum image (separate molecules, within the limit)",
+                     "min_image_limit_A": round(limit, 2),
+                     "frames_beyond_limit": 0,
+                     "max_disagreement_A": round(float(np.abs(raw - per).max()), 3)}
+
+    # Different molecules, and too far apart for the minimum image on the ATOM PAIR to
+    # mean anything -- taking it anyway is what turned a nicked duplex held at 98 A into a
+    # reported 22.8 A and a force of -1400 pN.
+    #
+    # There is still a right answer when the two molecules are parts of one assembly, as
+    # they are for a nicked strand whose halves are base-paired to a common complement.
+    # Choose the periodic image of the second MOLECULE that sits closest to the first --
+    # a decision made on the molecules' centres of geometry, which are only a fraction of
+    # the box apart and so unambiguous -- and then measure the atoms inside that choice.
+    # Doing it atom-by-atom is what fails: the two atoms are at opposite ends of the
+    # assembly and their own nearest image is the wrong one.
+    mi, mj = int(mols[int(i)]), int(mols[int(j)])
+    ai = np.where(mols == mi)[0]
+    aj = np.where(mols == mj)[0]
+    xyz = traj.xyz * 10.0                                  # nm -> A
+    ci = xyz[:, ai, :].mean(axis=1)
+    cj = xyz[:, aj, :].mean(axis=1)
+    H = np.asarray(traj.unitcell_vectors, float) * 10.0    # (frames, 3, 3), rows a/b/c
+    shifts = np.array([[a, b, c] for a in (-1, 0, 1) for b in (-1, 0, 1)
+                       for c in (-1, 0, 1)], float)
+    out = np.empty(len(xyz))
+    used = np.zeros((len(xyz), 3))
+    for fr in range(len(xyz)):
+        cand = cj[fr] + shifts @ H[fr]                     # every image of B's centre
+        best = int(np.argmin(np.linalg.norm(cand - ci[fr], axis=1)))
+        used[fr] = shifts[best]
+        out[fr] = float(np.linalg.norm(
+            (xyz[fr, int(j)] + shifts[best] @ H[fr]) - xyz[fr, int(i)]))
+    moved = int((np.abs(used).sum(axis=1) > 0).sum())
+    return out, {"convention": "whole-molecule image (separate molecules, assembled by "
+                               "their centres of geometry)",
                  "min_image_limit_A": round(limit, 2),
-                 "frames_beyond_limit": 0,
-                 "max_disagreement_A": round(float(np.abs(raw - per).max()), 3)}
+                 "frames_beyond_limit": int((out >= 0.98 * limit).sum()),
+                 "frames_needing_a_lattice_shift": moved,
+                 "max_disagreement_A": round(float(np.abs(out - per).max()), 3)}
 
 
 def audit(traj, pairs, mols=None):

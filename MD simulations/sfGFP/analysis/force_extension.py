@@ -54,6 +54,13 @@ WC_OPEN_A = 4.0          # N1(purine)-N3(pyrimidine) beyond this: the pair has o
 # numbers are fixed here rather than chosen after looking at the data.
 TERMINAL_MARGIN = 2
 OPEN_OCCUPANCY = 0.10
+# A window whose target separation approaches the box's perpendicular width is measuring a
+# duplex that can see its own periodic image, and its force is not the molecule's alone.
+# The solvent boxes here were padded around the BENT duplex, which is 61.7 A long against
+# the straight molecule's 93, so the extended windows quietly ran in a box too small for
+# them -- the 27-mer's 66-88 A windows and the 40-mers' 82-128 A ones.  Flagged rather
+# than silently dropped, so the curve shows where it stops being trustworthy.
+BOX_FRACTION_MAX = 0.85
 TURN_BP = 10.5           # one helical turn, for smoothing the axis
 
 
@@ -167,8 +174,16 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
 
     resmap = load_map(resmap_path)
     strands = dna_strands(top, resmap)
+    box_width = 2.0 * geometry.min_image_limit(t)
+    box_ok = bool(x0 < BOX_FRACTION_MAX * box_width)
+    if not box_ok:
+        print(f"  WARNING: x0 = {x0:.0f} A is {x0 / box_width:.2f} of the box's "
+              f"perpendicular width ({box_width:.0f} A) -- the duplex can reach its own "
+              "periodic image and this force is not its alone")
     out = {"x0_A": x0, "k_kJ_mol_nm2": k, "frames": len(t), "skip_ns": skip_ns,
-           "pbc": pbc,
+           "pbc": pbc, "box_width_A": round(box_width, 1),
+           "x0_over_box": round(float(x0 / box_width), 3),
+           "box_ok": box_ok,
            "mean_r_A": round(float(r.mean()), 3), "sd_r_A": round(float(r.std()), 3),
            "sem_r_A": round(sem, 4), "lag1_rho": round(rho, 4),
            "independent_samples": round(float(n_ind), 1),
