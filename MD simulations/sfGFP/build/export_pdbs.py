@@ -13,7 +13,9 @@ What makes these different from the assembly intermediates in build/04_assemble:
 * **CONECT records for every non-standard residue.** No viewer has a template for
   TET, TDP, DNL or DNH, so without explicit connectivity PyMOL and ChimeraX guess
   bonds by distance — which quietly mis-draws the fused bicyclononane cage and can
-  miss the two carbamate bonds that make the chimera a closed loop.
+  miss the bonds that close the covalent loop.  Note that only some of these
+  constructs ARE closed loops: L3/L4/L5, C1 and U2/U3 are, while S3/S4/S5 and C2/U4
+  are two-arm or two-strand constructs by design.  Each file's REMARK says which.
 
 Two files per system: the equilibrated starting structure and the last production
 frame. Solvent is stripped by default; ``--with-solvent`` keeps it.
@@ -22,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -34,7 +37,10 @@ warnings.filterwarnings("ignore", module="parmed")
 
 ROOT = Path(__file__).resolve().parent.parent
 SOLVENT = {"WAT", "HOH", "Na+", "Cl-", "MG", "K+"}
-NONSTANDARD = {"TET", "TDP", "DNL", "DNH", "CRO"}
+# Every residue no viewer has a template for.  Missing one is not a crash, it is a
+# silently mis-drawn molecule: without explicit connectivity PyMOL and ChimeraX guess
+# bonds by distance, which mangles the fused polycyclic cages in particular.
+NONSTANDARD = {"TET", "TDP", "DNL", "DNP", "DNH", "CRO", "CMS", "CDB"}
 TITLE = {
     "S0_wt": "sfGFP, wild type (PDB 2B3P prepared)",
     "S1_tet": "sfGFP with two Tet2-Et residues at 133/149, unclicked",
@@ -43,6 +49,22 @@ TITLE = {
     "S4_spring40": "sfGFP-DNA chimera, 40 bp spring",
     "S5_spring40nick": "sfGFP-DNA chimera, 40 bp spring nicked at the centre",
     "S6_clamp": "sfGFP with two Tet2-Et residues (force-clamp topology)",
+    # The corrected builds: ONE strand modified at both ends, so the chimera really is a
+    # covalent circle.  S3-S5 above put a linker on each of two strands and are kept as
+    # the two-arm construct they actually are.
+    "L3_loop27": "sfGFP-DNA chimera, 27 bp spring, CLOSED covalent loop",
+    "L4_loop40": "sfGFP-DNA chimera, 40 bp spring, closed covalent loop",
+    "L5_loop40nick": "sfGFP-DNA chimera, 40 bp closed loop, complement nicked at centre",
+    "C1_ss50": "sfGFP-DNA chimera, 50 nt single-stranded spring, closed covalent loop",
+    "C2_ssarms": "sfGFP with two 25 nt single strands, non-circular control",
+    "D_27bp": "27 bp duplex alone, for the force-extension measurement",
+    "D_40bp": "40 bp duplex alone, for the force-extension measurement",
+    "D_40bp_nick": "40 bp duplex alone, nicked, for the force-extension measurement",
+    "U0_apo": "ubiquitin F45W/T9C/K63C, apo (PDB 1UBQ prepared)",
+    "U1_clicked": "ubiquitin with both DBCO crosslinkers clicked, no DNA",
+    "U2_ss50": "ubiquitin-DNA chimera, 50 nt ssDNA spring, closed covalent loop",
+    "U3_ds50": "ubiquitin-DNA chimera, 50 bp dsDNA spring, closed covalent loop",
+    "U4_ssarms": "ubiquitin with two 25 nt single strands, non-circular control",
 }
 
 
@@ -110,6 +132,24 @@ def write_pdb(struct, path: Path, title: str, note: str):
     return len(serial_of)
 
 
+# A run directory is the system name plus, optionally, the physical condition the run
+# was done at -- md_chain.sbatch builds TAG="$SYS" + "_<f>pN" / "_x<x0>A" / "_k<k>".  The
+# suffixes have to be matched precisely rather than with a trailing "*", because
+# "D_40bp*" also matches "D_40bp_nick_x50A": pairing that trajectory with D_40bp's
+# topology is a 77397-against-77407 atom mismatch, which is how this was found.
+RUN_SUFFIX = re.compile(r"^(_[0-9.]+pN)?(_x[0-9.]+A)?(_k[0-9.]+)?$")
+
+
+def runs_for(runs: Path, name: str, tail: str):
+    """Run files belonging to exactly this system, not to one whose name extends it."""
+    out = []
+    for d in sorted(runs.glob(f"{name}*")):
+        if not d.is_dir() or not RUN_SUFFIX.match(d.name[len(name):]):
+            continue
+        out += sorted(d.glob(tail))
+    return out
+
+
 def export_system(name: str, sysdir: Path, runs: Path, out: Path, keep_solvent: bool):
     top = sysdir / "system.prmtop"
     if not (top.exists() and (sysdir / "residue_map.json").exists()):
@@ -123,17 +163,23 @@ def export_system(name: str, sysdir: Path, runs: Path, out: Path, keep_solvent: 
     # ("A0000"), which ParmEd's PDB reader rejects with thousands of warnings and no
     # coordinates -- and the two 121k-atom chimeras are exactly that size.  The XML
     # state is exact and format-proof.
-    eq = sorted(runs.glob(f"{name}*/rep*/02_equilibrate/equilibrated.xml"))
+    eq = runs_for(runs, name, "rep*/02_equilibrate/equilibrated.xml")
     if eq:
         sources.append(("start", eq[0], "equilibrated starting structure"))
-    # the last frame of the longest production run
-    trajs = sorted(runs.glob(f"{name}*/rep*/03_production/traj.dcd"),
-                   key=lambda p: p.stat().st_size, reverse=True)
+    else:
+        # A system that has not run yet still has a built structure worth exporting --
+        # the ubiquitin set was queued when this was written.
+        inp = sysdir / "system.inpcrd"
+        if inp.exists():
+            sources.append(("built", inp, "as built, before equilibration"))
+    trajs = sorted(runs_for(runs, name, "rep*/03_production/traj.dcd"),
+                   key=lambda q: q.stat().st_size, reverse=True)
     if trajs:
         sources.append(("final", trajs[0], "last frame of the longest production run"))
 
     for tag, src, note in sources:
         struct = parmed.load_file(str(top))
+        n_expect = len(struct.atoms)
         if src.suffix == ".dcd":
             # mdtraj's DCD reader cannot seek to a negative index, so ask the file
             # how long it is first rather than counting on -1 to mean "last".
@@ -148,12 +194,26 @@ def export_system(name: str, sysdir: Path, runs: Path, out: Path, keep_solvent: 
             if prog.exists():
                 ns = json.loads(prog.read_text())["ns_done"]
             note = f"{note} ({ns:g} ns)" if ns else note
+        elif src.suffix == ".inpcrd":
+            rst = parmed.load_file(str(src))
+            if len(rst.coordinates[0] if rst.coordinates.ndim == 3
+                   else rst.coordinates) != n_expect:
+                print(f"  SKIP {name} {tag}: inpcrd atom count mismatch")
+                continue
+            struct.coordinates = rst.coordinates
         elif src.suffix == ".xml":
             import openmm
             import openmm.unit as ommunit
             state = openmm.XmlSerializer.deserialize(src.read_text())
-            struct.coordinates = np.array(
-                state.getPositions().value_in_unit(ommunit.angstrom))
+            xyz = np.array(state.getPositions().value_in_unit(ommunit.angstrom))
+            # Belt and braces alongside runs_for(): if a source ever gets paired with the
+            # wrong topology again, say so instead of raising a reshape error thirty
+            # lines away from the cause.
+            if len(xyz) != n_expect:
+                print(f"  SKIP {name} {tag}: {src} has {len(xyz)} atoms, "
+                      f"{top.name} expects {n_expect}")
+                continue
+            struct.coordinates = xyz
         else:
             struct.coordinates = md.load(str(src)).xyz[0] * 10.0
         if not keep_solvent:
@@ -251,10 +311,10 @@ PyMOL:
     show cartoon, polymer.protein
     show cartoon, polymer.nucleic
     set cartoon_ring_mode, 3
-    show sticks, resn CRO+TDP+DNL
+    show sticks, resn CRO+TET+TDP+DNL+DNP+DNH+CMS+CDB
     color grey80, polymer.protein
     color skyblue, polymer.nucleic
-    color orange, resn TDP+DNL
+    color orange, resn TET+TDP+DNL+DNP+DNH+CMS+CDB
     color limegreen, resn CRO
     orient
 
@@ -262,8 +322,8 @@ ChimeraX:
 
     open S3_spring27_final.pdb
     cartoon; nucleotides stubs
-    show :CRO,TDP,DNL atoms; style :CRO,TDP,DNL stick
-    color /A grey; color /C,D cornflowerblue; color :TDP,DNL orange; color :CRO green
+    show :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB atoms; style :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB stick
+    color /A grey; color /C,D,E,F cornflowerblue; color :TET,TDP,DNL,DNP,DNH,CMS,CDB orange; color :CRO green
 
 To measure the spring the way the analysis does — the distance between the two 5′
 phosphates, which is what sets the force:

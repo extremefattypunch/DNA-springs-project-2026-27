@@ -43,10 +43,10 @@ PyMOL:
     show cartoon, polymer.protein
     show cartoon, polymer.nucleic
     set cartoon_ring_mode, 3
-    show sticks, resn CRO+TDP+DNL
+    show sticks, resn CRO+TET+TDP+DNL+DNP+DNH+CMS+CDB
     color grey80, polymer.protein
     color skyblue, polymer.nucleic
-    color orange, resn TDP+DNL
+    color orange, resn TET+TDP+DNL+DNP+DNH+CMS+CDB
     color limegreen, resn CRO
     orient
 
@@ -54,8 +54,8 @@ ChimeraX:
 
     open S3_spring27_final.pdb
     cartoon; nucleotides stubs
-    show :CRO,TDP,DNL atoms; style :CRO,TDP,DNL stick
-    color /A grey; color /C,D cornflowerblue; color :TDP,DNL orange; color :CRO green
+    show :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB atoms; style :CRO,TET,TDP,DNL,DNP,DNH,CMS,CDB stick
+    color /A grey; color /C,D,E,F cornflowerblue; color :TET,TDP,DNL,DNP,DNH,CMS,CDB orange; color :CRO green
 
 To measure the spring the way the analysis does — the distance between the two 5′
 phosphates, which is what sets the force:
