@@ -5,7 +5,16 @@ from the raw PDB deposition, runs it in explicit solvent, and measures what the 
 does to the barrel and the chromophore.
 
 Two amber (TAG) codons put the tetrazine amino acid **Tet2-Et** at two solvent-exposed
-sites; a doubly-**sTCO**-modified DNA duplex is clicked on, closing a covalent loop.
+sites, and a doubly-**sTCO**-modified DNA strand is clicked on at both of its ends,
+closing a covalent loop.
+
+> **Note on the older systems.** `S3_spring27`, `S4_spring40` and `S5_spring40nick` were
+> built with a linker on the 5′ end of each of *two different* strands. That loads the
+> duplex mechanically but is not the experiment: it leaves every tether bond a bridge in
+> the bond graph, so no covalent cycle exists and the "loop" is closed by base pairing
+> alone. They are kept and reported as what they are — the two-arm construct, which is
+> Zocchi's pre-ligation chimera. `L3_loop27`, `L4_loop40` and `L5_loop40nick` are the
+> corrected, genuinely circular builds, and `build_system.py` now asserts the cycle.
 Because dsDNA's persistence length (~50 nm) dwarfs the barrel, the duplex must bend,
 and it pushes the two attachment points apart with a force of a few pN.
 

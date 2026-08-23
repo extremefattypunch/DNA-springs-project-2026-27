@@ -57,6 +57,13 @@ if [[ -n "${RESTRAINT_X0:-}" ]]; then
     if [[ -n "${RESTRAINT_K:-}" ]]; then
         CLAMP_ARGS+=(--restraint-k "$RESTRAINT_K")
     fi
+    # The deepest compression windows have to be walked in from a built geometry 40 A
+    # away, so they get a longer ramp than the 2 ns default; going faster risks tearing a
+    # base pair on the way in, and a pair torn by the approach looks exactly like the
+    # kink these runs exist to look for.
+    if [[ -n "${RESTRAINT_RAMP_PS:-}" ]]; then
+        CLAMP_ARGS+=(--restraint-ramp-ps "$RESTRAINT_RAMP_PS")
+    fi
     echo "== harmonic window x0 = ${RESTRAINT_X0} A, k = ${RESTRAINT_K:-default} \
 between atoms ${CLAMP_ATOMS}"
 elif [[ -n "${CLAMP_PN:-}" ]]; then

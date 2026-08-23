@@ -30,7 +30,7 @@ and one turned out to have a sharper answer than the hypothesis it came with.
 | 5 | The book DOI does not resolve | **Right, and four others were also wrong** — two of them resolved to unrelated papers |
 | 6 | Is the force modelled or measured? | It was modelled. Now **measured** too — and the two disagree by 5×, for a reason that is #8. Both written out; a PBC bug found and fixed along the way |
 | 7 | ssDNA chimera? | Built and running, 50 nt, plus a two-arm control that holds DNA content exactly fixed |
-| 8 | "It does not kink" — force field, timescale, or model? | Mostly **model and timescale**. Our curvature is 40–60 % below where all-atom MD nucleates kinks — and the measured force independently confirms the duplex is on the *unyielded* branch |
+| 8 | "It does not kink" — force field, timescale, or model? | Mostly **model and timescale**. Our curvature is a little over half of where all-atom MD nucleates kinks — and the measured force independently confirms the duplex is on the *unyielded* branch |
 | 9 | Do the Et-tet residues change local secondary structure? | **No** — DSSP is identical. But there is a real local effect, and it is a different one |
 
 Two of these connect: the mechanism behind #9 is also the artefact behind #3.
@@ -492,14 +492,21 @@ Mostly **(c) the model's threshold is too permissive** and **(b) 45 ns is far to
 (a), a force-field limitation, is real but secondary and does not point the way that would
 rescue the model. Here is the evidence.
 
-### What our system's curvature actually is
+### What our system's curvature actually is — and a number I had wrong
 
-Radius 31–34 Å, i.e. 5.7–6.3° per base-pair step, equivalent to a 57–63 bp minicircle. One
-correction to how the report framed this: that is **~25 % tighter in radius than
-nucleosomal DNA** (the nucleosome superhelix gives ~42 Å and ~4.6°/bp), not "roughly
-nucleosomal". Our measured per-step bend in the chimeras is 4.8–5.2° with the worst single
-step at ~9.5°, and Watson–Crick opening averages 0.03–0.11 pairs per frame — essentially
-none.
+The duplexes are built at *R* = 41–44 Å and relax over the run to **37–41 Å, i.e. 4.8–5.2°
+per base-pair step** (measured, one-turn smoothed, 18 replicates), equivalent to a 70–78 bp
+minicircle. The worst single step is ~9.5°, and Watson–Crick opening averages 0.03–0.11
+pairs per frame — essentially none.
+
+I need to correct myself twice over here. The report first said this was "roughly
+nucleosomal"; I then "corrected" that to 31–34 Å and ~25 % tighter than nucleosomal. **The
+31–34 Å figure was wrong** — I had carried it over without checking it against the
+trajectories. The numbers above are what the bend analysis actually reports, and at 37–41 Å
+against the nucleosome's 42 Å the original wording was closer to right than my correction
+was. The conclusion is unaffected in direction and slightly strengthened in degree: we sit
+at about **56 % of the curvature at which all-atom MD nucleates kinks**, not somewhat below
+it.
 
 ### (c) Zocchi's τ_c is the most kink-friendly estimate in the field
 
@@ -512,7 +519,7 @@ Converting each published criterion to a threshold radius via *R* = *B*/τ_c:
 | Vologodskii & Frank-Kamenetskii 2013; Du 2008 | nuclease probing | 35–40 Å | 4.9–5.6 |
 | Curuksu et al. 2009 (umbrella sampling, AMBER) | asymptotic torque 40–51 pN nm | — | kink only above **8.6–9.3** |
 | Fields, Meyer & Cohen 2013 (FRET "molecular vice") | WLC linear up to 7°/bp | ≤28 Å | 7 |
-| **our chimeras** | | **31–34 Å** | **5.7–6.3** |
+| **our chimeras, measured** | | **37–41 Å** | **4.8–5.2** |
 
 Zocchi's τ_c puts the softening transition at a *gentler* bend than a nucleosome. Every
 independent estimate is 1.3–2.7× stiffer. On his criterion we are well past the
@@ -520,7 +527,7 @@ transition; on Curuksu's and on Fields'/Cohen's we are comfortably below it. So 
 disagreement between our simulation and his prediction is substantially a disagreement
 between his τ_c and the rest of the literature — and the one directly comparable
 calculation, Curuksu's umbrella sampling on a bent *linear* duplex in the same force-field
-family, finds kinks only above 8.6–9.3°/bp, **40–60 % more curvature than we impose**.
+family, finds kinks only above 8.6–9.3°/bp, **almost twice the curvature we impose**.
 Not seeing a kink is the expected result, not an anomaly.
 
 Zocchi's implied kink cost, (π/2)τ_c ≈ 12 k_BT, is likewise at the bottom of the published

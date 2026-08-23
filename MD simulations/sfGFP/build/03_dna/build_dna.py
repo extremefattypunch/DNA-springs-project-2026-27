@@ -27,9 +27,12 @@ pair -- is preserved exactly; only the inter-pair geometry changes, which is wha
 bending physically *is*.  The backbone takes up the strain, and the resulting
 O3'-P deviations are reported rather than hidden.
 
-For the spans this project needs, R comes out near 37-40 A, which is essentially
-nucleosomal curvature (~42 A) -- strongly bent but thoroughly precedented, not a
-structure held together by hope.  Whether the duplex then relieves that strain by
+For the spans this project needs, R comes out at 41-44 A as built, and the duplex then
+relaxes to 37-41 A over the run (4.8-5.2 deg per base-pair step, measured).  Either way
+that is essentially nucleosomal curvature (~42 A, 4.6 deg/bp) -- strongly bent but
+thoroughly precedented, not a structure held together by hope.  It is also only a little
+over half the 8.6-9.3 deg/bp at which all-atom MD is reported to nucleate kinks, which is
+the number that matters for whether one should be expected here.  Whether the duplex then relieves that strain by
 kinking is left to the simulation to answer, since that softening transition is the
 thing Zocchi's model is really about.
 """

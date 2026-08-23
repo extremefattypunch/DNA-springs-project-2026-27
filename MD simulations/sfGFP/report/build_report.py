@@ -789,11 +789,20 @@ def build(args):
     is mostly the last two.</p>
 
     <h4>The curvature we impose is below where all-atom MD nucleates kinks</h4>
-    <p>Our radius of 31–34 Å is 5.7–6.3° per base-pair step, equivalent to a 57–63 bp
-    minicircle. (For scale: that is about 25% <em>tighter</em> in radius than nucleosomal
-    DNA, which runs at ~42 Å and ~4.6°/bp — not "roughly nucleosomal", as an earlier
-    version of this page said.) Converting each published criterion to a threshold radius
-    through <em>R</em> = <em>B</em>/τ<sub>c</sub>:</p>
+    <p>The duplexes are built at <em>R</em> = 41–44 Å and relax over the run to
+    <strong>37–41 Å, i.e. 4.8–5.2° per base-pair step</strong> (measured, one-turn
+    smoothed, 18 replicates), equivalent to a 70–78 bp minicircle. That is essentially
+    <em>nucleosomal</em> curvature — 42 Å and 4.6°/bp — and about
+    <strong>56% of the curvature at which all-atom MD nucleates kinks</strong>.</p>
+    <div class="note"><div class="h">Correcting a correction</div>
+      <p>An earlier version of this page said 31–34 Å and 5.7–6.3°/bp, and a version after
+      that "corrected" it to being 25% tighter than nucleosomal. Both were wrong: 31–34 Å
+      was a figure I had carried over without checking it against the trajectories, and
+      the numbers above are what the bend analysis actually reports. The conclusion is
+      unaffected in direction and slightly strengthened in degree — we are further below
+      the kinking threshold than either earlier version implied.</p></div>
+    <p>Converting each published criterion to a threshold radius through
+    <em>R</em> = <em>B</em>/τ<sub>c</sub>:</p>
 
     <div class="tbl-wrap"><table>
       <thead><tr><th>source</th><th>criterion</th><th>threshold R</th><th>°/bp</th></tr></thead>
@@ -803,16 +812,16 @@ def build(args):
       <tr><td>Vologodskii &amp; Frank-Kamenetskii 2013; Du 2008</td><td>nuclease probing</td><td>35–40 Å</td><td>4.9–5.6</td></tr>
       <tr><td>Fields, Meyer &amp; Cohen 2013</td><td>FRET “molecular vice”, WLC linear to 7°/bp</td><td>≤28 Å</td><td>7</td></tr>
       <tr><td>Curuksu <em>et al.</em> 2009</td><td>umbrella sampling, same force-field family</td><td>21–23 Å</td><td><strong>8.6–9.3</strong></td></tr>
-      <tr class="hi"><td><strong>this work</strong></td><td>bent duplex in the chimera</td><td><strong>31–34 Å</strong></td><td><strong>5.7–6.3</strong></td></tr>
+      <tr class="hi"><td><strong>this work</strong></td><td>bent duplex in the chimera, measured</td><td><strong>37–41 Å</strong></td><td><strong>4.8–5.2</strong></td></tr>
       </tbody></table></div>
 
     <p>Zocchi’s τ<sub>c</sub> is the most kink-friendly estimate in the field: it places
     the softening transition at a <em>gentler</em> bend than a nucleosome, where every
     independent estimate is 1.3–2.7× stiffer. The one directly comparable calculation —
     Curuksu <em>et al.</em>’s umbrella sampling on a bent linear duplex in the same
-    force-field family — finds type II kinks only above 8.6–9.3° per step, <strong>40–60%
-    more curvature than we impose</strong>. On that criterion, not seeing a kink is the
-    expected result rather than an anomaly.</p>
+    force-field family — finds type II kinks only above 8.6–9.3° per step, which is
+    <strong>almost twice the curvature we impose</strong>. On that criterion, not seeing a
+    kink is the expected result rather than an anomaly.</p>
 
     <h4>45 ns is short by two to five orders of magnitude</h4>
     <p>Base-pair lifetimes measured by NMR imino exchange are 1–40 ms, so the per-pair
