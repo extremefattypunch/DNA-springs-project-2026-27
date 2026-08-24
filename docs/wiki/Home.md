@@ -28,13 +28,13 @@ tracks neither of the two obvious causes:
 | against | correlation | p |
 |---|---|---|
 | the modelled spring force | r = **+0.08** (sign *positive*) | 0.81 |
-| how much protein the DNA touches | r = **+0.32** | 0.33 |
+| how much protein the DNA touches | r = **+0.32** | 0.34 |
 
 Constructs with **no spring at all** — a slack single strand at provably zero tension, or
 two arms that cannot circularise — compress by
 0.28 Å. Those with a spring compress by
 0.35 Å. The difference is not resolved
-(p = 0.53).
+(p = 0.54).
 
 This is the conclusion the companion [ubiquitin study](https://doi.org/10.64898/2026.07.05.736590)
 from this lab reached from NMR — local protein–DNA interaction rather than spring action —
@@ -47,12 +47,12 @@ from a different observable.
 | 40 bp, closed loop | sfGFP | 3.14 | **-0.482** | 0.030 |
 | 27 bp, closed loop | sfGFP | 6.64 | **-0.451** | 0.021 |
 | 40 bp nicked, two-arm | sfGFP | 2.37 | **-0.418** | 0.024 |
-| two 25 nt arms | ubiquitin | 0 — slack | **-0.417** | 0.082 |
+| two 25 nt arms | ubiquitin | 0 — slack | **-0.418** | 0.072 |
 | 50 nt ssDNA, closed loop | sfGFP | 0 — slack | **-0.322** | 0.063 |
-| 50 bp dsDNA, closed loop | ubiquitin | 2.23 | **-0.320** | 0.052 |
+| 50 bp dsDNA, closed loop | ubiquitin | 2.23 | **-0.315** | 0.056 |
 | two 25 nt arms | sfGFP | 0 — slack | **-0.296** | 0.064 |
 | 40 bp, two-arm | sfGFP | 3.04 | **-0.205** | 0.154 |
-| 50 nt ssDNA, closed loop | ubiquitin | 0 — slack | **-0.094** | 0.412 |
+| 50 nt ssDNA, closed loop | ubiquitin | 0 — slack | **-0.094** | 0.439 |
 | 27 bp, two-arm | sfGFP | 6.33 | **+0.021** | 0.878 |
 
 ## Why the protein barely moves
@@ -73,7 +73,7 @@ right: a force couple this small averages out at equilibrium.
 | 27 bp, closed loop | 71.5 Å | **6.64 pN** | 5.1 k<sub>B</sub>T | 0.19 of 27 |
 | 40 bp, closed loop | 72.3 Å | **3.14 pN** | 7.9 k<sub>B</sub>T | 0.47 of 40 |
 | 40 bp nicked, closed loop | 72.8 Å | **2.49 pN** | 6.3 k<sub>B</sub>T | 0.36 of 40 |
-| 50 bp dsDNA, closed loop | 53.3 Å | **2.23 pN** | 10.0 k<sub>B</sub>T | 0.84 of 50 |
+| 50 bp dsDNA, closed loop | 53.3 Å | **2.23 pN** | 10.0 k<sub>B</sub>T | 0.83 of 50 |
 
 These are Zocchi's *f(x)* evaluated at the end-to-end distance each simulation settles at
 — a **model**, not a measurement.
