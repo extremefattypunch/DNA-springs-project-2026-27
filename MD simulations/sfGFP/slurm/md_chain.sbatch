@@ -16,8 +16,28 @@
 #  * --gres is therefore generic.  It used to name the A100-80GB type explicitly to keep
 #    replicate throughput comparable, which is a real concern on a mixed pool but not
 #    one worth an entire lab's fairshare.
-#  * --cpus-per-task=4 is plenty: OpenMM's CUDA platform uses one worker thread
-#    plus PME bookkeeping. Asking for more only delays scheduling.
+#  * WHEN A BILLED PARTITION IS UNAVOIDABLE, IT IS `gpu_requeue`, NOT `gpu`.  Measured
+#    from `scontrol show partition`, Gres/gpu weights are: gpu_test 0, gpu_requeue
+#    418.25, gpu 836.5, seas_gpu 1727.8, gpu_h200 2648.8.  gpu_requeue is exactly half
+#    of `gpu` and its pool includes H100 and H200 cards, so `gpu_h200` charges 6.3x for
+#    hardware gpu_requeue hands out at 418.25.  The premium buys only immunity from
+#    preemption, and the produce step checkpoints every 10 report intervals and resumes
+#    by appending -- so a preemption costs a few hundred picoseconds of wall clock and
+#    no work at all.  There is no good reason for this project to use `gpu`.
+#  * --cpus-per-task=2 and --mem=8G, not 4 and 32G.  Honestly, this barely matters:
+#    sacct decomposes a job of the old shape as 836.5 (GPU) + 3.6 (4 cores) +
+#    1.92 (32 GB) = 842, so the GPU is 99.3 % of the bill and right-sizing host
+#    resources saves 0.5 %.  It is done because it is free, because it lets more jobs
+#    share a node, and because 32G was a number I guessed rather than measured.  The
+#    sampler below now records peak RSS and GPU utilisation so the next person sizes
+#    this from evidence.  Note that asking for less GPU *memory* saves nothing
+#    whatsoever: Gres/gpu=1 is charged for a whole device however little of it is used,
+#    and this cluster publishes no per-GPU-type weight.
+#  * --time is 12 h to match gpu_test's cap. It is worth setting accurately, but not for
+#    the reason it seems: billing accrues on ELAPSED time, so an over-long limit costs
+#    nothing directly (my jobs requested 2,880 GPU-hours, used 230.5, and were billed
+#    842 x 230.5).  What an accurate limit buys is backfill -- the scheduler can slot a
+#    3 h job into a gap it cannot slot a 3-day job into, so the job starts sooner.
 #  * 3-day cap is the partition maximum on gpu/gpu_requeue. The lab's older
 #    launch_production.sh asks for 7 days, which no GPU partition now allows.
 #  * --requeue with append-mode logs: production checkpoints every 10 report
@@ -29,8 +49,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
 #SBATCH --time=12:00:00
 #SBATCH --requeue
 #SBATCH --open-mode=append
@@ -55,6 +75,46 @@ mkdir -p "$RUNDIR"
 echo "== $(date -Is) $(hostname) part=${SLURM_JOB_PARTITION:-none} job=${SLURM_JOB_ID:-none}"
 nvidia-smi --query-gpu=name,memory.total,mig.mode.current --format=csv,noheader | head -1
 echo "== SYS=$SYS TAG=$TAG REP=$REP NS=$NS  restart_count=${SLURM_RESTART_COUNT:-0}"
+
+# Refuse to spend the lab's fairshare by accident.  The cost of a GPU job is invisible
+# at submission -- squeue looks identical whether the partition weight is 0 or 2648.8 --
+# which is how 120 jobs came to cost 194,084 billing-hours before anyone noticed.  An
+# expensive partition now has to be asked for in as many words.
+case "${SLURM_JOB_PARTITION:-}" in
+    gpu_test|"") ;;
+    gpu_requeue|serial_requeue)
+        echo "== billed partition ${SLURM_JOB_PARTITION} (Gres/gpu=418.25), preemptible;"
+        echo "   checkpoint-resume makes that safe. python slurm/cost.py prices it." ;;
+    *)
+        if [[ "${ALLOW_EXPENSIVE_GPU:-0}" != "1" ]]; then
+            echo "== REFUSING to run on ${SLURM_JOB_PARTITION}." >&2
+            echo "   gpu=836.5, seas_gpu=1727.8, gpu_h200=2648.8 per GPU-hour, against" >&2
+            echo "   418.25 on gpu_requeue for the same or better hardware and 0 on" >&2
+            echo "   gpu_test. Price it with 'python slurm/cost.py' first; if this really" >&2
+            echo "   is the right partition, resubmit with ALLOW_EXPENSIVE_GPU=1." >&2
+            exit 2
+        fi
+        echo "== WARNING: ${SLURM_JOB_PARTITION} at $( \
+            scontrol show partition "$SLURM_JOB_PARTITION" | tr ' ' '\n' \
+            | grep -o 'Gres/gpu=[0-9.]*' | head -1) per GPU-hour, explicitly allowed." ;;
+esac
+
+# Sample what this job actually uses, so the next request is measured rather than
+# guessed.  32G and 4 cores were guesses; nothing in sacct recorded MaxRSS for these
+# steps, so there was no evidence to correct them with.  Cheap: one line per minute.
+USAGE="$RUNDIR/resource_usage.csv"
+if [[ ! -s "$USAGE" ]]; then
+    echo "iso,gpu_util_pct,gpu_mem_used_MiB,gpu_mem_total_MiB,host_rss_MiB" > "$USAGE"
+fi
+(
+  while sleep 60; do
+    g=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total \
+        --format=csv,noheader,nounits 2>/dev/null | head -1 | tr -d ' ')
+    r=$(ps -o rss= -u "$USER" 2>/dev/null | awk '{s+=$1} END {printf "%d", s/1024}')
+    [[ -n "$g" ]] && echo "$(date -Is),$g,$r" >> "$USAGE"
+  done
+) & SAMPLER=$!
+trap 'kill "$SAMPLER" 2>/dev/null || true' EXIT
 
 CLAMP_ARGS=()
 if [[ -n "${RESTRAINT_X0:-}" ]]; then
@@ -100,4 +160,14 @@ fi
     --outdir "$RUNDIR/03_production" --ns "$NS" --seed "$((2000 + REP))" \
     "${CLAMP_ARGS[@]}"
 
+# Summarise what was actually used, so it lands in the job log where it will be seen.
+if [[ -s "$USAGE" ]]; then
+    awk -F, 'NR>1 {n++; u+=$2; if($2>mu)mu=$2; if($3>mg)mg=$3; if($5>mr)mr=$5}
+             END {if(n) printf "== used: GPU %.0f%% mean / %.0f%% peak, "\
+                  "GPU mem %.1f GB peak of %.1f, host RSS %.1f GB peak "\
+                  "(%d samples)\n", u/n, mu, mg/1024, $4/1024, mr/1024, n}' "$USAGE"
+    echo "   -> if GPU mean is well under 100%, several replicates would share one card;"
+    echo "      that divides the 418.25/hour between them, which is the only lever that"
+    echo "      touches the 99.3% of the bill the GPU accounts for."
+fi
 echo "== $(date -Is) done"
