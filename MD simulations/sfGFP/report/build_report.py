@@ -555,13 +555,96 @@ def build(args):
     zero_unclicked = ext.get("zero_force_ref", {}).get("mean")
     zero_clicked = ext.get("matched_control", {}).get("mean") or zero_unclicked
 
+    # ---------- measured force-extension ----------
+    # Computed here from the shipped csv rather than transcribed, because these are the
+    # numbers that answer "is the force a model or a measurement" and a stale copy of
+    # them would be the worst single error the report could contain.
+    def _measured_fx():
+        import numpy as _np
+        from scipy import stats as _st
+        csv = Path(__file__).resolve().parent.parent / "analysis" / "force_extension.csv"
+        if not csv.exists():
+            return None
+        d = pd.read_csv(csv)
+        if not {"mean_r_A", "force_pN", "box_ok", "box_width_A"} <= set(d.columns):
+            return None
+        d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
+        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
+        d = d[d.r_over_box <= 0.85]
+        if not len(d):
+            return None
+        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp",
+                "D_40bp_nick": "40 bp, nicked"}
+        out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {}}
+        for s, g in d.groupby("system"):
+            if s not in NB:
+                continue
+            eul = _np.pi ** 2 * 200.0 / (((NB[s] - 1) * 0.33) ** 2)
+            lr = _st.linregress(g.mean_r_A, g.force_pN)
+            e = {"label": NICE[s], "n": int(len(g)),
+                 "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
+                 "f": float(g.force_pN.mean()), "sem": float(g.force_pN.sem()),
+                 "euler": float(eul), "ratio": float(g.force_pN.mean() / eul),
+                 "slope": float(lr.slope), "slope_p": float(lr.pvalue)}
+            a = g[g.k_kJ_mol_nm2 == 33.0].force_pN.values
+            b = g[g.k_kJ_mol_nm2 == 200.0].force_pN.values
+            if len(a) > 1 and len(b) > 1:
+                tt = _st.ttest_ind(a, b, equal_var=False)
+                e["k_agree_p"] = float(tt.pvalue)
+                e["f_soft"], e["f_stiff"] = float(a.mean()), float(b.mean())
+            out["by_system"][s] = e
+        i, n = d[d.system == "D_40bp"].force_pN.values, \
+            d[d.system == "D_40bp_nick"].force_pN.values
+        if len(i) > 1 and len(n) > 1:
+            tt = _st.ttest_ind(i, n, equal_var=False)
+            out["nick"] = {"intact": float(i.mean()), "nicked": float(n.mean()),
+                           "p": float(tt.pvalue)}
+        return out
+
+    mfx = _measured_fx()
+    mfx_rows = ""
+    if mfx:
+        mfx_rows = "\n".join(
+            "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f–%.0f</td>"
+            "<td class='num'><strong>%.1f ± %.1f</strong></td>"
+            "<td class='num'>%.1f</td><td class='num'>%.2f</td>"
+            "<td class='num'>%.2f</td></tr>" % (
+                e["label"], e["n"], e["r_lo"], e["r_hi"], e["f"], e["sem"],
+                e["euler"], e["ratio"], e["slope_p"])
+            for e in mfx["by_system"].values())
+
     # ---------- hero ----------
     hero_force = (f"{sp[strongest]['force_pN']['mean']:.1f} pN" if strongest else "—")
     # "5'P-5'P" described the superseded attachment, where a linker sat on each of two
     # strands.  The distance is now measured between whichever nucleotide atoms the
     # linkers are actually bonded to, which for the corrected build is one strand's 5' P
     # and its own 3' O3'.  It is also a MODELLED force, and the hero stat should say so.
-    hero_sub = (f"{sp[strongest]['label']}, modelled from an end-to-end span of "
+    # The measured force leads if we have it: a number out of the force field is worth
+    # more than the same number out of a model, and the whole of point 6 was about that
+    # distinction.  Fall back to the modelled one only when the windows are unavailable.
+    d27m = (mfx or {}).get("by_system", {}).get("D_27bp")
+    if d27m:
+        hero_k = "measured spring force"
+        hero_force = f"{d27m['f']:.1f} pN"
+        hero_sub = (f"27 bp duplex, straight from the force field — and "
+                    f"{d27m['ratio']:.2f}× the Euler buckling load, not the few pN the "
+                    f"model predicts")
+    else:
+        hero_k = "strongest spring"
+        hero_force = (f"{sp[strongest]['force_pN']['mean']:.1f} pN" if strongest
+                      else "—")
+        hero_sub = "modelled, from the span the simulation settles at"
+    sq_h = f.get("is_it_a_spring") or {}
+    if sq_h.get("vs_modelled_force"):
+        hero_r = f"r = {sq_h['vs_modelled_force']['r']:+.2f}"
+        hero_r_sub = (f"site displacement against modelled force, "
+                      f"{sq_h.get('n_constructs', 0)} constructs — p = "
+                      f"{sq_h['vs_modelled_force']['p']:.2f}, and the sign is the wrong "
+                      f"way round")
+    else:
+        hero_r, hero_r_sub = f"&gt; {kap:.0f}", "k<sub>B</sub>T nm⁻², a bound not a value"
+    hero_sub_modelled = (f"{sp[strongest]['label']}, modelled from an end-to-end span of "
                 f"{sp[strongest]['x_A']['mean']:.0f} Å" if strongest else "")
     kap = clamp6.get("kappa_lower_bound_kT_nm2")
 
@@ -783,65 +866,6 @@ def build(args):
         vm_all.items(), key=lambda kv: -(f.get("springs", {}).get(kv[0], {})
                                          .get("force_pN", {}) or {}).get("mean", 0.0)))
 
-    # ---------- measured force-extension ----------
-    # Computed here from the shipped csv rather than transcribed, because these are the
-    # numbers that answer "is the force a model or a measurement" and a stale copy of
-    # them would be the worst single error the report could contain.
-    def _measured_fx():
-        import numpy as _np
-        from scipy import stats as _st
-        csv = Path(__file__).resolve().parent.parent / "analysis" / "force_extension.csv"
-        if not csv.exists():
-            return None
-        d = pd.read_csv(csv)
-        if not {"mean_r_A", "force_pN", "box_ok", "box_width_A"} <= set(d.columns):
-            return None
-        d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
-        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
-        d = d[d.r_over_box <= 0.85]
-        if not len(d):
-            return None
-        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
-        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp",
-                "D_40bp_nick": "40 bp, nicked"}
-        out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {}}
-        for s, g in d.groupby("system"):
-            if s not in NB:
-                continue
-            eul = _np.pi ** 2 * 200.0 / (((NB[s] - 1) * 0.33) ** 2)
-            lr = _st.linregress(g.mean_r_A, g.force_pN)
-            e = {"label": NICE[s], "n": int(len(g)),
-                 "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
-                 "f": float(g.force_pN.mean()), "sem": float(g.force_pN.sem()),
-                 "euler": float(eul), "ratio": float(g.force_pN.mean() / eul),
-                 "slope": float(lr.slope), "slope_p": float(lr.pvalue)}
-            a = g[g.k_kJ_mol_nm2 == 33.0].force_pN.values
-            b = g[g.k_kJ_mol_nm2 == 200.0].force_pN.values
-            if len(a) > 1 and len(b) > 1:
-                tt = _st.ttest_ind(a, b, equal_var=False)
-                e["k_agree_p"] = float(tt.pvalue)
-                e["f_soft"], e["f_stiff"] = float(a.mean()), float(b.mean())
-            out["by_system"][s] = e
-        i, n = d[d.system == "D_40bp"].force_pN.values, \
-            d[d.system == "D_40bp_nick"].force_pN.values
-        if len(i) > 1 and len(n) > 1:
-            tt = _st.ttest_ind(i, n, equal_var=False)
-            out["nick"] = {"intact": float(i.mean()), "nicked": float(n.mean()),
-                           "p": float(tt.pvalue)}
-        return out
-
-    mfx = _measured_fx()
-    mfx_rows = ""
-    if mfx:
-        mfx_rows = "\n".join(
-            "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f–%.0f</td>"
-            "<td class='num'><strong>%.1f ± %.1f</strong></td>"
-            "<td class='num'>%.1f</td><td class='num'>%.2f</td>"
-            "<td class='num'>%.2f</td></tr>" % (
-                e["label"], e["n"], e["r_lo"], e["r_hi"], e["f"], e["sem"],
-                e["euler"], e["ratio"], e["slope_p"])
-            for e in mfx["by_system"].values())
-
     ss = f.get("ss_springs") or {}
     ss_rows = "\n".join(
         "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f</td>"
@@ -915,21 +939,24 @@ def build(args):
   <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · {stamp}</p>
   <h1>A DNA spring, wound around a fluorescent protein</h1>
   <p class="lede">Two amber codons put a tetrazine amino acid{cite_eddins} on adjacent
-  strands of sfGFP’s β-barrel{cite_pedelacq}. A doubly-modified DNA duplex clicks onto both, and because dsDNA is
-  far too stiff to follow the barrel’s curvature it has to bend — pushing the two
-  attachment points apart with a force of a few piconewtons. This is what that looks
-  like <em>atom by atom</em>: what the spring delivers, what the protein does about it,
-  and which of the apparent effects survive their own error bars.</p>
+  strands of sfGFP’s β-barrel{cite_pedelacq}. A doubly-modified DNA duplex clicks onto
+  both, and because dsDNA is far too stiff to follow the barrel’s curvature it has to
+  bend — which should push the two attachment points apart. This is what that looks like
+  <em>atom by atom</em>, across eleven DNA-bearing constructs in two proteins. The
+  duplex turns out to deliver <em>far more</em> force than the model predicts, and the
+  protein turns out not to care: every construct pulls its attachment sites slightly
+  <em>together</em>, and it makes no measurable difference whether the DNA is a spring at
+  all.</p>
   <div class="stats">
-    <div class="stat force"><div class="k">strongest spring</div>
+    <div class="stat force"><div class="k">{hero_k}</div>
       <div class="v">{hero_force}</div><div class="s">{hero_sub}</div></div>
     <div class="stat"><div class="k">production analysed</div>
       <div class="v">{f['total_ns']:,.0f} ns</div>
       <div class="s">{f['n_replicates']} replicates across
-      {len([k for k in systems if k in LABEL])} systems</div></div>
-    <div class="stat"><div class="k">protein stiffness</div>
-      <div class="v">&gt; {kap:.0f}</div>
-      <div class="s">k<sub>B</sub>T nm⁻², a bound not a value — see below</div></div>
+      {len(f['systems_present'])} simulated systems</div></div>
+    <div class="stat"><div class="k">does the force explain it?</div>
+      <div class="v">{hero_r}</div>
+      <div class="s">{hero_r_sub}</div></div>
     <div class="stat ok"><div class="k">invented parameters</div>
       <div class="v">0</div>
       <div class="s">nothing flagged for review across the
@@ -1299,13 +1326,24 @@ def build(args):
      '</tbody></table></div>' if have_contacts else
      '<p class="muted">Contact analysis pending the current round of runs.</p>'}
     <p>The duplex is in contact with the protein in essentially every frame of every
-    replicate. Note also that the <em>most</em> compressed system is the nicked one,
-    which delivers the <em>least</em> force: a nick makes the duplex floppier, so it lies
-    against the barrel more readily. That ordering is what a contact mechanism predicts
-    and the opposite of what a force mechanism predicts. It is also the conclusion the
-    companion ubiquitin study reaches from the other direction{cite_boral} — a control
-    bearing two separate short strands reproduced most of the circular chimera's NMR
-    spectrum, pointing at local protein–DNA interaction rather than spring action.</p>
+    replicate, so whatever it does, it does not do at a distance. And the most compressed
+    system is the nicked one, which delivers the least modelled force — a floppier duplex
+    lies against the barrel more readily, which is the ordering a contact mechanism
+    predicts and the reverse of a force mechanism.</p>
+
+    <div class="note flag"><div class="h">But contact does not survive its own test</div>
+      <p>That ordering is one comparison, and an earlier version of this page used it to
+      argue for contact as <em>the</em> mechanism. With eleven constructs measured against
+      their own controls, the compression correlates with contact area no better than it
+      does with force — <strong>r = +0.32, p = 0.33</strong> — and constructs with no
+      spring at all compress as much as those with one. The section
+      <em>Is it acting as a spring at all?</em> below does that test properly; this
+      paragraph is what the contact measurement shows, not what it explains.</p>
+      <p>The companion ubiquitin study reaches the same negative conclusion from the other
+      direction{cite_boral}: a control bearing two separate short strands reproduced most
+      of the circular chimera's NMR spectrum, pointing at local protein–DNA interaction
+      rather than spring action. Agreeing that it is <em>not</em> spring action is firmer
+      than either study's guess at what it is instead.</p></div>
   </div>
 </section>
 

@@ -120,24 +120,27 @@
 
 <div class="wrap">
 <header class="mast">
-  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-24 00:02 UTC</p>
+  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-24 00:11 UTC</p>
   <h1>A DNA spring, wound around a fluorescent protein</h1>
   <p class="lede">Two amber codons put a tetrazine amino acid<sup><a href="#ref-6" class="cite">6</a>,<a href="#ref-7" class="cite">7</a></sup> on adjacent
-  strands of sfGFP’s β-barrel<sup><a href="#ref-1" class="cite">1</a></sup>. A doubly-modified DNA duplex clicks onto both, and because dsDNA is
-  far too stiff to follow the barrel’s curvature it has to bend — pushing the two
-  attachment points apart with a force of a few piconewtons. This is what that looks
-  like <em>atom by atom</em>: what the spring delivers, what the protein does about it,
-  and which of the apparent effects survive their own error bars.</p>
+  strands of sfGFP’s β-barrel<sup><a href="#ref-1" class="cite">1</a></sup>. A doubly-modified DNA duplex clicks onto
+  both, and because dsDNA is far too stiff to follow the barrel’s curvature it has to
+  bend — which should push the two attachment points apart. This is what that looks like
+  <em>atom by atom</em>, across eleven DNA-bearing constructs in two proteins. The
+  duplex turns out to deliver <em>far more</em> force than the model predicts, and the
+  protein turns out not to care: every construct pulls its attachment sites slightly
+  <em>together</em>, and it makes no measurable difference whether the DNA is a spring at
+  all.</p>
   <div class="stats">
-    <div class="stat force"><div class="k">strongest spring</div>
-      <div class="v">6.6 pN</div><div class="s">27 bp, closed loop, modelled from an end-to-end span of 71 Å</div></div>
+    <div class="stat force"><div class="k">measured spring force</div>
+      <div class="v">25.7 pN</div><div class="s">27 bp duplex, straight from the force field — and 0.96× the Euler buckling load, not the few pN the model predicts</div></div>
     <div class="stat"><div class="k">production analysed</div>
       <div class="v">4,050 ns</div>
       <div class="s">81 replicates across
-      16 systems</div></div>
-    <div class="stat"><div class="k">protein stiffness</div>
-      <div class="v">&gt; 107</div>
-      <div class="s">k<sub>B</sub>T nm⁻², a bound not a value — see below</div></div>
+      17 simulated systems</div></div>
+    <div class="stat"><div class="k">does the force explain it?</div>
+      <div class="v">r = +0.08</div>
+      <div class="s">site displacement against modelled force, 11 constructs — p = 0.81, and the sign is the wrong way round</div></div>
     <div class="stat ok"><div class="k">invented parameters</div>
       <div class="v">0</div>
       <div class="s">nothing flagged for review across the
@@ -649,13 +652,24 @@
 <tr><td>50 bp dsDNA, closed loop</td><td>6.5 &plusmn; 1.5</td><td>75%</td><td>11</td></tr>
 <tr><td>two 25 nt arms</td><td>19.9 &plusmn; 6.5</td><td>95%</td><td>16</td></tr></tbody></table></div>
     <p>The duplex is in contact with the protein in essentially every frame of every
-    replicate. Note also that the <em>most</em> compressed system is the nicked one,
-    which delivers the <em>least</em> force: a nick makes the duplex floppier, so it lies
-    against the barrel more readily. That ordering is what a contact mechanism predicts
-    and the opposite of what a force mechanism predicts. It is also the conclusion the
-    companion ubiquitin study reaches from the other direction<sup><a href="#ref-13" class="cite">13</a></sup> — a control
-    bearing two separate short strands reproduced most of the circular chimera's NMR
-    spectrum, pointing at local protein–DNA interaction rather than spring action.</p>
+    replicate, so whatever it does, it does not do at a distance. And the most compressed
+    system is the nicked one, which delivers the least modelled force — a floppier duplex
+    lies against the barrel more readily, which is the ordering a contact mechanism
+    predicts and the reverse of a force mechanism.</p>
+
+    <div class="note flag"><div class="h">But contact does not survive its own test</div>
+      <p>That ordering is one comparison, and an earlier version of this page used it to
+      argue for contact as <em>the</em> mechanism. With eleven constructs measured against
+      their own controls, the compression correlates with contact area no better than it
+      does with force — <strong>r = +0.32, p = 0.33</strong> — and constructs with no
+      spring at all compress as much as those with one. The section
+      <em>Is it acting as a spring at all?</em> below does that test properly; this
+      paragraph is what the contact measurement shows, not what it explains.</p>
+      <p>The companion ubiquitin study reaches the same negative conclusion from the other
+      direction<sup><a href="#ref-13" class="cite">13</a></sup>: a control bearing two separate short strands reproduced most
+      of the circular chimera's NMR spectrum, pointing at local protein–DNA interaction
+      rather than spring action. Agreeing that it is <em>not</em> spring action is firmer
+      than either study's guess at what it is instead.</p></div>
   </div>
 </section>
 
