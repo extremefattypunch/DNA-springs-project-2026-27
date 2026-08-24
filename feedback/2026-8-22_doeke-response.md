@@ -23,7 +23,7 @@ on anything scientific.
 > 1. **#6, the nick.** I wrote that the force field makes the nicked duplex ~3× weaker
 >    than the intact one, against the model's 1.3×. That came from single replicates.
 >    Across the full set the nicked and intact duplexes are **indistinguishable**
->    (14.0 ± 1.3 against 15.2 ± 2.3 pN, p = 0.66). The nick does nothing measurable on
+>    (14.0 ± 1.3 against 15.7 ± 2.0 pN, p = 0.50). The nick does nothing measurable on
 >    this timescale, which is worse for the model than what I claimed, but not the same
 >    claim.
 > 2. **#8, the threshold.** "6.7–8.3°/bp" rested partly on windows I have since had to
@@ -530,9 +530,9 @@ every valid run:
 
 | | measured force | n |
 |---|---|---|
-| 40 bp intact | 15.2 ± 2.3 pN | 7 |
+| 40 bp intact | 15.7 ± 2.0 pN | 8 |
 | 40 bp nicked | 14.0 ± 1.3 pN | 8 |
-| Welch | t = +0.45, **p = 0.66** | |
+| Welch | t = +0.70, **p = 0.50** | |
 
 There is no resolvable difference. Removing one backbone phosphodiester from a rod held
 together by forty base pairs' worth of stacking does not change its buckling load over

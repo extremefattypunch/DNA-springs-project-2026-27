@@ -71,6 +71,36 @@ PURPOSE = {
                        "to the complement so the loop stays closed.",
     "S6_clamp": "A constant force of 0/2/4/7/12/20 pN applied straight along the "
                 "Cβ–Cβ axis: the calibration curve.",
+    # The corrected builds: one strand modified at both its 5' and 3' ends, so a covalent
+    # path runs out along one tether, through the DNA, and back along the other.  This is
+    # the molecule the experiment makes; the S3-S5 trio above is not.
+    "L3_loop27": "The corrected 27 bp chimera — one strand carrying both linkers, so a "
+                 "covalent cycle exists. Asserted with a topology test the superseded "
+                 "build fails.",
+    "L4_loop40": "The corrected 40 bp chimera. Longer spring: less force, more stored "
+                 "energy.",
+    "L5_loop40nick": "The corrected nicked 40 bp chimera — the low-stress reference "
+                     "Zocchi’s calibration leans on. Measured directly, it is not "
+                     "softer.",
+    "C1_ss50": "A 50-nucleotide single strand clicked at both ends. Its contour is far "
+               "longer than the span it has to cover, so it is slack and its tension is "
+               "exactly zero — which makes it the zero-force control the whole argument "
+               "rests on.",
+    "C2_ssarms": "The same strand cut in the middle: two 25 nt arms, each attached at "
+                 "one end, which cannot circularise. Holds DNA content, sequence, sites "
+                 "and chemistry fixed and changes only the topology. The loop test is "
+                 "asserted in both directions, because a control that quietly closed "
+                 "would look like a null result.",
+    "U0_apo": "Ubiquitin, unmodified. The second protein exists so the conclusion does "
+              "not rest on one fold and one chemistry.",
+    "U1_clicked": "1UBQ F45W/T9C/K63C with the maleimide-thioether and DBCO-triazole "
+                  "crosslinker installed, no DNA: this family’s own matched control.",
+    "U2_ss50": "The 50 nt single-stranded chimera from the companion preprint, in the "
+               "protein that preprint studies. Slack, so zero tension.",
+    "U3_ds50": "The 50 bp duplex chimera: ubiquitin’s closed covalent loop, and the "
+               "only ubiquitin construct under any modelled load.",
+    "U4_ssarms": "Two 25 nt arms on ubiquitin — the preprint’s own control, which "
+                 "reproduced most of the circular chimera’s NMR spectrum.",
 }
 FIGS = [
     ("fig1_force_response", "Force response of the attachment sites",
@@ -127,7 +157,7 @@ FIGS = [
      is spread at 3–8° per step across both spring lengths, and essentially no base
      pairs open, so on this timescale the duplex is an elastically bent rod rather than
      a hinge."""),
-    ("fig5_kink_threshold", "Where this force field starts breaking base pairs",
+    ("fig5_kink_threshold", "Where this force field starts breaking base pairs — and how reliably",
      """The previous panel says no kink appears in the chimera. That could mean the duplex
      genuinely does not kink at this curvature, or that this force field cannot kink at
      all — and the two have opposite implications for Zocchi’s model. Separating them

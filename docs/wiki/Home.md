@@ -112,7 +112,7 @@ Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm�
 
 **What the nick does not do.** Zocchi's model treats the nick as the key softening control and predicts ~1.3× less force. Measured, there is no resolvable difference: 15.2 pN intact against 14.0 pN nicked, p = 0.66. Over 20–30 ns, removing one backbone bond from a rod held by 40 base pairs of stacking does not change its buckling load.
 
-2 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
+1 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
 
 ![measured force against extension](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig6_force_extension.png)
 
