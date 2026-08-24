@@ -40,7 +40,7 @@ pinned environment with its own activation script:
 source ./env/activate.sh     # exports DNASPRING_PY, DNASPRING_ENV, DNASPRING_SCRATCH
 ```
 
-Three storage rules on FASRC, learned the hard way:
+Three storage rules on FASRC,:
 
 - `/n/lab_storage/hekstra_lab` is **full**. Code and small results only — never
   trajectories.
