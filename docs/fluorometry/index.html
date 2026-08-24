@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluorometry — sfGFP–DNA chimera</title>
+<style>
+  /* Same tokens as the viewers, so the site reads as one system. */
+  :root {
+    color-scheme: light;
+    --surface:#fcfcfb; --plane:#f9f9f7; --ink:#0b0b0b; --ink2:#52514e;
+    --muted:#898781; --hair:rgba(11,11,11,.10); --accent:#2a78d6;
+    --g0:#2a78d6; --g1:#eb6834; --g2:#1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface:#1a1a19; --plane:#0d0d0d; --ink:#fff; --ink2:#c3c2b7;
+      --muted:#898781; --hair:rgba(255,255,255,.10); --accent:#3987e5;
+      --g0:#3987e5; --g1:#d95926; --g2:#199e70;
+    }
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--surface); color:var(--ink);
+    font:15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width:760px; margin:0 auto; padding:44px 22px 60px; }
+  h1 { font-size:25px; font-weight:650; letter-spacing:-.02em; margin:0 0 6px; }
+  .lede { color:var(--ink2); margin:0 0 32px; }
+  h2 {
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); margin:36px 0 12px;
+  }
+  a { color:var(--accent); }
+  .card {
+    display:block; text-decoration:none; color:inherit; background:var(--plane);
+    border:1px solid var(--hair); border-radius:10px; padding:16px 18px; margin-bottom:12px;
+  }
+  .card:hover { border-color:var(--accent); }
+  .card .t { font-weight:650; font-size:16px; margin-bottom:3px; color:var(--accent); }
+  .card .d { color:var(--ink2); font-size:13.5px; }
+  .card .m {
+    color:var(--muted); font-size:12px; margin-top:8px;
+    font-variant-numeric:tabular-nums;
+  }
+  .swatches { display:flex; gap:14px; margin:14px 0 0; flex-wrap:wrap; }
+  .sw { display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink2); }
+  .sw i { width:20px; height:0; border-top:3px solid; flex:0 0 auto; }
+  ul { padding-left:20px; }
+  li { margin-bottom:9px; color:var(--ink2); }
+  li b { color:var(--ink); font-weight:600; }
+  code {
+    font:13px ui-monospace, SFMono-Regular, Menlo, monospace;
+    background:var(--plane); border:1px solid var(--hair);
+    border-radius:4px; padding:1px 5px;
+  }
+  footer {
+    margin-top:40px; padding-top:16px; border-top:1px solid var(--hair);
+    color:var(--muted); font-size:12.5px;
+  }
+</style>
+<div class="wrap">
+  <h1>Fluorometry — sfGFP–DNA chimera</h1>
+  <p class="lede">
+    Excitation and emission spectra for the 0-, 1- and 2-tet sfGFP constructs,
+    superimposed on one wavelength axis. Every scan is individually toggleable,
+    with live group means and ±1 SD bands.
+  </p>
+
+  <div class="swatches">
+    <span class="sw"><i style="border-color:var(--g0)"></i>0-tet sfGFP</span>
+    <span class="sw"><i style="border-color:var(--g1)"></i>1-tet sfGFP</span>
+    <span class="sw"><i style="border-color:var(--g2)"></i>2-tet sfGFP</span>
+    <span class="sw"><i style="border-color:var(--muted);border-top-style:dashed"></i>dashed = excitation</span>
+  </div>
+
+  <h2>Runs</h2>
+
+  <a class="card" href="attempt2-260821.html">
+    <div class="t">2026-08-21 — attempt 2</div>
+    <div class="d">
+      The clean run. Excitation sweeps stop at 500&nbsp;nm, below the emission
+      monochromator, so there is no stray-light line to remove; signal is 5–10×
+      attempt 1 and within-group replicate scatter is much tighter.
+    </div>
+    <div class="m">18 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×2</div>
+  </a>
+
+  <a class="card" href="attempt1-260812.html">
+    <div class="t">2026-08-12 — attempt 1</div>
+    <div class="d">
+      The first run. Excitation swept through 510&nbsp;nm, so every sample scan
+      carries a λ<sub>ex</sub>&nbsp;=&nbsp;λ<sub>em</sub> Rayleigh spike 10–50× the
+      real band; it is masked by default. Replicate sweep ranges also differ.
+    </div>
+    <div class="m">20 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×3</div>
+  </a>
+
+  <h2>Reading these spectra</h2>
+  <ul>
+    <li>
+      <b>Raw S1 is not the excitation spectrum.</b> The xenon lamp output swings
+      ~8× across 400–650&nbsp;nm, which drags every raw λ<sub>ex</sub> down to a
+      uniform 467–468&nbsp;nm. Switching the channel to <b>S1 ÷ R1</b> (the reference
+      photodiode) restores 484–490&nbsp;nm — the real sfGFP maximum. This reproduces
+      independently in both runs.
+    </li>
+    <li>
+      <b>Normalise before comparing shape.</b> With each scan set to peak&nbsp;=&nbsp;1,
+      the three constructs lie on top of each other — λ<sub>ex</sub>&nbsp;≈&nbsp;486,
+      λ<sub>em</sub>&nbsp;≈&nbsp;508 — so the tet insertions do not measurably perturb
+      the chromophore. Brightness is the only thing separating them.
+    </li>
+    <li>
+      <b>Sample number → construct is an assignment, not a measurement.</b>
+      1&nbsp;=&nbsp;0-tet, 2&nbsp;=&nbsp;1-tet, 3&nbsp;=&nbsp;2-tet, carried over from
+      attempt 1's scan ordering. Each page restates it in its own notes.
+    </li>
+  </ul>
+
+  <h2>Rebuilding</h2>
+  <p style="color:var(--ink2)">
+    Both pages are generated from the Origin CSV exports by
+    <code>flurometer/build_chimera_viewer.py</code> in the repository, which reads
+    either export layout. The data is embedded, so each page is self-contained.
+  </p>
+
+  <footer>
+    <a href="https://github.com/extremefattypunch/DNA-springs-project-2026-27">DNA-springs-project-2026-27</a>
+    · <a href="https://github.com/extremefattypunch/DNA-springs-project-2026-27/wiki">wiki</a>
+  </footer>
+</div>
+</html>
