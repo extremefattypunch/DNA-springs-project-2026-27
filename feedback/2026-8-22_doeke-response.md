@@ -1,8 +1,10 @@
 # Response to Doeke's comments of 22 August 2026
 
 Ian Poon — sfGFP–DNA spring simulations
-Written 23 August 2026, revised the same day. Numbers marked **[running]** come from
-simulations still finishing; everything else is final.
+Written 23 August 2026, revised twice the same day. All 81 replicates (4,050 ns across
+17 systems) have now finished and every number below is from the complete set. What
+remains outstanding is listed at the end and is waiting on the lab's GPU allocation, not
+on anything scientific.
 
 > **Revised after sending.** Setting up the direct force measurement turned up a
 > periodic-boundary bug that had corrupted every spring end-to-end distance in the
@@ -13,6 +15,30 @@ simulations still finishing; everything else is final.
 > all eight systems. I also corrected a claim of my own in #7: I had called 6.9 nm a
 > 27-mer's ssDNA "contour length" when it is its natural rms end-to-end, which made a
 > matched strand look taut.
+
+> **Revised again, 23 August, after all 81 replicates finished.** Three things in the
+> version I sent you are now wrong and are corrected below, all in the same direction —
+> I had drawn conclusions from partial data.
+>
+> 1. **#6, the nick.** I wrote that the force field makes the nicked duplex ~3× weaker
+>    than the intact one, against the model's 1.3×. That came from single replicates.
+>    Across the full set the nicked and intact duplexes are **indistinguishable**
+>    (14.0 ± 1.3 against 15.2 ± 2.3 pN, p = 0.66). The nick does nothing measurable on
+>    this timescale, which is worse for the model than what I claimed, but not the same
+>    claim.
+> 2. **#8, the threshold.** "6.7–8.3°/bp" rested partly on windows I have since had to
+>    discard — the 27-mer's 66, 74, 82 and 88 Å windows all sit beyond what their box can
+>    hold, and those were the rows showing *no* opening at low curvature. With only valid
+>    windows, opening is a **probability, not a threshold**: it appears from 5.4°/bp and
+>    becomes certain only above 9–10°/bp. Every conclusion I drew from it survives — the
+>    force field can kink, it picks CpA, and our chimera at 4.8–5.2°/bp is below onset —
+>    but "the threshold is 6.7–8.3" does not.
+> 3. **#3, the mechanism.** With eleven constructs across two proteins I can now test the
+>    two candidate explanations rather than argue for one. The compression tracks
+>    **neither** the modelled force (r = +0.08, p = 0.81) **nor** the contact area
+>    (r = +0.32, p = 0.33), and constructs with no spring at all compress as much as
+>    those with one (p = 0.53). I had leaned on contact; the data does not support that
+>    either.
 
 ---
 
@@ -25,12 +51,12 @@ and one turned out to have a sharper answer than the hypothesis it came with.
 |---|---|---|
 | 1 | Tutorial for lab meeting | Written: [`2026-8-22_setup-tutorial.md`](2026-8-22_setup-tutorial.md) |
 | 2 | Two TCOs are on *different* strands | **You are right.** Real error. Rebuilt, and a topology test added that the old build fails |
-| 3 | Simulate a non-circular control; the couple/shear argument is confused | **Claim retracted.** Your physics is right and mine was wrong. Rebuilt against a matched control; the effect inverts sign |
+| 3 | Simulate a non-circular control; the couple/shear argument is confused | **Claim retracted.** Your physics is right and mine was wrong. And with 11 constructs in two proteins: every DNA-bearing construct compresses the sites, but it tracks neither force nor contact, and a slack strand does it as well as a spring |
 | 4 | Chromophore: bend or rotate? | **Rotate.** Caption reworded, with the measured torsions |
 | 5 | The book DOI does not resolve | **Right, and four others were also wrong** — two of them resolved to unrelated papers |
-| 6 | Is the force modelled or measured? | It was modelled. Now **measured** too — and the two disagree by 5×, for a reason that is #8. Both written out; a PBC bug found and fixed along the way |
-| 7 | ssDNA chimera? | Built and running, 50 nt, plus a two-arm control that holds DNA content exactly fixed |
-| 8 | "It does not kink" — force field, timescale, or model? | **The model.** We measured our own threshold: this force field kinks above 6.7–8.3°/bp, at the CpA step the literature predicts. Our chimera sits at 4.8–5.2. Not a force-field limitation — excluded by our own data |
+| 6 | Is the force modelled or measured? | It was modelled. Now **measured** too — 25.7 ± 1.0 pN for the 27 bp, which is the **Euler buckling load** (26.8 pN) and 4–11× the kinked branch. A PBC bug and a box-size error found and fixed along the way |
+| 7 | ssDNA chimera? | **Done**, 50 nt in both proteins, plus a two-arm control holding DNA content exactly fixed. Both slack — provably zero tension — which is what makes them the zero-force reference #3 leans on |
+| 8 | "It does not kink" — force field, timescale, or model? | **The model.** Opening is a probability that rises with curvature: present from 5.4°/bp, certain above 9–10°/bp, at the CpA step the literature predicts. Our chimera sits at 4.8–5.2 and opened nothing in 3 × 50 ns. Not a force-field limitation — excluded by our own data |
 | 9 | Do the Et-tet residues change local secondary structure? | **No** — DSSP is identical. But there is a real local effect, and it is a different one |
 
 Two of these connect: the mechanism behind #9 is also the artefact behind #3.
@@ -221,6 +247,77 @@ Note too that the *most* compressed system is the **nicked** one, which delivers
 readily. That ordering is what a contact mechanism predicts and the opposite of what a
 force mechanism predicts.
 
+### With all eleven constructs in, it is neither force *nor* contact
+
+The paragraph above was written with three chimeras and it argued for contact. Eleven
+constructs across two proteins let me test that instead of arguing it, and **contact does
+not survive the test either**.
+
+| construct | protein | modelled force | Δ Cβ–Cβ vs its own clicked control (Å) | p |
+|---|---|---|---|---|
+| 40 bp nicked, closed loop | sfGFP | 2.49 | **-0.586** | 0.014 |
+| 40 bp, closed loop | sfGFP | 3.14 | **-0.482** | 0.030 |
+| 27 bp, closed loop | sfGFP | 6.64 | **-0.451** | 0.021 |
+| 40 bp nicked, two-arm | sfGFP | 2.37 | **-0.418** | 0.024 |
+| two 25 nt arms | ubiquitin | 0 — slack | **-0.417** | 0.082 |
+| 50 nt ssDNA, closed loop | sfGFP | 0 — slack | **-0.322** | 0.063 |
+| 50 bp dsDNA, closed loop | ubiquitin | 2.23 | **-0.320** | 0.052 |
+| two 25 nt arms | sfGFP | 0 — slack | **-0.296** | 0.064 |
+| 40 bp, two-arm | sfGFP | 3.04 | **-0.205** | 0.154 |
+| 50 nt ssDNA, closed loop | ubiquitin | 0 — slack | **-0.094** | 0.412 |
+| 27 bp, two-arm | sfGFP | 6.33 | **+0.021** | 0.878 |
+
+Every construct that carries DNA compresses the sites — ten of eleven negative, the
+eleventh +0.02 which is zero, and not one positive. A spring pushing its anchors apart
+would extend them. But:
+
+- against the modelled spring force: **r = +0.08,
+  p = 0.81** — and the sign is *positive*, so more force
+  goes with *less* compression;
+- against how much protein the DNA touches: **r = +0.32,
+  p = 0.33**;
+- constructs with **no spring at all** compress 0.28 Å,
+  those with a spring 0.35 Å — not resolved
+  (p = 0.53).
+
+The two constructs delivering the *most* modelled force, the 27 bp pair at 6.3–6.6 pN, are
+the two that compress *least* (+0.02 and −0.45). A slack 50-nt single strand at provably
+zero tension compresses −0.32.
+
+So my contact explanation was better than the force explanation and still wrong as stated.
+What I can defend is narrower and matches your conclusion in the preprint more closely than
+my version did: **attaching a large, highly charged object a couple of nanometres from the
+barrel moves these sites by about a third of an ångström, and which object it is barely
+matters.** Whether that is electrostatics, hydration, or the tether geometry itself, these
+runs do not separate — and I should not have named a mechanism from three data points.
+
+The nicked-is-most-compressed ordering I pointed to above also does not survive: with the
+closed-loop builds included the ordering across all eleven is not monotonic in anything I
+can measure.
+
+### And on whether closing the loop matters
+
+Your point 2 made this testable — five pairs differing only in whether a covalent path
+runs through the DNA:
+
+| pair | closed − two-arm (Å) | p |
+|---|---|---|
+| 27 bp | -0.472 | 0.007 |
+| 40 bp | -0.277 | 0.018 |
+| 40 bp nicked | -0.168 | 0.311 |
+| 50 nt ssDNA, sfGFP | -0.026 | 0.724 |
+| 50 nt ssDNA, ubiquitin | +0.323 | 0.141 |
+
+All three **duplex** pairs say closure compresses more, by
+0.31 Å on average, paired
+p = 0.08. Both **single-stranded** pairs fail to
+reproduce it, and across all five it is p = 0.41.
+
+A three-pair trend at p = 0.08 that reverses when two more pairs are added is a hypothesis,
+not a result, and I am reporting it as one. It would be physically sensible — only a closed
+circuit can carry a bending moment around, and a slack strand has no moment to carry — which
+is exactly why it needs six replicates per system rather than three before I believe it.
+
 ### The non-circular controls you asked for
 
 Built, from the same 50-nt strand so that DNA content, sequence, sites and chemistry are
@@ -234,7 +331,7 @@ This is a tighter comparison than the preprint's two 12-mers, and it is Zocchi's
 design principle: change the mechanics, hold every contact constant. Both built with
 0 problems, and the loop test is asserted in **both** directions — C1 must be closed,
 C2 must not be — because a control that quietly closed would look like a null result.
-3 replicates × 50 ns each **[running]**.
+3 replicates × 50 ns each — **finished**, and reported above.
 
 ---
 
@@ -426,19 +523,26 @@ A flat plateau of 22–29 pN across the whole valid range, which is what a buckl
 kinked branch, which gives 2.4–6.6 pN over the same range. The two independent restraint
 stiffnesses agreeing at matched ⟨*r*⟩ is the method checking itself.
 
-**And the nick matters far more than the model says.** At the two windows where the 40-mers
-are inside their box:
+**And the nick does nothing measurable — which I had wrong.** The version I sent you put
+the nicked 40-mer at 4.2 and 6.9 pN against the intact 13.3 and 18.1, and concluded the
+force field softens it ~3× where the model says 1.3×. Those were single replicates. Across
+every valid run:
 
-| | *x*₀ = 50 Å | *x*₀ = 66 Å |
+| | measured force | n |
 |---|---|---|
-| 40 bp intact | 13.3 pN | 18.1 pN |
-| 40 bp nicked | **4.2 pN** | **6.9 pN** |
-| ratio | 3.2× | 2.6× |
+| 40 bp intact | 15.2 ± 2.3 pN | 7 |
+| 40 bp nicked | 14.0 ± 1.3 pN | 8 |
+| Welch | t = +0.45, **p = 0.66** | |
 
-Zocchi's model puts the nicked spring at 2.37 pN against the intact 3.04 — a factor of
-1.3, because in the kinked branch the force is set almost entirely by τ_c. The force field
-says roughly **three**. That is worth having beside your point 7: the nicked spring is not
-"weaker but not much weaker" in this force field; it is a great deal weaker.
+There is no resolvable difference. Removing one backbone phosphodiester from a rod held
+together by forty base pairs' worth of stacking does not change its buckling load over
+20–30 ns. Zocchi's model puts the nicked spring at 2.37 pN against the intact 3.04 — a
+factor of 1.3, set almost entirely by τ_c — and we cannot reproduce even that.
+
+This is *worse* for the model than the 3× I wrongly claimed, not better. The nicked spring
+is the low-stress reference his whole calibration leans on, and in this force field it is
+not a low-stress reference; it is the same spring. But it is a different statement from
+the one I sent, and the one I sent was drawn from too little data.
 
 ### The two calculations disagree by a factor of five, and the reason is point 8
 
@@ -446,9 +550,14 @@ Over the range where both can be evaluated and the box is adequate:
 
 | | force |
 |---|---|
-| Zocchi's kinked branch, 27 bp at 50 Å | **2.9 pN** |
-| Euler buckling load, π²*B*/*L*², for an *unyielded* rod | **25.6 pN** |
-| measured, from the force field | **26.4 ± 4.1 pN** |
+| Zocchi's kinked branch, 27 bp over 32–63 Å | **2.4–6.6 pN** |
+| Euler buckling load, π²*B*/*L*², for an *unyielded* rod | **26.8 pN** |
+| measured, from the force field, 19 valid runs | **25.7 ± 1.0 pN** |
+| ratio, measured to kinked branch | **4–11×** |
+
+(The Euler figure is 26.8 pN with *B* = 200 pN nm² and 26 steps of 0.33 nm. I quoted
+25.6 and 24.9 in two places in the version I sent you, from a contour taken over 27 steps
+rather than 26; 26.8 is the consistent value and it is what the figures now use.)
 
 The measurement lands on the Euler load, not the kinked one — and #8 says why: this duplex
 does not yield at the curvature the chimera imposes, so it stays on the elastic branch, and
@@ -461,12 +570,31 @@ experiment and our force field is on the wrong branch.
 
 **Still outstanding.** Near-straight duplexes have been solvated in boxes that fit the long
 windows (the 27-mer's now reaches 73 Å, covering the chimera's 70), and the 50 and 58 Å
-windows are being re-run in both boxes so the two halves of the curve can be checked
-against each other before they are joined. **[running]**
+windows need re-running in both boxes so the two halves of the curve can be checked
+against each other before they are joined. That is **queued behind the lab's GPU
+fairshare**, which a day of my own exploratory jobs exhausted; it is submitted to the
+free `gpu_test` partition and will land when the allocation resets.
 
 ## 7. The ssDNA chimera
 
-Built and running: **C1_ss50**, one 50-nt strand clicked at both ends, no complement.
+**Done.** **C1_ss50**, one 50-nt strand clicked at both ends, no complement, and its
+ubiquitin twin **U2_ss50**. Both come out *slack*, which is the useful part: 50 nucleotides
+is 295 Å of contour with a natural rms end-to-end of
+94 Å, and the attachment sites hold it at only
+54 Å. A worm-like chain held inside its own rms size is
+under **no tension at all**, so the Marko–Siggia force is exactly zero — not small, zero.
+
+That makes these the cleanest control in the project: same protein, same sites, same
+chemistry, comparable DNA, provably zero mechanical load. If the site compression were a
+force effect they should show none. They show
+0.32 Å (sfGFP) and
+0.09 Å (ubiquitin) — as much as any duplex.
+That is the observation #3 now rests on.
+
+The sign contrast is worth stating too, since it is the opposite of the duplex: a bent
+duplex is an *enthalpic* spring and **pushes** its anchors apart; a single strand is an
+*entropic* spring with a 1.5 nm persistence length and can only ever **pull**, and only
+once stretched past its natural size. Neither construct is.
 
 Two notes on the design.
 
@@ -537,17 +665,27 @@ breaking base pairs. Two replicates per window, 12–30 ns each, and the criteri
 fixed in advance — an **internal** pair (not the terminal two, which fray in anything)
 open in more than 10 % of frames.
 
-| °/bp | *x*₀ | rep 1 | rep 2 |
-|---|---|---|---|
-| 0.0 | 88 Å | — | — |
-| 2.8 | 82 | — | — |
-| 4.4 | 74 | — | — |
-| **5.6** | **66** | **—** | **—** |
-| 6.7 | 58 | — | bp17, 67 % |
-| 7.6 | 50 | — | bp13/16/17 |
-| 8.3 | 44 | bp17, 81 % | — |
-| 9.0 | 38 | **bp17, 100 %** | bp17, 71 % |
-| 9.7 | 32 | bp17, 14 % | bp17, 96 % |
+**The table I sent you had to change.** Its low-curvature rows — the 27-mer at 66, 74, 82
+and 88 Å — are the ones that showed no opening, and every one of them sits beyond what its
+solvent box can hold, so they measure a duplex interacting with its own periodic image. I
+cannot use them, and they were carrying the claim that opening *starts* at 6.7°/bp.
+
+What is left, pooling every valid window from all three duplexes and binning by the
+curvature the duplex actually adopted (not the target it was pulled towards — with the
+soft restraint those differ by 2–7 Å):
+
+| °/bp | runs | runs that opened an interior pair |
+|---|---|---|
+| 5–6 | 7 | 2 (29 %) |
+| 6–7 | 12 | 4 (33 %) |
+| 7–8 | 5 | 4 (80 %) |
+| 8–9 | 6 | 5 (83 %) |
+| 9–10 | 4 | **4 (100 %)** |
+
+The per-run observation is bimodal — a run either keeps every interior pair shut for its
+whole trajectory or opens one and holds it open 30–100 % of frames — so what varies
+smoothly with curvature is the *probability*, and an average over runs is a number no run
+exhibits.
 
 Three things follow, and they settle your question between them.
 
@@ -558,20 +696,21 @@ argument. That also means the seeded-kink test I proposed is no longer the decis
 experiment; it is still running, but as a question about metastability below the
 threshold rather than about whether the force field is capable of it at all.
 
-**The threshold is 6.7–8.3°/bp**, first appearing at 6.7 and reliable above 8.3. Curuksu
-*et al.*'s umbrella sampling puts type II kink nucleation above 8.6–9.3°/bp. Ours is a
-little lower, which is what you would expect from an unbiased run with a stiff restraint
-rather than a biased scan, but it is the same regime — and it is a long way from Zocchi's
-τ_c, which places the transition at 2.6–3.0°/bp. The section after next puts our number
-against every published estimate.
+**There is no threshold; there is a probability.** Opening appears as low as **5.4°/bp**
+and becomes certain only above **9–10°/bp**. Curuksu *et al.*'s umbrella sampling puts
+type II kink nucleation above 8.6–9.3°/bp — which is where our probability has reached
+0.8, so the two agree about where kinking becomes the *expected* behaviour while ours also
+shows a stochastic tail well below it. Both are a long way from Zocchi's τ_c, which places
+the transition at 2.6–3.0°/bp: even our stochastic tail does not reach that.
 
-**Our chimera is at 4.8–5.2°/bp, below the threshold we measure ourselves.** That is the
-answer. Not seeing a kink in the chimera is not a force-field limitation and not
+**Our chimera is at 4.8–5.2°/bp, below the lowest curvature at which we ever see a pair
+open.** That is the answer. Not seeing a kink in the chimera is not a force-field limitation and not
 principally a timescale artefact: the construct is simply not bent far enough, on this
 force field's own showing.
 
-One detail worth having, because it is a check rather than a coincidence. The kink lands
-on **base pair 17 every single time**, across independent windows and replicates. Base 17
+One detail worth having, because it is a check rather than a coincidence. In the 27 bp
+duplex the kink lands on **base pair 17 in 11 of its 14 openings**, across independent
+windows and replicates. Base 17
 is an adenine and the step into it is **CpA** — one of the three pyrimidine–purine steps
 (CpG, TpA, CpA) that Curuksu names as the preferred sites for roll to localise at. The
 other pair that opened, bp13, sits at a **TpG** step, also pyrimidine–purine. So the force
@@ -582,9 +721,18 @@ steps the literature says it should.
 
 This is the part that persuaded me. If the duplex never yields it stays on the elastic
 branch, and an unyielded rod under compression sustains its Euler buckling load,
-π²*B*/*L*² = 24.9 pN for a 27-mer. The directly measured force at the separation the
-chimera sits at is **33 pN**; Zocchi's kinked branch gives **6.3 pN** (see #6). The
-measurement lands on the unyielded value, four to five times the kinked one.
+π²*B*/*L*² = **26.8 pN** for a 27-mer. Measured over the 19 runs whose boxes can hold
+them, the 27 bp duplex delivers **25.7 ± 1.0 pN** — a ratio of 0.96, with nothing fitted —
+against Zocchi's kinked branch at 2.4–6.6 pN over the same range.
+
+The force is also **flat in separation** (p = 0.49), which is the other half of the
+signature: past its critical load a buckled rod does not stiffen, it keeps folding at
+roughly constant force.
+
+(I had quoted **33 pN** here, at the chimera's own ~70 Å separation. That window's target
+was 87 % of its box width, so it is withdrawn — see #6 — and the numbers above come only
+from windows inside their boxes. The chimera's own separation is not among them, and
+re-running it in a larger box is queued behind the lab's GPU allocation.)
 
 So two quite different observables — the shape of the bend profile and the magnitude of
 the delivered force — agree that this duplex has not yielded. That is more convincing than
@@ -673,10 +821,22 @@ find. That is the control your question implies and nobody has run it.
 
 ### What is still running
 
-The compression windows are 12–30 ns and the deepest two are the youngest, so the
-threshold will tighten. The seeded-kink runs (three positions, two replicates, 30 ns) test
-whether a kink placed *below* the threshold persists, which bears on whether the
-transition is hysteretic. **[running]**
+Three things, all waiting on GPU allocation rather than on analysis:
+
+- **The 27 bp windows in a box that fits them**, at 50, 58, 66 and 72 Å, to recover the
+  chimera's own separation and with it the measured-versus-modelled comparison at the
+  geometry that actually matters. This is the withdrawn 33 pN figure.
+- **The 40 bp pair at 70 Å**, for the same reason.
+- **The seeded kinks** — three positions (bp 7, 15, 21), two replicates, 30 ns — testing
+  whether a kink placed *below* the onset persists, which bears on whether the transition
+  is hysteretic. Built and validated; the seeding needed three attempts, because the first
+  version seeded into an already-bent duplex and produced an initial energy of
+  3.4 × 10¹¹ kJ/mol.
+
+I should say plainly why these are queued rather than finished: I ran 129 GPU jobs in one
+day on the billed partition and exhausted the whole lab's fairshare, which stopped
+everyone's jobs including my own. They are resubmitted to the unbilled `gpu_test`
+partition and will run when the allocation resets.
 
 The timescale arithmetic above still stands as a statement about *spontaneous* nucleation
 in the chimera's own geometry — but it is now the secondary explanation, not the primary
