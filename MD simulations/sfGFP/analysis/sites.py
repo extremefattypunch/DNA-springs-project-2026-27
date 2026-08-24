@@ -53,8 +53,17 @@ DSSP_WINDOW = (128, 155)
 
 
 def load_map(path):
+    """prmtop residue index -> (original residue number, name, original chain).
+
+    The chain is carried through because the residue *number* is not unique: a 50-mer
+    of DNA is numbered 1-50 in its own chain and the protein is numbered from 1 in its
+    own, so in the ubiquitin chimeras 52 of 130 residue numbers name two different
+    residues.  Dropping the chain here is what made every lookup of ubiquitin's site 9
+    return DNA nucleotide 9 instead.
+    """
     rows = json.loads(Path(path).read_text())
-    return {r["index"]: (r["orig_resnum"], r["orig_resname"]) for r in rows}
+    return {r["index"]: (r["orig_resnum"], r["orig_resname"], r.get("orig_chain"))
+            for r in rows}
 
 
 def drop_equilibration(t, skip):
@@ -78,8 +87,39 @@ def circular_stats(deg):
     return mean, sd, R
 
 
-def _by_number(resmap):
-    return {num: idx for idx, (num, _) in resmap.items()}
+# Amber's nucleic residue names, including the 3'/5' terminal variants.  Listed rather
+# than sniffed so a residue this project has not met yet fails loudly.
+_NUCLEIC = {f"D{b}{s}" for b in "ATGC" for s in ("", "3", "5", "N")}
+
+
+def _by_number(resmap, prefer_protein=True):
+    """residue number -> prmtop index, resolving the number collision explicitly.
+
+    Ubiquitin is modified at residues 9 and 63 and carries 50 nucleotides, so number 9
+    names both a cysteine and a guanine.  Whichever the dict built last silently won,
+    and it was the DNA: site 63 resolved (no nucleotide 63) while site 9 did not, so
+    the three DNA-bearing ubiquitin systems reported no backbone angles at all while
+    every sfGFP system was fine -- sfGFP's sites are 133 and 149, above any nucleotide
+    number, so the collision could not reach them.
+
+    Every caller in this module wants a protein residue, so protein wins by default and
+    the ambiguity is recorded rather than resolved by dict-insertion order.
+    """
+    out, ambiguous = {}, {}
+    for idx, entry in resmap.items():
+        num, name = entry[0], entry[1]
+        is_dna = name in _NUCLEIC
+        if num in out:
+            ambiguous.setdefault(num, []).append(name)
+            # keep whichever side the caller asked for; on a tie keep the first
+            keep_new = (not is_dna) if prefer_protein else is_dna
+            prev_name = resmap[out[num]][1]
+            prev_is_dna = prev_name in _NUCLEIC
+            if keep_new and (prev_is_dna if prefer_protein else not prev_is_dna):
+                out[num] = idx
+            continue
+        out[num] = idx
+    return out
 
 
 def backbone_dihedrals(t, top, resmap, resnum):
@@ -127,7 +167,7 @@ def stacking(t, top, resmap, resnum):
         return None
     ring = [a.index for a in top.residue(i).atoms if a.name in names]
     tyr = None
-    for idx, (num, nm) in resmap.items():
+    for idx, (num, nm, *_) in resmap.items():
         if num == AROMATIC_NEIGHBOUR[1] and nm == AROMATIC_NEIGHBOUR[0]:
             tyr = [a.index for a in top.residue(idx).atoms
                    if a.name in ("CG", "CD1", "CD2", "CE1", "CE2", "CZ", "OH")]

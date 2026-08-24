@@ -251,7 +251,15 @@ def main(summary=None, out=None):
             if not len(s):
                 continue
             entry = {"label": nm}
-            for site in (133, 149):
+            # Each protein's own attachment sites, read from which columns actually
+            # carry data for it.  Hardcoding sfGFP's 133/149 gave every ubiquitin row a
+            # line of NaN -- and ubiquitin's sites are 9 and 63, whose numbers were
+            # sitting in the same csv unread.
+            avail = sorted({int(c.split("_")[-1].split(".")[0])
+                            for c in s.columns
+                            if c.startswith("site.phi_") and not s[c].isna().all()})
+            entry["sites"] = avail
+            for site in avail:
                 rn = s.get(f"site.resname_{site}")
                 d = {"residue": (rn.iloc[0] if rn is not None and len(rn) else None)}
                 for ang in ("phi", "psi"):

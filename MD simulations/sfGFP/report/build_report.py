@@ -955,15 +955,60 @@ def build(args):
     def _site(sysk, site, key, dflt=float("nan")):
         return (sites_f.get(sysk, {}).get(str(site), {}) or {}).get(key, dflt)
 
-    site_rows = "\n".join(
-        f"<tr><td>{v['label']}</td>"
-        f"<td>{_site(k, 133, 'residue') or '&mdash;'}</td>"
-        f"<td>{_site(k, 133, 'phi'):+.1f}, {_site(k, 133, 'psi'):+.1f}</td>"
-        f"<td>{_site(k, 149, 'residue') or '&mdash;'}</td>"
-        f"<td>{_site(k, 149, 'phi'):+.1f}, {_site(k, 149, 'psi'):+.1f}</td>"
-        f"<td>{(lambda x: '&mdash;' if x != x else f'{x:.2f}')(_site(k, 149, 'Tyr200_contacts_per_frame'))}</td>"
-        f"</tr>"
-        for k, v in sites_f.items())
+    # Each protein's own two sites, taken from the entry rather than assumed: sfGFP is
+    # modified at 133/149 and ubiquitin at 9/63, and hardcoding the sfGFP pair printed a
+    # row of literal "nan" for every ubiquitin system -- whose angles were in the same
+    # file under different keys.
+    def _site_row(k, v):
+        sl = v.get("sites") or [s for s in (133, 149) if str(s) in v]
+        if len(sl) < 2:
+            return ""
+        a, b = sl[0], sl[1]
+
+        def ang(s):
+            ph, ps = _site(k, s, "phi"), _site(k, s, "psi")
+            return "&mdash;" if ph != ph or ps != ps else f"{ph:+.1f}, {ps:+.1f}"
+
+        stack = _site(k, b, "Tyr200_contacts_per_frame")
+        return (f"<tr><td>{v['label']}</td>"
+                f"<td class='num'>{a}</td>"
+                f"<td>{_site(k, a, 'residue') or '&mdash;'}</td>"
+                f"<td class='num'>{ang(a)}</td>"
+                f"<td class='num'>{b}</td>"
+                f"<td>{_site(k, b, 'residue') or '&mdash;'}</td>"
+                f"<td class='num'>{ang(b)}</td>"
+                f"<td class='num'>"
+                f"{'&mdash;' if stack != stack else f'{stack:.2f}'}</td></tr>")
+
+    # The point-9 prediction, tested across both proteins: modification should strain a
+    # site only where the native backbone sits at POSITIVE phi, a conformation Asp, Asn
+    # and Gly adopt readily and a bulkier side chain does not.  Two proteins with two
+    # unrelated chemistries give four sites, only one of them positive-phi.
+    strain = []
+    for prot, apo, mod in (("sfGFP", "S0_wt", "S1_tet"),
+                           ("ubiquitin", "U0_apo", "U1_clicked")):
+        av, mv = sites_f.get(apo) or {}, sites_f.get(mod) or {}
+        for st in (av.get("sites") or []):
+            a, m = av.get(str(st)) or {}, mv.get(str(st)) or {}
+            if a.get("phi") is None or m.get("phi") is None:
+                continue
+            strain.append({"protein": prot, "site": st,
+                           "native": a.get("residue"), "modified": m.get("residue"),
+                           "phi": a["phi"], "psi": a["psi"],
+                           "dphi": m["phi"] - a["phi"], "dpsi": m["psi"] - a["psi"],
+                           "positive_phi": a["phi"] > 0})
+    strain_rows = "\n".join(
+        "<tr%s><td>%s</td><td class='num'>%d</td><td>%s → %s</td>"
+        "<td class='num'>%+.1f, %+.1f</td><td class='num'><strong>%+.1f</strong></td>"
+        "<td class='num'>%+.1f</td><td>%s</td></tr>" % (
+            ' class="hi"' if r["positive_phi"] else "", r["protein"], r["site"],
+            r["native"], r["modified"], r["phi"], r["psi"], r["dphi"], r["dpsi"],
+            "<strong>left-handed α</strong>" if r["positive_phi"] else "ordinary")
+        for r in strain)
+    have_strain = len(strain) > 2
+
+    site_rows = "\n".join(r for r in (_site_row(k, v)
+                                      for k, v in sites_f.items()) if r)
     have_sites = bool(site_rows)
 
     con = f.get("contacts") or {}
@@ -1579,9 +1624,10 @@ def build(args):
     residues 128–155 is identical in the wild type, the unclicked protein and the clicked
     adduct: site 133 is coil in every case and site 149 is 100% β in every case.</p>
 
-    {'<div class="tbl-wrap"><table><thead><tr><th>system</th><th>133</th>'
-     '<th>φ, ψ at 133</th><th>149</th><th>φ, ψ at 149</th>'
-     '<th>ring–Tyr200 contacts at 149</th></tr></thead><tbody>'
+    {'<div class="tbl-wrap"><table><thead><tr><th>system</th>'
+     '<th>site</th><th>residue</th><th>φ, ψ</th>'
+     '<th>site</th><th>residue</th><th>φ, ψ</th>'
+     '<th>ring–Tyr200 contacts</th></tr></thead><tbody>'
      + site_rows + '</tbody></table></div>' if have_sites else ''}
 
     <p><strong>Site 133 is the clean result.</strong> Asp133 natively occupies the
@@ -1614,6 +1660,46 @@ def build(args):
       a mechanical effect for anyone using the unclicked protein as a reference. That is
       exactly how the retracted claim above arose. Ordinary β and α positions with no
       aromatic neighbour should be fine.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Which positions tolerate the modification</h2>
+    <span class="tag">a design rule, tested in a second protein</span></div>
+  <div class="col">
+    <p>The Ramachandran result above gives a rule with a prediction attached: a site
+    strains on modification only where the <em>native</em> backbone occupies a positive-φ
+    conformation, which Asp, Asn and Gly adopt readily and a bulkier side chain does not.
+    Two proteins with two unrelated attachment chemistries give four sites to test it on,
+    and exactly one of the four is positive-φ.</p>
+
+    {'<div class="tbl-wrap"><table><thead><tr><th>protein</th><th>site</th>'
+     '<th>residue</th><th>native φ, ψ</th><th>Δφ on modification</th><th>Δψ</th>'
+     '<th>native conformation</th></tr></thead><tbody>' + strain_rows +
+     '</tbody></table></div>' if have_strain else
+     '<p class="muted">Awaiting the second protein&rsquo;s site analysis.</p>'}
+
+    <p><strong>The prediction holds.</strong> The one positive-φ site moves 17.5° in φ; the
+    three ordinary sites move by a degree or less. And the chemistries have nothing in
+    common — sfGFP carries a genetically encoded tetrazine amino acid, a phenylalanine
+    derivative installed by amber suppression; ubiquitin carries a cysteine converted to a
+    maleimide thioether. What predicts the strain is not the adduct but the backbone
+    conformation the native residue was holding.</p>
+
+    <div class="note"><div class="h">The practical rule</div>
+      <p>When choosing attachment sites for either chemistry: <strong>avoid positions
+      whose native φ is positive</strong> — in practice Gly, and the Asn/Asp positions
+      that sit in the left-handed α region. An ordinary β or α position takes the
+      modification without measurable backbone cost.</p>
+      <p>Treat an aromatic neighbour as a second liability, independently. The tetrazine
+      ring at sfGFP&rsquo;s site 149 stacks on Tyr200 in some constructs and not others,
+      and it does so <em>differently before and after clicking</em> — so it will
+      masquerade as a mechanical effect in exactly the comparison this project set out to
+      make.</p>
+      <p>Both of these are conclusions about four sites in two proteins, which is a rule
+      of thumb rather than a survey. What makes it worth stating is that the prediction
+      was made from sfGFP alone and then held in a protein and a chemistry it was not
+      derived from.</p></div>
   </div>
 </section>
 

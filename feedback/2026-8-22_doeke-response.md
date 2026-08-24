@@ -920,6 +920,29 @@ supports:
    backbone moves by less than 13° and its secondary structure is unchanged; what makes
    it awkward is the neighbour, not the position.
 
+### And the prediction holds in the other protein
+
+This was written from sfGFP alone, so the ubiquitin set is a real test of it rather than a
+restatement — different protein, different fold, and a chemistry with nothing in common
+(a cysteine converted to a maleimide thioether, not a genetically encoded tetrazine amino
+acid). Four sites between the two proteins, and exactly one of them is positive-φ:
+
+| protein | site | residue | native φ, ψ | Δφ on modification | Δψ | native conformation |
+|---|---|---|---|---|---|---|
+| sfGFP | 133 | ASP → TET | +56.9, +16.3 | **+17.5** | -13.9 | **left-handed α** |
+| sfGFP | 149 | ASN → TET | -126.6, +137.2 | **+1.0** | -13.1 | ordinary |
+| ubiquitin | 9 | CYS → CMS | -81.4, +5.4 | **-0.3** | -4.5 | ordinary |
+| ubiquitin | 63 | CYS → CMS | -56.1, +142.1 | **+0.0** | +2.3 | ordinary |
+
+The one positive-φ site moves **17.5°**; the three ordinary sites move by **a degree or
+less**. So what predicts the strain is not the adduct at all — it is the backbone
+conformation the native residue was holding, which is a stronger and more useful statement
+than the one I could make from sfGFP by itself.
+
+It also means ubiquitin's two sites were well chosen, and that the ~0.3 Å compression seen
+there cannot be a backbone-strain artefact of the modification: there is no backbone strain
+to speak of.
+
 ### How this connects back to #3
 
 The 0.647 Å that clicking recovers is not an inexplicable chemistry offset. Across every
