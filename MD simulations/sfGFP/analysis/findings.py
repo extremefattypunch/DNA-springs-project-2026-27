@@ -195,6 +195,20 @@ def main(summary=None, out=None):
     f["extension"]["strongest_vs_weakest_spring"] = w2
     # Each chimera against the matched control, with a Bonferroni correction for the
     # three comparisons -- without it a single p = 0.02 out of three looks decisive.
+    # The step the point-3 retraction turns on: what CLICKING alone does, unclicked to
+    # clicked, no DNA either side.  Distinct from tet_vs_wt (installing the residues) and
+    # opposite in sign -- installing them shortens the separation, clicking lengthens it
+    # again -- so the two must not be quoted for each other.
+    for nm, a, b in (("clicked_vs_tet", "S1_tet", "S2_clicked"),
+                     ("clicked_vs_wt", "S0_wt", "S2_clicked")):
+        x = df[(df.system == a) & (df.clamp_pN.fillna(0) == 0)][
+            "mech.anchor_CB_CB_A.mean"].dropna().values
+        y = df[(df.system == b) & (df.clamp_pN.fillna(0) == 0)][
+            "mech.anchor_CB_CB_A.mean"].dropna().values
+        w = welch(y, x)
+        if w:
+            f["extension"][nm] = w
+
     f["extension"]["vs_matched_control"] = {}
     for fam, spec in FAMILIES.items():
         ctrl = df[(df.system == spec["control"]) & (df.clamp_pN.fillna(0) == 0)]

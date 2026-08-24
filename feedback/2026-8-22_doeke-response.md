@@ -29,8 +29,8 @@ on anything scientific.
 > 2. **#8, the threshold.** "6.7–8.3°/bp" rested partly on windows I have since had to
 >    discard — the 27-mer's 66, 74, 82 and 88 Å windows all sit beyond what their box can
 >    hold, and those were the rows showing *no* opening at low curvature. With only valid
->    windows, opening is a **probability, not a threshold**: it appears from 5.4°/bp and
->    becomes certain only above 9–10°/bp. Every conclusion I drew from it survives — the
+>    windows, opening is a **probability, not a threshold**: it appears from 5.5°/bp and
+>    becomes certain, meaning every run in the window, only above 8.7°/bp. Every conclusion I drew from it survives — the
 >    force field can kink, it picks CpA, and our chimera at 4.8–5.2°/bp is below onset —
 >    but "the threshold is 6.7–8.3" does not.
 > 3. **#3, the mechanism.** With eleven constructs across two proteins I can now test the
@@ -696,8 +696,8 @@ argument. That also means the seeded-kink test I proposed is no longer the decis
 experiment; it is still running, but as a question about metastability below the
 threshold rather than about whether the force field is capable of it at all.
 
-**There is no threshold; there is a probability.** Opening appears as low as **5.4°/bp**
-and becomes certain only above **9–10°/bp**. Curuksu *et al.*'s umbrella sampling puts
+**There is no threshold; there is a probability.** Opening appears as low as **5.5°/bp**
+and becomes certain — every run in the window — only above **8.7°/bp**. Curuksu *et al.*'s umbrella sampling puts
 type II kink nucleation above 8.6–9.3°/bp — which is where our probability has reached
 0.8, so the two agree about where kinking becomes the *expected* behaviour while ours also
 shows a stochastic tail well below it. Both are a long way from Zocchi's τ_c, which places

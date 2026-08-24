@@ -120,9 +120,10 @@ Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm�
 
 Not in the chimera. Our curvature is **4.8–5.2° per base-pair step**, and
 in three 50 ns runs no interior base pair opened. The windows above reach
-5.4–9.7°/bp, and there opening is a
-probability rather than a threshold: it appears from **5.4°/bp**
-and becomes certain only above **9–10°/bp**,
+5.5–9.4°/bp, and there opening is a
+probability rather than a threshold: it appears from **5.5°/bp**
+and becomes certain — every run in the window — only above
+**8.7°/bp**,
 with the 8.6–9.3°/bp at which the one directly comparable all-atom calculation nucleates
 a type II kink sitting where our probability is already 0.8.
 

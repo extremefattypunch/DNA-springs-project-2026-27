@@ -741,41 +741,74 @@ def build(args):
     # Read from the force-extension runs rather than written down, so the table cannot
     # drift from the data behind it.
     fx_rows, fx_note = "", ""
+    fx_first = fx_certain = None
     fxf = Path(args.root) / "analysis" / "force_extension.csv"
     if fxf.exists():
+        import numpy as _np
         fx = pd.read_csv(fxf)
-        fx = fx[fx.system == "D_27bp"]
-        if len(fx) and "wc.n_internal_open" in fx:
-            L = 26 * 3.376
-            import numpy as _np
+        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
+        need = {"wc.n_internal_open", "box_ok", "mean_r_A", "box_width_A"}
+        if len(fx) and need <= set(fx.columns):
+            # Only windows the box can hold, judged on where the duplex actually sat.
+            # The earlier version of this table showed every window and derived its
+            # "first opening" note from all of them -- and the widest windows, the ones
+            # beyond the box, were precisely the rows reading "no opening", so the note
+            # reported an onset that was an artefact of including them.
+            n_all = len(fx)
+            fx = fx[fx.box_ok.astype(str).str.lower().isin(("true", "1"))]
+            fx = fx.assign(r_over_box=fx.mean_r_A / fx.box_width_A)
+            fx = fx[(fx.r_over_box <= 0.85) & fx.system.isin(NB)]
+            n_drop = n_all - len(fx)
 
-            def per_bp(chord):
-                lo, hi = L / (2 * _np.pi), 1e6
-                for _ in range(200):
+            def per_bp(chord, n_bp):
+                L = (n_bp - 1) * 3.376
+                lo, hi = L / (2 * _np.pi), 1e7
+                for _ in range(300):
                     mid = 0.5 * (lo + hi)
-                    c = 2 * mid * _np.sin(L / (2 * mid))
-                    lo, hi = (mid, hi) if c < chord else (lo, mid)
+                    lo, hi = ((mid, hi) if 2 * mid * _np.sin(L / (2 * mid)) < chord
+                              else (lo, mid))
                 return _np.degrees(3.376 / (0.5 * (lo + hi)))
 
             out = []
-            for x0, g in fx.groupby("x0_A"):
-                dpb = per_bp(float(x0))
-                kinked = int((g["wc.n_internal_open"] > 0).sum())
-                out.append((dpb, float(x0), kinked, len(g),
-                            float(g["bend.max_step_deg"].mean()),
+            for (s, x0), g in fx.groupby(["system", "x0_A"]):
+                r = float(g.mean_r_A.mean())
+                out.append((per_bp(r, NB[s]), NICE[s], r,
+                            int((g["wc.n_internal_open"] > 0).sum()), len(g),
+                            float(g["bend.max_step_deg"].mean())
+                            if "bend.max_step_deg" in g else float("nan"),
                             float(g["force_pN"].mean())))
             out.sort()
-            def _fx_row(d, x, k, n, b, f):
+
+            def _fx_row(d, nm, r, k, n, b, fo):
                 cls = ' class="hi"' if k else ''
-                verdict = ("<strong>yes</strong>, %d/%d" % (k, n)) if k else "no"
-                return ('<tr%s><td class="num">%.1f</td><td class="num">%.0f</td>'
-                        '<td class="num">%.1f</td><td class="num">%.0f</td>'
-                        '<td>%s</td></tr>' % (cls, d, x, b, f, verdict))
+                verdict = ("<strong>yes</strong>, %d/%d" % (k, n)) if k else "no, 0/%d" % n
+                bs = "&mdash;" if b != b else "%.1f" % b
+                return ('<tr%s><td>%s</td><td class="num">%.1f</td>'
+                        '<td class="num">%.0f</td><td class="num">%s</td>'
+                        '<td class="num">%.0f</td><td>%s</td></tr>'
+                        % (cls, nm, d, r, bs, fo, verdict))
 
             fx_rows = "\n".join(_fx_row(*r) for r in out)
-            first = next((d for d, x, k, n, b, f in out if k), None)
-            fx_note = (f"First internal opening at <strong>{first:.1f}°/bp</strong>."
-                       if first else "No internal opening at any curvature tested.")
+            opened = [d for d, nm, r, k, n, b, fo in out if k]
+            allopen = [d for d, nm, r, k, n, b, fo in out if k == n]
+            parts = []
+            if opened:
+                parts.append("The gentlest curvature at which any interior pair opens is "
+                             f"<strong>{min(opened):.1f}°/bp</strong>")
+                if allopen:
+                    parts.append("and every run opens above "
+                                 f"<strong>{min(allopen):.1f}°/bp</strong>")
+            else:
+                parts.append("No interior pair opened at any curvature these boxes can "
+                             "hold")
+            if n_drop:
+                parts.append(f"{n_drop} of {n_all} runs are excluded because the duplex "
+                             "sat within 85 % of the box's perpendicular width, where it "
+                             "can reach its own image")
+            fx_note = ". ".join(parts) + "."
+            fx_first = min(opened) if opened else None
+            fx_certain = min(allopen) if allopen else None
 
     ps = params_summary(Path(args.root))
     _pv = {
@@ -822,7 +855,8 @@ def build(args):
     # ---------- prose that quotes the numbers ----------
     s27, s40, s40n = (sp.get("S3_spring27"), sp.get("S4_spring40"),
                       sp.get("S5_spring40nick"))
-    tw = ext.get("tet_vs_wt") or {}
+    tw = ext.get("tet_vs_wt") or {}          # installing the residues: WT -> unclicked
+    cw = ext.get("clicked_vs_tet") or {}     # clicking: unclicked -> clicked
     sw = ext.get("strongest_vs_weakest_spring") or {}
     chim_slope = ext.get("chimera_slope_A_per_pN")
     mc = ext.get("matched_control") or {}
@@ -1122,25 +1156,44 @@ def build(args):
     starts breaking base pairs. The criterion was fixed before the runs — an
     <strong>internal</strong> pair, not the terminal two which fray in anything, open in
     more than 10% of frames.</p>
-    {'<div class="tbl-wrap"><table><thead><tr><th>°/bp</th><th>x₀ (Å)</th>'
-     '<th>max step (°)</th><th>f (pN)</th><th>internal pair opens?</th></tr></thead>'
+    {'<div class="tbl-wrap"><table><thead><tr><th>duplex</th><th>°/bp</th>'
+     '<th>separation adopted (Å)</th>'
+     '<th>max step (°)</th><th>f (pN)</th><th>interior pair opens?</th></tr></thead>'
      '<tbody>' + fx_rows + '</tbody></table></div><p>' + fx_note + '</p>'
      if fx_rows else '<p class="muted">Force–extension windows still running.</p>'}
     <p>Three things follow. <strong>The force field can kink</strong> — reproducibly, with
     the opened pair sitting at the maximum of the bend profile — so the possibility that
     AMBER with OL15 simply cannot support a kink is excluded by our own data rather than by
-    argument. <strong>The threshold is 6.7–8.3°/bp</strong>, against Curuksu <em>et al.</em>'s
-    8.6–9.3 from biased sampling: the same regime, and a long way from Zocchi's
-    τ<sub>c</sub>, which implies 2.6–3.0. And <strong>our chimera sits at 4.8–5.2°/bp,
-    below the threshold we measure ourselves</strong> — which is the answer. The construct
-    is not bent far enough, on this force field's own showing.</p>
-    <p>One detail that makes this a check rather than a coincidence: the kink lands on
-    <strong>base pair 17 every time</strong>, across independent windows and replicates.
-    Base 17 is an adenine and the step into it is <strong>CpA</strong> — one of the three
-    pyrimidine–purine steps (CpG, TpA, CpA) that Curuksu names as where roll preferentially
-    localises. The other pair that opened, bp13, sits at a <strong>TpG</strong> step, also
-    pyrimidine–purine. The force field is not breaking a pair at random under load; it
-    picks exactly the dinucleotide steps the literature says it should.</p>
+    argument.</p>
+
+    <p><strong>There is no threshold; there is a probability.</strong> An earlier version of
+    this page said the threshold was 6.7–8.3°/bp. That rested partly on the 27-mer's widest
+    windows — 66 Å and beyond — which are exactly the rows showing <em>no</em> opening at
+    low curvature, and every one of them sits outside what its solvent box can hold. With
+    only valid windows, opening appears as low as
+    <strong>{fx_first:.1f}°/bp</strong> and becomes certain — every run in the window —
+    only above <strong>{fx_certain:.1f}°/bp</strong>. The per-run observation is bimodal:
+    a run either keeps every interior pair shut for its whole trajectory or opens one and
+    holds it open 30–100 % of frames. So what varies smoothly with curvature is the
+    <em>probability</em> of opening rather than its extent, which is what figure 5 plots —
+    binned by each run's own curvature, where the table above groups by window. Curuksu <em>et al.</em>'s 8.6–9.3°/bp from biased sampling is where our
+    probability has already reached 0.8, so the two agree about where kinking becomes the
+    expected behaviour while ours shows a stochastic tail below it. Both are a long way
+    from Zocchi's τ<sub>c</sub>, which implies 2.6–3.0 — even our tail does not reach
+    that.</p>
+
+    <p>And <strong>our chimera sits at 4.8–5.2°/bp, below the lowest curvature at which we
+    ever see a pair open</strong> — which is the answer. The construct is not bent far
+    enough, on this force field's own showing.</p>
+
+    <p>One detail that makes this a check rather than a coincidence: in the 27 bp duplex the
+    kink lands on <strong>base pair 17 in 11 of its 14 openings</strong>, across independent
+    windows and replicates. Base 17 is an adenine and the step into it is
+    <strong>CpA</strong> — one of the three pyrimidine–purine steps (CpG, TpA, CpA) that
+    Curuksu names as where roll preferentially localises. The other pair that opened, bp13,
+    sits at a <strong>TpG</strong> step, also pyrimidine–purine. The force field is not
+    breaking a pair at random under load; it picks exactly the dinucleotide steps the
+    literature says it should.</p>
 
     <h4>The force field, honestly</h4>
     <p>There is a documented bias, and OL15 is specifically implicated: backbone-dihedral
@@ -1284,7 +1337,7 @@ def build(args):
       attributed the excess over a pure axial pull to a couple and a shear delivered
       through the two flexible tethers. <strong>That claim is withdrawn.</strong> It used
       the <em>unclicked</em> protein as its zero. Every chimera is clicked, and clicking
-      alone moves the sites {tw.get('delta', 0):+.2f} Å — fifteen to thirty times any
+      alone moves the sites {cw.get('delta', 0):+.2f} Å — fifteen to thirty times any
       force effect. The physical argument was also unsound: at equilibrium a couple does
       no net work, and along Cβ–Cβ only the component of force along that coordinate can
       displace the mean. Thanks to Doeke Hekstra for catching both.</p></div>

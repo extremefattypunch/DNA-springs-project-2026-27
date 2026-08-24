@@ -101,34 +101,26 @@ def fx_summary(path: Path):
             return math.degrees(3.376 / (0.5 * (lo + hi)))
 
         dd = d[d["wc.max_internal_occupancy"].notna()].copy()
-        dd["deg_bp"] = [per_bp(float(r), NB.get(s, 27))
-                        for r, s in zip(dd.mean_r_A, dd.system)]
         dd["opened"] = dd["wc.max_internal_occupancy"] > 0
-        op = dd[dd.opened]
-        if len(op):
+        # Grouped by WINDOW, matching the report's table, so the two cannot quote
+        # different onsets for the same thing.  Per-run binning is what the figure does
+        # and gives a slightly different pair of numbers for a defensible reason; having
+        # the prose in both places agree matters more than either grouping does.
+        wins = []
+        for (s, x0), g in dd.groupby(["system", "x0_A"]):
+            r = float(g.mean_r_A.mean())
+            wins.append((per_bp(r, NB[s]), int(g.opened.sum()), int(len(g))))
+        wins.sort()
+        opened = [c for c, k, n in wins if k]
+        allopen = [c for c, k, n in wins if k == n]
+        if opened:
             out["kink"] = {
-                "gentlest_opening_deg_bp": float(op.deg_bp.min()),
-                "sampled_lo": float(dd.deg_bp.min()),
-                "sampled_hi": float(dd.deg_bp.max()),
-                "frac_lowest_bin": None}
-            # The curvature at which every run opens, in the SAME 1-degree bins the
-            # figure uses -- so the page and the panel cannot disagree.  Python's
-            # round() is banker's rounding, which put 8.5 in the 8 bin and made the
-            # answer depend on a tie-break nobody chose.
-            import math as _m
-            certain = []
-            lo_b = int(_m.floor(dd.deg_bp.min()))
-            for b in range(lo_b, int(_m.ceil(dd.deg_bp.max())) + 1):
-                g2 = dd[(dd.deg_bp >= b) & (dd.deg_bp < b + 1)]
-                if len(g2) and g2.opened.all():
-                    certain.append(b)
-            out["kink"]["certain_from_deg_bp"] = (float(min(certain)) if certain
-                                                  else None)
-            out["kink"]["certain_bin"] = (f"{min(certain):.0f}–{min(certain)+1:.0f}"
-                                          if certain else None)
-            # Restricted to the 27 bp duplex: that is the construct the sentence names,
-            # and pooling all three made bp17 look less dominant than it is.
-            bps = op[op.system == "D_27bp"]["wc.most_open_internal_bp"].dropna()
+                "gentlest_opening_deg_bp": float(min(opened)),
+                "certain_from_deg_bp": float(min(allopen)) if allopen else None,
+                "sampled_lo": float(min(c for c, k, n in wins)),
+                "sampled_hi": float(max(c for c, k, n in wins))}
+            bps = dd[dd.opened & (dd.system == "D_27bp")][
+                "wc.most_open_internal_bp"].dropna()
             if len(bps):
                 vc = bps.astype(int).value_counts()
                 out["kink"]["most_common_bp"] = int(vc.index[0])
@@ -237,7 +229,8 @@ forces in the table above are if anything **underestimates**."""
 in three 50 ns runs no interior base pair opened. The windows above reach
 {k.get('sampled_lo', 0):.1f}–{k.get('sampled_hi', 0):.1f}°/bp, and there opening is a
 probability rather than a threshold: it appears from **{k.get('gentlest_opening_deg_bp', 0):.1f}°/bp**
-and becomes certain only above **{k.get('certain_bin') or '?'}°/bp**,
+and becomes certain — every run in the window — only above
+**{k.get('certain_from_deg_bp') or float('nan'):.1f}°/bp**,
 with the 8.6–9.3°/bp at which the one directly comparable all-atom calculation nucleates
 a type II kink sitting where our probability is already 0.8.
 
