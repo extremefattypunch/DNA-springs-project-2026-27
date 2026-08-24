@@ -175,15 +175,26 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     resmap = load_map(resmap_path)
     strands = dna_strands(top, resmap)
     box_width = 2.0 * geometry.min_image_limit(t)
-    box_ok = bool(x0 < BOX_FRACTION_MAX * box_width)
+    # Judge the box on where the duplex ACTUALLY sits, not only on where we aimed.  A
+    # soft restraint is not a constraint: at k = 33 kJ/mol/nm2 the duplex settles 2-7 A
+    # beyond its target, so a window that passes on x0 can still spend its whole
+    # trajectory close enough to its own image to matter.  Both tests must pass.
+    r_mean = float(r.mean())
+    ok_x0 = bool(x0 < BOX_FRACTION_MAX * box_width)
+    ok_r = bool(r_mean < BOX_FRACTION_MAX * box_width)
+    box_ok = ok_x0 and ok_r
     if not box_ok:
-        print(f"  WARNING: x0 = {x0:.0f} A is {x0 / box_width:.2f} of the box's "
-              f"perpendicular width ({box_width:.0f} A) -- the duplex can reach its own "
-              "periodic image and this force is not its alone")
+        which = ("x0 = %.0f A" % x0) if not ok_x0 else ("the duplex settled at %.0f A"
+                                                        % r_mean)
+        print(f"  WARNING: {which} is "
+              f"{max(x0, r_mean) / box_width:.2f} of the box's perpendicular width "
+              f"({box_width:.0f} A) -- the duplex can reach its own periodic image and "
+              "this force is not its alone")
     out = {"x0_A": x0, "k_kJ_mol_nm2": k, "frames": len(t), "skip_ns": skip_ns,
            "pbc": pbc, "box_width_A": round(box_width, 1),
            "x0_over_box": round(float(x0 / box_width), 3),
-           "box_ok": box_ok,
+           "r_over_box": round(float(r_mean / box_width), 3),
+           "box_ok": box_ok, "box_ok_on_x0": ok_x0, "box_ok_on_measured_r": ok_r,
            "mean_r_A": round(float(r.mean()), 3), "sd_r_A": round(float(r.std()), 3),
            "sem_r_A": round(sem, 4), "lag1_rho": round(rho, 4),
            "independent_samples": round(float(n_ind), 1),

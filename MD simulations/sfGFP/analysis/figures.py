@@ -267,78 +267,233 @@ def fig_bend(runs, out):
 
 
 def fig_kink_threshold(runs, outdir):
-    """Where this force field starts breaking internal base pairs.
+    """How often a bent duplex breaks an internal base pair, against curvature.
 
-    Form: the data's job is magnitude along a continuum -- how persistently a pair stays
-    open as curvature rises -- so a dot-and-line against curvature, one measure on one
-    axis.  Deliberately NOT two y-scales with the bend angle on the right: that is the
-    single most common chart mistake and it would let a reader infer a relationship
-    between two quantities from the accident of their scaling.  The bend profile has its
-    own panel.
+    Form.  The per-run measurement is bimodal, not continuous: a run either keeps every
+    interior pair shut for its whole trajectory or it opens one and holds it open 30-100%
+    of frames.  Averaging that gives a number no run ever exhibits, and joining those
+    averages gave a sawtooth that read as violent structure where the truth is a smooth
+    rise in a probability.  So the measure plotted is the one that actually varies with
+    curvature -- the FRACTION OF RUNS in which any interior pair opens -- with the
+    individual runs shown underneath as the binary data they are.  One measure, one axis.
 
-    One series, so no legend box -- the title names it.  The two reference bands are
-    annotation rather than data and wear recessive tones with direct labels: our own
-    construct's curvature in the series hue, because it is our measurement, and the
-    published threshold in grey, because it is someone else's.
+    The band is a Wilson 68% interval, which is the right interval for a proportion from
+    four runs: a normal approximation would put the lower edge below zero and the upper
+    edge above one, and at n = 4 that is not a rounding detail.
+
+    Curvature is the nominal circular-arc equivalent of the separation the duplex
+    actually adopted.  The windows load it at its two ends, where the chimera's tethers
+    distribute the bend, so this coordinate is comparable rather than identical -- the
+    caption says so.
+
+    One series, because the claim is about the force field rather than about any one
+    duplex; which construct each run came from is in the shipped CSV.
     """
-    f = Path(runs).parent / "analysis" / "force_extension.csv"
+    f = Path(__file__).resolve().parent / "force_extension.csv"
     if not f.exists():
         print("  kink threshold: no force_extension.csv yet")
         return None
     d = pd.read_csv(f)
-    d = d[(d.system == "D_27bp") & d.get("wc.max_internal_occupancy").notna()] \
-        if "wc.max_internal_occupancy" in d else d.iloc[0:0]
-    if not len(d):
+    if "wc.max_internal_occupancy" not in d.columns:
         print("  kink threshold: no internal-opening column yet")
         return None
+    if "box_ok" in d.columns:
+        d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
+    if "r_over_box" not in d.columns and "box_width_A" in d.columns:
+        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
+    if "r_over_box" in d.columns:
+        d = d[d.r_over_box <= 0.85]
+    d = d[d["wc.max_internal_occupancy"].notna()]
+    if len(d) < 4:
+        print("  kink threshold: too few valid windows")
+        return None
 
-    L = 26 * 3.376                     # axis contour of the 27 bp duplex, angstrom
-    def per_bp(chord):
-        lo, hi = L / (2 * np.pi), 1e6
-        for _ in range(200):
+    RISE = 3.376
+    NBP = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+
+    def per_bp(chord, n_bp):
+        L = (n_bp - 1) * RISE
+        lo, hi = L / (2 * np.pi), 1e7
+        for _ in range(300):
             mid = 0.5 * (lo + hi)
-            c = 2 * mid * np.sin(L / (2 * mid))
-            lo, hi = (mid, hi) if c < chord else (lo, mid)
-        return np.degrees(3.376 / (0.5 * (lo + hi)))
+            lo, hi = ((mid, hi) if 2 * mid * np.sin(L / (2 * mid)) < chord
+                      else (lo, mid))
+        return np.degrees(RISE / (0.5 * (lo + hi)))
 
-    d = d.assign(deg_bp=[per_bp(float(x)) for x in d.x0_A])
-    g = d.groupby("deg_bp")["wc.max_internal_occupancy"].agg(["mean", "min", "max",
-                                                             "size"])
-    fig, ax = plt.subplots(figsize=(7.4, 4.3))
+    xcol = "mean_r_A" if "mean_r_A" in d.columns else "x0_A"
+    d = d.assign(deg_bp=[per_bp(float(x), NBP.get(s, 27))
+                         for x, s in zip(d[xcol], d.system)],
+                 opened=d["wc.max_internal_occupancy"] > 0)
 
-    # our construct, and the published threshold -- annotation, not series
+    def wilson(k, n, z=1.0):
+        """68% Wilson interval -- correct at n = 4, where the normal one is not."""
+        if not n:
+            return (0.0, 1.0)
+        ph, z2 = k / n, z * z
+        c = (ph + z2 / (2 * n)) / (1 + z2 / n)
+        h = (z / (1 + z2 / n)) * np.sqrt(ph * (1 - ph) / n + z2 / (4 * n * n))
+        return max(0.0, c - h), min(1.0, c + h)
+
+    lo_e, hi_e = np.floor(d.deg_bp.min()), np.ceil(d.deg_bp.max())
+    edges = np.arange(lo_e, hi_e + 1e-9, 1.0)
+    xs, ys, los, his, ns = [], [], [], [], []
+    for a, b in zip(edges[:-1], edges[1:]):
+        g = d[(d.deg_bp >= a) & (d.deg_bp < b)]
+        if not len(g):
+            continue
+        k, n = int(g.opened.sum()), len(g)
+        l, h = wilson(k, n)
+        xs.append(0.5 * (a + b)); ys.append(k / n); los.append(l); his.append(h)
+        ns.append(n)
+
+    fig, ax = plt.subplots(figsize=(7.6, 4.5))
     ax.axvspan(4.8, 5.2, color=VS.SERIES[0], alpha=0.13, lw=0, zorder=0)
     ax.axvspan(8.6, 9.3, color=VS.GRID, alpha=0.9, lw=0, zorder=0)
-    ax.annotate("our chimera\n4.8–5.2°/bp", (5.0, 0.93), ha="center", va="top",
-                fontsize=8.5, color=VS.SERIES[0], zorder=5)
-    ax.annotate("Curuksu et al.\n8.6–9.3", (8.95, 0.93), ha="center", va="top",
-                fontsize=8.5, color=VS.INK_MUTED, zorder=5)
+    ax.annotate("our chimera\n4.8–5.2°/bp\nnone open in 3 × 50 ns", (5.0, 0.55),
+                ha="center", va="top", fontsize=8.5, color=VS.SERIES[0], zorder=5)
+    ax.annotate("Curuksu et al.\ntype II kink\n8.6–9.3", (8.95, 0.42), ha="center",
+                va="top", fontsize=8.5, color=VS.INK_MUTED, zorder=5)
 
-    # individual replicates faint, the per-window mean solid: the spread is the story at
-    # the onset, where one replicate opens and the other does not
-    ax.plot(d.deg_bp, d["wc.max_internal_occupancy"], "o", ms=5, alpha=0.35,
-            color=VS.SERIES[0], lw=0, zorder=2)
-    ax.plot(g.index, g["mean"], "-o", lw=2.0, ms=8, color=VS.SERIES[0],
-            mec="white", mew=1.6, zorder=3)
+    # the individual runs, as the binary observations they are
+    ax.plot(d.deg_bp, d.opened.astype(float), "|", ms=11, mew=1.6,
+            color=VS.SERIES[0], alpha=0.4, zorder=2)
 
-    first = g[g["mean"] > 0]
-    if len(first):
-        x0 = float(first.index[0])
-        ax.annotate(f"first opening\n{x0:.1f}°/bp", (x0, float(first["mean"].iloc[0])),
-                    xytext=(-6, 34), textcoords="offset points", ha="right",
-                    fontsize=8.5, color=VS.INK_2, zorder=5,
-                    arrowprops=dict(arrowstyle="-", lw=1.0, color=VS.INK_MUTED))
-    ax.set_xlabel("curvature imposed on the duplex (degrees per base-pair step)")
-    ax.set_ylabel("fraction of frames an internal\nbase pair is open")
-    ax.set_ylim(-0.04, 1.08)
-    ax.set_title("Where this force field starts breaking base pairs")
+    ax.fill_between(xs, los, his, color=VS.SERIES[0], alpha=0.18, lw=0, zorder=1)
+    ax.plot(xs, ys, "-o", lw=2.2, ms=8, color=VS.SERIES[0], mec="white", mew=1.6,
+            zorder=3)
+    for x, y, n in zip(xs, ys, ns):
+        ax.annotate(f"{n}", (x, y), xytext=(0, 11), textcoords="offset points",
+                    ha="center", fontsize=7.5, color=VS.INK_MUTED, zorder=5)
+
+    ax.set_xlabel("curvature of the duplex (degrees per base-pair step, nominal "
+                  "circular arc)")
+    ax.set_ylabel("fraction of runs in which an\ninterior base pair opens")
+    ax.set_ylim(-0.09, 1.16)
+    ax.set_xlim(4.2, 10.4)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_title("Base-pair opening becomes certain only at the published kink curvature")
     ax.grid(axis="y", alpha=0.6)
     fig.tight_layout()
-    fig.savefig(Path(outdir) / "fig5_kink_threshold.png", dpi=200,
-                bbox_inches="tight")
-    g.to_csv(Path(outdir) / "fig5_kink_threshold.csv")
+    fig.savefig(Path(outdir) / "fig5_kink_threshold.png", dpi=200, bbox_inches="tight")
+    pd.DataFrame({"deg_bp_bin_centre": xs, "fraction_opening": ys,
+                  "wilson68_lo": los, "wilson68_hi": his, "n_runs": ns}).to_csv(
+        Path(outdir) / "fig5_kink_threshold.csv", index=False)
+    keep = [c for c in ("system", "x0_A", "replicate", "k_kJ_mol_nm2", "mean_r_A",
+                        "deg_bp", "wc.max_internal_occupancy",
+                        "wc.most_open_internal_bp") if c in d.columns]
+    d[keep].to_csv(Path(outdir) / "fig5_kink_threshold_runs.csv", index=False)
     plt.close(fig)
     return "fig5_kink_threshold"
+
+
+def fig_force_extension(runs, outdir):
+    """Measured force against measured extension, for the three bare duplexes.
+
+    This is the panel that answers "is the force a model or a measurement".  Every other
+    force in this project is Zocchi's f(x) evaluated at a simulated distance; these come
+    out of the force field itself, as the mean restraint force <k(r - x0)>.
+
+    Form: force is a magnitude against a continuum, so points with a line, one measure on
+    one axis.  Three constructs is three series, so a legend AND direct labels -- identity
+    is never carried by colour alone.  The two reference curves are annotation, not
+    series: they wear grey and are labelled in place.
+
+    The two restraint stiffnesses are the internal control rather than a series.  A soft
+    restraint lets the duplex settle several angstrom past its target, so if the force
+    were an artefact of how hard we pulled, the k = 33 and k = 200 points would sit on
+    different curves.  Plotted against the distance the duplex actually adopted, they
+    have to fall on one curve, and whether they do is visible here.  Marker shape carries
+    which is which; the reader is not asked to compare them by colour.
+    """
+    f = Path(__file__).resolve().parent / "force_extension.csv"
+    if not f.exists():
+        print("  force-extension: no force_extension.csv yet")
+        return None
+    d = pd.read_csv(f)
+    need = {"mean_r_A", "force_pN", "box_ok", "k_kJ_mol_nm2"}
+    if not need <= set(d.columns):
+        print("  force-extension: csv predates the box check")
+        return None
+    d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
+    # box_ok in an older csv was judged on the TARGET separation only.  The measured
+    # ratio is mean_r/box_width exactly, so derive it rather than skipping the check --
+    # a missing column must not silently relax a guard.
+    if "r_over_box" not in d.columns:
+        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
+    d = d[d.r_over_box <= 0.85]
+    if not len(d):
+        print("  force-extension: no valid windows")
+        return None
+
+    NBP = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+    NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
+    B, RISE_NM = 200.0, 0.33
+    order = [s for s in ("D_27bp", "D_40bp", "D_40bp_nick") if s in set(d.system)]
+
+    fig, ax = plt.subplots(figsize=(7.6, 4.6))
+
+    # --- annotation: the two things the measurement can be compared against ---
+    for n_bp in sorted({NBP[s] for s in order}):
+        eul = np.pi ** 2 * B / (((n_bp - 1) * RISE_NM) ** 2)
+        ax.axhline(eul, color=VS.INK_MUTED, lw=1.1, ls=(0, (4, 3)), alpha=0.8, zorder=1)
+        ax.annotate(f"Euler load, {n_bp} bp — {eul:.0f} pN", (0.012, eul),
+                    xycoords=("axes fraction", "data"), xytext=(0, 4),
+                    textcoords="offset points", ha="left", va="bottom", fontsize=8.5,
+                    color=VS.INK_MUTED, zorder=5)
+    pass
+
+    zoc = {"D_27bp": (2.4, 6.6), "D_40bp": (2.0, 3.2), "D_40bp_nick": (1.8, 2.6)}
+    lo = min(v[0] for s, v in zoc.items() if s in order)
+    hi = max(v[1] for s, v in zoc.items() if s in order)
+    ax.axhspan(lo, hi, color=VS.GRID, alpha=0.85, lw=0, zorder=0)
+    ax.annotate("what Zocchi’s kinked branch predicts for these same duplexes",
+                (0.012, lo + 0.35), xycoords=("axes fraction", "data"), ha="left",
+                va="bottom", fontsize=8.5, color=VS.INK_MUTED, zorder=5)
+
+    # --- the data ---
+    # Drawn as a PLATEAU, not as a curve through the points.  Regressing force on
+    # separation gives p = 0.29-0.54 for all three constructs: there is no resolvable
+    # slope, which is the signature of post-buckling -- a buckled rod carries a roughly
+    # constant load however far you compress it.  A line joining consecutive points
+    # would invent a trend out of which restraint stiffness happened to land where, so
+    # each construct gets the flat mean it actually measures, banded by its standard
+    # error, spanning only the separations sampled.
+    for i, s in enumerate(order):
+        g = d[d.system == s]
+        col = VS.SERIES[i]
+        for k, mk in ((33.0, "s"), (200.0, "o")):
+            gg = g[g.k_kJ_mol_nm2 == k]
+            if len(gg):
+                ax.plot(gg.mean_r_A, gg.force_pN, mk, ms=7, color=col, alpha=0.5,
+                        lw=0, mec="white", mew=0.9, zorder=2,
+                        label=NICE[s] if k == 200.0 else None)
+        m, e = float(g.force_pN.mean()), float(g.force_pN.sem())
+        r0, r1 = float(g.mean_r_A.min()), float(g.mean_r_A.max())
+        ax.fill_between([r0, r1], m - e, m + e, color=col, alpha=0.20, lw=0, zorder=1)
+        ax.plot([r0, r1], [m, m], "-", lw=2.4, color=col, zorder=3,
+                solid_capstyle="round")
+        ax.annotate(f"{NICE[s]}   {m:.1f} pN", (r1, m), xytext=(8, 0),
+                    textcoords="offset points", ha="left", va="center",
+                    fontsize=9, color=col, zorder=5)
+
+    ax.plot([], [], "o", color=VS.INK_MUTED, ms=6, lw=0, label="stiff restraint (k = 200)")
+    ax.plot([], [], "s", color=VS.INK_MUTED, ms=6, lw=0, label="soft restraint (k = 33)")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.17), frameon=False,
+              fontsize=8.5, ncol=5, handletextpad=0.4, columnspacing=1.4)
+    ax.set_xlabel("end-to-end separation the duplex actually adopted (Å)")
+    ax.set_ylabel("force the duplex exerts (pN)\nmeasured as ⟨k(r − x₀)⟩")
+    ax.set_title("Force measured from the force field, not from a model")
+    ax.set_xlim(float(d.mean_r_A.min()) - 3, float(d.mean_r_A.max()) + 17)
+    ax.set_ylim(0, max(40.0, float(d.force_pN.max()) + 4))
+    ax.grid(axis="y", alpha=0.6)
+    fig.tight_layout()
+    fig.savefig(Path(outdir) / "fig6_force_extension.png", dpi=200,
+                bbox_inches="tight")
+    keep = [c for c in ("system", "x0_A", "replicate", "k_kJ_mol_nm2", "mean_r_A",
+                        "force_pN", "force_sem_pN") if c in d.columns]
+    d[keep].to_csv(Path(outdir) / "fig6_force_extension.csv", index=False)
+    plt.close(fig)
+    return "fig6_force_extension"
 
 
 def fig_ramachandran(runs, outdir):
@@ -438,7 +593,8 @@ def main():
     made = [fig_force_response(df, out), fig_rmsf(df, a.runs, out),
             fig_hbonds(df, out), fig_bend(a.runs, out),
              fig_ramachandran(a.runs, out),
-             fig_kink_threshold(a.runs, out)]
+             fig_kink_threshold(a.runs, out),
+             fig_force_extension(a.runs, out)]
     made = [m for m in made if m]
     print("wrote: " + ", ".join(f"{m}.png" for m in made))
     (out / "figures.json").write_text(json.dumps(made, indent=2))

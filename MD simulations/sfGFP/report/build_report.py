@@ -128,21 +128,39 @@ FIGS = [
      pairs open, so on this timescale the duplex is an elastically bent rod rather than
      a hinge."""),
     ("fig5_kink_threshold", "Where this force field starts breaking base pairs",
-     """The previous panel says no kink appears in the chimera. That could mean the
-     duplex genuinely does not kink at this curvature, or it could mean this force field
-     cannot kink at all — and the two have opposite implications for Zocchi’s model.
-     Separating them needs curvature the chimera does not reach, which is what the
-     harmonic windows provide: the same 27 bp duplex held at separations from 32 to 58 Å,
-     spanning 3.5 to 8.3° per base-pair step. Faint marks are individual replicates,
-     the solid line their per-window mean; the vertical bands are annotation, not data.
-     <strong>Base pairs do break, at 6.7–8.3° per step</strong>, so the force field is
-     capable of it — and the onset sits within the range Curuksu <em>et al.</em> report
-     for a type II kink, from a different force field and a different protocol. Our own
-     chimera, at 4.8–5.2°, is below it. The opening is also not diffuse: in every window
-     that opens it is <strong>base pair 17</strong>, whose incoming step is CpA — one of
-     the pyrimidine–purine steps kinking is known to prefer. That is what makes this a
-     measurement rather than an absence: the force field can kink, it kinks where the
-     literature says it should, and our construct does not bend it far enough."""),
+     """The previous panel says no kink appears in the chimera. That could mean the duplex
+     genuinely does not kink at this curvature, or that this force field cannot kink at
+     all — and the two have opposite implications for Zocchi’s model. Separating them
+     needs curvature the chimera does not reach, which is what the harmonic windows
+     provide. The measure plotted is the <em>fraction of runs</em> in which an interior
+     base pair opens, because the per-run observation is bimodal — a run either keeps
+     every interior pair shut or opens one and holds it open most of the trajectory — so
+     an average over runs would be a number no run exhibits. Ticks along the top and
+     bottom are the individual runs; the band is a Wilson 68 % interval, which is the
+     right interval for a proportion out of four; the small numbers are how many runs
+     each bin holds. Curvature is the circular-arc equivalent of the separation the
+     duplex actually adopted, not of the target it was pulled towards.
+     <strong>Opening is stochastic from about 5.4°/bp and becomes certain only at
+     9.5°/bp</strong>, with the published type II kink curvature (grey) sitting where the
+     probability is already 0.8. So the force field is entirely capable of breaking base
+     pairs, and it does so around where the literature says it should. Our chimera, at
+     4.8–5.2°/bp, opened none in three 50 ns runs — it sits just below the onset. That is
+     what makes this a measurement rather than an absence, and it excludes “the force
+     field cannot kink” as the explanation."""),
+    ("fig6_force_extension", "Force measured from the force field, not from a model",
+     """The bare duplexes, no protein, held at a series of separations by a harmonic
+     restraint; the ordinate is the mean restraint force, which <em>is</em> the force the
+     duplex exerts. Faint marks are individual runs, circles the stiff restraint and
+     squares the soft one; the solid bar is each duplex’s mean over the separations it was
+     sampled at, banded by its standard error. It is drawn flat because it <em>is</em>
+     flat — regressing force on separation gives no resolvable slope for any of the three,
+     which is what a buckled rod does: past its critical load it keeps folding at roughly
+     constant force. Two things to read. The plateaux sit on the dashed <strong>Euler
+     buckling loads</strong> π²B/L², within 4 % for the 27 bp, with nothing fitted. And
+     they sit far above the grey band, which is what Zocchi’s kinked branch predicts for
+     these same duplexes — about six times below what we measure. The two restraint
+     stiffnesses interleave rather than separating, which is the control that makes this
+     the duplex’s force and not the restraint’s."""),
 ]
 STEPS = [
     ("Prepare", "build/01_protein",
@@ -765,6 +783,65 @@ def build(args):
         vm_all.items(), key=lambda kv: -(f.get("springs", {}).get(kv[0], {})
                                          .get("force_pN", {}) or {}).get("mean", 0.0)))
 
+    # ---------- measured force-extension ----------
+    # Computed here from the shipped csv rather than transcribed, because these are the
+    # numbers that answer "is the force a model or a measurement" and a stale copy of
+    # them would be the worst single error the report could contain.
+    def _measured_fx():
+        import numpy as _np
+        from scipy import stats as _st
+        csv = Path(__file__).resolve().parent.parent / "analysis" / "force_extension.csv"
+        if not csv.exists():
+            return None
+        d = pd.read_csv(csv)
+        if not {"mean_r_A", "force_pN", "box_ok", "box_width_A"} <= set(d.columns):
+            return None
+        d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
+        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
+        d = d[d.r_over_box <= 0.85]
+        if not len(d):
+            return None
+        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp",
+                "D_40bp_nick": "40 bp, nicked"}
+        out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {}}
+        for s, g in d.groupby("system"):
+            if s not in NB:
+                continue
+            eul = _np.pi ** 2 * 200.0 / (((NB[s] - 1) * 0.33) ** 2)
+            lr = _st.linregress(g.mean_r_A, g.force_pN)
+            e = {"label": NICE[s], "n": int(len(g)),
+                 "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
+                 "f": float(g.force_pN.mean()), "sem": float(g.force_pN.sem()),
+                 "euler": float(eul), "ratio": float(g.force_pN.mean() / eul),
+                 "slope": float(lr.slope), "slope_p": float(lr.pvalue)}
+            a = g[g.k_kJ_mol_nm2 == 33.0].force_pN.values
+            b = g[g.k_kJ_mol_nm2 == 200.0].force_pN.values
+            if len(a) > 1 and len(b) > 1:
+                tt = _st.ttest_ind(a, b, equal_var=False)
+                e["k_agree_p"] = float(tt.pvalue)
+                e["f_soft"], e["f_stiff"] = float(a.mean()), float(b.mean())
+            out["by_system"][s] = e
+        i, n = d[d.system == "D_40bp"].force_pN.values, \
+            d[d.system == "D_40bp_nick"].force_pN.values
+        if len(i) > 1 and len(n) > 1:
+            tt = _st.ttest_ind(i, n, equal_var=False)
+            out["nick"] = {"intact": float(i.mean()), "nicked": float(n.mean()),
+                           "p": float(tt.pvalue)}
+        return out
+
+    mfx = _measured_fx()
+    mfx_rows = ""
+    if mfx:
+        mfx_rows = "\n".join(
+            "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f–%.0f</td>"
+            "<td class='num'><strong>%.1f ± %.1f</strong></td>"
+            "<td class='num'>%.1f</td><td class='num'>%.2f</td>"
+            "<td class='num'>%.2f</td></tr>" % (
+                e["label"], e["n"], e["r_lo"], e["r_hi"], e["f"], e["sem"],
+                e["euler"], e["ratio"], e["slope_p"])
+            for e in mfx["by_system"].values())
+
     ss = f.get("ss_springs") or {}
     ss_rows = "\n".join(
         "<tr><td>%s</td><td class='num'>%d</td><td class='num'>%.0f</td>"
@@ -922,16 +999,20 @@ def build(args):
     so this is the one number in the whole model that the simulation can supply
     independently.</p>
 
-    <h3>The nick softens the spring, by the amount it should</h3>
+    <h3>The nick softens the spring in the model — but not in measurement</h3>
     <p>The nicked 40 bp duplex delivers <strong>{sig(s40n['force_pN']['mean'])} pN</strong>
     against <strong>{sig(s40['force_pN']['mean'])} pN</strong> for the intact duplex of
     the same length, and it is visibly floppier: its span wanders over
     {sig(s40n['x_wander_A']['mean'], 1)} Å within a trajectory against
     {sig(s40['x_wander_A']['mean'], 1)} Å for the intact one. Zocchi’s two values of the
     critical bending torque{cite_tau} — 27 pN·nm with a nick, 31–36 without — predict this
-    ordering, and we reach it here from structure rather than from his calibration. This
-    is the control he relies on throughout: the nicked spring is the low-stress
-    reference, and it behaves like one.</p>
+    ordering, and we reach it here from structure rather than from his calibration.</p>
+    <p><strong>Measured directly, though, the nick does nothing resolvable</strong> — see
+    the next section. The agreement here is between two calculations that both take the
+    nick's effect from the same critical torque, so it is a consistency check on our
+    geometry rather than independent support for the model. The nicked spring is the
+    low-stress reference his argument relies on, and our force field does not reproduce
+    that it is softer.</p>
 
     <h3>Shorter spring, more force; longer spring, more stored energy</h3>
     <p>The 27 bp spring delivers {sig(s27['force_pN']['mean'])} pN and stores
@@ -1050,6 +1131,93 @@ def build(args):
     <p><strong>So the forces above remain model-dependent numbers.</strong> They are
     consistent with the model’s inputs; they do not confirm its mechanism. That is why
     the force is now also measured directly, below.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>What the spring delivers, measured</h2>
+    <span class="tag">the force field's own answer, not the model's</span></div>
+  <div class="col">
+    <p>Every force above is Zocchi's <em>f(x)</em> evaluated at a simulated distance. That
+    is a model, and the obvious question — put to us directly in review — is what the
+    force field says if you simply ask it. So we did: a bare duplex, no protein, held at a
+    series of separations by a harmonic restraint between the two linker nitrogens. The
+    mean restraint force ⟨k(r − x₀)⟩ <em>is</em> the force the duplex exerts, with no
+    model in between.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>duplex</th><th>runs</th><th>separations sampled (Å)</th>
+      <th>measured force (pN)</th><th>Euler load π²B/L² (pN)</th>
+      <th>measured / Euler</th><th>p, slope vs separation</th></tr></thead>
+      <tbody>{mfx_rows}</tbody></table></div>
+
+    <h3>The force does not depend on how far you compress it</h3>
+    <p>For all three duplexes, regressing force on separation gives no resolvable slope
+    (p = {", ".join("%.2f" % e["slope_p"] for e in (mfx or {"by_system": {}})["by_system"].values())}).
+    A constant load independent of compression is the signature of a <strong>buckled
+    rod</strong>: once past its critical load an elastic rod does not stiffen, it just
+    keeps folding at roughly the same force.</p>
+
+    <h3>And the load it holds is the Euler load</h3>
+    <p>The 27 bp duplex plateaus at
+    <strong>{(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("f", 0):.1f} ±
+    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("sem", 0):.1f} pN</strong>
+    against a classical Euler buckling load of
+    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("euler", 0):.1f} pN — a ratio of
+    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("ratio", 0):.2f}, with nothing
+    fitted. The 40 bp pair land at
+    {(mfx or {}).get("by_system", {}).get("D_40bp", {}).get("ratio", 0):.2f} and
+    {(mfx or {}).get("by_system", {}).get("D_40bp_nick", {}).get("ratio", 0):.2f} of theirs.
+    Textbook elasticity, from an all-atom force field, with a persistence length nobody
+    supplied.</p>
+
+    <div class="note flag"><div class="h">This disagrees with the model the project is built on</div>
+      <p>Zocchi's kinked branch predicts <strong>2.4–6.6 pN</strong> for these same
+      duplexes at these same separations. We measure
+      {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("f", 0):.0f} pN for the
+      27 bp — roughly <strong>six times higher</strong> — and on the
+      <em>unyielded</em> branch, which is the branch his model says the duplex has already
+      left. On this timescale the duplex is not a softened, kinked spring; it is an
+      elastic rod holding its buckling load.</p>
+      <p>Two consequences. The forces in the table above are, if anything,
+      <strong>underestimates</strong>. And the reason the protein does not respond is not
+      that the force is small — it is that even 26 pN moved these attachment sites less
+      than the noise, because the barrel is stiff along that coordinate and the load is
+      not applied along it.</p></div>
+
+    <h3>Two restraint stiffnesses, one answer</h3>
+    <p>Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm⁻².
+    The soft one is not really a constraint — the duplex settles 2–7 Å past its target —
+    so if the measured force were an artefact of how hard we pulled, the two would sit on
+    different curves. Plotted against the separation the duplex actually adopted, they
+    agree
+    (p = {", ".join("%.2f" % e["k_agree_p"] for e in (mfx or {"by_system": {}})["by_system"].values() if "k_agree_p" in e)}).
+    That is the control that makes this a measurement of the duplex rather than of the
+    restraint.</p>
+
+    <h3>What the nick does — and does not do</h3>
+    <p>Zocchi's model treats the nick as the key softening control, and predicts about
+    1.3× less force. Measured, there is <strong>no resolvable difference</strong>:
+    {(mfx or {}).get("nick", {}).get("intact", 0):.1f} pN intact against
+    {(mfx or {}).get("nick", {}).get("nicked", 0):.1f} pN nicked, p =
+    {(mfx or {}).get("nick", {}).get("p", float("nan")):.2f}. A nick removes one backbone
+    bond from a rod held together by 40 base pairs' worth of stacking; over 20–30 ns it
+    does not measurably change the buckling load. The model's ordering may still be right
+    on longer timescales, where a nick can act as a hinge — but our own data does not
+    support quoting it as a validated control, and the model section above should be read
+    with that in mind.</p>
+
+    <div class="note"><div class="h">What this cannot say</div>
+      <p>These are 20–30 ns windows on bare duplexes. A kink that takes microseconds to
+      nucleate would lower the plateau and is invisible here, so the Euler agreement is
+      evidence about this timescale, not about equilibrium.</p>
+      <p>And the chimera's own separation — about 70 Å for the 27 bp — is
+      <strong>outside</strong> the range we can sample validly, because a box big enough
+      to hold a 27-mer at 70 Å without it touching its own periodic image is larger than
+      the one these runs used. An earlier draft quoted a measured force at the chimera's
+      geometry; that figure came from a window whose target was 87 % of the box width and
+      it is <strong>withdrawn</strong>. Repeating those windows in a larger box is queued
+      and waiting on GPU allocation.</p></div>
   </div>
 </section>
 

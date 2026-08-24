@@ -3,5 +3,7 @@
   "fig2_rmsf",
   "fig3_chromophore_hbonds",
   "fig4_dna_bend",
-  "ramachandran"
+  "ramachandran",
+  "fig5_kink_threshold",
+  "fig6_force_extension"
 ]
