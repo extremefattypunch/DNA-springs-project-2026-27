@@ -228,13 +228,20 @@ def _read_trace(mode, group, rep, path, origin=None):
 
 
 def parse_extra(spec):
-    """``DIR#NUM=IDX`` -> (Path, number, construct index)."""
+    """``DIR#NUM=IDX`` or ``DIR#NUM=IDX:LABEL``.
+
+    Without a label the files join construct IDX as extra replicates.  With
+    one they become a group of their own -- the same construct under a
+    different condition -- drawn in that construct's hue at a lighter step,
+    because it is one identity at two levels rather than two identities.
+    """
     try:
-        left, idx = spec.rsplit("=", 1)
+        left, right = spec.rsplit("=", 1)
         d, num = left.rsplit("#", 1)
-        return Path(d), int(num), int(idx)
+        idx, _, label = right.partition(":")
+        return Path(d), int(num), int(idx), label.strip() or None
     except ValueError:
-        sys.exit(f"--extra: expected DIR#NUM=INDEX, got {spec!r}")
+        sys.exit(f"--extra: expected DIR#NUM=INDEX[:LABEL], got {spec!r}")
 
 
 def build_payload(root: Path, constructs, extras=()):
@@ -258,8 +265,9 @@ def build_payload(root: Path, constructs, extras=()):
                 t["scatter"] = round(hit[0], 1)
 
     # ---- traces appended from another run -------------------------------
+    variant_of = {}
     for spec in extras:
-        d, num, idx = parse_extra(spec)
+        d, num, idx, label = parse_extra(spec)
         if not d.is_absolute():
             d = HERE / d
         if not d.is_dir():
@@ -270,24 +278,42 @@ def build_payload(root: Path, constructs, extras=()):
         picked = sorted((f for f in ef if f[1] == num), key=lambda f: (f[0], f[2] or ""))
         if not picked:
             sys.exit(f"--extra: no sample {num} found under {d.name}")
-        target = constructs[idx - 1]
+        parent = constructs[idx - 1]
         origin = d.name.split("_")[0]
-        used = {t["rep"] for t in traces if t["group"] == target and t["rep"]}
-        # Continue the replicate letters rather than colliding with a..c, so an
-        # appended set is one click away from being excluded again.
-        nxt = (chr(max(ord(c) for c in used) + 1) if used else "a")
-        letters = {}
-        for mode, _, rep, path in picked:
-            if rep not in letters:
-                letters[rep] = chr(ord(nxt) + len(letters))
-            traces.append(_read_trace(mode, target, letters[rep], path, origin=origin))
-        notes.append(
-            f"Sample {num} from {d.name} is appended to {target} as replicates "
-            f"{'/'.join(sorted(letters.values()))}. It is a different run at a "
-            "different concentration, not a repeat of this one — untick those "
-            "replicates to drop them from the plot and from the group mean.")
+        if label:
+            # Its own group: keep the a/b/c letters, since these are that
+            # condition's own replicates rather than more of the parent's.
+            target = f"{parent}({label})"
+            variant_of[target] = idx - 1
+            for mode, _, rep, path in picked:
+                traces.append(_read_trace(mode, target, rep, path, origin=origin))
+            notes.append(
+                f"{target} is sample {num} from {d.name}, carried in as its own "
+                f"group. It shares {parent}'s hue at a lighter step because it is "
+                "the same construct at a different concentration, not a different "
+                "construct — and it keeps its own mean, so it never averages into "
+                f"{parent}.")
+        else:
+            used = {t["rep"] for t in traces if t["group"] == parent and t["rep"]}
+            # Continue the replicate letters rather than colliding with a..c, so
+            # an appended set is one click away from being excluded again.
+            nxt = (chr(max(ord(c) for c in used) + 1) if used else "a")
+            letters = {}
+            for mode, _, rep, path in picked:
+                if rep not in letters:
+                    letters[rep] = chr(ord(nxt) + len(letters))
+                traces.append(_read_trace(mode, parent, letters[rep], path, origin=origin))
+            notes.append(
+                f"Sample {num} from {d.name} is appended to {parent} as replicates "
+                f"{'/'.join(sorted(letters.values()))}. It is a different run at a "
+                "different concentration, not a repeat of this one — untick those "
+                "replicates to drop them from the plot and from the group mean.")
 
-    order = [name_of(c) for c in levels]
+    order = []
+    for c in levels:
+        g = name_of(c)
+        order.append(g)
+        order += [v for v, par in variant_of.items() if par == c - 1]
     present = [g for g in order if any(t["group"] == g for t in traces)]
     groups = ([CALIBRATION] if any(t["group"] == CALIBRATION for t in traces) else []) + present
     reps = sorted({t["rep"] for t in traces if t["rep"]})
@@ -357,6 +383,7 @@ def build_payload(root: Path, constructs, extras=()):
         "traces": traces,
         "notes": notes,
         "scatterDefault": lines[0] if lines else None,
+        "variantOf": variant_of,
         "rampLight": ramp_steps(n_lev, RAMP_LIGHT) if series else [],
         "rampDark": ramp_steps(n_lev, RAMP_DARK) if series else [],
     }
@@ -395,6 +422,7 @@ HTML = r"""<!doctype html>
     --muted:#898781; --grid:#e1e0d9; --axis:#c3c2b7; --hair:rgba(11,11,11,.10);
     --accent:#2a78d6; --warnbg:#fdf6e3; --warnink:#6b4f12; --warnline:#e6d18a;
     --c-cal:#898781; --c-g0:#2a78d6; --c-g1:#eb6834; --c-g2:#1baf7a;
+    --c-v0:#7fb0ee; --c-v1:#f2946c; --c-v2:#5bc9a1;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -403,6 +431,7 @@ HTML = r"""<!doctype html>
       --muted:#898781; --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,.10);
       --accent:#3987e5; --warnbg:#241f12; --warnink:#e8d9a8; --warnline:#4a3f22;
       --c-cal:#898781; --c-g0:#3987e5; --c-g1:#d95926; --c-g2:#199e70;
+      --c-v0:#7fb0ee; --c-v1:#e88a63; --c-v2:#4cbf94;
     }
   }
   :root[data-theme="dark"] {
@@ -411,6 +440,7 @@ HTML = r"""<!doctype html>
     --muted:#898781; --grid:#2c2c2a; --axis:#383835; --hair:rgba(255,255,255,.10);
     --accent:#3987e5; --warnbg:#241f12; --warnink:#e8d9a8; --warnline:#4a3f22;
     --c-cal:#898781; --c-g0:#3987e5; --c-g1:#d95926; --c-g2:#199e70;
+    --c-v0:#7fb0ee; --c-v1:#e88a63; --c-v2:#4cbf94;
   }
 __RAMPCSS__
   * { box-sizing:border-box; }
@@ -625,10 +655,12 @@ for (const t of RAW) {
    running a different experiment through the same builder) never repaints
    the others: colour follows the entity's rank in the declared order. */
 const SEQUENTIAL = PAYLOAD.encoding === "sequential";
+const VARIANT_OF = PAYLOAD.variantOf || {};
 const COLOR_VAR = {};
 { let i = 0;
   for (const g of GROUPS) {
     COLOR_VAR[g] = g === "calibration" ? "--c-cal"
+                 : g in VARIANT_OF ? `--c-v${VARIANT_OF[g]}`
                  : SEQUENTIAL ? `--s${i++}` : `--c-g${i++}`;
   }
 }
