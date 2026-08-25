@@ -76,12 +76,23 @@
 
   <h2>Runs</h2>
 
+  <a class="card" href="attempt3-260821.html">
+    <div class="t">2026-08-21 — attempt 3 <span style="font-weight:400;font-size:13px;color:var(--muted)">· latest</span></div>
+    <div class="d">
+      The complete run: a full 3&nbsp;×&nbsp;3 replicate set and signal 20–30×
+      attempt 2, with no stray-light line and no detector clipping. No calibration
+      scans were taken. The xenon lamp lines at 467 and 473&nbsp;nm are plainly
+      visible in raw S1 and vanish under S1&nbsp;÷&nbsp;R1.
+    </div>
+    <div class="m">18 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×3</div>
+  </a>
+
   <a class="card" href="attempt2-260821.html">
     <div class="t">2026-08-21 — attempt 2</div>
     <div class="d">
-      The clean run. Excitation sweeps stop at 500&nbsp;nm, below the emission
-      monochromator, so there is no stray-light line to remove; signal is 5–10×
-      attempt 1 and within-group replicate scatter is much tighter.
+      Excitation sweeps stop at 500&nbsp;nm, below the emission monochromator, so
+      there is no stray-light line to remove; signal is 5–10× attempt 1 and
+      replicate scatter is much tighter.
     </div>
     <div class="m">18 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×2</div>
   </a>
@@ -99,15 +110,17 @@
   <h2>Reading these spectra</h2>
   <ul>
     <li>
-      <b>Raw S1 is not the excitation spectrum.</b> The xenon lamp output swings
-      ~8× across 400–650&nbsp;nm, which drags every raw λ<sub>ex</sub> down to a
-      uniform 467–468&nbsp;nm. Switching the channel to <b>S1 ÷ R1</b> (the reference
-      photodiode) restores 484–490&nbsp;nm — the real sfGFP maximum. This reproduces
-      independently in both runs.
+      <b>Raw S1 is not the excitation spectrum.</b> The xenon lamp has sharp
+      emission lines at 467 and 473&nbsp;nm, and its output swings ~8× across the
+      sweep — that, not the protein, is what pins every raw λ<sub>ex</sub> to a
+      uniform 467&nbsp;nm. The reference photodiode <b>R1</b> spikes at exactly the
+      same wavelengths, so switching the channel to <b>S1 ÷ R1</b> cancels the lines
+      and leaves a smooth band peaking at 485–490&nbsp;nm — the real sfGFP maximum.
+      This reproduces independently across all three runs.
     </li>
     <li>
       <b>Normalise before comparing shape.</b> With each scan set to peak&nbsp;=&nbsp;1,
-      the three constructs lie on top of each other — λ<sub>ex</sub>&nbsp;≈&nbsp;486,
+      the three constructs lie on top of each other — λ<sub>ex</sub>&nbsp;≈&nbsp;487,
       λ<sub>em</sub>&nbsp;≈&nbsp;508 — so the tet insertions do not measurably perturb
       the chromophore. Brightness is the only thing separating them.
     </li>

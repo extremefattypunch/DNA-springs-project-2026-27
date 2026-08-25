@@ -726,8 +726,12 @@ function swatch(color, dash, w) {
 for (const f of FACETS) {
   const box = document.getElementById(f.box);
   for (const v of f.vals) {
+    // Count the constructs, not GROUPS-minus-one: a run with no calibration
+    // scans has no calibration entry to subtract, and the old form under-counted.
     const count = f.key === "kind"
-      ? (v === "mean" ? MODES.length * (GROUPS.length - 1) : RAW.length)
+      ? (v === "mean"
+           ? MODES.length * GROUPS.filter(g => g !== "calibration").length
+           : RAW.length)
       : RAW.filter(t => (f.key === "rep" ? t.repKey : t[f.key]) === v).length;
     const l = document.createElement("label"); l.className = "chk";
     const i = document.createElement("input");
