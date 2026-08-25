@@ -115,6 +115,17 @@
   #legend .it.off { opacity:.34; }
   #legend .it .sw { width:22px; height:0; flex:0 0 auto; }
   #legend .it.mean { font-weight:600; }
+  #legend .it.sel { box-shadow:inset 0 0 0 1.5px var(--accent); background:var(--plane); }
+  #legend .it .fx {
+    color:var(--accent); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:11px;
+  }
+  #sel_info {
+    font-size:11.5px; color:var(--ink2); margin-bottom:6px; line-height:1.4;
+    min-height:2.4em;
+  }
+  #sel_info b { color:var(--ink); font-weight:600; }
+  #sel_info .none { color:var(--muted); }
   #status { margin-top:9px; color:var(--muted); font-size:11.5px; }
   .flag {
     margin-top:11px; padding:8px 11px; background:var(--warnbg);
@@ -199,6 +210,21 @@
     <div class="row"><span>smooth</span>
       <input type="range" id="o_smooth" min="1" max="21" step="2" value="1">
       <span id="o_smooth_v" style="min-width:3.4em;text-align:right">off</span>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h2>Scaling <button id="b_selall">all shown</button></h2>
+    <div id="sel_info"></div>
+    <div class="row">
+      <span>&times;</span>
+      <input type="number" id="o_factor" step="0.1" min="0" style="width:5.4em">
+      <button class="btn" id="b_apply">apply</button>
+    </div>
+    <div class="row" id="quickscale"></div>
+    <div class="row">
+      <button class="btn" id="b_selclear">deselect</button>
+      <button class="btn" id="b_screset">reset &times;1</button>
     </div>
   </div>
 
@@ -307,7 +333,12 @@ const state = {
   sd: true, peaks: false,
   norm: "none", scale: "linear", smooth: 1,
   xdom: null, table: false, theme: "auto",
+  /* Scaling is a display multiplier per trace, keyed by id so it survives
+     filtering.  Selection is deliberately a different gesture from the
+     legend's show/hide, so neither can be triggered by accident. */
+  sel: new Set(), factor: new Map(),
 };
+const factorOf = id => state.factor.get(id) ?? 1;
 
 /* ---------- signal pipeline ----------
    channel -> scatter mask -> smooth -> normalise.  Masking before normalising
@@ -511,6 +542,89 @@ bind("o_smooth", "input", e => {
   draw();
 });
 bind("b_reset", "click", () => { state.xdom = null; state.hidden.clear(); draw(); });
+
+/* ---------- scaling ----------
+   Selection is its own gesture (ctrl/cmd-click) so it cannot collide with the
+   legend's show/hide, and the factor is reported back for the current
+   selection rather than only being writable. */
+function labelFor(id) {
+  const r = pool().find(r => r.id === id);
+  return r ? r.ser.label : id;
+}
+
+function renderSel() {
+  const box = document.getElementById("sel_info");
+  const inp = document.getElementById("o_factor");
+  box.textContent = "";
+  const ids = [...state.sel];
+  if (!ids.length) {
+    const d = document.createElement("div");
+    d.className = "none";
+    d.textContent = "Nothing selected. Ctrl-click (⌘-click) legend entries to " +
+                    "pick traces, then set a factor.";
+    box.append(d);
+    inp.value = "";
+    return;
+  }
+  const facs = ids.map(factorOf);
+  const same = facs.every(f => f === facs[0]);
+  const d = document.createElement("div");
+  if (ids.length === 1) {
+    d.innerHTML = `<b>${labelFor(ids[0]).replace(/[&<>]/g, c =>
+      ({ "&":"&amp;", "<":"&lt;", ">":"&gt;" }[c]))}</b><br>currently ×${fmt(facs[0])}`;
+  } else {
+    d.innerHTML = `<b>${ids.length} traces selected</b><br>` +
+      (same ? `all currently ×${fmt(facs[0])}`
+            : `mixed factors (×${fmt(Math.min(...facs))} – ×${fmt(Math.max(...facs))})`);
+  }
+  box.append(d);
+  inp.value = same ? facs[0] : "";
+}
+
+function applyFactor(f) {
+  if (!isFinite(f) || f <= 0) return;
+  for (const id of state.sel) {
+    if (f === 1) state.factor.delete(id); else state.factor.set(id, f);
+  }
+  draw();
+}
+
+bind("o_factor", "keydown", e => {
+  if (e.key === "Enter") applyFactor(parseFloat(e.target.value));
+});
+bind("b_apply", "click", () => applyFactor(parseFloat(document.getElementById("o_factor").value)));
+bind("b_selall", "click", () => {
+  const shown = pool().filter(r => !state.hidden.has(r.id)).map(r => r.id);
+  const every = shown.length && shown.every(id => state.sel.has(id));
+  state.sel = new Set(every ? [] : shown);
+  draw();
+});
+bind("b_selclear", "click", () => { state.sel.clear(); draw(); });
+bind("b_screset", "click", () => {
+  // With nothing selected this is a global reset; with a selection it is
+  // scoped to it, which is the less surprising of the two readings.
+  if (state.sel.size) for (const id of state.sel) state.factor.delete(id);
+  else state.factor.clear();
+  draw();
+});
+{
+  const q = document.getElementById("quickscale");
+  for (const [lbl, fn] of [["×2", f => f * 2], ["×5", f => f * 5],
+                           ["÷2", f => f / 2], ["÷10", f => f / 10]]) {
+    const b = document.createElement("button");
+    b.className = "btn"; b.textContent = lbl;
+    b.style.padding = "3px 7px";
+    b.addEventListener("click", () => {
+      for (const id of state.sel) {
+        const nf = fn(factorOf(id));
+        if (Math.abs(nf - 1) < 1e-9) state.factor.delete(id);
+        else state.factor.set(id, nf);
+      }
+      draw();
+    });
+    q.append(b);
+  }
+}
 bind("b_table", "click", e => {
   state.table = !state.table;
   e.currentTarget.setAttribute("aria-pressed", String(state.table));
@@ -584,8 +698,19 @@ function draw() {
   readTheme();
   const all = pool();
   const vis = all.filter(r => !state.hidden.has(r.id));
-  const prep = vis.map(r => ({ r, x: r.ser.x, y: r.kind === "mean" ? r.ser.y : procY(r.ser),
-                               sd: r.kind === "mean" ? r.ser.sd : null }));
+  // The multiplier lands here, after normalising and after the mean is taken,
+  // so scaling a replicate never drags the group mean with it and "peak = 1"
+  // cannot silently undo it.
+  const prep = vis.map(r => {
+    const f = factorOf(r.id);
+    let y = r.kind === "mean" ? r.ser.y : procY(r.ser);
+    let sd = r.kind === "mean" ? r.ser.sd : null;
+    if (f !== 1) {
+      y = y.map(v => (v == null || !isFinite(v)) ? null : v * f);
+      if (sd) sd = sd.map(v => v * f);
+    }
+    return { r, x: r.ser.x, y, sd, f };
+  });
 
   let x0 = Infinity, x1 = -Infinity;
   for (const p of prep) { x0 = Math.min(x0, p.r.ser.xlo); x1 = Math.max(x1, p.r.ser.xhi); }
@@ -656,7 +781,13 @@ function draw() {
   ctx.fillText("Wavelength (nm)", PAD.l + iw / 2, H - 6);
   ctx.save();
   ctx.translate(15, PAD.t + ih / 2); ctx.rotate(-Math.PI / 2);
-  ctx.textBaseline = "top"; ctx.fillText(yLabel(), 0, 0);
+  ctx.textBaseline = "top";
+  let ylab = yLabel();
+  if ([...state.factor.values()].some(f => f !== 1)) {
+    const marked = ylab + " · scaled";
+    if (ctx.measureText(marked).width <= ih - 8) ylab = marked;
+  }
+  ctx.fillText(ylab, 0, 0);
   ctx.restore();
 
   ctx.save();
@@ -742,6 +873,7 @@ function draw() {
 
   plot = { prep, x0, x1, sx, sy, iw, ih, W, H, logMode };
   renderLegend(all);
+  renderSel();
   renderFlags(vis);
   renderStatus(vis, prep);
   renderTable(prep, x0, x1, logMode);
@@ -784,9 +916,21 @@ function renderLegend(all) {
       it.title = r.kind === "mean"
         ? `mean of ${r.ser.file} over ${fmt(r.ser.xlo)}–${fmt(r.ser.xhi)} nm`
         : `${r.ser.file}  (${fmt(r.ser.xlo)}–${fmt(r.ser.xhi)} nm, n=${r.ser.n})`;
+      if (state.sel.has(r.id)) it.classList.add("sel");
       it.append(swatch(r.color, r.dash, r.kind === "mean" ? 3 : 2),
                 document.createTextNode(r.ser.label));
+      const f = factorOf(r.id);
+      if (f !== 1) {
+        const b = document.createElement("span");
+        b.className = "fx"; b.textContent = " ×" + fmt(f);
+        it.append(b);
+      }
       it.addEventListener("click", ev => {
+        if (ev.ctrlKey || ev.metaKey) {          // select for scaling
+          state.sel.has(r.id) ? state.sel.delete(r.id) : state.sel.add(r.id);
+          draw();
+          return;
+        }
         if (ev.shiftKey) {
           const others = all.filter(o => o.id !== r.id);
           const soloed = others.every(o => state.hidden.has(o.id));
@@ -846,9 +990,11 @@ function renderStatus(vis, prep) {
   if (state.norm !== "none") {
     bits.push("each scan normalised before averaging");
   }
+  const scaled = [...state.factor].filter(([, f]) => f !== 1).length;
+  if (scaled) bits.push(`${scaled} trace${scaled > 1 ? "s" : ""} scaled`);
   bits.push(state.xdom
     ? `zoomed ${fmt(state.xdom[0])}–${fmt(state.xdom[1])} nm · double-click to reset`
-    : "drag to zoom · shift-click a legend entry to solo");
+    : "drag to zoom · shift-click to solo · ctrl-click to select for scaling");
   document.getElementById("status").textContent = bits.join("  —  ");
 }
 
@@ -861,7 +1007,7 @@ function renderTable(prep, x0, x1, logMode) {
   if (!state.table) return;
   const tb = document.createElement("table"); tb.className = "tbl";
   const head = ["Trace", "Measurement", "Range (nm)", "pts",
-                "λₘₐₓ (nm)", "peak", "area", "source"];
+                "λₘₐₓ (nm)", "peak", "area", "scale", "source"];
   const thead = document.createElement("thead"), hr = document.createElement("tr");
   for (const h of head) { const th = document.createElement("th"); th.textContent = h; hr.append(th); }
   thead.append(hr); tb.append(thead);
@@ -886,6 +1032,7 @@ function renderTable(prep, x0, x1, logMode) {
                      k < 0 ? "–" : fmt(p.x[k]),
                      k < 0 ? "–" : fmt(p.y[k]),
                      fmt(area),
+                     p.f === 1 ? "–" : "×" + fmt(p.f),
                      p.r.ser.file]) {
       const td = document.createElement("td"); td.textContent = v; tr.append(td);
     }
@@ -933,7 +1080,8 @@ cv.addEventListener("mousemove", ev => {
     d.append(swatch(q.p.r.color, q.p.r.dash, q.p.r.kind === "mean" ? 3 : 2));
     const e = document.createElement("em"); e.textContent = q.p.r.ser.label;
     const s = document.createElement("span");
-    s.textContent = fmt(q.v) + (state.sd && q.sd ? ` ± ${fmt(q.sd)}` : "");
+    s.textContent = fmt(q.v) + (state.sd && q.sd ? ` ± ${fmt(q.sd)}` : "")
+                  + (q.p.f !== 1 ? ` (×${fmt(q.p.f)})` : "");
     d.append(e, s); tip.append(d);
   }
   if (rows.length > 12) {
