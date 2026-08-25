@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
-"""Build a standalone, interactive overlay viewer for the sfGFP-DNA chimera run.
+"""Build a standalone, interactive overlay viewer for an sfGFP-DNA chimera run.
 
-The 260812 folder is an Origin export: twenty ``Dflt{Em,Ex}<n>_Data.csv`` files
-with no sample names in them.  The identity of each scan lives only in the
-operator's notebook, so it is declared here (see ``ASSIGNMENT``) rather than
-guessed from the filenames.
+Handles both Origin export layouts used so far:
+
+  attempt 1 (260812)  Dflt{Em,Ex}<n>_Data.csv, n = 1..10, with no sample identity
+                      in the name at all -- the scan order interleaved the three
+                      constructs, so the mapping is declared in LEGACY_SCANS.
+  attempt 2 (260821)  {Em,Ex}<construct><replicate>_Data.csv plus {Em,Ex}Calib,
+                      e.g. Em1a / Ex3b -- identity is in the filename.
+
+Construct numbers are 1-based and map onto --constructs in order; the default
+0-tet / 1-tet / 2-tet comes from attempt 1, where the operator's f1a..f3c scan
+names line up with the declared "2,5,8 = 0-tet" ordering.
 
 Emission files are two-column (Wavelength / S1).  Excitation files are
 four-column (A,S1,B,R1): S1 is the emission-channel photon count and R1 is the
-reference photodiode in microamps, which tracks the xenon lamp output across
-the sweep.  Both are carried into the payload so the viewer can offer a
-lamp-corrected excitation spectrum (S1/R1) alongside the raw counts.
+reference photodiode in microamps, tracking xenon lamp output across the sweep.
+Both are carried into the payload so the viewer can offer a lamp-corrected
+excitation spectrum (S1/R1) alongside the raw counts.
 
 Usage:
-    python3 build_chimera_viewer.py                       # defaults below
-    python3 build_chimera_viewer.py --root DIR --out FILE
+    python3 build_chimera_viewer.py                          # newest run
+    python3 build_chimera_viewer.py 260812_sfGFPDNAchimeraALL_1-3
+    python3 build_chimera_viewer.py DIR --constructs "WT,mut A,mut B"
 """
 
 from __future__ import annotations
@@ -22,29 +30,31 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_ROOT = HERE / "260812_sfGFPDNAchimeraALL_1-3"
-DEFAULT_OUT = DEFAULT_ROOT / "chimera_spectra_viewer.html"
+DEFAULT_ROOT = HERE / "260821_sfGFPDNAchimeraALL_1-3(attempt2)"
 
-# Scan number -> (construct, replicate).  Declared by the operator; the file
-# names carry no sample identity.  Replicate order follows the scan order
-# within each construct, i.e. Em2/Em5/Em8 are 0-tet replicates 1/2/3.
-ASSIGNMENT = {
-    1: ("calibration", None),
-    2: ("0-tet sfGFP", 1), 5: ("0-tet sfGFP", 2), 8: ("0-tet sfGFP", 3),
-    3: ("1-tet sfGFP", 1), 6: ("1-tet sfGFP", 2), 9: ("1-tet sfGFP", 3),
-    4: ("2-tet sfGFP", 1), 7: ("2-tet sfGFP", 2), 10: ("2-tet sfGFP", 3),
+DEFAULT_CONSTRUCTS = ["0-tet sfGFP", "1-tet sfGFP", "2-tet sfGFP"]
+CALIBRATION = "calibration"
+
+# attempt 1 only: Dflt scan number -> (construct index, replicate).  The three
+# constructs were scanned round-robin, so 2/5/8 are construct 1's replicates.
+LEGACY_SCANS = {
+    1: (None, None),
+    2: (1, "1"), 5: (1, "2"), 8: (1, "3"),
+    3: (2, "1"), 6: (2, "2"), 9: (2, "3"),
+    4: (3, "1"), 7: (3, "2"), 10: (3, "3"),
 }
 
-GROUP_ORDER = ["calibration", "0-tet sfGFP", "1-tet sfGFP", "2-tet sfGFP"]
-
-# The emission monochromator sat here during the excitation sweeps, so every
-# excitation scan carries a Rayleigh stray-light spike at this wavelength.
-# Detected below and reported, not assumed.
+# Fallback centre for the stray-light mask when a run has no detectable line.
 SCATTER_GUESS = 510.0
+
+# The palette is three validated categorical slots; a fourth construct would
+# need a re-validated set rather than an invented hue.
+MAX_CONSTRUCTS = 3
 
 
 # --------------------------------------------------------------------------
@@ -115,54 +125,110 @@ def find_scatter_line(x, y):
 # payload
 # --------------------------------------------------------------------------
 
-def build_payload(root: Path):
+MODES = (("emission", "Em"), ("excitation", "Ex"))
+
+# Em1a / Ex3b -> construct 1, replicate "a".  EmCalib / ExCalibration -> reference.
+RE_NAMED = re.compile(r"^(Em|Ex)(\d+)([A-Za-z])$")
+RE_CALIB = re.compile(r"^(Em|Ex)Calib(ration)?$", re.I)
+RE_LEGACY = re.compile(r"^Dflt(Em|Ex)(\d+)$")
+
+
+def discover(root: Path, constructs):
+    """Return [(mode, construct_index|None, replicate|None, path)] for a run.
+
+    Both export layouts are recognised by filename; whichever matches more
+    files wins, so a folder is never half-read under the wrong scheme.
+    """
+    prefix_mode = {p: m for m, p in MODES}
+    named, legacy = [], []
+
+    for path in sorted(root.glob("*_Data.csv")):
+        stem = path.name[:-len("_Data.csv")]
+        if (m := RE_CALIB.match(stem)):
+            named.append((prefix_mode[m.group(1).title()[:2]], None, None, path))
+        elif (m := RE_NAMED.match(stem)):
+            named.append((prefix_mode[m.group(1)], int(m.group(2)), m.group(3).lower(), path))
+        elif (m := RE_LEGACY.match(stem)):
+            ci, rep = LEGACY_SCANS.get(int(m.group(2)), (None, None))
+            legacy.append((prefix_mode[m.group(1)], ci, rep, path))
+
+    found = named if len(named) >= len(legacy) else legacy
+    if not found:
+        return [], None
+    layout = "named" if found is named else "legacy"
+
+    seen = {c for _, c, _, _ in found if c}
+    if seen and max(seen) > len(constructs):
+        sys.exit(f"{root.name}: construct index {max(seen)} has no --constructs entry "
+                 f"(got {len(constructs)}: {', '.join(constructs)})")
+    if len(seen) > MAX_CONSTRUCTS:
+        sys.exit(f"{root.name}: {len(seen)} constructs, but the validated palette "
+                 f"has {MAX_CONSTRUCTS} categorical slots")
+    return found, layout
+
+
+def build_payload(root: Path, constructs):
+    found, layout = discover(root, constructs)
+    if not found:
+        return None
+
     traces, notes = [], []
-    missing = []
+    for mode, ci, rep, path in found:
+        names, units, cols = read_origin_csv(path)
+        group = CALIBRATION if ci is None else constructs[ci - 1]
 
-    for mode, prefix in (("emission", "Em"), ("excitation", "Ex")):
-        for num in sorted(ASSIGNMENT):
-            path = root / f"Dflt{prefix}{num}_Data.csv"
-            if not path.exists():
-                missing.append(path.name)
-                continue
-            names, units, cols = read_origin_csv(path)
-            group, rep = ASSIGNMENT[num]
+        x, s1 = cols[0], cols[1]
+        axis = uniform_axis(x)
+        if axis is None:
+            raise ValueError(f"{path.name}: wavelength axis is not a uniform grid")
+        x0, dx, n = axis
 
-            x, s1 = cols[0], cols[1]
-            axis = uniform_axis(x)
-            if axis is None:
-                raise ValueError(f"{path.name}: wavelength axis is not a uniform grid")
-            x0, dx, n = axis
+        r1 = None
+        if len(cols) >= 4:
+            if any(abs(a - b) > 1e-6 for a, b in zip(cols[0], cols[2])):
+                raise ValueError(f"{path.name}: S1 and R1 wavelength columns disagree")
+            r1 = cols[3]
 
-            r1 = None
-            if len(cols) >= 4:
-                if any(abs(a - b) > 1e-6 for a, b in zip(cols[0], cols[2])):
-                    raise ValueError(f"{path.name}: S1 and R1 wavelength columns disagree")
-                r1 = cols[3]
+        trace = {
+            "id": path.name[:-len("_Data.csv")],
+            "file": path.name,
+            "mode": mode,
+            "group": group,
+            "rep": rep,
+            "x0": x0, "dx": dx, "n": n,
+            "s1": s1, "r1": r1,
+            "yUnit": units[1] if len(units) > 1 else "CPS",
+            "rUnit": units[3] if len(units) > 3 else None,
+        }
+        traces.append(trace)
 
-            trace = {
-                "id": f"{prefix}{num}",
-                "file": path.name,
-                "mode": mode,
-                "group": group,
-                "rep": rep,
-                "x0": x0, "dx": dx, "n": n,
-                "s1": s1,
-                "r1": r1,
-                "yUnit": units[1] if len(units) > 1 else "CPS",
-                "rUnit": units[3] if len(units) > 3 else None,
-            }
-            traces.append(trace)
+        if mode == "excitation" and group != CALIBRATION:
+            hit = find_scatter_line(x, s1)
+            if hit:
+                trace["scatter"] = round(hit[0], 1)
 
-            if mode == "excitation" and group != "calibration":
-                hit = find_scatter_line(x, s1)
-                if hit:
-                    trace["scatter"] = round(hit[0], 1)
+    present = [g for g in constructs if any(t["group"] == g for t in traces)]
+    groups = ([CALIBRATION] if any(t["group"] == CALIBRATION for t in traces) else []) + present
+    reps = sorted({t["rep"] for t in traces if t["rep"]})
 
-    if missing:
-        notes.append("missing files: " + ", ".join(missing))
+    # A group short of the others is a gap in the run, not a detail: say so
+    # here so it reaches the page instead of only showing up as a small n.
+    counts = {}
+    for g in present:
+        for m, _ in MODES:
+            counts.setdefault(g, {})[m] = sum(
+                1 for t in traces if t["group"] == g and t["mode"] == m)
+    widest = max((max(v.values()) for v in counts.values()), default=0)
+    short = [f"{g} ({'/'.join(str(counts[g][m]) for m, _ in MODES)})"
+             for g in present if min(counts[g].values()) < widest]
+    if short:
+        notes.append(
+            "Not every construct has the same number of replicates (Em/Ex): "
+            + "; ".join(short)
+            + f", against {widest} for the others. Their means average fewer scans, "
+              "and an SD over two replicates is just the half-range — read it as a "
+              "spread marker, not a triplicate SD.")
 
-    # Report the scatter line once, from the data, rather than per file.
     lines = sorted({t["scatter"] for t in traces if "scatter" in t})
     if lines:
         where = ", ".join(f"{v:g} nm" for v in lines)
@@ -171,21 +237,37 @@ def build_payload(root: Path):
             "— the emission monochromator was parked there, so the sweep sees the "
             "lamp directly when λ_ex = λ_em. It is 10–50× the real "
             "excitation band and is masked by default.")
+    elif any(t["mode"] == "excitation" for t in traces):
+        hi = max(t["x0"] + (t["n"] - 1) * t["dx"]
+                 for t in traces if t["mode"] == "excitation" and t["group"] != CALIBRATION)
+        notes.append(
+            f"No λ_ex = λ_em stray-light line in this run: the excitation sweeps stop "
+            f"at {hi:g} nm, below the emission monochromator, so the Rayleigh line is "
+            "never sampled. The mask is off and there is nothing to remove.")
     notes.append(
         "Excitation files carry a reference photodiode (R1, µA) that tracks lamp "
         "output across the sweep. Raw S1 is uncorrected for the xenon lamp profile; "
         "S1÷R1 is the lamp-corrected excitation spectrum.")
     notes.append(
-        "Scan→sample assignment is declared, not inferred: "
-        "1 = calibration; 2/5/8 = 0-tet; 3/6/9 = 1-tet; 4/7/10 = 2-tet "
-        "(replicates 1/2/3 in that order).")
+        ("Sample number → construct is an assignment, not a measurement: "
+         + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present))
+         + ". Rebuild with --constructs to relabel.") if layout == "named" else
+        ("Scan→sample assignment is declared, not inferred: 1 = calibration; "
+         "2/5/8 = " + present[0] + "; 3/6/9 = " + present[1] +
+         "; 4/7/10 = " + present[2] + " (replicates 1/2/3 in that order)."))
+
+    summary = " · ".join(
+        f"{g.split()[0]} ×{max(counts[g].values())}" for g in present)
 
     return {
         "source": root.name,
-        "groups": GROUP_ORDER,
+        "layout": layout,
+        "groups": groups,
+        "reps": reps,
+        "summary": summary,
         "traces": traces,
         "notes": notes,
-        "scatterDefault": lines[0] if lines else SCATTER_GUESS,
+        "scatterDefault": lines[0] if lines else None,
     }
 
 
@@ -436,8 +518,12 @@ for (const t of RAW) {
     : `${t.group} · rep ${t.rep}`;
 }
 
-const COLOR_VAR = { "calibration":"--c-cal", "0-tet sfGFP":"--c-g0",
-                    "1-tet sfGFP":"--c-g1", "2-tet sfGFP":"--c-g2" };
+/* Slots are assigned by position in GROUPS, so renaming a construct (or
+   running a different experiment through the same builder) never repaints
+   the others: colour follows the entity's rank in the declared order. */
+const COLOR_VAR = {};
+{ let i = 0;
+  for (const g of GROUPS) COLOR_VAR[g] = g === "calibration" ? "--c-cal" : `--c-g${i++}`; }
 let CSSV = {};
 function readTheme() {
   const cs = getComputedStyle(document.documentElement);
@@ -460,7 +546,7 @@ const FACETS = [
     vals: GROUPS,
     label: v => v === "calibration" ? "calibration (off-scale)" : v },
   { key:"rep",   box:"f_rep",
-    vals: ["1","2","3"],
+    vals: PAYLOAD.reps,
     label: v => "replicate " + v },
   { key:"kind",  box:"f_kind",
     vals: ["individual","mean"],
@@ -473,12 +559,17 @@ const state = {
     /* Calibration is 20-40x the sample signal and sits in a disjoint band;
        starting it on would flatten every sample trace to the baseline. */
     group: new Set(GROUPS.filter(g => g !== "calibration")),
-    rep:   new Set(["1","2","3"]),
+    rep:   new Set(PAYLOAD.reps),
     kind:  new Set(["individual","mean"]),
   },
   hidden: new Set(),
   exch: "s1",
-  mask: true, maskC: PAYLOAD.scatterDefault, maskW: 3,
+  /* Masking is only meaningful where a stray-light line was detected. A run
+     whose excitation sweep stops below the emission monochromator has none,
+     and defaulting the mask on there would advertise a correction that
+     removes nothing. */
+  mask: PAYLOAD.scatterDefault != null,
+  maskC: PAYLOAD.scatterDefault == null ? 510 : PAYLOAD.scatterDefault, maskW: 3,
   sd: true, peaks: false,
   norm: "none", scale: "linear", smooth: 1,
   xdom: null, table: false, theme: "auto",
@@ -586,7 +677,8 @@ function meanOf(mode, group) {
     nrep: reps.length, x, y, sd, n: x.length,
     xlo: x[0], xhi: x[x.length - 1], clipped,
     label: `${group} · mean (n=${reps.length}` +
-           (clipped ? `, ${fmt(x[0])}–${fmt(x[x.length - 1])} nm` : "") + ")",
+           (clipped ? `, ${fmt(x[0])}–${fmt(x[x.length - 1])} nm` : "") + ")" +
+           (reps.length === 2 ? " ½-range" : ""),
     file: reps.map(t => t.id).join("+"),
   };
 }
@@ -694,6 +786,14 @@ bind("b_theme", "click", e => {
   draw();
 });
 document.getElementById("o_maskc").value = state.maskC;
+document.getElementById("o_mask").checked = state.mask;
+if (PAYLOAD.scatterDefault == null) {
+  const hint = document.createElement("div");
+  hint.style.cssText = "color:var(--muted);font-size:11px;margin-top:4px;line-height:1.35";
+  hint.textContent = "no λ_ex = λ_em line in this run — the sweep ends below the " +
+                     "emission monochromator, so there is nothing to mask";
+  document.getElementById("maskrow").after(hint);
+}
 
 /* ---------- canvas ---------- */
 const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
@@ -997,7 +1097,7 @@ function renderStatus(vis, prep) {
   const bits = [];
   const nm = vis.filter(r => r.kind === "mean").length;
   bits.push(`${vis.length} traces (${vis.length - nm} scans, ${nm} means)`);
-  if (state.mask && state.on.mode.has("excitation")) {
+  if (state.mask && PAYLOAD.scatterDefault != null && state.on.mode.has("excitation")) {
     bits.push(`scatter masked ${fmt(state.maskC - state.maskW)}–${fmt(state.maskC + state.maskW)} nm`);
   }
   const clipped = vis.filter(r => r.kind === "mean" && r.ser.clipped);
@@ -1173,7 +1273,7 @@ bind("b_csv", "click", () => {
     PAYLOAD.notes.map(t => `<li>${esc(t)}</li>`).join("") + "</ul>";
 }
 document.getElementById("subtitle").textContent =
-  `${RAW.length} scans · ${GROUPS.length - 1} constructs × 3 replicates · ${PAYLOAD.source}`;
+  `${RAW.length} scans · ${PAYLOAD.summary} · ${PAYLOAD.source}`;
 
 let rt;
 window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 90); });
@@ -1195,27 +1295,39 @@ def render(payload, title):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--root", type=Path, default=DEFAULT_ROOT,
-                    help="folder holding the Dflt*_Data.csv files")
-    ap.add_argument("--out", type=Path, default=DEFAULT_OUT,
-                    help="output HTML file")
-    ap.add_argument("--title", default="sfGFP–DNA chimera · excitation & emission overlay")
+    ap.add_argument("root", nargs="?", type=Path, default=DEFAULT_ROOT,
+                    help="folder holding the *_Data.csv files")
+    ap.add_argument("--root", dest="root_opt", type=Path, default=None,
+                    help=argparse.SUPPRESS)          # older calling convention
+    ap.add_argument("--out", type=Path, default=None,
+                    help="output HTML file (default: <root>/chimera_spectra_viewer.html)")
+    ap.add_argument("--constructs", default=",".join(DEFAULT_CONSTRUCTS),
+                    help="comma-separated construct names, in sample-number order")
+    ap.add_argument("--title", default=None)
     args = ap.parse_args(argv)
 
-    root = args.root.resolve()
+    root = (args.root_opt or args.root)
+    if not root.is_absolute():
+        root = HERE / root
+    root = root.resolve()
     if not root.is_dir():
         sys.exit(f"not a directory: {root}")
 
-    payload = build_payload(root)
-    if not payload["traces"]:
-        sys.exit(f"no Dflt*_Data.csv files found under {root}")
+    constructs = [c.strip() for c in args.constructs.split(",") if c.strip()]
+    payload = build_payload(root, constructs)
+    if not payload or not payload["traces"]:
+        sys.exit(f"no recognised *_Data.csv files under {root}")
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(render(payload, args.title), encoding="utf-8")
+    out = args.out or (root / "chimera_spectra_viewer.html")
+    title = args.title or f"{root.name} · excitation & emission overlay"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(render(payload, title), encoding="utf-8")
 
     em = sum(1 for t in payload["traces"] if t["mode"] == "emission")
     ex = len(payload["traces"]) - em
-    print(f"{args.out}  ←  {em} emission + {ex} excitation scans")
+    print(f"{out}")
+    print(f"  {em} emission + {ex} excitation scans · {payload['layout']} layout "
+          f"· {payload['summary']}")
     for n in payload["notes"]:
         print("  · " + n)
     return 0
