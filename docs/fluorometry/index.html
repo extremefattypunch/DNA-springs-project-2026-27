@@ -92,9 +92,12 @@
     <div class="d">
       Excitation sweeps stop at 500&nbsp;nm, below the emission monochromator, so
       there is no stray-light line to remove; signal is 5–10× attempt 1 and
-      replicate scatter is much tighter.
+      replicate scatter is much tighter. <b>Sample ×16 from the concentration
+      ladder is appended</b> to 1-tet as replicates d/e/f — a different run at a
+      much higher concentration, so it dominates the raw axis. Untick d/e/f to
+      get the original run back.
     </div>
-    <div class="m">18 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×2</div>
+    <div class="m">24 scans · 0-tet ×3 · 1-tet ×3 (+3 appended) · 2-tet ×2</div>
   </a>
 
   <a class="card" href="attempt1-260812.html">
@@ -107,6 +110,19 @@
     <div class="m">20 scans · 0-tet ×3 · 1-tet ×3 · 2-tet ×3</div>
   </a>
 
+  <h2>Concentration series</h2>
+
+  <a class="card" href="dilution-260825.html">
+    <div class="t">2026-08-25 — 1-tet concentration ladder</div>
+    <div class="d">
+      One construct (1-tet) at five levels, ×2 through ×32, three replicates each.
+      Encoded as a light→dark ramp rather than five hues, because concentration is a
+      magnitude. The ladder is visibly <b>sub-linear at the top</b>: ×32 returns only
+      10.6× the emission of ×2, not 16×.
+    </div>
+    <div class="m">32 scans · ×2 ×3 · ×4 ×3 · ×8 ×3 · ×16 ×3 · ×32 ×3</div>
+  </a>
+
   <h2>Reading these spectra</h2>
   <ul>
     <li>
@@ -117,6 +133,14 @@
       same wavelengths, so switching the channel to <b>S1 ÷ R1</b> cancels the lines
       and leaves a smooth band peaking at 485–490&nbsp;nm — the real sfGFP maximum.
       This reproduces independently across all three runs.
+    </li>
+    <li>
+      <b>Concentration is not free of consequences.</b> The ×2→×32 ladder returns
+      10.6× the emission for 16× the material, and its emission maximum walks from
+      507.3 to 510.7&nbsp;nm as it brightens. Both are reabsorption — the inner-filter
+      effect — so above roughly ×16 the response is no longer proportional, and
+      absolute λ<sub>em</sub> should not be compared across runs of different
+      brightness.
     </li>
     <li>
       <b>Normalise before comparing shape.</b> With each scan set to peak&nbsp;=&nbsp;1,

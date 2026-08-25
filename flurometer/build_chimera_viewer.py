@@ -56,6 +56,30 @@ SCATTER_GUESS = 510.0
 # need a re-validated set rather than an invented hue.
 MAX_CONSTRUCTS = 3
 
+# A concentration ladder is a magnitude, not an identity, so it gets the
+# sequential blue ramp rather than categorical hues.  The step nearest the
+# chart surface must still clear 2:1, which is why light starts at step 250
+# and dark stops at step 600 (the documented ordinal floors).
+BLUE_RAMP = {
+    100: "#cde2fb", 150: "#b7d3f6", 200: "#9ec5f4", 250: "#86b6ef",
+    300: "#6da7ec", 350: "#5598e7", 400: "#3987e5", 450: "#2a78d6",
+    500: "#256abf", 550: "#1c5cab", 600: "#184f95", 650: "#104281",
+    700: "#0d366b",
+}
+RAMP_LIGHT = [k for k in sorted(BLUE_RAMP) if k >= 250]
+RAMP_DARK = [k for k in sorted(BLUE_RAMP) if k <= 600]
+MAX_SERIES = 7
+
+
+def ramp_steps(n, allowed):
+    """Pick n evenly spaced steps, lightest first, from an allowed step list."""
+    if n <= 0:
+        return []
+    if n == 1:
+        return [BLUE_RAMP[allowed[len(allowed) // 2]]]
+    last = len(allowed) - 1
+    return [BLUE_RAMP[allowed[round(i * last / (n - 1))]] for i in range(n)]
+
 
 # --------------------------------------------------------------------------
 # reading
@@ -133,7 +157,7 @@ RE_CALIB = re.compile(r"^(Em|Ex)Calib(ration)?$", re.I)
 RE_LEGACY = re.compile(r"^Dflt(Em|Ex)(\d+)$")
 
 
-def discover(root: Path, constructs):
+def discover(root: Path, constructs, validate=True):
     """Return [(mode, construct_index|None, replicate|None, path)] for a run.
 
     Both export layouts are recognised by filename; whichever matches more
@@ -154,65 +178,120 @@ def discover(root: Path, constructs):
 
     found = named if len(named) >= len(legacy) else legacy
     if not found:
-        return [], None
+        return [], None, False, []
     layout = "named" if found is named else "legacy"
 
-    seen = {c for _, c, _, _ in found if c}
-    if seen and max(seen) > len(constructs):
-        sys.exit(f"{root.name}: construct index {max(seen)} has no --constructs entry "
-                 f"(got {len(constructs)}: {', '.join(constructs)})")
-    if len(seen) > MAX_CONSTRUCTS:
+    # A run whose sample numbers run past the construct list is a
+    # concentration ladder (2/4/8/16/32), not three constructs: the number is
+    # a magnitude, so it earns the sequential ramp instead of a hue each.
+    seen = sorted({c for _, c, _, _ in found if c})
+    series = bool(seen) and max(seen) > len(constructs)
+    if not validate:
+        # An --extra source is only mined for specific files; its own labelling
+        # scheme is none of this run's business.
+        return found, layout, series, seen
+    if series:
+        if len(seen) > MAX_SERIES:
+            sys.exit(f"{root.name}: {len(seen)} levels, more than the {MAX_SERIES} "
+                     "the sequential ramp resolves")
+    elif len(seen) > MAX_CONSTRUCTS:
         sys.exit(f"{root.name}: {len(seen)} constructs, but the validated palette "
                  f"has {MAX_CONSTRUCTS} categorical slots")
-    return found, layout
+    return found, layout, series, seen
 
 
-def build_payload(root: Path, constructs):
-    found, layout = discover(root, constructs)
+def _read_trace(mode, group, rep, path, origin=None):
+    names, units, cols = read_origin_csv(path)
+    x, s1 = cols[0], cols[1]
+    axis = uniform_axis(x)
+    if axis is None:
+        raise ValueError(f"{path.name}: wavelength axis is not a uniform grid")
+    x0, dx, n = axis
+
+    r1 = None
+    if len(cols) >= 4:
+        if any(abs(a - b) > 1e-6 for a, b in zip(cols[0], cols[2])):
+            raise ValueError(f"{path.name}: S1 and R1 wavelength columns disagree")
+        r1 = cols[3]
+
+    stem = path.name[:-len("_Data.csv")]
+    return {
+        "id": (f"{origin}:{stem}" if origin else stem),
+        "file": (f"{origin}/{path.name}" if origin else path.name),
+        "origin": origin,
+        "mode": mode, "group": group, "rep": rep,
+        "x0": x0, "dx": dx, "n": n,
+        "s1": s1, "r1": r1,
+        "yUnit": units[1] if len(units) > 1 else "CPS",
+        "rUnit": units[3] if len(units) > 3 else None,
+    }
+
+
+def parse_extra(spec):
+    """``DIR#NUM=IDX`` -> (Path, number, construct index)."""
+    try:
+        left, idx = spec.rsplit("=", 1)
+        d, num = left.rsplit("#", 1)
+        return Path(d), int(num), int(idx)
+    except ValueError:
+        sys.exit(f"--extra: expected DIR#NUM=INDEX, got {spec!r}")
+
+
+def build_payload(root: Path, constructs, extras=()):
+    found, layout, series, levels = discover(root, constructs)
     if not found:
         return None
 
+    def name_of(ci):
+        if ci is None:
+            return CALIBRATION
+        return f"\u00d7{ci}" if series else constructs[ci - 1]
+
     traces, notes = [], []
     for mode, ci, rep, path in found:
-        names, units, cols = read_origin_csv(path)
-        group = CALIBRATION if ci is None else constructs[ci - 1]
-
-        x, s1 = cols[0], cols[1]
-        axis = uniform_axis(x)
-        if axis is None:
-            raise ValueError(f"{path.name}: wavelength axis is not a uniform grid")
-        x0, dx, n = axis
-
-        r1 = None
-        if len(cols) >= 4:
-            if any(abs(a - b) > 1e-6 for a, b in zip(cols[0], cols[2])):
-                raise ValueError(f"{path.name}: S1 and R1 wavelength columns disagree")
-            r1 = cols[3]
-
-        trace = {
-            "id": path.name[:-len("_Data.csv")],
-            "file": path.name,
-            "mode": mode,
-            "group": group,
-            "rep": rep,
-            "x0": x0, "dx": dx, "n": n,
-            "s1": s1, "r1": r1,
-            "yUnit": units[1] if len(units) > 1 else "CPS",
-            "rUnit": units[3] if len(units) > 3 else None,
-        }
-        traces.append(trace)
-
-        if mode == "excitation" and group != CALIBRATION:
-            hit = find_scatter_line(x, s1)
+        t = _read_trace(mode, name_of(ci), rep, path)
+        traces.append(t)
+        if mode == "excitation" and t["group"] != CALIBRATION:
+            xs = [t["x0"] + i * t["dx"] for i in range(t["n"])]
+            hit = find_scatter_line(xs, t["s1"])
             if hit:
-                trace["scatter"] = round(hit[0], 1)
+                t["scatter"] = round(hit[0], 1)
 
-    present = [g for g in constructs if any(t["group"] == g for t in traces)]
+    # ---- traces appended from another run -------------------------------
+    for spec in extras:
+        d, num, idx = parse_extra(spec)
+        if not d.is_absolute():
+            d = HERE / d
+        if not d.is_dir():
+            sys.exit(f"--extra: not a directory: {d}")
+        if idx > len(constructs):
+            sys.exit(f"--extra: construct index {idx} has no --constructs entry")
+        ef, _, _, _ = discover(d, constructs, validate=False)
+        picked = sorted((f for f in ef if f[1] == num), key=lambda f: (f[0], f[2] or ""))
+        if not picked:
+            sys.exit(f"--extra: no sample {num} found under {d.name}")
+        target = constructs[idx - 1]
+        origin = d.name.split("_")[0]
+        used = {t["rep"] for t in traces if t["group"] == target and t["rep"]}
+        # Continue the replicate letters rather than colliding with a..c, so an
+        # appended set is one click away from being excluded again.
+        nxt = (chr(max(ord(c) for c in used) + 1) if used else "a")
+        letters = {}
+        for mode, _, rep, path in picked:
+            if rep not in letters:
+                letters[rep] = chr(ord(nxt) + len(letters))
+            traces.append(_read_trace(mode, target, letters[rep], path, origin=origin))
+        notes.append(
+            f"Sample {num} from {d.name} is appended to {target} as replicates "
+            f"{'/'.join(sorted(letters.values()))}. It is a different run at a "
+            "different concentration, not a repeat of this one — untick those "
+            "replicates to drop them from the plot and from the group mean.")
+
+    order = [name_of(c) for c in levels]
+    present = [g for g in order if any(t["group"] == g for t in traces)]
     groups = ([CALIBRATION] if any(t["group"] == CALIBRATION for t in traces) else []) + present
     reps = sorted({t["rep"] for t in traces if t["rep"]})
 
-    # A group short of the others is a gap in the run, not a detail: say so
-    # here so it reaches the page instead of only showing up as a small n.
     counts = {}
     for g in present:
         for m, _ in MODES:
@@ -223,7 +302,7 @@ def build_payload(root: Path, constructs):
              for g in present if min(counts[g].values()) < widest]
     if short:
         notes.append(
-            "Not every construct has the same number of replicates (Em/Ex): "
+            "Not every group has the same number of replicates (Em/Ex): "
             + "; ".join(short)
             + f", against {widest} for the others. Their means average fewer scans, "
               "and an SD over two replicates is just the half-range — read it as a "
@@ -248,27 +327,51 @@ def build_payload(root: Path, constructs):
         "Excitation files carry a reference photodiode (R1, µA) that tracks lamp "
         "output across the sweep. Raw S1 is uncorrected for the xenon lamp profile; "
         "S1÷R1 is the lamp-corrected excitation spectrum.")
-    notes.append(
-        ("Sample number → construct is an assignment, not a measurement: "
-         + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present))
-         + ". Rebuild with --constructs to relabel.") if layout == "named" else
-        ("Scan→sample assignment is declared, not inferred: 1 = calibration; "
-         "2/5/8 = " + present[0] + "; 3/6/9 = " + present[1] +
-         "; 4/7/10 = " + present[2] + " (replicates 1/2/3 in that order)."))
+    if series:
+        notes.append(
+            "The number in each filename is the sample label used in the export; the "
+            "exports do not record what concentration it corresponds to. Signal rises "
+            "monotonically with it, so the ladder is ordered by concentration, but the "
+            "absolute scale is not in these files.")
+    else:
+        notes.append(
+            ("Sample number → construct is an assignment, not a measurement: "
+             + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present))
+             + ". Rebuild with --constructs to relabel.") if layout == "named" else
+            ("Scan→sample assignment is declared, not inferred: 1 = calibration; "
+             "2/5/8 = " + present[0] + "; 3/6/9 = " + present[1] +
+             "; 4/7/10 = " + present[2] + " (replicates 1/2/3 in that order)."))
 
     summary = " · ".join(
         f"{g.split()[0]} ×{max(counts[g].values())}" for g in present)
 
+    n_lev = len(present)
     return {
         "source": root.name,
         "layout": layout,
+        "encoding": "sequential" if series else "categorical",
+        "groupLabel": "Concentration" if series else "Construct",
         "groups": groups,
         "reps": reps,
         "summary": summary,
         "traces": traces,
         "notes": notes,
         "scatterDefault": lines[0] if lines else None,
+        "rampLight": ramp_steps(n_lev, RAMP_LIGHT) if series else [],
+        "rampDark": ramp_steps(n_lev, RAMP_DARK) if series else [],
     }
+
+
+def ramp_css(payload):
+    """CSS custom properties for the sequential ramp, both themes."""
+    if payload["encoding"] != "sequential":
+        return ""
+    lt = "".join(f"--s{i}:{h};" for i, h in enumerate(payload["rampLight"]))
+    dk = "".join(f"--s{i}:{h};" for i, h in enumerate(payload["rampDark"]))
+    return (f"\n  :root {{ {lt} }}"
+            f"\n  @media (prefers-color-scheme: dark) {{"
+            f" :root:not([data-theme=\"light\"]) {{ {dk} }} }}"
+            f"\n  :root[data-theme=\"dark\"] {{ {dk} }}\n")
 
 
 # --------------------------------------------------------------------------
@@ -309,7 +412,7 @@ HTML = r"""<!doctype html>
     --accent:#3987e5; --warnbg:#241f12; --warnink:#e8d9a8; --warnline:#4a3f22;
     --c-cal:#898781; --c-g0:#3987e5; --c-g1:#d95926; --c-g2:#199e70;
   }
-
+__RAMPCSS__
   * { box-sizing:border-box; }
   body {
     margin:0; background:var(--surface); color:var(--ink);
@@ -428,7 +531,7 @@ HTML = r"""<!doctype html>
 <div class="wrap">
 <aside>
   <div class="grp"><h2>Measurement <button data-all="mode">all</button></h2><div id="f_mode"></div></div>
-  <div class="grp"><h2>Construct <button data-all="group">all</button></h2><div id="f_group"></div></div>
+  <div class="grp"><h2><span id="lbl_group">Construct</span> <button data-all="group">all</button></h2><div id="f_group"></div></div>
   <div class="grp"><h2>Replicate <button data-all="rep">all</button></h2><div id="f_rep"></div></div>
   <div class="grp"><h2>Trace <button data-all="kind">all</button></h2><div id="f_kind"></div></div>
 
@@ -515,21 +618,27 @@ for (const t of RAW) {
   t.repKey = t.rep == null ? null : String(t.rep);
   t.label = t.group === "calibration"
     ? `calibration · ${t.mode === "emission" ? "Em" : "Ex"}`
-    : `${t.group} · rep ${t.rep}`;
+    : `${t.group} · rep ${t.rep}` + (t.origin ? ` (${t.origin})` : "");
 }
 
 /* Slots are assigned by position in GROUPS, so renaming a construct (or
    running a different experiment through the same builder) never repaints
    the others: colour follows the entity's rank in the declared order. */
+const SEQUENTIAL = PAYLOAD.encoding === "sequential";
 const COLOR_VAR = {};
 { let i = 0;
-  for (const g of GROUPS) COLOR_VAR[g] = g === "calibration" ? "--c-cal" : `--c-g${i++}`; }
+  for (const g of GROUPS) {
+    COLOR_VAR[g] = g === "calibration" ? "--c-cal"
+                 : SEQUENTIAL ? `--s${i++}` : `--c-g${i++}`;
+  }
+}
+document.getElementById("lbl_group").textContent = PAYLOAD.groupLabel || "Construct";
 let CSSV = {};
 function readTheme() {
   const cs = getComputedStyle(document.documentElement);
   CSSV = {};
   for (const k of ["--ink","--ink2","--muted","--grid","--axis","--surface",
-                   "--c-cal","--c-g0","--c-g1","--c-g2"]) {
+                   ...Object.values(COLOR_VAR)]) {
     CSSV[k] = cs.getPropertyValue(k).trim();
   }
 }
@@ -1292,6 +1401,7 @@ def render(payload, title):
     blob = json.dumps(payload, separators=(",", ":"), ensure_ascii=True)
     blob = blob.replace("</", "<\\/")          # never close the host <script>
     return (HTML
+            .replace("__RAMPCSS__", ramp_css(payload))
             .replace("__PAYLOAD__", blob)
             .replace("__TITLE__", title))
 
@@ -1307,6 +1417,9 @@ def main(argv=None):
                     help="output HTML file (default: <root>/chimera_spectra_viewer.html)")
     ap.add_argument("--constructs", default=",".join(DEFAULT_CONSTRUCTS),
                     help="comma-separated construct names, in sample-number order")
+    ap.add_argument("--extra", action="append", default=[], metavar="DIR#NUM=INDEX",
+                    help="append sample NUM from another run's DIR onto construct "
+                         "INDEX, as extra replicates (repeatable)")
     ap.add_argument("--title", default=None)
     args = ap.parse_args(argv)
 
@@ -1318,7 +1431,7 @@ def main(argv=None):
         sys.exit(f"not a directory: {root}")
 
     constructs = [c.strip() for c in args.constructs.split(",") if c.strip()]
-    payload = build_payload(root, constructs)
+    payload = build_payload(root, constructs, args.extra)
     if not payload or not payload["traces"]:
         sys.exit(f"no recognised *_Data.csv files under {root}")
 
@@ -1331,7 +1444,7 @@ def main(argv=None):
     ex = len(payload["traces"]) - em
     print(f"{out}")
     print(f"  {em} emission + {ex} excitation scans · {payload['layout']} layout "
-          f"· {payload['summary']}")
+          f"· {payload['encoding']} · {payload['summary']}")
     for n in payload["notes"]:
         print("  · " + n)
     return 0
