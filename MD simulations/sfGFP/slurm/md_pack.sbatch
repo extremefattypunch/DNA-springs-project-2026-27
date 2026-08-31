@@ -109,6 +109,10 @@ while IFS= read -r spec; do
     # run off ONE topology, so the condition has to be in the directory name or they
     # overwrite each other's trajectory.
     TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}${X0:+_x${X0}A}${K:+_k${K}}"
+    case "$TAG" in
+        *_x_*|*_xA_*|*_k) echo "== malformed TAG '$TAG' from spec: $spec" >&2; exit 2 ;;
+    esac
+    [[ "$REP" =~ ^[0-9]+$ ]] || { echo "== REP not a number in: $spec" >&2; exit 2; }
     RUNDIR="data/runs/$TAG/rep$REP"
     mkdir -p "$RUNDIR"
     labels+=("$TAG/rep$REP")

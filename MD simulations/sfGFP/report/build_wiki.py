@@ -63,15 +63,26 @@ def fx_summary(path: Path):
     if not len(d):
         return {"stale": True}
 
-    NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
-    NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
+    # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
+    # topology, rather than from a map keyed on system name.  The map had to
+    # be edited in five files whenever a system was added, and a system
+    # missing from it silently fell back to 27.
+    NB = (d.groupby("system")["wc.pairs"].max().dropna()
+          .astype(int).to_dict() if "wc.pairs" in d else {})
+    # Keyed on the physical duplex, so the same molecule in two box sizes forms one
+    # curve rather than two unrelated series, and the windows they share become a
+    # cross-check between boxes.
+    if "duplex" not in d.columns:
+        d = d.assign(duplex=d.system.map(
+            lambda s: f"{NB.get(s, 27)} bp"
+                      + (", nicked" if "nick" in s.lower() else "")))
     out = {"stale": False, "n_valid": int(len(d)), "systems": {}}
-    for s, g in d.groupby("system"):
-        if s not in NB:
-            continue
-        eul = euler_pN(NB[s])
+    for s, g in d.groupby("duplex"):
+        eul = euler_pN(int(str(s).split()[0]))
         lr = st.linregress(g.mean_r_A, g.force_pN)
-        e = {"label": NICE[s], "n": int(len(g)),
+        e = {"label": s, "n": int(len(g)),
+             "boxes_A": sorted({round(float(b)) for b in g.get("box_A", [])
+                                if b == b}) if "box_A" in g else [],
              "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
              "f": float(g.force_pN.mean()), "sem": float(g.force_pN.sem()),
              "euler": float(eul), "ratio": float(g.force_pN.mean() / eul),
@@ -82,8 +93,8 @@ def fx_summary(path: Path):
             e["k_agree_p"] = float(st.ttest_ind(a, b, equal_var=False).pvalue)
         out["systems"][s] = e
 
-    i_, n_ = (d[d.system == "D_40bp"].force_pN.values,
-              d[d.system == "D_40bp_nick"].force_pN.values)
+    i_, n_ = (d[d.duplex == "40 bp"].force_pN.values,
+              d[d.duplex == "40 bp, nicked"].force_pN.values)
     if len(i_) > 1 and len(n_) > 1:
         out["nick"] = {"intact": float(i_.mean()), "nicked": float(n_.mean()),
                        "p": float(st.ttest_ind(i_, n_, equal_var=False).pvalue)}
@@ -109,7 +120,7 @@ def fx_summary(path: Path):
         wins = []
         for (s, x0), g in dd.groupby(["system", "x0_A"]):
             r = float(g.mean_r_A.mean())
-            wins.append((per_bp(r, NB[s]), int(g.opened.sum()), int(len(g))))
+            wins.append((per_bp(r, NB.get(s, 27)), int(g.opened.sum()), int(len(g))))
         wins.sort()
         opened = [c for c, k, n in wins if k]
         allopen = [c for c, k, n in wins if k == n]
@@ -119,7 +130,7 @@ def fx_summary(path: Path):
                 "certain_from_deg_bp": float(min(allopen)) if allopen else None,
                 "sampled_lo": float(min(c for c, k, n in wins)),
                 "sampled_hi": float(max(c for c, k, n in wins))}
-            bps = dd[dd.opened & (dd.system == "D_27bp")][
+            bps = dd[dd.opened & (dd.duplex.astype(str).str.startswith("27"))][
                 "wc.most_open_internal_bp"].dropna()
             if len(bps):
                 vc = bps.astype(int).value_counts()
@@ -163,7 +174,7 @@ def main():
     n_neg = sum(1 for v in vm.values() if v["delta"] < 0)
     e27 = euler_pN(27)
 
-    if fx and not fx.get("stale") and fx["systems"].get("D_27bp"):
+    if fx and not fx.get("stale") and fx["systems"].get("27 bp"):
         # NOT `rows` -- that name already holds the constructs table above, and
         # shadowing it silently replaced that table with this one.
         fx_rows = "\n".join(
@@ -171,7 +182,7 @@ def main():
                 e["label"], e["r_lo"], e["r_hi"], e["f"], e["sem"], e["euler"],
                 e["ratio"], e["slope_p"])
             for e in fx["systems"].values())
-        d27 = fx["systems"]["D_27bp"]
+        d27 = fx["systems"]["27 bp"]
         ks = [e["k_agree_p"] for e in fx["systems"].values() if "k_agree_p" in e]
         fx_txt = f"""A bare duplex, no protein, held at a series of separations by a
 harmonic restraint between the two linker nitrogens. The mean restraint force

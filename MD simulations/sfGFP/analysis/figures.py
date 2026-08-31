@@ -309,7 +309,12 @@ def fig_kink_threshold(runs, outdir):
         return None
 
     RISE = 3.376
-    NBP = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+    # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
+    # topology, rather than from a map keyed on system name.  The map had to
+    # be edited in five files whenever a system was added, and a system
+    # missing from it silently fell back to 27.
+    NBP = (d.groupby("system")["wc.pairs"].max().dropna()
+           .astype(int).to_dict() if "wc.pairs" in d else {})
 
     def per_bp(chord, n_bp):
         L = (n_bp - 1) * RISE
@@ -425,15 +430,28 @@ def fig_force_extension(runs, outdir):
         print("  force-extension: no valid windows")
         return None
 
-    NBP = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
-    NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
+    # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
+    # topology, rather than from a map keyed on system name.  The map had to
+    # be edited in five files whenever a system was added, and a system
+    # missing from it silently fell back to 27.
+    NBP = (d.groupby("system")["wc.pairs"].max().dropna()
+           .astype(int).to_dict() if "wc.pairs" in d else {})
     B, RISE_NM = 200.0, 0.33
-    order = [s for s in ("D_27bp", "D_40bp", "D_40bp_nick") if s in set(d.system)]
+    # Grouped by the PHYSICAL duplex, not the system name: D_27bp and B_27bp are the
+    # same 27 bp molecule in a 78 A and an 85 A box, so their force curves are one
+    # curve, and the windows they share are a cross-check between boxes rather than two
+    # unrelated series.  `duplex` is written by force_extension.py from the measured
+    # base-pair count, so a new box needs no edit here.
+    if "duplex" not in d.columns:
+        d = d.assign(duplex=d.system.map(
+            lambda s: f"{NBP.get(s, 27)} bp" + (", nicked" if "nick" in s.lower() else "")))
+    order = sorted(set(d.duplex), key=lambda s: (int(s.split()[0]), "nick" in s))
+    NICE = {s: s for s in order}
 
     fig, ax = plt.subplots(figsize=(7.6, 4.6))
 
     # --- annotation: the two things the measurement can be compared against ---
-    for n_bp in sorted({NBP[s] for s in order}):
+    for n_bp in sorted({int(s.split()[0]) for s in order}):
         eul = np.pi ** 2 * B / (((n_bp - 1) * RISE_NM) ** 2)
         ax.axhline(eul, color=VS.INK_MUTED, lw=1.1, ls=(0, (4, 3)), alpha=0.8, zorder=1)
         ax.annotate(f"Euler load, {n_bp} bp — {eul:.0f} pN", (0.012, eul),
@@ -442,9 +460,12 @@ def fig_force_extension(runs, outdir):
                     color=VS.INK_MUTED, zorder=5)
     pass
 
-    zoc = {"D_27bp": (2.4, 6.6), "D_40bp": (2.0, 3.2), "D_40bp_nick": (1.8, 2.6)}
-    lo = min(v[0] for s, v in zoc.items() if s in order)
-    hi = max(v[1] for s, v in zoc.items() if s in order)
+    # Zocchi's kinked-branch range per duplex length, keyed on base pairs so it follows
+    # the duplex rather than the system name.
+    zoc = {27: (2.4, 6.6), 40: (1.8, 3.2)}
+    lens = {int(s.split()[0]) for s in order}
+    lo = min(zoc[L][0] for L in lens if L in zoc)
+    hi = max(zoc[L][1] for L in lens if L in zoc)
     ax.axhspan(lo, hi, color=VS.GRID, alpha=0.85, lw=0, zorder=0)
     ax.annotate("what Zocchi’s kinked branch predicts for these same duplexes",
                 (0.012, lo + 0.35), xycoords=("axes fraction", "data"), ha="left",
@@ -459,7 +480,7 @@ def fig_force_extension(runs, outdir):
     # each construct gets the flat mean it actually measures, banded by its standard
     # error, spanning only the separations sampled.
     for i, s in enumerate(order):
-        g = d[d.system == s]
+        g = d[d.duplex == s]
         col = VS.SERIES[i]
         for k, mk in ((33.0, "s"), (200.0, "o")):
             gg = g[g.k_kJ_mol_nm2 == k]
@@ -489,8 +510,9 @@ def fig_force_extension(runs, outdir):
     fig.tight_layout()
     fig.savefig(Path(outdir) / "fig6_force_extension.png", dpi=200,
                 bbox_inches="tight")
-    keep = [c for c in ("system", "x0_A", "replicate", "k_kJ_mol_nm2", "mean_r_A",
-                        "force_pN", "force_sem_pN") if c in d.columns]
+    keep = [c for c in ("duplex", "system", "box_A", "x0_A", "replicate",
+                        "k_kJ_mol_nm2", "mean_r_A", "force_pN", "force_sem_pN")
+            if c in d.columns]
     d[keep].to_csv(Path(outdir) / "fig6_force_extension.csv", index=False)
     plt.close(fig)
     return "fig6_force_extension"

@@ -69,6 +69,20 @@ SYSDIR="build/systems/$SYS"
 # The same reasoning applies to the force-extension windows: several separations run
 # off ONE topology, so x0 has to be in the directory name too.
 TAG="$SYS${CLAMP_PN:+_${CLAMP_PN}pN}${RESTRAINT_X0:+_x${RESTRAINT_X0}A}${RESTRAINT_K:+_k${RESTRAINT_K}}"
+# A tag with an empty condition in it is a submission bug, not a run.  On 2026-08-23 an
+# invocation with RESTRAINT_X0, RESTRAINT_K and REP all empty produced
+# data/runs/B_27bp_xA_k/rep -- 15 MB of minimisation under a name that matches the
+# force-extension glob and means nothing.  Catch it at submission instead.
+case "$TAG" in
+    *_x_*|*_xA_*|*_x_A*|*_k|*_xA_k|*pN_*pN*)
+        echo "== malformed TAG '$TAG': a condition variable expanded empty." >&2
+        echo "   RESTRAINT_X0='${RESTRAINT_X0:-}' RESTRAINT_K='${RESTRAINT_K:-}'" >&2
+        echo "   CLAMP_PN='${CLAMP_PN:-}' -- set them or leave them unset, not empty." >&2
+        exit 2 ;;
+esac
+if ! [[ "$REP" =~ ^[0-9]+$ ]]; then
+    echo "== REP must be a number, got '$REP'" >&2; exit 2
+fi
 RUNDIR="data/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
 

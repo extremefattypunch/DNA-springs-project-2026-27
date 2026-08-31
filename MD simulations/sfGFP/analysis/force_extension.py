@@ -137,13 +137,29 @@ def wc_opening(t, strands):
 
 
 def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns=10.0,
-            report_ps=20.0):
+            report_ps=20.0, clamp_atoms=None, seeded_bp=None):
+    """Bend profile, base-pair opening and (where there is a restraint) the force.
+
+    Two kinds of run come through here.  A harmonic *window* records restraint_x0_A and
+    restraint_k in progress.json, and the mean restraint force is the measurement.  A
+    *free* run -- the seeded-kink duplexes -- has no restraint at all, and the question
+    is instead whether the kink it was built with survives.  The geometry analysis is
+    identical either way, which is the reason this shares one code path rather than
+    getting a second module: the Watson-Crick criterion, the helical-axis smoothing and
+    the minimum-image handling are all things it took several attempts to get right, and
+    a parallel implementation would drift from them.
+    """
     prog = json.loads(Path(progress).read_text())
     x0 = prog.get("restraint_x0_A")
     k = prog.get("restraint_k")
-    if x0 is None or k is None:
-        raise ValueError("this run has no harmonic restraint recorded")
-    i, j = (int(v) for v in prog["clamp_atoms"].split(","))
+    restrained = x0 is not None and k is not None
+    ca = prog.get("clamp_atoms")
+    if ca is None and clamp_atoms is not None:
+        ca = Path(clamp_atoms).read_text().strip() if Path(str(clamp_atoms)).exists() \
+            else str(clamp_atoms)
+    if ca is None:
+        raise ValueError("no clamp atoms recorded and none supplied")
+    i, j = (int(v) for v in str(ca).split(","))
 
     t = md.load(str(traj), top=str(top_path), stride=stride)
     skip = int(round(skip_ns * 1000.0 / report_ps / stride))
@@ -159,7 +175,9 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     # by default -- which is what produced the nonsensical -89 and -178 pN in the first
     # pass.  Both clamp atoms are on the same strand, hence the same molecule, so the raw
     # coordinates are contiguous and give the separation the restraint actually saw.
-    r, pbc = geometry.long_distance(t, i, j, f"restraint pair (window x0={x0} A)")
+    r, pbc = geometry.long_distance(
+        t, i, j, f"restraint pair (window x0={x0} A)" if restrained
+        else "end-to-end pair (free run, no restraint)")
     # Correlation time from the lag-1 autocorrelation, so the error bar reflects the
     # number of INDEPENDENT samples rather than the number of frames.
     d = r - r.mean()
@@ -168,9 +186,14 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     n_ind = len(r) * (1.0 - rho) / (1.0 + rho)
     sem = float(r.std() / np.sqrt(max(n_ind, 1.0)))
 
-    f_kjnm = k * (r.mean() - x0) / 10.0            # (A -> nm)
-    f_pN = f_kjnm * KJ_PER_MOL_NM_TO_PN
-    f_sem_pN = k * sem / 10.0 * KJ_PER_MOL_NM_TO_PN
+    if restrained:
+        f_kjnm = k * (r.mean() - x0) / 10.0        # (A -> nm)
+        f_pN = f_kjnm * KJ_PER_MOL_NM_TO_PN
+        f_sem_pN = k * sem / 10.0 * KJ_PER_MOL_NM_TO_PN
+    else:
+        # A free duplex exerts no force on anything, and reporting 0 would put a
+        # meaningless point on the force-extension curve. None keeps the row out of it.
+        f_pN = f_sem_pN = None
 
     resmap = load_map(resmap_path)
     strands = dna_strands(top, resmap)
@@ -180,25 +203,30 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
     # beyond its target, so a window that passes on x0 can still spend its whole
     # trajectory close enough to its own image to matter.  Both tests must pass.
     r_mean = float(r.mean())
-    ok_x0 = bool(x0 < BOX_FRACTION_MAX * box_width)
+    # A free run has no target, so only the separation it actually adopted can be judged
+    # against the box; ok_x0 is vacuously true there rather than being skipped, so the
+    # two columns still mean what their names say.
+    ok_x0 = bool(x0 < BOX_FRACTION_MAX * box_width) if restrained else True
     ok_r = bool(r_mean < BOX_FRACTION_MAX * box_width)
     box_ok = ok_x0 and ok_r
     if not box_ok:
         which = ("x0 = %.0f A" % x0) if not ok_x0 else ("the duplex settled at %.0f A"
                                                         % r_mean)
         print(f"  WARNING: {which} is "
-              f"{max(x0, r_mean) / box_width:.2f} of the box's perpendicular width "
-              f"({box_width:.0f} A) -- the duplex can reach its own periodic image and "
-              "this force is not its alone")
-    out = {"x0_A": x0, "k_kJ_mol_nm2": k, "frames": len(t), "skip_ns": skip_ns,
+              f"{max(x0 or 0.0, r_mean) / box_width:.2f} of the box's perpendicular "
+              f"width ({box_width:.0f} A) -- the duplex can reach its own periodic "
+              "image and this force is not its alone")
+    out = {"x0_A": x0, "k_kJ_mol_nm2": k, "restrained": restrained,
+           "frames": len(t), "skip_ns": skip_ns,
            "pbc": pbc, "box_width_A": round(box_width, 1),
-           "x0_over_box": round(float(x0 / box_width), 3),
+           "x0_over_box": round(float(x0 / box_width), 3) if restrained else None,
            "r_over_box": round(float(r_mean / box_width), 3),
            "box_ok": box_ok, "box_ok_on_x0": ok_x0, "box_ok_on_measured_r": ok_r,
            "mean_r_A": round(float(r.mean()), 3), "sd_r_A": round(float(r.std()), 3),
            "sem_r_A": round(sem, 4), "lag1_rho": round(rho, 4),
            "independent_samples": round(float(n_ind), 1),
-           "force_pN": round(float(f_pN), 3), "force_sem_pN": round(float(f_sem_pN), 3),
+           "force_pN": round(float(f_pN), 3) if f_pN is not None else None,
+           "force_sem_pN": round(float(f_sem_pN), 3) if f_sem_pN is not None else None,
            "n_strands": len(strands)}
     rows = {"r_A": r}
 
@@ -249,6 +277,54 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
                 "kinked": bool(internal)}
             rows["n_open_pairs"] = (wc > WC_OPEN_A).sum(axis=1).astype(float)
 
+            # ---- did a kink we PUT there survive? ----
+            # The seeded runs start with one interior pair deliberately broken and 114
+            # degrees of local bend.  Left free, the duplex either keeps that -- which
+            # would make the kink metastable, and Zocchi's softened branch reachable --
+            # or heals it, which says the kinked state is not a minimum at zero load.
+            # The distinction needs the pair's history, not its average, because a pair
+            # that shuts after 2 ns and a pair that shuts after 25 ns mean different
+            # things and have similar means.
+            if seeded_bp is not None and 1 <= seeded_bp <= n_pairs:
+                col = seeded_bp - 1
+                d_seed = wc[:, col]
+                openness = d_seed > WC_OPEN_A
+                # first frame after which it is shut for the rest of the trajectory
+                healed_at = None
+                if not openness[-1]:
+                    idx = np.where(openness)[0]
+                    last_open = int(idx[-1]) if len(idx) else -1
+                    healed_at = (last_open + 1) * report_ps * stride / 1000.0
+                flank = [c for c in (col - 1, col + 1) if 0 <= c < n_pairs]
+                entry = {
+                    "bp": seeded_bp,
+                    "label": labels[col],
+                    "N1_N3_mean_A": round(float(d_seed.mean()), 3),
+                    "N1_N3_first_A": round(float(d_seed[0]), 3),
+                    "N1_N3_last_A": round(float(d_seed[-1]), 3),
+                    "open_fraction": round(float(openness.mean()), 4),
+                    "open_at_end": bool(openness[-1]),
+                    "healed_after_ns": (round(healed_at, 2)
+                                        if healed_at is not None else None),
+                    "flanking_N1_N3_A": [round(float(wc[:, c].mean()), 3)
+                                         for c in flank],
+                    # a kink that moves rather than heals is a third outcome, and the
+                    # most interesting one, so it is named rather than left implicit
+                    "most_open_bp_now": int(open_frac.argmax()) + 1,
+                    "migrated": bool(internal
+                                     and max(internal, key=lambda x: x[1])[0]
+                                     != seeded_bp)}
+                if openness.mean() > 0.5:
+                    entry["verdict"] = "persisted"
+                elif openness.mean() > 0.05:
+                    entry["verdict"] = "intermittent"
+                elif entry["migrated"]:
+                    entry["verdict"] = "migrated"
+                else:
+                    entry["verdict"] = "healed"
+                out["seeded"] = entry
+                rows["seeded_N1_N3_A"] = d_seed
+
     if out_prefix:
         pd.DataFrame(rows).to_csv(f"{out_prefix}_fx.csv", index=False)
         Path(f"{out_prefix}_fx.json").write_text(json.dumps(out, indent=2))
@@ -263,15 +339,41 @@ def main():
     ap.add_argument("--stride", type=int, default=2)
     ap.add_argument("--skip-ns", type=float, default=10.0)
     ap.add_argument("--min-ns", type=float, default=15.0)
+    ap.add_argument("--free", default="K27_*",
+                    help="glob for FREE bare-duplex systems with no restraint -- the "
+                         "seeded kinks. Their geometry is analysed the same way; they "
+                         "simply have no force to report.")
     a = ap.parse_args()
 
+    # Harmonic windows carry the target in the directory name; free runs do not, so they
+    # are matched separately rather than by loosening the window glob -- which would also
+    # have swept up every protein chimera.
+    targets = [(t_, True) for t_ in
+               sorted(Path(a.runs).glob("*_x*A*/rep*/03_production/traj.dcd"))]
+    if a.free:
+        targets += [(t_, False) for t_ in
+                    sorted(Path(a.runs).glob(f"{a.free}/rep*/03_production/traj.dcd"))]
+
     rows = []
-    # The trailing _k<stiffness> is optional, so the glob must not require the name to
-    # end at the window: a soft-restraint run is D_27bp_x50A_k33.
-    for traj in sorted(Path(a.runs).glob("*_x*A*/rep*/03_production/traj.dcd")):
+    for traj, is_window in targets:
         tag = traj.parent.parent.parent.name
-        base = tag.rsplit("_x", 1)[0]
+        base = tag.rsplit("_x", 1)[0] if is_window else tag
         sysdir = Path(a.systems) / base
+        # K27_bp7 -> seeded pair 7. Taken from the name and cross-checked against what
+        # the seeder actually wrote, so a rename cannot silently point this at the wrong
+        # base pair.
+        seeded = None
+        if not is_window:
+            m = re.search(r"_bp(\d+)$", base)
+            if m:
+                seeded = int(m.group(1))
+                kj = Path("build/03_dna") / f"kink27_bp{seeded}.json"
+                if kj.exists():
+                    rec = json.loads(kj.read_text()).get("step")
+                    if rec is not None and int(rec) != seeded:
+                        print(f"  skip {tag}: name says bp{seeded} but the seeder "
+                              f"recorded step {rec}")
+                        continue
         prog = traj.parent / "progress.json"
         if not (sysdir / "system.prmtop").exists() or not prog.exists():
             print(f"  skip {tag}: no topology or progress"); continue
@@ -280,13 +382,24 @@ def main():
             print(f"  skip {tag}/{traj.parent.parent.name}: only {ns} ns"); continue
         try:
             r = analyse(traj, sysdir / "system.prmtop", sysdir / "residue_map.json",
-                        prog, str(traj.parent / "analysis"), a.stride, a.skip_ns)
+                        prog, str(traj.parent / "analysis"), a.stride, a.skip_ns,
+                        clamp_atoms=sysdir / "clamp_atoms.txt", seeded_bp=seeded)
         except Exception as e:                                    # noqa: BLE001
             print(f"  {tag}/{traj.parent.parent.name} failed: "
                   f"{type(e).__name__}: {e}")
             continue
-        flat = {"system": base, "tag": tag, "replicate": traj.parent.parent.name,
-                "ns": ns}
+        # `duplex` is the PHYSICAL molecule, which is not the same thing as the
+        # system name: D_27bp and B_27bp are the identical 27 bp duplex differing only
+        # in how much water surrounds it (78.3 A across against 85.5).  The force curve
+        # is a property of the molecule, so it is grouped by this, and the two boxes are
+        # distinguished by box_width_A -- which makes the overlapping windows a
+        # cross-check between boxes rather than two unrelated series.
+        nick = "nick" in base.lower()
+        npair = (r.get("wc") or {}).get("pairs")
+        duplex = (f"{npair} bp{', nicked' if nick else ''}" if npair
+                  else base.split("_", 1)[-1])
+        flat = {"system": base, "duplex": duplex, "box_A": r.get("box_width_A"),
+                "tag": tag, "replicate": traj.parent.parent.name, "ns": ns}
         for kk, vv in r.items():
             if isinstance(vv, dict):
                 for k2, v2 in vv.items():
@@ -295,6 +408,14 @@ def main():
             else:
                 flat[kk] = vv
         rows.append(flat)
+        if not r.get("restrained"):
+            sd = r.get("seeded") or {}
+            print(f"  {tag}/{traj.parent.parent.name}: FREE, <r> {r['mean_r_A']:.2f} A, "
+                  f"seeded bp{sd.get('bp')} {sd.get('verdict', '?')} "
+                  f"(open {100 * sd.get('open_fraction', 0):.0f}% of frames, "
+                  f"N1-N3 {sd.get('N1_N3_first_A', 0):.1f} -> "
+                  f"{sd.get('N1_N3_last_A', 0):.1f} A)")
+            continue                      # already appended above; the print differs only
         print(f"  {tag}/{traj.parent.parent.name}: x0 {r['x0_A']:.0f} A, "
               f"<r> {r['mean_r_A']:.2f}, f = {r['force_pN']:+.2f} "
               f"+/- {r['force_sem_pN']:.2f} pN"
@@ -305,7 +426,8 @@ def main():
                     if r['wc']['internal_open'] else "")
                  if "wc" in r else ""))
     if not rows:
-        raise SystemExit("no force-extension windows with enough production yet")
+        raise SystemExit("no harmonic windows and no free duplex runs with "
+                         "enough production yet")
     df = pd.DataFrame(rows).sort_values(["system", "x0_A", "replicate"])
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(a.out, index=False)

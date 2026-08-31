@@ -603,16 +603,28 @@ def build(args):
         d = d[d.r_over_box <= 0.85]
         if not len(d):
             return None
-        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
-        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp",
-                "D_40bp_nick": "40 bp, nicked"}
-        out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {}}
-        for s, g in d.groupby("system"):
-            if s not in NB:
-                continue
-            eul = _np.pi ** 2 * 200.0 / (((NB[s] - 1) * 0.33) ** 2)
+        # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
+        # topology, rather than from a map keyed on system name.  The map had to
+        # be edited in five files whenever a system was added, and a system
+        # missing from it silently fell back to 27.
+        NB = (d.groupby("system")["wc.pairs"].max().dropna()
+              .astype(int).to_dict() if "wc.pairs" in d else {})
+        # Keyed on the physical duplex: D_27bp and B_27bp are the same molecule in
+        # different-sized boxes, so their windows belong to one curve and the ones they
+        # share are a cross-check between boxes.
+        if "duplex" not in d.columns:
+            d = d.assign(duplex=d.system.map(
+                lambda s: f"{NB.get(s, 27)} bp"
+                          + (", nicked" if "nick" in s.lower() else "")))
+        out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {},
+               "boxes": {}}
+        for s, g in d.groupby("duplex"):
+            NB_s = int(str(s).split()[0])
+            eul = _np.pi ** 2 * 200.0 / (((NB_s - 1) * 0.33) ** 2)
             lr = _st.linregress(g.mean_r_A, g.force_pN)
-            e = {"label": NICE[s], "n": int(len(g)),
+            e = {"label": s, "n": int(len(g)),
+                 "boxes_A": sorted({round(float(b)) for b in g.get("box_A", [])
+                                    if b == b}) if "box_A" in g else [],
                  "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
                  "f": float(g.force_pN.mean()), "sem": float(g.force_pN.sem()),
                  "euler": float(eul), "ratio": float(g.force_pN.mean() / eul),
@@ -624,8 +636,8 @@ def build(args):
                 e["k_agree_p"] = float(tt.pvalue)
                 e["f_soft"], e["f_stiff"] = float(a.mean()), float(b.mean())
             out["by_system"][s] = e
-        i, n = d[d.system == "D_40bp"].force_pN.values, \
-            d[d.system == "D_40bp_nick"].force_pN.values
+        i, n = (d[d.duplex == "40 bp"].force_pN.values,
+                d[d.duplex == "40 bp, nicked"].force_pN.values)
         if len(i) > 1 and len(n) > 1:
             tt = _st.ttest_ind(i, n, equal_var=False)
             out["nick"] = {"intact": float(i.mean()), "nicked": float(n.mean()),
@@ -653,7 +665,7 @@ def build(args):
     # The measured force leads if we have it: a number out of the force field is worth
     # more than the same number out of a model, and the whole of point 6 was about that
     # distinction.  Fall back to the modelled one only when the windows are unavailable.
-    d27m = (mfx or {}).get("by_system", {}).get("D_27bp")
+    d27m = (mfx or {}).get("by_system", {}).get("27 bp")
     if d27m:
         hero_k = "measured spring force"
         hero_force = f"{d27m['f']:.1f} pN"
@@ -776,7 +788,12 @@ def build(args):
     if fxf.exists():
         import numpy as _np
         fx = pd.read_csv(fxf)
-        NB = {"D_27bp": 27, "D_40bp": 40, "D_40bp_nick": 40}
+        # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
+        # topology, rather than from a map keyed on system name.  The map had to
+        # be edited in five files whenever a system was added, and a system
+        # missing from it silently fell back to 27.
+        NB = (d.groupby("system")["wc.pairs"].max().dropna()
+              .astype(int).to_dict() if "wc.pairs" in d else {})
         NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
         need = {"wc.n_internal_open", "box_ok", "mean_r_A", "box_width_A"}
         if len(fx) and need <= set(fx.columns):
