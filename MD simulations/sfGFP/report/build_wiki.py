@@ -56,10 +56,14 @@ def fx_summary(path: Path):
         return {"stale": True}
     from scipy import stats as st
 
-    d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
+    # box_ok is AUTHORITATIVE: computed by force_extension.py from unrounded values.
+    # Re-deriving it from the rounded csv columns flipped a run at 0.850049 and made the
+    # wiki disagree with the report about the valid set.
     n_all = len(d)
-    d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
-    d = d[d.r_over_box <= 0.85]
+    if "box_ok_on_measured_r" not in d.columns:
+        d = d.assign(box_ok=d.box_ok.astype(str).str.lower().isin(("true", "1"))
+                     & (d.mean_r_A / d.box_width_A <= 0.85))
+    d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
     if not len(d):
         return {"stale": True}
 

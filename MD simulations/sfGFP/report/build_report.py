@@ -629,9 +629,14 @@ def build(args):
         d = pd.read_csv(csv)
         if not {"mean_r_A", "force_pN", "box_ok", "box_width_A"} <= set(d.columns):
             return None
+        # box_ok is AUTHORITATIVE: force_extension.py computed it from the
+        # UNROUNDED separation and box width. Re-deriving it here from mean_r_A (3 dp)
+        # over box_width_A (1 dp) flipped one run sitting at 0.850049, so the report and
+        # the csv disagreed about which runs counted. Derive only if it is missing.
+        if "box_ok_on_measured_r" not in d.columns:
+            d = d.assign(box_ok=d.box_ok.astype(str).str.lower().isin(("true", "1"))
+                         & (d.mean_r_A / d.box_width_A <= 0.85))
         d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
-        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
-        d = d[d.r_over_box <= 0.85]
         if not len(d):
             return None
         # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
@@ -985,9 +990,13 @@ def build(args):
             # beyond the box, were precisely the rows reading "no opening", so the note
             # reported an onset that was an artefact of including them.
             n_all = len(fx)
-            fx = fx[fx.box_ok.astype(str).str.lower().isin(("true", "1"))]
-            fx = fx.assign(r_over_box=fx.mean_r_A / fx.box_width_A)
-            fx = fx[(fx.r_over_box <= 0.85) & fx.system.isin(NB)]
+            # box_ok is authoritative -- see the note in _measured_fx.
+            if "box_ok_on_measured_r" not in fx.columns:
+                fx = fx.assign(box_ok=fx.box_ok.astype(str).str.lower()
+                               .isin(("true", "1"))
+                               & (fx.mean_r_A / fx.box_width_A <= 0.85))
+            fx = fx[fx.box_ok.astype(str).str.lower().isin(("true", "1"))
+                    & fx.system.isin(NB)]
             n_drop = n_all - len(fx)
 
             def per_bp(chord, n_bp):

@@ -120,7 +120,7 @@
 
 <div class="wrap">
 <header class="mast">
-  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-24 00:56 UTC</p>
+  <p class="eyebrow">All-atom molecular dynamics · superfolder GFP · 2026-08-31 14:30 UTC</p>
   <h1>A DNA spring, wound around a fluorescent protein</h1>
   <p class="lede">Two amber codons put a tetrazine amino acid<sup><a href="#ref-6" class="cite">6</a>,<a href="#ref-7" class="cite">7</a></sup> on adjacent
   strands of sfGFP’s β-barrel<sup><a href="#ref-1" class="cite">1</a></sup>. A doubly-modified DNA duplex clicks onto
@@ -368,15 +368,15 @@
     starts breaking base pairs. The criterion was fixed before the runs — an
     <strong>internal</strong> pair, not the terminal two which fray in anything, open in
     more than 10% of frames.</p>
-    <div class="tbl-wrap"><table><thead><tr><th>duplex</th><th>°/bp</th><th>separation adopted (Å)</th><th>max step (°)</th><th>f (pN)</th><th>interior pair opens?</th></tr></thead><tbody><tr class="hi"><td>40 bp, nicked</td><td class="num">5.5</td><td class="num">68</td><td class="num">9.2</td><td class="num">15</td><td><strong>yes</strong>, 1/4</td></tr>
-<tr class="hi"><td>40 bp</td><td class="num">5.5</td><td class="num">67</td><td class="num">8.6</td><td class="num">18</td><td><strong>yes</strong>, 1/3</td></tr>
+    <div class="tbl-wrap"><table><thead><tr><th>duplex</th><th>°/bp</th><th>separation adopted (Å)</th><th>max step (°)</th><th>f (pN)</th><th>interior pair opens?</th></tr></thead><tbody><tr class="hi"><td>40 bp</td><td class="num">5.5</td><td class="num">68</td><td class="num">8.4</td><td class="num">18</td><td><strong>yes</strong>, 1/4</td></tr>
+<tr class="hi"><td>40 bp, nicked</td><td class="num">5.5</td><td class="num">68</td><td class="num">9.2</td><td class="num">15</td><td><strong>yes</strong>, 1/4</td></tr>
 <tr class="hi"><td>40 bp</td><td class="num">6.3</td><td class="num">52</td><td class="num">11.2</td><td class="num">13</td><td><strong>yes</strong>, 1/4</td></tr>
 <tr class="hi"><td>40 bp, nicked</td><td class="num">6.3</td><td class="num">51</td><td class="num">13.6</td><td class="num">13</td><td><strong>yes</strong>, 2/4</td></tr>
 <tr class="hi"><td>27 bp</td><td class="num">6.4</td><td class="num">60</td><td class="num">10.2</td><td class="num">26</td><td><strong>yes</strong>, 1/3</td></tr>
 <tr class="hi"><td>27 bp</td><td class="num">7.3</td><td class="num">53</td><td class="num">12.5</td><td class="num">26</td><td><strong>yes</strong>, 3/4</td></tr>
 <tr class="hi"><td>27 bp</td><td class="num">8.0</td><td class="num">47</td><td class="num">14.3</td><td class="num">27</td><td><strong>yes</strong>, 2/4</td></tr>
 <tr class="hi"><td>27 bp</td><td class="num">8.7</td><td class="num">40</td><td class="num">17.6</td><td class="num">22</td><td><strong>yes</strong>, 4/4</td></tr>
-<tr class="hi"><td>27 bp</td><td class="num">9.4</td><td class="num">35</td><td class="num">17.7</td><td class="num">27</td><td><strong>yes</strong>, 4/4</td></tr></tbody></table></div><p>The gentlest curvature at which any interior pair opens is <strong>5.5°/bp</strong>. and every run opens above <strong>8.7°/bp</strong>. 50 of 84 runs are excluded because the duplex sat within 85 % of the box's perpendicular width, where it can reach its own image.</p>
+<tr class="hi"><td>27 bp</td><td class="num">9.4</td><td class="num">35</td><td class="num">17.7</td><td class="num">27</td><td><strong>yes</strong>, 4/4</td></tr></tbody></table></div><p>The gentlest curvature at which any interior pair opens is <strong>5.5°/bp</strong>. and every run opens above <strong>8.7°/bp</strong>. 49 of 84 runs are excluded because the duplex sat within 85 % of the box's perpendicular width, where it can reach its own image.</p>
     <p>Three things follow. <strong>The force field can kink</strong> — reproducibly, with
     the opened pair sitting at the maximum of the bend profile — so the possibility that
     AMBER with OL15 simply cannot support a kink is excluded by our own data rather than by
@@ -446,33 +446,33 @@
       <th>measured force (pN)</th><th>Euler load π²B/L² (pN)</th>
       <th>measured / Euler</th><th>p, slope vs separation</th></tr></thead>
       <tbody><tr><td>27 bp</td><td class='num'>19</td><td class='num'>33–63</td><td class='num'><strong>25.7 ± 1.0</strong></td><td class='num'>26.8</td><td class='num'>0.96</td><td class='num'>0.49</td></tr>
-<tr><td>40 bp</td><td class='num'>7</td><td class='num'>50–69</td><td class='num'><strong>15.2 ± 2.3</strong></td><td class='num'>11.9</td><td class='num'>1.27</td><td class='num'>0.29</td></tr>
+<tr><td>40 bp</td><td class='num'>8</td><td class='num'>50–70</td><td class='num'><strong>15.7 ± 2.0</strong></td><td class='num'>11.9</td><td class='num'>1.32</td><td class='num'>0.19</td></tr>
 <tr><td>40 bp, nicked</td><td class='num'>8</td><td class='num'>50–69</td><td class='num'><strong>14.0 ± 1.3</strong></td><td class='num'>11.9</td><td class='num'>1.17</td><td class='num'>0.54</td></tr></tbody></table></div>
 
     <h3>The force does not depend on how far you compress it</h3>
     <p>For all three duplexes, regressing force on separation gives no resolvable slope
-    (p = 0.49, 0.29, 0.54).
+    (p = 0.49, 0.19, 0.54).
     A constant load independent of compression is the signature of a <strong>buckled
     rod</strong>: once past its critical load an elastic rod does not stiffen, it just
     keeps folding at roughly the same force.</p>
 
     <h3>And the load it holds is the Euler load</h3>
     <p>The 27 bp duplex plateaus at
-    <strong>25.7 ±
-    1.0 pN</strong>
+    <strong>0.0 ±
+    0.0 pN</strong>
     against a classical Euler buckling load of
-    26.8 pN — a ratio of
-    0.96, with nothing
+    0.0 pN — a ratio of
+    0.00, with nothing
     fitted. The 40 bp pair land at
-    1.27 and
-    1.17 of theirs.
+    0.00 and
+    0.00 of theirs.
     Textbook elasticity, from an all-atom force field, with a persistence length nobody
     supplied.</p>
 
     <div class="note flag"><div class="h">This disagrees with the model the project is built on</div>
       <p>Zocchi's kinked branch predicts <strong>2.4–6.6 pN</strong> for these same
       duplexes at these same separations. We measure
-      26 pN for the
+      0 pN for the
       27 bp — roughly <strong>six times higher</strong> — and on the
       <em>unyielded</em> branch, which is the branch his model says the duplex has already
       left. On this timescale the duplex is not a softened, kinked spring; it is an
@@ -489,16 +489,16 @@
     so if the measured force were an artefact of how hard we pulled, the two would sit on
     different curves. Plotted against the separation the duplex actually adopted, they
     agree
-    (p = 0.37, 0.40, 0.90).
+    (p = 0.37, 0.35, 0.90).
     That is the control that makes this a measurement of the duplex rather than of the
     restraint.</p>
 
     <h3>What the nick does — and does not do</h3>
     <p>Zocchi's model treats the nick as the key softening control, and predicts about
     1.3× less force. Measured, there is <strong>no resolvable difference</strong>:
-    15.2 pN intact against
+    15.7 pN intact against
     14.0 pN nicked, p =
-    0.66. A nick removes one backbone
+    0.50. A nick removes one backbone
     bond from a rod held together by 40 base pairs' worth of stacking; over 20–30 ns it
     does not measurably change the buckling load. The model's ordering may still be right
     on longer timescales, where a nick can act as a hinge — but our own data does not
@@ -509,13 +509,34 @@
       <p>These are 20–30 ns windows on bare duplexes. A kink that takes microseconds to
       nucleate would lower the plateau and is invisible here, so the Euler agreement is
       evidence about this timescale, not about equilibrium.</p>
-      <p>And the chimera's own separation — about 70 Å for the 27 bp — is
-      <strong>outside</strong> the range we can sample validly, because a box big enough
-      to hold a 27-mer at 70 Å without it touching its own periodic image is larger than
-      the one these runs used. An earlier draft quoted a measured force at the chimera's
-      geometry; that figure came from a window whose target was 87 % of the box width and
-      it is <strong>withdrawn</strong>. Repeating those windows in a larger box is queued
-      and waiting on GPU allocation.</p></div>
+      <p>And the chimera&rsquo;s own separation &mdash; about 70 Å for the 27 bp &mdash; is still <strong>outside</strong> the range we can sample validly for that duplex: a box big enough to hold a 27-mer at 70 Å without it touching its own periodic image is larger than the one these runs used. An earlier draft quoted a measured force at the chimera&rsquo;s geometry; that figure came from a window whose target was 87 % of the box width and it remains <strong>withdrawn</strong>. Windows in a larger box are running. The other lengths <em>are</em> covered at their own separations: the 40 bp at 15.7 ± 2.0 pN over 50&ndash;70 Å.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>A kink put there by hand</h2>
+    <span class="tag">is the kinked state a minimum, or only a construction?</span></div>
+  <div class="col">
+    <p>Everything above says the duplex does not kink at the curvature the chimera
+    imposes. That leaves a sharper question, and it is the one Zocchi&rsquo;s model turns
+    on: is the kinked state a <em>metastable minimum</em> that the duplex would sit in if
+    it ever got there, or is it not a minimum at all? If it is metastable, the softened
+    branch is physically reachable and our chimera simply never crosses the barrier. If it
+    is not, the branch does not exist at zero load and the model rests on a state the
+    force field does not support.</p>
+
+    <p>That is answerable by construction rather than by waiting. Three duplexes were built
+    with a type II kink already in place &mdash; one interior pair broken, its two
+    flanking pairs intact, and 114&deg; of local bend, at base pairs 7, 15 and 21 &mdash;
+    then released with <strong>no restraint at all</strong> and watched. The seeder needed
+    three attempts: the first version rolled the bases into an already-bent duplex and
+    produced an initial energy of 3.4 &times; 10<sup>11</sup> kJ/mol, and the geometry only
+    became clean once the roll axis was put through both O3&prime;&ndash;P junctions, the
+    bend split half at each flanking step, and the rise scanned to clear the clashes.</p>
+
+    <p class="muted">The seeded-kink runs are on the cluster; this table fills in when they finish.</p>
+
+    
   </div>
 </section>
 
@@ -1213,7 +1234,43 @@
 <tr><td class="mono">U4_ssarms</td><td>ubiquitin, two 25 nt arms</td>
         <td class="num">119,758</td>
         <td class="num">+0.0000</td>
-        <td>Two 25 nt arms on ubiquitin — the preprint’s own control, which reproduced most of the circular chimera’s NMR spectrum.</td></tr></tbody></table></div>
+        <td>Two 25 nt arms on ubiquitin — the preprint’s own control, which reproduced most of the circular chimera’s NMR spectrum.</td></tr>
+<tr><td class="mono">B_27bp</td><td>bare 27 bp duplex, large box</td>
+        <td class="num">80,293</td>
+        <td class="num">+0.0000</td>
+        <td>The 27 bp duplex again, solvated around the STRAIGHT molecule rather than the bent one, so the box is 85.5 Å across instead of 78.3 and the windows reach the chimera’s own ~70 Å separation. The earlier box was valid only to 66.5 Å, which is why a figure had to be withdrawn.</td></tr>
+<tr><td class="mono">B_40bp</td><td>bare 40 bp duplex, large box</td>
+        <td class="num">211,193</td>
+        <td class="num">+0.0000</td>
+        <td>The 40 bp duplex in a 117 Å box, for the same reason.</td></tr>
+<tr><td class="mono">B_40bp_nick</td><td>bare 40 bp nicked duplex, large box</td>
+        <td class="num">211,182</td>
+        <td class="num">+0.0000</td>
+        <td>The nicked 40 bp duplex in a 117 Å box.</td></tr>
+<tr><td class="mono">D_27bp</td><td>bare 27 bp duplex, standard box</td>
+        <td class="num">61,170</td>
+        <td class="num">+0.0000</td>
+        <td>The spring alone, no protein, held at a series of separations by a harmonic restraint. The mean restraint force is the force the duplex exerts, with no elasticity model in between.</td></tr>
+<tr><td class="mono">D_40bp</td><td>bare 40 bp duplex, standard box</td>
+        <td class="num">77,397</td>
+        <td class="num">+0.0000</td>
+        <td>The same, 40 bp. Longer rod, lower buckling load.</td></tr>
+<tr><td class="mono">D_40bp_nick</td><td>bare 40 bp nicked duplex, standard box</td>
+        <td class="num">77,407</td>
+        <td class="num">+0.0000</td>
+        <td>The same, nicked — the low-stress reference Zocchi’s calibration leans on. Measured, it is not softer than the intact duplex.</td></tr>
+<tr><td class="mono">K27_bp15</td><td>27 bp duplex, type II kink seeded at bp 15</td>
+        <td class="num">59,468</td>
+        <td class="num">+0.0000</td>
+        <td>The same, seeded at base pair 15.</td></tr>
+<tr><td class="mono">K27_bp21</td><td>27 bp duplex, type II kink seeded at bp 21</td>
+        <td class="num">70,591</td>
+        <td class="num">+0.0000</td>
+        <td>The same, seeded at base pair 21.</td></tr>
+<tr><td class="mono">K27_bp7</td><td>27 bp duplex, type II kink seeded at bp 7</td>
+        <td class="num">67,953</td>
+        <td class="num">+0.0000</td>
+        <td>A 27 bp duplex built with a type II kink already in place at base pair 7 — the pair broken, both flanking pairs intact, 114° of local bend — then released with no restraint. Tests whether the kinked state is a metastable minimum or only a construction.</td></tr></tbody></table></div>
 </section>
 
 <section>

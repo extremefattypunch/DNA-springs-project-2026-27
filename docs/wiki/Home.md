@@ -87,7 +87,7 @@ harmonic restraint between the two linker nitrogens. The mean restraint force
 | duplex | separations sampled (Å) | measured force (pN) | Euler load π²B/L² (pN) | measured / Euler | p, slope vs separation |
 |---|---|---|---|---|---|
 | 27 bp | 33–63 | **25.7 ± 1.0** | 26.8 | 0.96 | 0.49 |
-| 40 bp | 50–69 | **15.2 ± 2.3** | 11.9 | 1.27 | 0.29 |
+| 40 bp | 50–70 | **15.7 ± 2.0** | 11.9 | 1.32 | 0.19 |
 | 40 bp, nicked | 50–69 | **14.0 ± 1.3** | 11.9 | 1.17 | 0.54 |
 
 Two things to read.
@@ -108,11 +108,11 @@ his model says the duplex has already left. So on this timescale the duplex is n
 softened kinked spring; it is an elastic rod holding its buckling load, and the modelled
 forces in the table above are if anything **underestimates**.
 
-Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm⁻². The soft one is barely a constraint — the duplex settles 2–7 Å past its target — so if the force were an artefact of how hard we pulled, the two would separate. Against the separation actually adopted they agree (p = 0.37, 0.40, 0.90). That is the control that makes this the duplex's force rather than the restraint's.
+Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm⁻². The soft one is barely a constraint — the duplex settles 2–7 Å past its target — so if the force were an artefact of how hard we pulled, the two would separate. Against the separation actually adopted they agree (p = 0.37, 0.35, 0.90). That is the control that makes this the duplex's force rather than the restraint's.
 
-**What the nick does not do.** Zocchi's model treats the nick as the key softening control and predicts ~1.3× less force. Measured, there is no resolvable difference: 15.2 pN intact against 14.0 pN nicked, p = 0.66. Over 20–30 ns, removing one backbone bond from a rod held by 40 base pairs of stacking does not change its buckling load.
+**What the nick does not do.** Zocchi's model treats the nick as the key softening control and predicts ~1.3× less force. Measured, there is no resolvable difference: 15.7 pN intact against 14.0 pN nicked, p = 0.50. Over 20–30 ns, removing one backbone bond from a rod held by 40 base pairs of stacking does not change its buckling load.
 
-1 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
+49 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
 
 ![measured force against extension](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig6_force_extension.png)
 

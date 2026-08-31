@@ -299,10 +299,8 @@ def fig_kink_threshold(runs, outdir):
         return None
     if "box_ok" in d.columns:
         d = d[d.box_ok.astype(str).str.lower().isin(("true", "1"))]
-    if "r_over_box" not in d.columns and "box_width_A" in d.columns:
-        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
-    if "r_over_box" in d.columns:
-        d = d[d.r_over_box <= 0.85]
+    if "box_ok_on_measured_r" not in d.columns and "box_width_A" in d.columns:
+        d = d[(d.mean_r_A / d.box_width_A) <= 0.85]
     d = d[d["wc.max_internal_occupancy"].notna()]
     if len(d) < 4:
         print("  kink threshold: too few valid windows")
@@ -423,9 +421,11 @@ def fig_force_extension(runs, outdir):
     # box_ok in an older csv was judged on the TARGET separation only.  The measured
     # ratio is mean_r/box_width exactly, so derive it rather than skipping the check --
     # a missing column must not silently relax a guard.
-    if "r_over_box" not in d.columns:
-        d = d.assign(r_over_box=d.mean_r_A / d.box_width_A)
-    d = d[d.r_over_box <= 0.85]
+    # box_ok already carries the measured-separation test when the csv is current;
+    # only older files need it derived, and deriving it from rounded columns is what
+    # made one boundary run appear in some tables and not others.
+    if "box_ok_on_measured_r" not in d.columns:
+        d = d[(d.mean_r_A / d.box_width_A) <= 0.85]
     if not len(d):
         print("  force-extension: no valid windows")
         return None
