@@ -89,7 +89,21 @@ FREE = {"gpu_test"}
 # an A40 while the solo reference was an A100-80GB, so the comparison was across hardware,
 # not across pack size.  Measured solo-vs-packed on the SAME card, packing scales almost
 # perfectly and a single run leaves ~3/4 of the card idle even at 211k atoms.
-PACK_MEASURED = [(80293, 8, 3.6), (211182, 4, 4.0)]
+# (atoms, pack size, aggregate/solo).  PRODUCTION figures where available -- production
+# is 30 of the ~36 ns per run, and it runs a 4 fs timestep with no barostat, so each run
+# uses the card better than in equilibration and leaves LESS headroom for a neighbour.
+# Measuring during equilibration overstates what packing buys: the same 8-way pack looked
+# like 3.6x in NPT and is 2.3x in production.
+#
+# The aggregate throughputs are measured.  The solo comparisons marked (est) scale an
+# A100-80GB reference by memory bandwidth rather than being measured on the same card --
+# the same cross-card extrapolation that produced a wrong answer once already, so they
+# are flagged rather than trusted.
+PACK_MEASURED = [
+    (66000, 6, 1.7),      # production, a100_3g.20gb MIG, 411 ns/day aggregate (solo est)
+    (80293, 8, 2.3),      # production, A100-SXM4-40GB,   836 ns/day aggregate (solo est)
+    (211182, 4, 4.0),     # equilibration, A40, solo MEASURED on the same card
+]
 
 # Memory bandwidth, GB/s -- what sets MD throughput.  Billing is FLAT per GPU on every
 # partition here, so the card you land on changes cost per nanosecond by up to 2.9x for
