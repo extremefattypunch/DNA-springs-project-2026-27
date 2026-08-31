@@ -12,31 +12,36 @@
 #
 # Running N runs concurrently on one card bills one GPU instead of N.
 #
-# I first wrote here that the worst case is break-even -- that if each run dropped to
-# exactly 1/N speed the elapsed time would grow by N and the bill would be unchanged, so
-# packing could only ever cost wall-clock.  THAT IS WRONG, and measuring it showed why:
-# contention is not capped at 1/N.  Concurrent runs on a card that is already saturated
-# interfere, and each ends up slower than 1/N, so the pack takes longer than N sequential
-# runs and costs MORE than not packing at all.
+# I first wrote here that the worst case is break-even.  Then I measured it, concluded
+# from the measurement that packing HURT above ~200k atoms, cancelled a pack on that
+# basis -- and the measurement was confounded.  Both errors are worth recording because
+# the second was subtler than the first.
 #
-# Measured on this project, NPT equilibration, same code and timestep throughout, against
-# solo references on a whole A100 (264 ns/day at 82k atoms, 199 at 124k):
+# The confound: I compared each pack against a solo reference measured on an
+# A100-SXM4-80GB, while the packs themselves had landed on whatever gpu_requeue had free
+# -- an RTX A6000 and an A40.  That is a comparison across HARDWARE, not across pack size.
+# An A40 has 696 GB/s of memory bandwidth against the A100's 2039, so a run on it is ~2.9x
+# slower before packing enters into it.
 #
-#     80,293 atoms, 8-way, whole A100    439 ns/day aggregate vs 284 solo   1.54x  WIN
-#    211,182 atoms, 4-way, whole A100     74 ns/day aggregate vs 108 solo   0.69x  LOSS
-#     59,468 atoms, 6-way, 3g.20gb MIG   220 ns/day aggregate vs ~165      ~1.33x  WIN
+# Measured properly, solo against packed ON THE SAME CARD:
 #
-# So the rule is about how full the card already is, not about how many runs you have:
+#    211,182 atoms, A40:  1 run alone 18.6 ns/day;  4 packed 18.5 ns/day EACH
+#                         -> 74 ns/day from one billed GPU, 4.0x, no contention at all
+#     80,293 atoms, A6000: 8 packed 48.8 each = 390 aggregate against ~107 solo,  ~3.6x
+#                         (that solo figure is bandwidth-scaled, so treat it as indicative)
 #
-#   * up to ~100k atoms a single run leaves most of an A100 idle -> pack, 6-8 at a time;
-#   * at ~200k atoms one run already saturates it -> run them ONE PER GPU. Packing the
-#     four 211k-atom windows would have cost 19,500 billing-hours against 13,400 run
-#     singly, and taken 47 hours instead of 8.
+# So a single run of even a 211k-atom system leaves about three quarters of the card idle,
+# and packing is worth 4x rather than the 1.5x I first credited it with.  Pack generously.
 #
-# Measure before trusting either: the summary at the end of this script prints the
-# aggregate, and 02_equilibrate/npt.log gives a solo reference from any earlier unpacked
-# run of a comparable system.  Do not assume the factor from the table above; the
-# crossover depends on the card as well as the system.
+# Two rules follow, and they are the whole point of this header:
+#
+#   1. Compare solo against packed ON THE SAME GPU MODEL.  Nothing else is a measurement
+#      of packing.  02_equilibrate/npt.log gives the number and sacct -o AllocTRES gives
+#      the card.
+#   2. --cpus-per-task must equal the number of CONCURRENT RUNS -- one core each, since
+#      OpenMM's CUDA platform is single-threaded on the host.  FAS RC's Job Defense
+#      Shield flagged 157 of my jobs for allocating four cores to a single-threaded
+#      process; a pack is the legitimate case for more than one, and it wants exactly N.
 #
 # JOBS is the work list: one spec per line, whitespace-separated KEY=VALUE pairs.
 # Recognised keys mirror md_chain.sbatch exactly, so a packed run is byte-identical to a
@@ -68,6 +73,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
+#SBATCH --constraint=a100
 #SBATCH --time=12:00:00
 #SBATCH --requeue
 #SBATCH --open-mode=append

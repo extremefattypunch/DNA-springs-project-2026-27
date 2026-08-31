@@ -24,7 +24,18 @@
 #    preemption, and the produce step checkpoints every 10 report intervals and resumes
 #    by appending -- so a preemption costs a few hundred picoseconds of wall clock and
 #    no work at all.  There is no good reason for this project to use `gpu`.
-#  * --cpus-per-task=2 and --mem=8G, not 4 and 32G.  Honestly, this barely matters:
+#  * --cpus-per-task=1.  OpenMM's CUDA platform is single-threaded on the host, so one
+#    run needs exactly one core.  FAS RC's Job Defense Shield flagged 157 of my jobs for
+#    this: every one showed CPU utilisation of almost exactly 100%/cores -- 24.9% on four
+#    cores -- which is the signature of a single-threaded process, and it wasted about
+#    1,032 CPU-hours.  A PACKED job is the one exception and wants one core per concurrent
+#    run; see md_pack.sbatch.
+#  * --constraint=a100.  Billing is FLAT per GPU: gpu_requeue charges 418.25 whether it
+#    hands you an A100-SXM4-80GB (2039 GB/s) or an A40 (696 GB/s).  MD throughput is set
+#    by memory bandwidth, so taking whatever is free costs up to 2.9x more per nanosecond
+#    for the same money.  Asking for an A100 is the cheapest thing in this file.  Relax it
+#    if the queue is long -- but relax it knowingly.
+#  * --mem=8G, not 32G.  Honestly, this barely matters:
 #    sacct decomposes a job of the old shape as 836.5 (GPU) + 3.6 (4 cores) +
 #    1.92 (32 GB) = 842, so the GPU is 99.3 % of the bill and right-sizing host
 #    resources saves 0.5 %.  It is done because it is free, because it lets more jobs
@@ -49,8 +60,9 @@
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH --mem=8G
+#SBATCH --constraint=a100
 #SBATCH --time=12:00:00
 #SBATCH --requeue
 #SBATCH --open-mode=append

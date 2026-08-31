@@ -84,9 +84,22 @@ FREE = {"gpu_test"}
 # The crossover is where one run already saturates the card, which for an A100 and these
 # systems is somewhere between 100k and 200k atoms.  Treated as a warning rather than a
 # formula: two points either side of a crossover do not determine its position.
-PACK_MEASURED = [(59468, 6, 1.33), (80293, 8, 1.54), (211182, 4, 0.69)]
-PACK_SAFE_ATOMS = 100_000      # below this, packing measurably helped
-PACK_RISK_ATOMS = 200_000      # at or above this, packing measurably HURT
+# Corrected 2026-08-31.  The first version of this table said 4-way at 211k atoms gave
+# 0.69x -- a LOSS -- and I cancelled a pack on that basis.  It was wrong: that pack ran on
+# an A40 while the solo reference was an A100-80GB, so the comparison was across hardware,
+# not across pack size.  Measured solo-vs-packed on the SAME card, packing scales almost
+# perfectly and a single run leaves ~3/4 of the card idle even at 211k atoms.
+PACK_MEASURED = [(80293, 8, 3.6), (211182, 4, 4.0)]
+
+# Memory bandwidth, GB/s -- what sets MD throughput.  Billing is FLAT per GPU on every
+# partition here, so the card you land on changes cost per nanosecond by up to 2.9x for
+# exactly the same money.  This is why --constraint=a100 belongs in every submit script.
+GPU_BANDWIDTH = {
+    "nvidia_h200": 4800, "nvidia_h100_80gb_hbm3": 3350,
+    "nvidia_a100-sxm4-80gb": 2039, "nvidia_a100-sxm4-40gb": 1555,
+    "nvidia_rtx_a6000": 768, "nvidia_a40": 696,
+    "tesla_v100s-pcie-32gb": 1134, "tesla_v100-pcie-32gb": 900,
+}
 
 
 def partitions():
@@ -244,27 +257,33 @@ def main():
                 atoms = int(json.loads(bf.read_text())["atoms"])
             except (ValueError, KeyError):
                 atoms = None
+    near = min(PACK_MEASURED, key=lambda r: abs(r[0] - (atoms or 100_000)))
     if a.pack > 1:
         print(f"\n  packing {a.pack} runs onto one GPU"
               + (f", system is {atoms:,} atoms" if atoms else ""))
-        if atoms is None:
-            print("  Cannot check that against the measured crossover without --atoms.")
-        elif atoms >= PACK_RISK_ATOMS:
-            print(f"  *** DO NOT PACK. At {atoms:,} atoms one run already saturates the")
-            print(f"      card. Measured: 4-way at 211,182 atoms gave 0.69x of solo")
-            print(f"      throughput, so the pack cost 1.46x MORE than one job per GPU")
-            print(f"      and took 47 h instead of 8. Run these singly.")
-        elif atoms <= PACK_SAFE_ATOMS:
-            near = min(PACK_MEASURED, key=lambda r: abs(r[0] - atoms))
-            print(f"  Measured nearby: {near[1]}-way at {near[0]:,} atoms gave "
-                  f"{near[2]:.2f}x of solo throughput, so the bill divides by about "
-                  f"that.")
-        else:
-            print(f"  {atoms:,} atoms is between the sizes where packing measurably "
-                  f"helped ({PACK_SAFE_ATOMS:,}) and measurably hurt "
-                  f"({PACK_RISK_ATOMS:,}).")
-            print("  Measure it: run the pack, then compare its aggregate against a solo "
-                  "02_equilibrate/npt.log from a comparable earlier run.")
+        print(f"  Measured nearby: {near[1]}-way at {near[0]:,} atoms achieved "
+              f"{near[2]:.1f}x the throughput of ONE run on the same card, so the GPU "
+              f"bill divides by about that.")
+        print(f"  Set --cpus-per-task={a.pack} -- one core per concurrent run, since "
+              f"OpenMM's CUDA platform is single-threaded on the host.")
+    else:
+        print(f"\n  NOT packing. A single run leaves most of the card idle: "
+              f"{near[1]} concurrent runs of a {near[0]:,}-atom system reached "
+              f"{near[2]:.1f}x one run's throughput on the same GPU, for one GPU's "
+              f"billing.")
+        print("  Set --cpus-per-task=1 -- OpenMM's CUDA platform uses exactly one host "
+              "core, and RC's Job Defense Shield emails about anything more.")
+
+    # ---- the card matters as much as the pack, and costs nothing to ask for ----
+    fast = max(GPU_BANDWIDTH.values())
+    slow_here = [k for k in ("nvidia_a40", "nvidia_rtx_a6000") if k in GPU_BANDWIDTH]
+    if slow_here:
+        worst = min(GPU_BANDWIDTH[k] for k in slow_here)
+        print(f"\n  Billing is FLAT per GPU, but the cards are not: "
+              f"{fast} GB/s at best against {worst} GB/s at worst on the same partition "
+              f"-- up to {fast / worst:.1f}x the cost per nanosecond for the same money.")
+        print("  Use --constraint=a100 (or h100/h200). Asking for a fast card is the "
+              "cheapest line in a submit script.")
 
     if not total_h:
         return
