@@ -59,14 +59,34 @@ from __future__ import annotations
 import argparse
 import glob
 import os
+import json
 import re
 import subprocess
 import sys
 from collections import defaultdict
+from pathlib import Path
 
 # Partitions that bill nothing.  Kept as a set rather than inferred from a zero weight so
 # that a config change shows up as a surprise rather than being silently absorbed.
 FREE = {"gpu_test"}
+
+# Measured packing efficiency: aggregate throughput of N concurrent runs on one card,
+# divided by what ONE run of the same system achieves alone.  Above 1 the pack is
+# cheaper per nanosecond; below 1 it is DEARER than running the jobs singly, because
+# contention is not capped at 1/N.  From this project's own NPT equilibration on
+# 2026-08-31, against solo references of 264 ns/day at 82k atoms and 199 at 124k:
+#
+#      atoms   pack           aggregate/solo
+#     59,468   6-way MIG           ~1.33
+#     80,293   8-way A100           1.54
+#    211,182   4-way A100           0.69   <- costs 1.46x more than one per GPU
+#
+# The crossover is where one run already saturates the card, which for an A100 and these
+# systems is somewhere between 100k and 200k atoms.  Treated as a warning rather than a
+# formula: two points either side of a crossover do not determine its position.
+PACK_MEASURED = [(59468, 6, 1.33), (80293, 8, 1.54), (211182, 4, 0.69)]
+PACK_SAFE_ATOMS = 100_000      # below this, packing measurably helped
+PACK_RISK_ATOMS = 200_000      # at or above this, packing measurably HURT
 
 
 def partitions():
@@ -161,6 +181,13 @@ def main():
     ap.add_argument("--plan", default=None,
                     help="file of 'SYSTEM ns reps' lines to price as one batch")
     ap.add_argument("--runs", default="data/runs")
+    ap.add_argument("--pack", type=int, default=1,
+                    help="how many runs would share one GPU. Checked against the "
+                         "measured crossover; packing a large system costs MORE than "
+                         "running it alone.")
+    ap.add_argument("--atoms", type=int, default=None,
+                    help="system size, for the packing check. Read from "
+                         "build/systems/<sys>/build_report.json when --sys is given.")
     a = ap.parse_args()
 
     parts = partitions()
@@ -208,6 +235,37 @@ def main():
         print(f"\n  no throughput logged yet for: {', '.join(sorted(set(unknown)))}")
         print("  run one replicate on gpu_test (free) first; the cost of everything "
               "else follows from its ns/day.")
+    # ---- is the proposed pack size sane for a system this size? ----
+    atoms = a.atoms
+    if atoms is None and a.sys:
+        bf = Path("build/systems") / a.sys / "build_report.json"
+        if bf.exists():
+            try:
+                atoms = int(json.loads(bf.read_text())["atoms"])
+            except (ValueError, KeyError):
+                atoms = None
+    if a.pack > 1:
+        print(f"\n  packing {a.pack} runs onto one GPU"
+              + (f", system is {atoms:,} atoms" if atoms else ""))
+        if atoms is None:
+            print("  Cannot check that against the measured crossover without --atoms.")
+        elif atoms >= PACK_RISK_ATOMS:
+            print(f"  *** DO NOT PACK. At {atoms:,} atoms one run already saturates the")
+            print(f"      card. Measured: 4-way at 211,182 atoms gave 0.69x of solo")
+            print(f"      throughput, so the pack cost 1.46x MORE than one job per GPU")
+            print(f"      and took 47 h instead of 8. Run these singly.")
+        elif atoms <= PACK_SAFE_ATOMS:
+            near = min(PACK_MEASURED, key=lambda r: abs(r[0] - atoms))
+            print(f"  Measured nearby: {near[1]}-way at {near[0]:,} atoms gave "
+                  f"{near[2]:.2f}x of solo throughput, so the bill divides by about "
+                  f"that.")
+        else:
+            print(f"  {atoms:,} atoms is between the sizes where packing measurably "
+                  f"helped ({PACK_SAFE_ATOMS:,}) and measurably hurt "
+                  f"({PACK_RISK_ATOMS:,}).")
+            print("  Measure it: run the pack, then compare its aggregate against a solo "
+                  "02_equilibrate/npt.log from a comparable earlier run.")
+
     if not total_h:
         return
 
