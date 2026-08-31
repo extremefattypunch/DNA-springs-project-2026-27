@@ -388,6 +388,8 @@ from this lab reached from NMR — local protein–DNA interaction rather than s
 reproduced here independently, in a different protein, with a different chemistry, and
 from a different observable.
 
+![site displacement against the force said to cause it]({RAW}/fig7_headline.png)
+
 | construct | protein | modelled force | Δ Cβ–Cβ vs its own clicked control (Å) | p |
 |---|---|---|---|---|
 {rows}

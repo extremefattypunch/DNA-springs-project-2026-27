@@ -134,6 +134,23 @@ PURPOSE = {
                  "reproduced most of the circular chimera’s NMR spectrum.",
 }
 FIGS = [
+    ("fig7_headline", "The result the whole project turns on",
+     """Every DNA-bearing construct, in both proteins, against the force the spring model
+     says its DNA delivers. The ordinate is the displacement of the two attachment sites
+     from <em>that construct’s own</em> clicked control, so the tether chemistry is
+     subtracted out; bars are the standard error of the difference. Almost everything sits
+     <strong>below zero</strong> — the sites move together, not apart, which is the
+     opposite of what a spring pushing its anchors would do. And there is no trend: the
+     grey line is a least-squares fit drawn faintly because the honest reading is that
+     there is nothing to fit, r = +0.08 at p = 0.81, with the sign such that
+     <em>more</em> force goes with <em>less</em> compression. The strongest spring in the
+     set, a 27 bp closed loop at 6.6 pN, displaces its sites by −0.45 Å; a slack
+     50-nucleotide strand at <em>provably zero tension</em> displaces them by −0.42.
+     <strong>The ringed points carry the argument</strong>: they are the constructs with
+     no spring at all — a slack single strand, or two arms that cannot circularise — and
+     if the compression were a force effect they should show none. They sit among the
+     loaded ones. Two proteins with unrelated attachment chemistries agree, which is why
+     this is the strongest thing in the report."""),
     ("fig1_force_response", "Force response of the attachment sites",
      """The deformation coordinate is the Cβ–Cβ separation of the two attachment
      residues; the abscissa is the force pulling them apart. Blue is the axial clamp,

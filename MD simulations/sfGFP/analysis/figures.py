@@ -518,6 +518,117 @@ def fig_force_extension(runs, outdir):
     return "fig6_force_extension"
 
 
+def fig_headline(runs, outdir):
+    """Site displacement against the force that is supposed to cause it.
+
+    This is the project's central claim and until now it existed only as a table, while
+    the ubiquitin half of the evidence -- five systems, fifteen replicates -- appeared in
+    no figure at all.  Figure 1 shows three constructs, and they are the superseded
+    two-arm builds.
+
+    Form: the question is whether two continuous quantities are related, so a scatter,
+    one measure per axis.  The point of the panel is a NON-relationship, which is a hard
+    thing to show honestly -- a fitted line through noise invites the eye to see a trend.
+    So the fit is drawn only as a faint band with its correlation stated in words, and
+    the zero line is the reference that matters: everything below it is compression.
+
+    Two proteins is two series, so a legend, and each is also direct-labelled -- identity
+    is never carried by colour alone.  The constructs carrying no spring at all sit at
+    x = 0 and are ringed, because they are the comparison that decides the question: if
+    displacement were a force effect they should show none.
+    """
+    fj = Path(__file__).resolve().parent / "findings.json"
+    if not fj.exists():
+        print("  headline: no findings.json")
+        return None
+    f = json.loads(fj.read_text())
+    vm = f.get("extension", {}).get("vs_matched_control") or {}
+    sp = f.get("springs") or {}
+    lab = f.get("labels") or {}
+    if len(vm) < 4:
+        print("  headline: too few constructs")
+        return None
+
+    pts = []
+    for k, v in vm.items():
+        force = (sp.get(k, {}).get("force_pN", {}) or {}).get("mean", 0.0) or 0.0
+        # sem of the difference, recovered from Welch's t: delta / t
+        sem = abs(v["delta"] / v["t"]) if v.get("t") else 0.0
+        pts.append({"k": k, "label": lab.get(k, k), "force": force,
+                    "delta": v["delta"], "sem": sem,
+                    "fam": v.get("family", "sfGFP"), "p": v.get("p", 1.0)})
+
+    fams = sorted({p_["fam"] for p_ in pts})
+    colour = {fam: VS.SERIES[i] for i, fam in enumerate(fams)}
+    fig, ax = plt.subplots(figsize=(7.8, 4.8))
+
+    ax.axhline(0.0, color=VS.INK_MUTED, lw=1.1, zorder=1)
+    # kept left: the right-hand end of this line is where the one positive construct
+    # sits, and the label was landing on its error bar
+    ax.annotate("no change from the construct's own clicked control",
+                (0.30, 0.0), xycoords=("axes fraction", "data"), xytext=(0, 6),
+                textcoords="offset points", ha="center", va="bottom", fontsize=8.5,
+                color=VS.INK_MUTED, zorder=5)
+
+    sq = f.get("is_it_a_spring") or {}
+    r = (sq.get("vs_modelled_force") or {}).get("r")
+    pv = (sq.get("vs_modelled_force") or {}).get("p")
+    if r is not None and len(pts) > 2:
+        xs = np.array([p_["force"] for p_ in pts])
+        ys = np.array([p_["delta"] for p_ in pts])
+        b, a0 = np.polyfit(xs, ys, 1)
+        gx = np.linspace(-0.4, xs.max() * 1.08, 50)
+        # Faint, and unlabelled as a "fit": the honest reading is that there is none.
+        ax.plot(gx, a0 + b * gx, "-", lw=1.4, color=VS.GRID, zorder=1)
+
+    for fam in fams:
+        g = [p_ for p_ in pts if p_["fam"] == fam]
+        c = colour[fam]
+        ax.errorbar([p_["force"] for p_ in g], [p_["delta"] for p_ in g],
+                    yerr=[p_["sem"] for p_ in g], fmt="o", ms=9, color=c, ecolor=c,
+                    elinewidth=1.3, capsize=3, mec="white", mew=1.5, zorder=3,
+                    label=fam, lw=0)
+        # ring the springless constructs: they are the ones that decide the question
+        noload = [p_ for p_ in g if p_["force"] == 0]
+        if noload:
+            ax.plot([p_["force"] for p_ in noload], [p_["delta"] for p_ in noload],
+                    "o", ms=17, mfc="none", mec=c, mew=1.6, alpha=0.7, zorder=2)
+
+    # label the three constructs the argument actually names: the strongest spring, the
+    # most compressed, and the single one that is not compressed at all
+    hi = max(pts, key=lambda p_: p_["force"])
+    lo = min(pts, key=lambda p_: p_["delta"])
+    top = max(pts, key=lambda p_: p_["delta"])
+    labelled = [(hi, -10, 14, "right"), (lo, 12, -4, "left")]
+    if top is not hi and top is not lo:
+        labelled.append((top, -12, 6, "right"))
+    for p_, dx, dy, ha in labelled:
+        ax.annotate(p_["label"], (p_["force"], p_["delta"]), xytext=(dx, dy),
+                    textcoords="offset points", ha=ha, fontsize=8.5,
+                    color=colour[p_["fam"]], zorder=5)
+    ax.annotate("ringed: no spring at all\n(slack strand, or arms that cannot close)",
+                (0.02, 0.04), xycoords="axes fraction", fontsize=8.5,
+                color=VS.INK_2, zorder=5)
+    if r is not None:
+        ax.annotate(f"r = {r:+.2f},  p = {pv:.2f}\nacross {len(pts)} constructs "
+                    f"in {len(fams)} proteins",
+                    (0.985, 0.045), xycoords="axes fraction", ha="right",
+                    fontsize=9.5, color=VS.INK, zorder=5)
+
+    ax.legend(loc="upper right", frameon=False, fontsize=9)
+    ax.set_xlabel("force the spring model says the DNA delivers (pN)")
+    ax.set_ylabel("displacement of the attachment sites (Å)\nagainst each construct's "
+                  "own clicked control")
+    ax.set_title("The sites move together, and not by more when the force is larger")
+    ax.set_xlim(-0.6, max(p_["force"] for p_ in pts) * 1.12 + 0.4)
+    ax.grid(axis="y", alpha=0.6)
+    fig.tight_layout()
+    fig.savefig(Path(outdir) / "fig7_headline.png", dpi=200, bbox_inches="tight")
+    pd.DataFrame(pts).to_csv(Path(outdir) / "fig7_headline.csv", index=False)
+    plt.close(fig)
+    return "fig7_headline"
+
+
 def fig_ramachandran(runs, outdir):
     """phi/psi at the two modified sites, WT against Tet2-Et against clicked.
 
@@ -616,7 +727,8 @@ def main():
             fig_hbonds(df, out), fig_bend(a.runs, out),
              fig_ramachandran(a.runs, out),
              fig_kink_threshold(a.runs, out),
-             fig_force_extension(a.runs, out)]
+             fig_force_extension(a.runs, out),
+             fig_headline(a.runs, out)]
     made = [m for m in made if m]
     print("wrote: " + ", ".join(f"{m}.png" for m in made))
     (out / "figures.json").write_text(json.dumps(made, indent=2))
