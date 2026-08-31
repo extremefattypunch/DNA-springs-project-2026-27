@@ -644,6 +644,105 @@ def build(args):
                            "p": float(tt.pvalue)}
         return out
 
+    # ---------- seeded kinks: does a kink we put there survive? ----------
+    def _seeded():
+        csv = Path(__file__).resolve().parent.parent / "analysis" / "force_extension.csv"
+        if not csv.exists():
+            return None
+        d = pd.read_csv(csv)
+        if "seeded.bp" not in d.columns:
+            return None
+        d = d[d["seeded.bp"].notna()]
+        if not len(d):
+            return None
+        rows, verdicts = [], {}
+        for (sysname, bp), g in d.groupby(["system", "seeded.bp"]):
+            v = list(g.get("seeded.verdict", []))
+            verdict = max(set(v), key=v.count) if v else "?"
+            verdicts[verdict] = verdicts.get(verdict, 0) + len(g)
+            rows.append({
+                "system": sysname, "bp": int(bp), "n": int(len(g)),
+                "first": float(g["seeded.N1_N3_first_A"].mean()),
+                "last": float(g["seeded.N1_N3_last_A"].mean()),
+                "open_frac": float(g["seeded.open_fraction"].mean()),
+                "healed_ns": (float(g["seeded.healed_after_ns"].dropna().mean())
+                              if g["seeded.healed_after_ns"].notna().any() else None),
+                "migrated": bool(g.get("seeded.migrated", pd.Series([False])).any()),
+                "verdict": verdict,
+                "verdicts": sorted(set(v))})
+        rows.sort(key=lambda r: r["bp"])
+        return {"rows": rows, "n_runs": int(len(d)), "verdict_counts": verdicts,
+                "all_healed": all(r["verdict"] == "healed" for r in rows),
+                "any_persisted": any(r["verdict"] == "persisted" for r in rows)}
+
+    seeded = _seeded()
+    seeded_rows = ""
+    # The verdict paragraph is written per OUTCOME rather than assumed, because the three
+    # outcomes have opposite implications for the model and this section would otherwise
+    # be a conclusion waiting for data to agree with it.
+    seeded_verdict = ""
+    if seeded:
+        vc = seeded["verdict_counts"]
+        vsum = ", ".join(f"{v} of {seeded['n_runs']} {k}"
+                         for k, v in sorted(vc.items(), key=lambda kv: -kv[1]))
+        if seeded["all_healed"]:
+            seeded_verdict = (
+                '<div class="note flag"><div class="h">The kinked state is not a minimum '
+                'here</div>'
+                f'<p>Every seeded kink healed ({vsum}). Released without load, the broken '
+                'pair re-formed and the 114&deg; bend relaxed &mdash; at all three '
+                'positions, in every replicate. So in this force field the kink is not a '
+                'metastable state that a duplex would occupy if it reached it; it is a '
+                'geometry that only exists while something holds it there.</p>'
+                '<p>That matters for Zocchi&rsquo;s model more than the absence of '
+                'spontaneous kinking did. A barrier we never cross could always be crossed '
+                'given longer; a state that is not a minimum cannot be occupied at all. '
+                'His softened branch, which the 2.4&ndash;6.6 pN predictions come from, '
+                'requires the duplex to <em>sit</em> in the kinked state under a few '
+                'piconewtons of load. We can put it there and it does not stay, which is '
+                'why the measured force lands on the unyielded Euler branch instead.</p>'
+                '<p>The honest limit: this is one force field, 30 ns, and three positions '
+                'in one sequence. It says the kinked state is not a minimum <em>of '
+                'DNA.OL15 at zero load</em>. Whether real DNA differs is exactly the '
+                'question the experiment can answer and the simulation cannot.</p></div>')
+        elif seeded["any_persisted"]:
+            seeded_verdict = (
+                '<div class="note flag"><div class="h">The kinked state is metastable</div>'
+                f'<p>{vsum}. A kink placed by hand and released <strong>stayed</strong>, '
+                'which makes the kinked state a genuine minimum at zero load and Zocchi&rsquo;s '
+                'softened branch physically reachable. Our chimera does not reach it, but '
+                'that is now a statement about a barrier rather than about the state not '
+                'existing &mdash; and a barrier can be crossed on timescales longer than '
+                'ours. This is the result that most favours the model, and it changes what '
+                'the measured Euler-branch force means: the duplex is on the unyielded '
+                'branch because it has not yet yielded, not because it cannot.</p></div>')
+        else:
+            seeded_verdict = (
+                '<div class="note"><div class="h">Mixed, and worth saying so</div>'
+                f'<p>{vsum}. The outcome depends on where the kink was placed, which is '
+                'informative but not decisive: it suggests the kinked state sits close to '
+                'the edge of stability, with sequence context deciding. Neither the '
+                'model&rsquo;s softened branch nor its absence follows from this, and more '
+                'positions and longer runs are what would settle it.</p></div>')
+        if any(r["migrated"] for r in seeded["rows"]):
+            seeded_verdict += (
+                '<p>At least one run <strong>migrated</strong> rather than healing or '
+                'staying &mdash; the opening moved to a different base pair. Where it '
+                'moves to is in the shipped CSV; a kink that walks is a different object '
+                'from one that persists in place, and the distinction is not one the '
+                'occupancy average can show.</p>')
+    if seeded:
+        seeded_rows = "\n".join(
+            "<tr%s><td class='num'>%d</td><td class='num'>%d</td>"
+            "<td class='num'>%.1f</td><td class='num'>%.1f</td>"
+            "<td class='num'>%.0f%%</td><td class='num'>%s</td>"
+            "<td><strong>%s</strong></td></tr>" % (
+                ' class="hi"' if r["verdict"] in ("persisted", "migrated") else "",
+                r["bp"], r["n"], r["first"], r["last"], 100 * r["open_frac"],
+                ("%.1f" % r["healed_ns"]) if r["healed_ns"] is not None else "&mdash;",
+                r["verdict"])
+            for r in seeded["rows"])
+
     mfx = _measured_fx()
     mfx_rows = ""
     if mfx:
@@ -788,13 +887,16 @@ def build(args):
     if fxf.exists():
         import numpy as _np
         fx = pd.read_csv(fxf)
-        # n_bp comes from wc.pairs, which force_extension.py MEASURES from the
-        # topology, rather than from a map keyed on system name.  The map had to
-        # be edited in five files whenever a system was added, and a system
-        # missing from it silently fell back to 27.
-        NB = (d.groupby("system")["wc.pairs"].max().dropna()
-              .astype(int).to_dict() if "wc.pairs" in d else {})
-        NICE = {"D_27bp": "27 bp", "D_40bp": "40 bp", "D_40bp_nick": "40 bp, nicked"}
+        # n_bp from wc.pairs, which the analysis MEASURES from the topology, rather than
+        # from a map keyed on system name that had to be edited in five files whenever a
+        # system was added -- and where a system missing from it fell back to 27.
+        NB = (fx.groupby("system")["wc.pairs"].max().dropna()
+              .astype(int).to_dict() if "wc.pairs" in fx.columns else {})
+        if "duplex" in fx.columns:
+            NICE = {s: str(fx[fx.system == s].duplex.iloc[0]) for s in NB}
+        else:
+            NICE = {s: f"{NB.get(s, 27)} bp"
+                       + (", nicked" if "nick" in s.lower() else "") for s in NB}
         need = {"wc.n_internal_open", "box_ok", "mean_r_A", "box_width_A"}
         if len(fx) and need <= set(fx.columns):
             # Only windows the box can hold, judged on where the duplex actually sat.
@@ -1390,6 +1492,39 @@ def build(args):
       geometry; that figure came from a window whose target was 87 % of the box width and
       it is <strong>withdrawn</strong>. Repeating those windows in a larger box is queued
       and waiting on GPU allocation.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>A kink put there by hand</h2>
+    <span class="tag">is the kinked state a minimum, or only a construction?</span></div>
+  <div class="col">
+    <p>Everything above says the duplex does not kink at the curvature the chimera
+    imposes. That leaves a sharper question, and it is the one Zocchi&rsquo;s model turns
+    on: is the kinked state a <em>metastable minimum</em> that the duplex would sit in if
+    it ever got there, or is it not a minimum at all? If it is metastable, the softened
+    branch is physically reachable and our chimera simply never crosses the barrier. If it
+    is not, the branch does not exist at zero load and the model rests on a state the
+    force field does not support.</p>
+
+    <p>That is answerable by construction rather than by waiting. Three duplexes were built
+    with a type II kink already in place &mdash; one interior pair broken, its two
+    flanking pairs intact, and 114&deg; of local bend, at base pairs 7, 15 and 21 &mdash;
+    then released with <strong>no restraint at all</strong> and watched. The seeder needed
+    three attempts: the first version rolled the bases into an already-bent duplex and
+    produced an initial energy of 3.4 &times; 10<sup>11</sup> kJ/mol, and the geometry only
+    became clean once the roll axis was put through both O3&prime;&ndash;P junctions, the
+    bend split half at each flanking step, and the rise scanned to clear the clashes.</p>
+
+    {'<div class="tbl-wrap"><table><thead><tr><th>seeded bp</th><th>runs</th>'
+     '<th>N1&ndash;N3 at the start (Å)</th><th>at the end (Å)</th>'
+     '<th>open, fraction of frames</th><th>shut after (ns)</th>'
+     '<th>outcome</th></tr></thead><tbody>' + seeded_rows +
+     '</tbody></table></div>' if seeded_rows else
+     '<p class="muted">The seeded-kink runs are on the cluster; this table fills in when '
+     'they finish.</p>'}
+
+    {seeded_verdict}
   </div>
 </section>
 
