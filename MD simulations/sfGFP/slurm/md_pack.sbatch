@@ -10,11 +10,33 @@
 # 1,240 ns/day; S0_wt is 44,016 at 751.  For systems that size the card is idle waiting
 # on kernel launches, not saturated.
 #
-# Running N runs concurrently on one card bills one GPU instead of N.  The worst case is
-# break-even on cost (if each run drops to exactly 1/N speed, elapsed time grows by N and
-# the bill is unchanged); it can only lose wall-clock, never fairshare.  The job prints
-# the measured GPU utilisation and per-run throughput at the end so the factor is known
-# rather than assumed.
+# Running N runs concurrently on one card bills one GPU instead of N.
+#
+# I first wrote here that the worst case is break-even -- that if each run dropped to
+# exactly 1/N speed the elapsed time would grow by N and the bill would be unchanged, so
+# packing could only ever cost wall-clock.  THAT IS WRONG, and measuring it showed why:
+# contention is not capped at 1/N.  Concurrent runs on a card that is already saturated
+# interfere, and each ends up slower than 1/N, so the pack takes longer than N sequential
+# runs and costs MORE than not packing at all.
+#
+# Measured on this project, NPT equilibration, same code and timestep throughout, against
+# solo references on a whole A100 (264 ns/day at 82k atoms, 199 at 124k):
+#
+#     80,293 atoms, 8-way, whole A100    439 ns/day aggregate vs 284 solo   1.54x  WIN
+#    211,182 atoms, 4-way, whole A100     74 ns/day aggregate vs 108 solo   0.69x  LOSS
+#     59,468 atoms, 6-way, 3g.20gb MIG   220 ns/day aggregate vs ~165      ~1.33x  WIN
+#
+# So the rule is about how full the card already is, not about how many runs you have:
+#
+#   * up to ~100k atoms a single run leaves most of an A100 idle -> pack, 6-8 at a time;
+#   * at ~200k atoms one run already saturates it -> run them ONE PER GPU. Packing the
+#     four 211k-atom windows would have cost 19,500 billing-hours against 13,400 run
+#     singly, and taken 47 hours instead of 8.
+#
+# Measure before trusting either: the summary at the end of this script prints the
+# aggregate, and 02_equilibrate/npt.log gives a solo reference from any earlier unpacked
+# run of a comparable system.  Do not assume the factor from the table above; the
+# crossover depends on the card as well as the system.
 #
 # JOBS is the work list: one spec per line, whitespace-separated KEY=VALUE pairs.
 # Recognised keys mirror md_chain.sbatch exactly, so a packed run is byte-identical to a
