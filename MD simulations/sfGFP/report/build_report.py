@@ -744,6 +744,49 @@ def build(args):
             for r in seeded["rows"])
 
     mfx = _measured_fx()
+    # Does any valid window now reach the separation the chimera itself sits at?  This is
+    # the withdrawn 33 pN figure, and whether it can be restated is a property of the
+    # data, so the paragraph about it is built from the data rather than edited by hand.
+    CHIMERA_R = {"27 bp": 70.0, "40 bp": 70.0, "40 bp, nicked": 72.0}
+    chim = {}
+    for lbl, target in CHIMERA_R.items():
+        e = (mfx or {}).get("by_system", {}).get(lbl)
+        if e and e["r_lo"] - 3.0 <= target <= e["r_hi"] + 3.0:
+            chim[lbl] = {"target": target, **e}
+    # The withdrawn figure was specifically about the 27 bp duplex at ~70 A, so that is
+    # the case the paragraph has to speak to.  An earlier version of this said "about
+    # 70 A for the 27 bp ... is now inside the range" and then quoted the 40 bp figure,
+    # because it fell back to whichever duplex happened to qualify.
+    got27 = chim.get("27 bp")
+    if got27:
+        boxes = ", ".join(f"{b}" for b in (got27.get("boxes_A") or []))
+        cannot_say = (
+            "<p>The chimera&rsquo;s own separation &mdash; about 70 Å for the 27 bp "
+            "&mdash; is now <strong>inside</strong> the range we can sample validly"
+            + (f", in a box {boxes} Å across" if boxes else "")
+            + ". An earlier draft quoted <strong>33 pN</strong> there, from a window "
+              "whose target was 87 % of its box width; that figure was withdrawn and is "
+              f"now replaced by <strong>{got27['f']:.1f} ± {got27['sem']:.1f} pN</strong> "
+              f"measured over {got27['n']} valid runs spanning "
+              f"{got27['r_lo']:.0f}&ndash;{got27['r_hi']:.0f} Å. The withdrawal stands as "
+              "a record of the error; the number replacing it comes from a box that fits "
+              "the molecule.</p>")
+    else:
+        others = ", ".join(
+            f"the {lbl} at {e['f']:.1f} ± {e['sem']:.1f} pN over "
+            f"{e['r_lo']:.0f}&ndash;{e['r_hi']:.0f} Å"
+            for lbl, e in chim.items())
+        cannot_say = (
+            "<p>And the chimera&rsquo;s own separation &mdash; about 70 Å for the 27 bp "
+            "&mdash; is still <strong>outside</strong> the range we can sample validly "
+            "for that duplex: a box big enough to hold a 27-mer at 70 Å without it "
+            "touching its own periodic image is larger than the one these runs used. An "
+            "earlier draft quoted a measured force at the chimera&rsquo;s geometry; that "
+            "figure came from a window whose target was 87 % of the box width and it "
+            "remains <strong>withdrawn</strong>. Windows in a larger box are running."
+            + (f" The other lengths <em>are</em> covered at their own separations: "
+               f"{others}." if others else "")
+            + "</p>")
     mfx_rows = ""
     if mfx:
         mfx_rows = "\n".join(
@@ -1485,13 +1528,7 @@ def build(args):
       <p>These are 20–30 ns windows on bare duplexes. A kink that takes microseconds to
       nucleate would lower the plateau and is invisible here, so the Euler agreement is
       evidence about this timescale, not about equilibrium.</p>
-      <p>And the chimera's own separation — about 70 Å for the 27 bp — is
-      <strong>outside</strong> the range we can sample validly, because a box big enough
-      to hold a 27-mer at 70 Å without it touching its own periodic image is larger than
-      the one these runs used. An earlier draft quoted a measured force at the chimera's
-      geometry; that figure came from a window whose target was 87 % of the box width and
-      it is <strong>withdrawn</strong>. Repeating those windows in a larger box is queued
-      and waiting on GPU allocation.</p></div>
+      {cannot_say}</div>
   </div>
 </section>
 
