@@ -821,22 +821,47 @@ find. That is the control your question implies and nobody has run it.
 
 ### What is still running
 
-Three things, all waiting on GPU allocation rather than on analysis:
+Three things, all now on the cluster — 18 runs across three GPUs, one of them free:
 
-- **The 27 bp windows in a box that fits them**, at 50, 58, 66 and 72 Å, to recover the
-  chimera's own separation and with it the measured-versus-modelled comparison at the
-  geometry that actually matters. This is the withdrawn 33 pN figure.
-- **The 40 bp pair at 70 Å**, for the same reason.
+- **The 27 bp windows in a box that fits them**, at 50, 58, 64 and 70 Å, two replicates
+  each. The rebuilt box is 85.5 Å across against the old 78.3, so it is valid to 72.7 Å
+  and covers the chimera's own ~70 Å where the old one stopped at 66.5. This recovers the
+  withdrawn 33 pN figure. The 50 and 58 Å windows deliberately overlap the existing
+  curve, which is the cross-check that licenses joining the two halves rather than
+  assuming they are comparable.
+- **The 40 bp pair at 70 Å**, two replicates each, in a 117 Å box.
 - **The seeded kinks** — three positions (bp 7, 15, 21), two replicates, 30 ns — testing
   whether a kink placed *below* the onset persists, which bears on whether the transition
-  is hysteretic. Built and validated; the seeding needed three attempts, because the first
-  version seeded into an already-bent duplex and produced an initial energy of
-  3.4 × 10¹¹ kJ/mol.
+  is hysteretic. The seeding needed three attempts: the first version rolled the bases
+  into an already-bent duplex and produced an initial energy of 3.4 × 10¹¹ kJ/mol, and it
+  only came out clean once the roll axis went through both O3′–P junctions, the bend was
+  split half at each flanking step, and the rise was scanned to clear the clashes.
 
-I should say plainly why these are queued rather than finished: I ran 129 GPU jobs in one
-day on the billed partition and exhausted the whole lab's fairshare, which stopped
-everyone's jobs including my own. They are resubmitted to the unbilled `gpu_test`
-partition and will run when the allocation resets.
+On why these were queued rather than finished when I first wrote this: I ran 129 GPU jobs
+in one day on the billed partition and exhausted the whole lab's fairshare, which stopped
+everyone's jobs including my own. Three things came out of fixing that, and the second and
+third only because Ian pushed back twice on how little of each node I was using:
+
+1. **The partition is almost the whole lever.** `sacct` decomposes a job as
+   836.5 (GPU) + 3.6 (4 cores) + 1.92 (32 GB) = 842, so the GPU is 99.3 % of the bill and
+   right-sizing host memory saves 0.5 %. `gpu_requeue` is half the weight of `gpu` for the
+   same or better hardware, and preemption is free here because the engine checkpoints and
+   resumes by appending. Billing accrues on *elapsed* time, so an over-long `--time` costs
+   nothing directly — it only delays scheduling.
+2. **Pack independent runs onto one card.** Measured solo against packed *on the same GPU
+   model*: one 211k-atom run alone gets 18.6 ns/day on an A40, and four packed get 18.5
+   ns/day **each** — 4× the science from one billed GPU, with no contention. A single run
+   leaves three quarters of the card idle. I got this wrong twice first, once by asserting
+   packing could not lose and once by "measuring" a loss that was really an A40 being
+   compared against an A100.
+3. **Ask for the fast card, because billing is flat.** `gpu_requeue` charges 418.25
+   whether it hands you an A100 at 2039 GB/s or an A40 at 696. `--constraint=a100` is the
+   cheapest line in the submit script. Measured gain on an 8-way pack: 1.17×, less than
+   bandwidth implies, because a pack with eight contexts is not purely bandwidth-bound.
+
+FAS RC's Job Defense Shield also flagged 157 of these jobs for allocating four CPU cores
+to a single-threaded process — OpenMM's CUDA platform uses exactly one — wasting about
+1,032 CPU-hours. One core per concurrent run now.
 
 The timescale arithmetic above still stands as a statement about *spontaneous* nucleation
 in the chimera's own geometry — but it is now the secondary explanation, not the primary
