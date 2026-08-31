@@ -37,6 +37,42 @@ STAGE = {"03_production/production.log": "prod", "02_equilibrate/npt.log": "npt"
          "02_equilibrate/nvt.log": "nvt"}
 
 
+def current_activity(run_dir):
+    """What the run is doing now, from pack.log, when no stage log is advancing.
+
+    The restraint ramp deliberately writes no frames -- it walks the restraint centre in
+    over 2-4 ns without recording, so a base pair torn on the way in cannot be mistaken
+    for the kink these runs look for.  It is therefore SILENT in every stage log, and a
+    monitor that only reads those sees a live run as stalled.  pack.log still narrates
+    it, so that is what to read.
+    """
+    lg = os.path.join(run_dir, "pack.log")
+    if not os.path.exists(lg):
+        return None, None
+    try:
+        lines = [l.rstrip() for l in open(lg) if l.strip()]
+    except OSError:
+        return None, None
+    if not lines:
+        return None, None
+    last = lines[-1]
+    age = time.time() - os.path.getmtime(lg)
+    # The ramp announces itself once and then runs silent for its whole 2-4 ns, so its
+    # pack.log mtime goes stale while the run is perfectly healthy.  Return the expected
+    # duration with it so the reader can tell a long ramp from a hang.
+    if "ramping the restraint" in last:
+        m = re.search(r"over ([0-9.]+) ps", last)
+        ps = float(m.group(1)) if m else None
+        return (f"ramping, {ps / 1000:.0f} ns" if ps else "ramping"), age
+    for key, label in (("ramping the restraint", "ramping"),
+                       ("NPT stage", "npt"), ("NVT with restraints", "nvt"),
+                       ("minimis", "minimise"), ("started from", "prod starting"),
+                       ("resumed from", "resuming")):
+        if key in last:
+            return label, age
+    return last[:38], age
+
+
 def last_speed(path):
     """(ns done, ns/day) from the last numeric line, or None."""
     try:
@@ -98,6 +134,21 @@ def main():
         if run not in best or age < best[run][3]:
             best[run] = (tag, ns, speed, age)
 
+    # runs with no fresh stage log: say what they are actually doing rather than
+    # leaving them out, which is how a silent ramp looks like a dead run
+    quiet = []
+    for run_dir in sorted(glob.glob(os.path.join(a.runs, "*", "rep*"))):
+        run = os.sep.join(run_dir.split(os.sep)[-2:])
+        fresh = run in best and best[run][3] <= a.stale_after
+        if fresh:
+            continue
+        act, age = current_activity(run_dir)
+        if not act or age is None:
+            continue
+        # a ramp is exempt from the staleness cutoff: it is silent BY DESIGN
+        if act.startswith("ramping") or age <= a.stale_after:
+            quiet.append((run, act, age))
+
     jobs = gpu_of_running_jobs()
     if jobs:
         print("\n  running jobs and the card each actually holds:")
@@ -114,6 +165,12 @@ def main():
               f"{age:8.0f}s{mark}")
         if not stale:
             live[tag].append(speed)
+    if quiet:
+        print("\n  advancing but writing no frames -- the restraint ramp is silent by")
+        print("  design, so that a base pair torn on the way in cannot be mistaken for")
+        print("  the kink these runs are looking for:")
+        for run, act, age in sorted(quiet):
+            print(f"    {run:34s} {act:18s} last logged {age / 60:5.1f} min ago")
     for tag, sp in sorted(live.items()):
         print(f"\n  {tag}: {len(sp)} live runs, {sum(sp):.0f} ns/day aggregate, "
               f"{sum(sp)/len(sp):.0f} each")
