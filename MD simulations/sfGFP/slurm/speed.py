@@ -74,18 +74,33 @@ def current_activity(run_dir):
 
 
 def last_speed(path):
-    """(ns done, ns/day) from the last numeric line, or None."""
+    """(ns of THIS STAGE done, ns/day) from the log, or None.
+
+    The time column is OpenMM's context clock, not the stage's progress.  It carries
+    over from everything the context has already integrated, so a production log for a
+    window run opens at about 7 ns -- roughly 1 ns of equilibration plus a 6 ns restraint
+    ramp -- before a single nanosecond of production has been recorded.  Reading that
+    column as progress said a run was 8.9 ns into its 30 when it had done 1.9, and made
+    every completion estimate look three hours better than it was.
+
+    Progress is therefore the last time MINUS the first, both from this log.  On a
+    requeue the engine appends, so the first line still marks where the stage began.
+    """
     try:
-        last = None
+        first = last = None
         with open(path) as fh:
             for line in fh:
                 if line[:1].isdigit():
                     last = line
+                    if first is None:
+                        first = line
         if not last:
             return None
+        t1 = float(last.split()[1]) / 1000.0
+        t0 = float(first.split()[1]) / 1000.0
         f = last.split()
-        # OpenMM's StateDataReporter: step, time(ps), ..., speed(ns/day) last-but-two
-        return float(f[1]) / 1000.0, float(f[-2] if len(f) > 8 else f[-1])
+        speed = float(f[-2] if len(f) > 8 else f[-1])
+        return t1 - t0, speed
     except (OSError, IndexError, ValueError):
         return None
 
@@ -155,7 +170,7 @@ def main():
         for jid, (name, card, node) in sorted(jobs.items()):
             print(f"    {jid}  {name:18s} {card:26s} {node}")
 
-    print(f"\n  {'run':34s} {'stage':>6} {'ns':>8} {'ns/day':>8} {'log age':>9}")
+    print(f"\n  {'run':34s} {'stage':>6} {'ns done':>8} {'ns/day':>8} {'log age':>9}")
     live = defaultdict(list)
     for run in sorted(best):
         tag, ns, speed, age = best[run]
