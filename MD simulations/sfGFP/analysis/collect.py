@@ -37,6 +37,33 @@ def split_tag(tag: str):
     return tag, None
 
 
+_HAS_PROTEIN = {}
+
+
+def has_protein(sysdir: Path) -> bool:
+    """Does this system contain a protein at all?
+
+    The bare-duplex systems -- the force-extension windows and the seeded kinks -- have
+    no protein, so every analysis in this file is meaningless for them: there is no
+    chromophore, no attachment sites, no barrel and no protein-DNA contact.  They would
+    still be globbed (K27_bp7/rep1 matches `*/rep*/03_production/traj.dcd` and has a
+    build directory), and would land in summary.csv as rows of failed analyses plus
+    three spurious entries in the system count.  force_extension.py is where they belong.
+
+    Decided from the topology rather than from a name pattern, so a new bare-duplex
+    system is handled without anyone remembering to add a prefix here.
+    """
+    key = str(sysdir)
+    if key not in _HAS_PROTEIN:
+        try:
+            import mdtraj as md
+            top = md.load_prmtop(str(sysdir / "system.prmtop"))
+            _HAS_PROTEIN[key] = bool(top.select("protein").size)
+        except Exception:                                        # noqa: BLE001
+            _HAS_PROTEIN[key] = True        # if unsure, analyse it and let it fail loudly
+    return _HAS_PROTEIN[key]
+
+
 def flat(prefix, d, out):
     for k, v in (d or {}).items():
         key = f"{prefix}{k}"
@@ -112,6 +139,10 @@ def main():
         top, rmap = sysdir / "system.prmtop", sysdir / "residue_map.json"
         if not top.exists() or not rmap.exists():
             print(f"  skip {tag}/{rep_dir.name}: no topology at {sysdir}")
+            continue
+        if not has_protein(sysdir):
+            print(f"  skip {tag}/{rep_dir.name}: protein-free duplex -- "
+                  f"force_extension.py handles these")
             continue
         prog = traj.parent / "progress.json"
         ns = json.loads(prog.read_text())["ns_done"] if prog.exists() else 0.0

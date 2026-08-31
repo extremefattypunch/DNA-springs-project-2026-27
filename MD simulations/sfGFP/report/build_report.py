@@ -48,7 +48,19 @@ LABEL = {"S0_wt": "WT sfGFP", "S1_tet": "2× Tet2-Et", "S2_clicked": "clicked, n
          "U0_apo": "ubiquitin, apo", "U1_clicked": "ubiquitin, clicked, no DNA",
          "U2_ss50": "ubiquitin, 50 nt ssDNA loop",
          "U3_ds50": "ubiquitin, 50 bp dsDNA loop",
-         "U4_ssarms": "ubiquitin, two 25 nt arms"}
+         "U4_ssarms": "ubiquitin, two 25 nt arms",
+         # Protein-free duplexes.  Two whole sections rest on these -- the measured
+         # force-extension curve and the seeded-kink test -- and none of them was in
+         # this table, which listed only the constructs that carry a protein.
+         "D_27bp": "bare 27 bp duplex, standard box",
+         "D_40bp": "bare 40 bp duplex, standard box",
+         "D_40bp_nick": "bare 40 bp nicked duplex, standard box",
+         "B_27bp": "bare 27 bp duplex, large box",
+         "B_40bp": "bare 40 bp duplex, large box",
+         "B_40bp_nick": "bare 40 bp nicked duplex, large box",
+         "K27_bp7": "27 bp duplex, type II kink seeded at bp 7",
+         "K27_bp15": "27 bp duplex, type II kink seeded at bp 15",
+         "K27_bp21": "27 bp duplex, type II kink seeded at bp 21"}
 PURPOSE = {
     "S0_wt": "Baseline. Validates the published chromophore parameters against a "
              "structure nobody modified.",
@@ -71,6 +83,25 @@ PURPOSE = {
                        "to the complement so the loop stays closed.",
     "S6_clamp": "A constant force of 0/2/4/7/12/20 pN applied straight along the "
                 "Cβ–Cβ axis: the calibration curve.",
+    # ---- protein-free duplexes: where the MEASURED forces come from ----
+    "D_27bp": "The spring alone, no protein, held at a series of separations by a "
+              "harmonic restraint. The mean restraint force is the force the duplex "
+              "exerts, with no elasticity model in between.",
+    "D_40bp": "The same, 40 bp. Longer rod, lower buckling load.",
+    "D_40bp_nick": "The same, nicked — the low-stress reference Zocchi’s calibration "
+                   "leans on. Measured, it is not softer than the intact duplex.",
+    "B_27bp": "The 27 bp duplex again, solvated around the STRAIGHT molecule rather "
+              "than the bent one, so the box is 85.5 Å across instead of 78.3 and the "
+              "windows reach the chimera’s own ~70 Å separation. The earlier box was "
+              "valid only to 66.5 Å, which is why a figure had to be withdrawn.",
+    "B_40bp": "The 40 bp duplex in a 117 Å box, for the same reason.",
+    "B_40bp_nick": "The nicked 40 bp duplex in a 117 Å box.",
+    "K27_bp7": "A 27 bp duplex built with a type II kink already in place at base pair "
+               "7 — the pair broken, both flanking pairs intact, 114° of local bend — "
+               "then released with no restraint. Tests whether the kinked state is a "
+               "metastable minimum or only a construction.",
+    "K27_bp15": "The same, seeded at base pair 15.",
+    "K27_bp21": "The same, seeded at base pair 21.",
     # The corrected builds: one strand modified at both its 5' and 3' ends, so a covalent
     # path runs out along one tether, through the DNA, and back along the other.  This is
     # the molecule the experiment makes; the S3-S5 trio above is not.
@@ -915,12 +946,18 @@ def build(args):
         <td class="num">{pm(wat, 1) if wat else '—'}</td>
         <td class="num">{pm(rm, 3) if rm else '—'}</td></tr>\n""")
 
+    # Protein constructs first, then the protein-free duplexes: they are answering
+    # different questions and interleaving them alphabetically hid that.
+    def _sys_order(k):
+        return (1 if k.startswith(("D_", "B_", "K27_")) else 0, k)
+
     rows_sys = "\n".join(
         f"""<tr><td class="mono">{esc(k)}</td><td>{esc(LABEL.get(k, k))}</td>
         <td class="num">{r['atoms']:,}</td>
         <td class="num">{r['net_charge']:+.4f}</td>
         <td>{PURPOSE.get(k, '')}</td></tr>"""
-        for k, r in systems.items() if k in LABEL)
+        for k, r in sorted(systems.items(), key=lambda kv: _sys_order(kv[0]))
+        if k in LABEL)
     # ---------- the measured kinking threshold ----------
     # Read from the force-extension runs rather than written down, so the table cannot
     # drift from the data behind it.
