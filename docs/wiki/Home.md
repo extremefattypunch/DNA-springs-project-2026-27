@@ -136,6 +136,7 @@ the explanation — one of the three candidates put to us in review.
 
 ![base-pair opening against curvature](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig5_kink_threshold.png)
 
+
 ## Does closing the covalent loop matter?
 
 The rebuild (below) made five matched pairs possible, differing only in whether a covalent

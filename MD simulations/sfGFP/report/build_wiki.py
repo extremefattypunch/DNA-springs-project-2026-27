@@ -265,6 +265,81 @@ the explanation — one of the three candidates put to us in review.""")
         kink_txt = ("Not in the chimera, at 4.8–5.2° per base-pair step. The direct "
                     "test against curvature is being re-analysed.")
 
+    # ---- seeded kinks: released with no restraint, does the kink survive? ----
+    seeded_txt = ""
+    fxcsv = Path(a.fx)
+    if fxcsv.exists():
+        dd = pd.read_csv(fxcsv)
+        if "seeded.bp" in dd.columns:
+            dd = dd[dd["seeded.bp"].notna()]
+            if len(dd):
+                rows = []
+                verdicts = []
+                for (sysname, bp), g in dd.groupby(["system", "seeded.bp"]):
+                    v = list(g.get("seeded.verdict", []))
+                    verdict = max(set(v), key=v.count) if v else "?"
+                    verdicts.append(verdict)
+                    healed = g["seeded.healed_after_ns"].dropna()
+                    rows.append("| %d | %d | %.1f | %.1f | %.0f%% | %s | **%s** |" % (
+                        int(bp), len(g),
+                        g["seeded.N1_N3_first_A"].mean(),
+                        g["seeded.N1_N3_last_A"].mean(),
+                        100 * g["seeded.open_fraction"].mean(),
+                        ("%.1f" % healed.mean()) if len(healed) else "—",
+                        verdict))
+                rows.sort()
+                all_healed = all(v == "healed" for v in verdicts)
+                any_persist = any(v == "persisted" for v in verdicts)
+                counts = ", ".join(f"{verdicts.count(v)} {v}"
+                                   for v in sorted(set(verdicts)))
+                head = ("| seeded bp | runs | N1–N3 start (Å) | end (Å) | open, "
+                        "frames | shut after (ns) | outcome |\n"
+                        "|---|---|---|---|---|---|---|\n" + "\n".join(rows))
+                if all_healed:
+                    body = (
+                        "\n\n**Every seeded kink healed** (" + counts + "). Released "
+                        "without load, the broken pair re-formed and the 114° bend "
+                        "relaxed, at all three positions in every replicate. So in this "
+                        "force field the kinked state is **not a metastable minimum** — "
+                        "it is a geometry that exists only while something holds it "
+                        "there.\n\nThat bears on Zocchi's model harder than the absence "
+                        "of spontaneous kinking did. A barrier never crossed might be "
+                        "crossed given longer; a state that is not a minimum cannot be "
+                        "occupied at all. His softened branch — where the 2.4–6.6 pN "
+                        "predictions come from — requires the duplex to *sit* kinked "
+                        "under a few piconewtons. We put it there and it does not stay, "
+                        "which is why the measured force lands on the unyielded Euler "
+                        "branch.")
+                elif any_persist:
+                    body = (
+                        "\n\n" + counts + ". A kink placed by hand and released "
+                        "**stayed**, so the kinked state is a real minimum at zero load "
+                        "and Zocchi's softened branch is physically reachable. Our "
+                        "chimera does not reach it — but that is now a statement about a "
+                        "barrier, not about the state failing to exist, and a barrier can "
+                        "be crossed on timescales longer than ours. This is the outcome "
+                        "most favourable to the model.")
+                else:
+                    body = (
+                        "\n\n" + counts + ". The outcome depends on where the kink was "
+                        "placed, which suggests the kinked state sits near the edge of "
+                        "stability with sequence context deciding. Neither the softened "
+                        "branch nor its absence follows; more positions and longer runs "
+                        "would settle it.")
+                seeded_txt = f"""
+
+## A kink put there by hand
+
+Everything above says the duplex does not kink at the curvature the chimera imposes.
+The sharper question, and the one Zocchi's model turns on, is whether the kinked state
+is a **metastable minimum** the duplex would sit in if it ever got there, or not a
+minimum at all. That is answerable by construction: three duplexes were built with a
+type II kink already in place — one interior pair broken, both flanking pairs intact,
+114° of local bend, at base pairs 7, 15 and 21 — then released with **no restraint** and
+watched.
+
+{head}{body}
+"""
     md = f"""# DNA springs on sfGFP — all-atom MD
 
 **[▶ Read the full report]({PAGES})**
@@ -342,6 +417,7 @@ These are Zocchi's *f(x)* evaluated at the end-to-end distance each simulation s
 
 ![base-pair opening against curvature]({RAW}/fig5_kink_threshold.png)
 
+{seeded_txt}
 ## Does closing the covalent loop matter?
 
 The rebuild (below) made five matched pairs possible, differing only in whether a covalent
