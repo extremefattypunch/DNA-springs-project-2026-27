@@ -244,7 +244,27 @@ def parse_extra(spec):
         sys.exit(f"--extra: expected DIR#NUM=INDEX[:LABEL], got {spec!r}")
 
 
-def build_payload(root: Path, constructs, extras=()):
+def parse_merge(spec):
+    """``DIR=name1,name2,name3`` or ``DIR=...:control``.
+
+    Folds a second export into this page as further groups of its own.  The
+    ``:control`` suffix marks them as reference traces -- a blank rather than a
+    peer of the samples -- so they take neutral steps instead of a hue each.
+    """
+    try:
+        d, names = spec.split("=", 1)
+        names, _, kind = names.rpartition(":")
+        if not names:                       # no ":kind" given
+            names, kind = kind, ""
+        out = [n.strip() for n in names.split(",") if n.strip()]
+        if not out:
+            raise ValueError
+        return Path(d), out, kind.strip().lower() == "control"
+    except ValueError:
+        sys.exit(f"--merge: expected DIR=NAME1,NAME2,...[:control], got {spec!r}")
+
+
+def build_payload(root: Path, constructs, extras=(), merges=()):
     found, layout, series, levels = discover(root, constructs)
     if not found:
         return None
@@ -265,6 +285,37 @@ def build_payload(root: Path, constructs, extras=()):
                 t["scatter"] = round(hit[0], 1)
 
     # ---- traces appended from another run -------------------------------
+    # ---- another run folded in as further groups ------------------------
+    controls, merged_order, merged_from = [], [], {}
+    for spec in merges:
+        d, names, is_control = parse_merge(spec)
+        if not d.is_absolute():
+            d = HERE / d
+        if not d.is_dir():
+            sys.exit(f"--merge: not a directory: {d}")
+        mf, _, _, _ = discover(d, names, validate=False)
+        if not mf:
+            sys.exit(f"--merge: no recognised *_Data.csv under {d.name}")
+        origin = d.name.split("_")[0]
+        for mode, ci, rep, path in mf:
+            if ci is None:
+                continue           # the root run already supplies calibration
+            if ci > len(names):
+                sys.exit(f"--merge: {d.name} has sample {ci} but only "
+                         f"{len(names)} names were given")
+            g = names[ci - 1]
+            if g not in merged_order:
+                merged_order.append(g)
+                merged_from[g] = d.name
+                if is_control:
+                    controls.append(g)
+            traces.append(_read_trace(mode, g, rep, path, origin=origin))
+        notes.append(
+            f"{', '.join(names)} come from {d.name}"
+            + (" and are controls: they are drawn in neutral steps rather than a "
+               "hue each, because a blank is not a peer of the samples."
+               if is_control else "."))
+
     variant_of = {}
     for spec in extras:
         d, num, idx, label = parse_extra(spec)
@@ -314,6 +365,7 @@ def build_payload(root: Path, constructs, extras=()):
         g = name_of(c)
         order.append(g)
         order += [v for v, par in variant_of.items() if par == c - 1]
+    order += merged_order
     present = [g for g in order if any(t["group"] == g for t in traces)]
     groups = ([CALIBRATION] if any(t["group"] == CALIBRATION for t in traces) else []) + present
     reps = sorted({t["rep"] for t in traces if t["rep"]})
@@ -362,7 +414,8 @@ def build_payload(root: Path, constructs, extras=()):
     else:
         notes.append(
             ("Sample number → construct is an assignment, not a measurement: "
-             + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present))
+             + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present)
+                         if c not in merged_order)
              + ". Rebuild with --constructs to relabel.") if layout == "named" else
             ("Scan→sample assignment is declared, not inferred: 1 = calibration; "
              "2/5/8 = " + present[0] + "; 3/6/9 = " + present[1] +
@@ -384,6 +437,7 @@ def build_payload(root: Path, constructs, extras=()):
         "notes": notes,
         "scatterDefault": lines[0] if lines else None,
         "variantOf": variant_of,
+        "controls": controls,
         "rampLight": ramp_steps(n_lev, RAMP_LIGHT) if series else [],
         "rampDark": ramp_steps(n_lev, RAMP_DARK) if series else [],
     }
@@ -423,6 +477,7 @@ HTML = r"""<!doctype html>
     --accent:#2a78d6; --warnbg:#fdf6e3; --warnink:#6b4f12; --warnline:#e6d18a;
     --c-cal:#898781; --c-g0:#2a78d6; --c-g1:#eb6834; --c-g2:#1baf7a;
     --c-v0:#7fb0ee; --c-v1:#f2946c; --c-v2:#5bc9a1;
+    --n0:#b3b1a9; --n1:#898781; --n2:#5e5c57;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -432,6 +487,7 @@ HTML = r"""<!doctype html>
       --accent:#3987e5; --warnbg:#241f12; --warnink:#e8d9a8; --warnline:#4a3f22;
       --c-cal:#898781; --c-g0:#3987e5; --c-g1:#d95926; --c-g2:#199e70;
       --c-v0:#7fb0ee; --c-v1:#e88a63; --c-v2:#4cbf94;
+      --n0:#c3c2b7; --n1:#898781; --n2:#5e5c57;
     }
   }
   :root[data-theme="dark"] {
@@ -441,6 +497,7 @@ HTML = r"""<!doctype html>
     --accent:#3987e5; --warnbg:#241f12; --warnink:#e8d9a8; --warnline:#4a3f22;
     --c-cal:#898781; --c-g0:#3987e5; --c-g1:#d95926; --c-g2:#199e70;
     --c-v0:#7fb0ee; --c-v1:#e88a63; --c-v2:#4cbf94;
+    --n0:#c3c2b7; --n1:#898781; --n2:#5e5c57;
   }
 __RAMPCSS__
   * { box-sizing:border-box; }
@@ -682,10 +739,12 @@ for (const t of RAW) {
    the others: colour follows the entity's rank in the declared order. */
 const SEQUENTIAL = PAYLOAD.encoding === "sequential";
 const VARIANT_OF = PAYLOAD.variantOf || {};
+const CONTROLS = new Set(PAYLOAD.controls || []);
 const COLOR_VAR = {};
-{ let i = 0;
+{ let i = 0, c = 0;
   for (const g of GROUPS) {
     COLOR_VAR[g] = g === "calibration" ? "--c-cal"
+                 : CONTROLS.has(g) ? `--n${c++ % 3}`
                  : g in VARIANT_OF ? `--c-v${VARIANT_OF[g]}`
                  : SEQUENTIAL ? `--s${i++}` : `--c-g${i++}`;
   }
@@ -883,6 +942,7 @@ function pool() {
     r.dash = dashOf(r.ser.mode);
     r.width = r.kind === "mean" ? 2.6 : 1.3;
     r.alpha = r.kind === "mean" ? 1 : (r.ser.group === "calibration" ? .8 : .55);
+    if (CONTROLS.has(r.ser.group) && r.kind !== "mean") r.width = 1.1;
   }
   return out;
 }
@@ -1600,6 +1660,9 @@ def main(argv=None):
     ap.add_argument("--extra", action="append", default=[], metavar="DIR#NUM=INDEX",
                     help="append sample NUM from another run's DIR onto construct "
                          "INDEX, as extra replicates (repeatable)")
+    ap.add_argument("--merge", action="append", default=[],
+                    metavar="DIR=N1,N2,N3[:control]",
+                    help="fold another run in as further groups (repeatable)")
     ap.add_argument("--title", default=None)
     args = ap.parse_args(argv)
 
@@ -1611,7 +1674,7 @@ def main(argv=None):
         sys.exit(f"not a directory: {root}")
 
     constructs = [c.strip() for c in args.constructs.split(",") if c.strip()]
-    payload = build_payload(root, constructs, args.extra)
+    payload = build_payload(root, constructs, args.extra, args.merge)
     if not payload or not payload["traces"]:
         sys.exit(f"no recognised *_Data.csv files under {root}")
 
