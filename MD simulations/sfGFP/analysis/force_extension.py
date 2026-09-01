@@ -315,8 +315,23 @@ def analyse(traj, top_path, resmap_path, progress, out_prefix, stride=1, skip_ns
                     "migrated": bool(internal
                                      and max(internal, key=lambda x: x[1])[0]
                                      != seeded_bp)}
-                if openness.mean() > 0.5:
-                    entry["verdict"] = "persisted"
+                # A type II kink is TWO things: a broken pair and a large bend. Judging
+                # it on the pair alone called these runs "persisted" when the pair had
+                # indeed stayed open for all 30 ns but the 114 deg bend had relaxed
+                # completely -- the duplex straightened back to its full contour while
+                # keeping one unpaired site. That is a different object from a kink, and
+                # it is the opposite conclusion for a model whose softened branch needs
+                # the duplex to SIT bent at low load. So the bend is part of the verdict.
+                contour = (n_pairs - 1) * 3.376
+                straightness = float(r.mean()) / contour if contour else float("nan")
+                entry["end_to_end_A"] = round(float(r.mean()), 2)
+                entry["contour_A"] = round(contour, 2)
+                entry["straightness"] = round(straightness, 3)
+                entry["still_bent"] = bool(straightness < 0.92)
+                if openness.mean() > 0.5 and entry["still_bent"]:
+                    entry["verdict"] = "persisted"          # pair open AND still bent
+                elif openness.mean() > 0.5:
+                    entry["verdict"] = "unbent"             # pair open, bend gone
                 elif openness.mean() > 0.05:
                     entry["verdict"] = "intermittent"
                 elif entry["migrated"]:

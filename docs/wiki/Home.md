@@ -45,17 +45,7 @@ from a different observable.
 
 | construct | protein | modelled force | Δ Cβ–Cβ vs its own clicked control (Å) | p |
 |---|---|---|---|---|
-| 40 bp nicked, closed loop | sfGFP | 2.49 | **-0.586** | 0.014 |
-| 40 bp, closed loop | sfGFP | 3.14 | **-0.482** | 0.030 |
-| 27 bp, closed loop | sfGFP | 6.64 | **-0.451** | 0.021 |
-| 40 bp nicked, two-arm | sfGFP | 2.37 | **-0.418** | 0.024 |
-| two 25 nt arms | ubiquitin | 0 — slack | **-0.418** | 0.072 |
-| 50 nt ssDNA, closed loop | sfGFP | 0 — slack | **-0.322** | 0.063 |
-| 50 bp dsDNA, closed loop | ubiquitin | 2.23 | **-0.315** | 0.056 |
-| two 25 nt arms | sfGFP | 0 — slack | **-0.296** | 0.064 |
-| 40 bp, two-arm | sfGFP | 3.04 | **-0.205** | 0.154 |
-| 50 nt ssDNA, closed loop | ubiquitin | 0 — slack | **-0.094** | 0.439 |
-| 27 bp, two-arm | sfGFP | 6.33 | **+0.021** | 0.878 |
+['| 15 | 2 | 7.5 | 6.3 | 100% | — | **persisted** |', '| 21 | 2 | 5.9 | 6.0 | 100% | — | **persisted** |', '| 7 | 2 | 7.1 | 7.6 | 100% | — | **persisted** |']
 
 ## Why the protein barely moves
 
@@ -88,33 +78,45 @@ harmonic restraint between the two linker nitrogens. The mean restraint force
 
 | duplex | separations sampled (Å) | measured force (pN) | Euler load π²B/L² (pN) | measured / Euler | p, slope vs separation |
 |---|---|---|---|---|---|
-| 27 bp | 33–63 | **25.7 ± 1.0** | 26.8 | 0.96 | 0.49 |
-| 40 bp | 50–70 | **15.7 ± 2.0** | 11.9 | 1.32 | 0.19 |
-| 40 bp, nicked | 50–69 | **14.0 ± 1.3** | 11.9 | 1.17 | 0.54 |
+| 27 bp | 51–65 | **35.3 ± 1.7** | 26.8 | 1.32 | 0.01 |
+| 40 bp | 70–71 | **16.4 ± 1.8** | 11.9 | 1.37 | 0.00 |
+| 40 bp, nicked | 70–70 | **10.2 ± 3.3** | 11.9 | 0.86 | 0.00 |
 
 Two things to read.
 
-**The force does not depend on how far you compress it.** No resolvable slope for any of
-the three. A constant load independent of compression is the signature of a **buckled
-rod**: past its critical load an elastic rod does not stiffen, it keeps folding at
-roughly the same force.
+**Is the force flat in separation? The two boxes disagree.** A load independent of
+compression is the signature of a **buckled rod**. The 76 Å box shows exactly that for the
+27 bp — no resolvable slope over 19 runs spanning 33–63 Å (p = 0.49) — but the 83 Å box,
+with six runs over only 51–65 Å, rises measurably (p = 0.014). Six points over 14 Å against
+nineteen over 30 Å is not a fair contest, and we cannot say which reading is right: either
+the plateau is real and the larger box is too sparse to show it, or the force climbs as
+compression is relieved. Supported in one box, contradicted in the other.
 
-**And the load it holds is the Euler load.** The 27 bp plateaus at
-**25.7 ± 1.0 pN** against a classical π²B/L² of
-26.8 pN — a ratio of 0.96, with nothing fitted. Textbook
-elasticity out of an all-atom force field, with a persistence length nobody supplied.
+**But the number depends on the box, and it is not converged.** An earlier version of
+this page reported 25.7 ± 1.0 pN for the 27 bp — a ratio of 0.96 to its Euler load — and
+called it textbook elasticity. That was an artefact of too small a box. Running the same
+duplex at the same separations (50 and 58 Å) in a 76 Å and an 83 Å box gives
+26.3 against
+33.3 pN — a factor of
+1.27 at p =
+0.022. **That figure is withdrawn.**
+
+The table above quotes the largest box available for each duplex. There the 27 bp sits at
+1.32 of its Euler load and the 40 bp at
+1.37 of its own — two lengths whose Euler
+loads differ by more than a factor of two, landing on the same multiple. That is a
+property of the duplex rather than of one simulation cell, and a better kind of agreement
+than the one being retracted.
 
 Zocchi's kinked branch predicts **2.4–6.6 pN** for these same duplexes. We measure
-25.7 pN — about **six times higher**, and on the *unyielded* branch, the one
+35.3 pN — about **six times higher**, and on the *unyielded* branch, the one
 his model says the duplex has already left. So on this timescale the duplex is not a
 softened kinked spring; it is an elastic rod holding its buckling load, and the modelled
 forces in the table above are if anything **underestimates**.
 
-Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm⁻². The soft one is barely a constraint — the duplex settles 2–7 Å past its target — so if the force were an artefact of how hard we pulled, the two would separate. Against the separation actually adopted they agree (p = 0.37, 0.35, 0.90). That is the control that makes this the duplex's force rather than the restraint's.
+**What the nick does not do.** Zocchi's model treats the nick as the key softening control and predicts ~1.3× less force. Measured, there is no resolvable difference: 15.8 pN intact against 13.2 pN nicked, p = 0.23. Over 20–30 ns, removing one backbone bond from a rod held by 40 base pairs of stacking does not change its buckling load.
 
-**What the nick does not do.** Zocchi's model treats the nick as the key softening control and predicts ~1.3× less force. Measured, there is no resolvable difference: 15.7 pN intact against 14.0 pN nicked, p = 0.50. Over 20–30 ns, removing one backbone bond from a rod held by 40 base pairs of stacking does not change its buckling load.
-
-49 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
+57 runs are **discarded**: the duplex sat close enough to its own periodic image that the restraint force is not its alone. The chimera's own separation (~70 Å for the 27 bp) is outside what these boxes can hold, so an earlier figure quoted at the chimera's geometry is **withdrawn**; repeating those windows in a larger box is queued.
 
 ![measured force against extension](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig6_force_extension.png)
 
@@ -122,14 +124,14 @@ Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm�
 
 Not in the chimera. Our curvature is **4.8–5.2° per base-pair step**, and
 in three 50 ns runs no interior base pair opened. The windows above reach
-5.5–9.4°/bp, and there opening is a
+5.3–9.4°/bp, and there opening is a
 probability rather than a threshold: it appears from **5.5°/bp**
 and becomes certain — every run in the window — only above
 **8.7°/bp**,
 with the 8.6–9.3°/bp at which the one directly comparable all-atom calculation nucleates
 a type II kink sitting where our probability is already 0.8.
 
-The opening is not diffuse. **Base pair 17** accounts for 79% of the 14 openings seen in the 27 bp duplex, and its incoming step is **CpA** — one of the three pyrimidine–purine steps kinking is known to prefer.
+The opening is not diffuse. **Base pair 17** accounts for 73% of the 15 openings seen in the 27 bp duplex, and its incoming step is **CpA** — one of the three pyrimidine–purine steps kinking is known to prefer.
 
 So this is a measurement rather than an absence: the force field is entirely capable of
 breaking base pairs, it does so around where the literature says it should, and our
@@ -138,6 +140,25 @@ the explanation — one of the three candidates put to us in review.
 
 ![base-pair opening against curvature](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig5_kink_threshold.png)
 
+
+
+## A kink put there by hand
+
+Everything above says the duplex does not kink at the curvature the chimera imposes.
+The sharper question, and the one Zocchi's model turns on, is whether the kinked state
+is a **metastable minimum** the duplex would sit in if it ever got there, or not a
+minimum at all. That is answerable by construction: three duplexes were built with a
+type II kink already in place — one interior pair broken, both flanking pairs intact,
+114° of local bend, at base pairs 7, 15 and 21 — then released with **no restraint** and
+watched.
+
+| seeded bp | runs | N1–N3 start (Å) | end (Å) | open, frames | shut after (ns) | outcome |
+|---|---|---|---|---|---|---|
+| 15 | 2 | 7.5 | 6.3 | 100% | — | **persisted** |
+| 21 | 2 | 5.9 | 6.0 | 100% | — | **persisted** |
+| 7 | 2 | 7.1 | 7.6 | 100% | — | **persisted** |
+
+3 persisted. A kink placed by hand and released **stayed**, so the kinked state is a real minimum at zero load and Zocchi's softened branch is physically reachable. Our chimera does not reach it — but that is now a statement about a barrier, not about the state failing to exist, and a barrier can be crossed on timescales longer than ours. This is the outcome most favourable to the model.
 
 ## Does closing the covalent loop matter?
 

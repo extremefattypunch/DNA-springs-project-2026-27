@@ -208,6 +208,13 @@ kill "$SAMPLER" 2>/dev/null || true
 
 echo
 echo "== what this job actually got out of its one GPU =="
+# `|| true`, and set +e around it, because THIS IS A REPORTING STEP. On 2026-08-31 the
+# kink pack ran all six simulations to 30 ns, printed its aggregate, and was then marked
+# FAILED by Slurm because this summary raised ValueError on the '[N/A]' utilisation a MIG
+# device reports. Every run was perfect and the job's recorded state said otherwise --
+# which, trusted over the data, would have meant re-running six GPU jobs for nothing.
+# A summary must never be able to fail the work it is summarising.
+set +e
 "$DNASPRING_PY" - "$USAGE" "${labels[@]}" <<'PYEOF'
 import os, sys
 usage, labels = sys.argv[1], sys.argv[2:]
@@ -253,5 +260,9 @@ if os.path.exists(usage):
             print("  Utilisation not reportable on this device (MIG instances return "
                   "[N/A]); judge packing by the aggregate throughput above instead.")
 PYEOF
+summary_rc=$?
+set -e
+[[ "$summary_rc" -ne 0 ]] && echo "== (the usage summary above failed, rc=$summary_rc; " \
+    "the simulations are unaffected)"
 echo "== $(date -Is) done (fail=$fail)"
 exit "$fail"

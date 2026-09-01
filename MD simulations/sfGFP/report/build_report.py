@@ -669,8 +669,47 @@ def build(args):
             d = d.assign(duplex=d.system.map(
                 lambda s: f"{NB.get(s, 27)} bp"
                           + (", nicked" if "nick" in s.lower() else "")))
+        # Split by box size as well as by duplex.  A matched comparison -- the 27 bp at
+        # x0 = 50 and 58 A, run in both a 76 A and an 83 A box -- gives 26.3 +- 1.7 pN
+        # against 33.3 +- 1.8, a factor of 1.27 at p = 0.022.  The measurement is not
+        # converged with respect to box size, so quoting one number for a duplex without
+        # saying which box it came from is quoting an artefact.
+        import numpy as _np2
+        SMALL = {"27 bp": 80.0, "40 bp": 100.0, "40 bp, nicked": 100.0}
+        d = d.assign(_box=[("large" if b >= SMALL.get(s, 90.0) else "small")
+                           for b, s in zip(d.box_A, d.duplex)])
+        boxcmp = {}
+        for dup, g in d.groupby("duplex"):
+            shared = sorted(set(g[g._box == "small"].x0_A) & set(g[g._box == "large"].x0_A))
+            if not shared:
+                continue
+            m = g[g.x0_A.isin(shared)]
+            s_ = m[m._box == "small"].force_pN
+            l_ = m[m._box == "large"].force_pN
+            if len(s_) > 1 and len(l_) > 1:
+                tt2 = _st.ttest_ind(l_.values, s_.values, equal_var=False)
+                boxcmp[dup] = {
+                    "shared_x0": shared,
+                    "small": round(float(s_.mean()), 2),
+                    "small_sem": round(float(s_.sem()), 2), "n_small": int(len(s_)),
+                    "large": round(float(l_.mean()), 2),
+                    "large_sem": round(float(l_.sem()), 2), "n_large": int(len(l_)),
+                    "ratio": round(float(l_.mean() / s_.mean()), 2),
+                    "p": round(float(tt2.pvalue), 4)}
         out = {"n_runs": int(len(d)), "n_dropped": None, "by_system": {},
-               "boxes": {}}
+               "by_box": {}, "box_effect": boxcmp}
+        for (dup, bx), g in d.groupby(["duplex", "_box"]):
+            NB_s = int(str(dup).split()[0])
+            eul = _np.pi ** 2 * 200.0 / (((NB_s - 1) * 0.33) ** 2)
+            out["by_box"][f"{dup} | {bx}"] = {
+                "duplex": dup, "box": bx, "n": int(len(g)),
+                "box_A": round(float(g.box_A.mean()), 1),
+                "f": round(float(g.force_pN.mean()), 2),
+                "sem": round(float(g.force_pN.sem()), 2) if len(g) > 1 else 0.0,
+                "euler": round(float(eul), 1),
+                "ratio": round(float(g.force_pN.mean() / eul), 2),
+                "r_lo": round(float(g.mean_r_A.min()), 1),
+                "r_hi": round(float(g.mean_r_A.max()), 1)}
         for s, g in d.groupby("duplex"):
             NB_s = int(str(s).split()[0])
             eul = _np.pi ** 2 * 200.0 / (((NB_s - 1) * 0.33) ** 2)
@@ -840,6 +879,24 @@ def build(args):
             + (f" The other lengths <em>are</em> covered at their own separations: "
                f"{others}." if others else "")
             + "</p>")
+    # Best estimate = the LARGEST box available for each duplex. The smaller boxes are
+    # kept in the table because their disagreement with it is itself the finding.
+    best_box = {}
+    for _k, _e in (mfx or {}).get("by_box", {}).items():
+        cur = best_box.get(_e["duplex"])
+        if cur is None or _e["box_A"] > cur["box_A"]:
+            best_box[_e["duplex"]] = _e
+    box_rows = "\n".join(
+        "<tr%s><td>%s</td><td class='num'>%.0f</td><td class='num'>%d</td>"
+        "<td class='num'>%.0f–%.0f</td><td class='num'><strong>%.1f ± %.1f</strong></td>"
+        "<td class='num'>%.1f</td><td class='num'>%.2f</td></tr>" % (
+            ' class="hi"' if _e is best_box.get(_e["duplex"]) else "",
+            _e["duplex"], _e["box_A"], _e["n"], _e["r_lo"], _e["r_hi"], _e["f"],
+            _e["sem"], _e["euler"], _e["ratio"])
+        for _k, _e in sorted((mfx or {}).get("by_box", {}).items(),
+                             key=lambda kv: (kv[1]["duplex"], kv[1]["box_A"])))
+    be = ((mfx or {}).get("box_effect", {}) or {}).get("27 bp", {})
+
     mfx_rows = ""
     if mfx:
         mfx_rows = "\n".join(
@@ -860,13 +917,22 @@ def build(args):
     # The measured force leads if we have it: a number out of the force field is worth
     # more than the same number out of a model, and the whole of point 6 was about that
     # distinction.  Fall back to the modelled one only when the windows are unavailable.
-    d27m = (mfx or {}).get("by_system", {}).get("27 bp")
+    # The hero must quote the LARGEST box, not the pooled average: pooling mixes a
+    # converged measurement with one the box was too small for, and the pooled 25.7 pN
+    # (0.96x Euler) is the figure this page now retracts.
+    _bb = {}
+    for _k, _e in (mfx or {}).get("by_box", {}).items():
+        c = _bb.get(_e["duplex"])
+        if c is None or _e["box_A"] > c["box_A"]:
+            _bb[_e["duplex"]] = _e
+    d27m = _bb.get("27 bp")
     if d27m:
         hero_k = "measured spring force"
-        hero_force = f"{d27m['f']:.1f} pN"
-        hero_sub = (f"27 bp duplex, straight from the force field — and "
-                    f"{d27m['ratio']:.2f}× the Euler buckling load, not the few pN the "
-                    f"model predicts")
+        hero_force = f"{d27m['f']:.0f} pN"
+        hero_sub = (f"27 bp duplex, straight from the force field, in the largest box "
+                    f"we have ({d27m['box_A']:.0f} Å) — {d27m['ratio']:.1f}× its Euler "
+                    f"buckling load and far above the few pN the model predicts. Not "
+                    f"converged: a smaller box gave less")
     else:
         hero_k = "strongest spring"
         hero_force = (f"{sp[strongest]['force_pN']['mean']:.1f} pN" if strongest
@@ -1531,25 +1597,57 @@ def build(args):
       <th>measured / Euler</th><th>p, slope vs separation</th></tr></thead>
       <tbody>{mfx_rows}</tbody></table></div>
 
-    <h3>The force does not depend on how far you compress it</h3>
-    <p>For all three duplexes, regressing force on separation gives no resolvable slope
-    (p = {", ".join("%.2f" % e["slope_p"] for e in (mfx or {"by_system": {}})["by_system"].values())}).
-    A constant load independent of compression is the signature of a <strong>buckled
-    rod</strong>: once past its critical load an elastic rod does not stiffen, it just
-    keeps folding at roughly the same force.</p>
+    <h3>Is the force flat in separation? The two boxes disagree</h3>
+    <p>A load independent of how far you compress is the signature of a
+    <strong>buckled rod</strong> — past its critical load an elastic rod does not stiffen,
+    it keeps folding at roughly the same force. The 76 Å box shows exactly that for the
+    27 bp duplex: no resolvable slope across 19 runs spanning 33–63 Å (+0.08 pN Å⁻¹,
+    p = 0.49), and the 40 bp pair likewise (p = 0.19 and 0.54).</p>
+    <p>The 83 Å box does not. Its six runs span only 51–65 Å and rise measurably
+    (+0.60 pN Å⁻¹, p = 0.014). Six points over fourteen ångström against nineteen over
+    thirty is not a fair contest, and the two readings cannot be reconciled from what we
+    have: either the plateau is real and the larger box has too few points over too narrow
+    a range to show it, or the force genuinely climbs as compression is relieved and the
+    rod approaches its buckling onset from the stiff side. <strong>We cannot tell which,
+    and the honest position is that the plateau is supported in one box and contradicted
+    in the other.</strong> Settling it needs the large box run out to the compressions the
+    small one covered.</p>
 
-    <h3>And the load it holds is the Euler load</h3>
-    <p>The 27 bp duplex plateaus at
-    <strong>{(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("f", 0):.1f} ±
-    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("sem", 0):.1f} pN</strong>
-    against a classical Euler buckling load of
-    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("euler", 0):.1f} pN — a ratio of
-    {(mfx or {}).get("by_system", {}).get("D_27bp", {}).get("ratio", 0):.2f}, with nothing
-    fitted. The 40 bp pair land at
-    {(mfx or {}).get("by_system", {}).get("D_40bp", {}).get("ratio", 0):.2f} and
-    {(mfx or {}).get("by_system", {}).get("D_40bp_nick", {}).get("ratio", 0):.2f} of theirs.
-    Textbook elasticity, from an all-atom force field, with a persistence length nobody
-    supplied.</p>
+    <h3>But the number depends on the box, and it is not converged</h3>
+
+    <div class="note flag"><div class="h">A retraction, and the check that caught it</div>
+      <p>An earlier version of this page said the 27 bp duplex plateaus at
+      <strong>25.7 ± 1.0 pN</strong> against a Euler buckling load of 26.8 pN — a ratio of
+      0.96 — and called it textbook elasticity falling out of an all-atom force field with
+      nothing fitted. <strong>That agreement was an artefact of a box that was too
+      small.</strong></p>
+      <p>The rebuilt windows deliberately overlapped the old ones so the two boxes could be
+      checked against each other before their curves were joined. They do not agree. At the
+      separations run in both — 50 and 58 Å, same duplex, same restraint, same protocol —
+      the 76 Å box gives <strong>{be.get('small', 0):.1f} ± {be.get('small_sem', 0):.1f} pN</strong>
+      and the 83 Å box gives <strong>{be.get('large', 0):.1f} ± {be.get('large_sem', 0):.1f} pN</strong>,
+      a factor of {be.get('ratio', 0):.2f} at p = {be.get('p', 1):.3f}. The force rises with
+      box size and has not converged; the 0.96 was the one box that happened to land on the
+      textbook value.</p></div>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>duplex</th><th>box width (Å)</th><th>runs</th>
+      <th>separations (Å)</th><th>measured force (pN)</th>
+      <th>Euler π²B/L² (pN)</th><th>ratio</th></tr></thead>
+      <tbody>{box_rows}</tbody></table></div>
+
+    <p>The highlighted rows are the largest box available for each duplex. There the 27 bp
+    sits at <strong>{best_box.get('27 bp', {}).get('ratio', 0):.2f}</strong> of its Euler
+    load and the 40 bp at <strong>{best_box.get('40 bp', {}).get('ratio', 0):.2f}</strong>
+    of its own — a different and better kind of agreement than the one being retracted:
+    two lengths whose Euler loads differ by more than a factor of two, landing on the same
+    multiple of their own. That is a property of the duplex rather than of one simulation
+    cell.</p>
+
+    <p>What the box dependence does <em>not</em> touch is the comparison that matters.
+    Every box at every separation puts the force far above Zocchi’s kinked branch, and the
+    better-resolved boxes put it <em>further</em> above. The disagreement with the model is
+    not a finite-size artefact — if anything we have been understating it.</p>
 
     <div class="note flag"><div class="h">This disagrees with the model the project is built on</div>
       <p>Zocchi's kinked branch predicts <strong>2.4–6.6 pN</strong> for these same
@@ -2097,6 +2195,20 @@ def build(args):
 </div>
 """
     out = Path(args.out)
+    # A rendered "0.0 ± 0.0 pN ... ratio of 0.00" is what a `.get(key, {}).get(k, 0)`
+    # produces when the key was renamed underneath it, and it publishes silently -- the
+    # integrity checks looked for unrendered braces and for "nan", neither of which this
+    # trips. It shipped once, in the sentence claiming textbook Euler agreement.
+    import re as _re
+    # (?<![\d.]) so "10.0 kT" and "30.0 A" are not read as a zero -- the first version
+    # of this guard flagged the tail of "5.1-10.0 k_BT" and cried wolf immediately.
+    zeros = _re.findall(r"(?<![\d.])0\.0+(?:\s*±\s*0\.0+)?\s*(?:pN|Å|k<sub>B</sub>T)",
+                        html)
+    ratio0 = _re.findall(r"ratio of 0\.00|0\.00× (?:its |the )?Euler", html)
+    if zeros or ratio0:
+        print(f"  WARNING: {len(zeros) + len(ratio0)} suspicious zero-valued quantities "
+              f"in the rendered page -- a renamed key defaulting to 0 looks exactly like "
+              f"this. First: {(zeros + ratio0)[:3]}")
     out.write_text(html)
     print(f"wrote {out} ({out.stat().st_size / 1e6:.2f} MB)")
     print(f"  PNG figures: {html.count('data:image/png')}, "

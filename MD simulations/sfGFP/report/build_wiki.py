@@ -80,11 +80,30 @@ def fx_summary(path: Path):
         d = d.assign(duplex=d.system.map(
             lambda s: f"{NB.get(s, 27)} bp"
                       + (", nicked" if "nick" in s.lower() else "")))
-    out = {"stale": False, "n_valid": int(len(d)), "systems": {}}
+    # Split by box as well as duplex, and report the LARGEST box for each: a matched
+    # comparison (27 bp at x0 = 50 and 58 in a 76 A and an 83 A box) gives 26.3 against
+    # 33.3 pN, p = 0.02, so the measurement is not converged and a pooled number mixes a
+    # sound measurement with one whose box was too small.
+    SMALL = {"27 bp": 80.0, "40 bp": 100.0, "40 bp, nicked": 100.0}
+    d = d.assign(_big=[b >= SMALL.get(s, 90.0) for b, s in zip(d.box_A, d.duplex)])
+    out = {"stale": False, "n_valid": int(len(d)), "systems": {}, "box_effect": {}}
     for s, g in d.groupby("duplex"):
+        shared = sorted(set(g[~g._big].x0_A) & set(g[g._big].x0_A))
+        if shared:
+            m = g[g.x0_A.isin(shared)]
+            sm, lg = m[~m._big].force_pN, m[m._big].force_pN
+            if len(sm) > 1 and len(lg) > 1:
+                out["box_effect"][s] = {
+                    "small": float(sm.mean()), "large": float(lg.mean()),
+                    "ratio": float(lg.mean() / sm.mean()),
+                    "p": float(st.ttest_ind(lg.values, sm.values,
+                                            equal_var=False).pvalue),
+                    "x0": shared}
+        if g._big.any():
+            g = g[g._big]                 # best estimate = the largest box available
         eul = euler_pN(int(str(s).split()[0]))
         lr = st.linregress(g.mean_r_A, g.force_pN)
-        e = {"label": s, "n": int(len(g)),
+        e = {"label": s, "n": int(len(g)), "box_A": round(float(g.box_A.mean()), 0),
              "boxes_A": sorted({round(float(b)) for b in g.get("box_A", [])
                                 if b == b}) if "box_A" in g else [],
              "r_lo": float(g.mean_r_A.min()), "r_hi": float(g.mean_r_A.max()),
@@ -198,15 +217,29 @@ harmonic restraint between the two linker nitrogens. The mean restraint force
 
 Two things to read.
 
-**The force does not depend on how far you compress it.** No resolvable slope for any of
-the three. A constant load independent of compression is the signature of a **buckled
-rod**: past its critical load an elastic rod does not stiffen, it keeps folding at
-roughly the same force.
+**Is the force flat in separation? The two boxes disagree.** A load independent of
+compression is the signature of a **buckled rod**. The 76 Å box shows exactly that for the
+27 bp — no resolvable slope over 19 runs spanning 33–63 Å (p = 0.49) — but the 83 Å box,
+with six runs over only 51–65 Å, rises measurably (p = 0.014). Six points over 14 Å against
+nineteen over 30 Å is not a fair contest, and we cannot say which reading is right: either
+the plateau is real and the larger box is too sparse to show it, or the force climbs as
+compression is relieved. Supported in one box, contradicted in the other.
 
-**And the load it holds is the Euler load.** The 27 bp plateaus at
-**{d27['f']:.1f} ± {d27['sem']:.1f} pN** against a classical π²B/L² of
-{d27['euler']:.1f} pN — a ratio of {d27['ratio']:.2f}, with nothing fitted. Textbook
-elasticity out of an all-atom force field, with a persistence length nobody supplied.
+**But the number depends on the box, and it is not converged.** An earlier version of
+this page reported 25.7 ± 1.0 pN for the 27 bp — a ratio of 0.96 to its Euler load — and
+called it textbook elasticity. That was an artefact of too small a box. Running the same
+duplex at the same separations (50 and 58 Å) in a 76 Å and an 83 Å box gives
+{fx['box_effect'].get('27 bp', {}).get('small', 0):.1f} against
+{fx['box_effect'].get('27 bp', {}).get('large', 0):.1f} pN — a factor of
+{fx['box_effect'].get('27 bp', {}).get('ratio', 0):.2f} at p =
+{fx['box_effect'].get('27 bp', {}).get('p', 1):.3f}. **That figure is withdrawn.**
+
+The table above quotes the largest box available for each duplex. There the 27 bp sits at
+{d27['ratio']:.2f} of its Euler load and the 40 bp at
+{fx['systems'].get('40 bp', {}).get('ratio', 0):.2f} of its own — two lengths whose Euler
+loads differ by more than a factor of two, landing on the same multiple. That is a
+property of the duplex rather than of one simulation cell, and a better kind of agreement
+than the one being retracted.
 
 Zocchi's kinked branch predicts **2.4–6.6 pN** for these same duplexes. We measure
 {d27['f']:.1f} pN — about **six times higher**, and on the *unyielded* branch, the one
