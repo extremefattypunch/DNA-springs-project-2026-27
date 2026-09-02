@@ -1,0 +1,50 @@
+{
+  "run": "260828_sfGFPDNA(dsVSssVSnicked)_att1",
+  "note": "a/b/c are technical replicates of one preparation",
+  "groups": {
+    "ss": {
+      "force_pN": 0.0,
+      "n_scans": 3,
+      "ratio": [
+        0.12935,
+        0.12712,
+        0.12694
+      ],
+      "mean": 0.1278,
+      "sd": 0.00135,
+      "blank_fraction_at_400nm": 0.0046
+    },
+    "ds": {
+      "force_pN": 3.1,
+      "n_scans": 3,
+      "ratio": [
+        0.11532,
+        0.11611,
+        0.11617
+      ],
+      "mean": 0.11587,
+      "sd": 0.00048,
+      "blank_fraction_at_400nm": 0.0041
+    },
+    "nicked": {
+      "force_pN": 2.5,
+      "n_scans": 3,
+      "ratio": [
+        0.11987,
+        0.11926,
+        0.11944
+      ],
+      "mean": 0.11952,
+      "sd": 0.00032,
+      "blank_fraction_at_400nm": 0.0035
+    }
+  },
+  "scan_range_nm": [
+    400.0,
+    500.0
+  ],
+  "scan_step_nm": 1.0,
+  "a_band_truncated": true,
+  "monotone_in_force": true,
+  "relative_change_pct": -9.3
+}
