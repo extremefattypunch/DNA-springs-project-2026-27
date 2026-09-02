@@ -753,6 +753,11 @@ def build(args):
             verdict = max(set(v), key=v.count) if v else "?"
             verdicts[verdict] = verdicts.get(verdict, 0) + len(g)
             rows.append({
+                "straightness": (float(g["seeded.straightness"].mean())
+                                 if "seeded.straightness" in g else None),
+                "r_over_box": (float((g.mean_r_A / g.box_A).mean())
+                               if "box_A" in g else None),
+                "box_ok": bool(g.box_ok.all()) if "box_ok" in g else True,
                 "system": sysname, "bp": int(bp), "n": int(len(g)),
                 "first": float(g["seeded.N1_N3_first_A"].mean()),
                 "last": float(g["seeded.N1_N3_last_A"].mean()),
@@ -765,7 +770,9 @@ def build(args):
         rows.sort(key=lambda r: r["bp"])
         return {"rows": rows, "n_runs": int(len(d)), "verdict_counts": verdicts,
                 "all_healed": all(r["verdict"] == "healed" for r in rows),
-                "any_persisted": any(r["verdict"] == "persisted" for r in rows)}
+                "any_persisted": any(r["verdict"] == "persisted" for r in rows),
+                "all_unbent": all(r["verdict"] == "unbent" for r in rows),
+                "any_box_bad": any(not r["box_ok"] for r in rows)}
 
     seeded = _seeded()
     seeded_rows = ""
@@ -828,10 +835,15 @@ def build(args):
             "<tr%s><td class='num'>%d</td><td class='num'>%d</td>"
             "<td class='num'>%.1f</td><td class='num'>%.1f</td>"
             "<td class='num'>%.0f%%</td><td class='num'>%s</td>"
-            "<td><strong>%s</strong></td></tr>" % (
+            "<td class='num'>%s</td><td><strong>%s</strong></td></tr>" % (
                 ' class="hi"' if r["verdict"] in ("persisted", "migrated") else "",
                 r["bp"], r["n"], r["first"], r["last"], 100 * r["open_frac"],
-                ("%.1f" % r["healed_ns"]) if r["healed_ns"] is not None else "&mdash;",
+                ("%.2f" % r["straightness"]) if r.get("straightness") else "&mdash;",
+                # flagged when the molecule outgrew its cell -- the reason this table's
+                # second half is reported as untested rather than as a result
+                ("<strong>%.2f</strong>" % r["r_over_box"]) if r.get("r_over_box")
+                and r["r_over_box"] > 0.85 else
+                (("%.2f" % r["r_over_box"]) if r.get("r_over_box") else "&mdash;"),
                 r["verdict"])
             for r in seeded["rows"])
 
