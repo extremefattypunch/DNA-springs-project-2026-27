@@ -60,16 +60,25 @@ is already a signal of exactly that shape in your own data, [below](#there-is-al
 
 ---
 
-## Why the roGFP positions cannot take a spring
+## Why the roGFP positions are attachable, and still not worth using
+
+> **A retraction.** An earlier version of this page said a DNA spring **could not be
+> attached** at these positions at all, on the grounds that a spring "needs its anchors
+> ~30 Å apart" while roGFP's pairs are 4.6–5.9 Å apart. **That argument was wrong.** A
+> tether *adds* reach rather than imposing a minimum separation: with the measured 21.7 Å
+> arms, anchors 4.6 Å apart can hold a duplex spanning up to 48 Å, and a 27 bp duplex
+> there delivers **4.6 pN** against the 7.2 pN of the built geometry. The real objection
+> is narrower and is set out below. The figure's original caption was wrong for the same
+> reason.
 
 The proposal was to anchor at **S147↔Q204** or **N149↔S202**, the pairs roGFP uses,
 because constraining those two β-strands is known to swing the 400/490 nm excitation
 equilibrium. The reasoning is right: residues 147–149 sit on β-strand 7 and 202–205 on
-β-strand 10, the two strands are **adjacent and antiparallel**, and they carry the
-chromophore's own hydrogen bonds — in 2B3P's own `SHEET` record, His148 pairs directly
-with Thr203.
+β-strand 10 (Ser147 itself falls just outside β7, which begins at His148), the two
+strands are **adjacent and antiparallel**, and they carry the chromophore's own hydrogen
+bonds — in 2B3P's own `SHEET` record, His148 pairs directly with Thr203.
 
-But roGFP puts *cysteines* there, and a disulfide is a 2 Å bond. Measured Cβ–Cβ:
+roGFP puts *cysteines* there, and a disulfide is a 2 Å bond. Measured Cβ–Cβ:
 
 | pair | separation | solvent exposure | |
 |---|---|---|---|
@@ -78,13 +87,34 @@ But roGFP puts *cysteines* there, and a disulfide is a 2 Å bond. Measured Cβ�
 | **ASN149–GLN204** | 10.6 Å | 61 / 75 Å² | the mixed diagonal |
 | **ASP133–ASN149** | 31.3 Å | 108 / 61 Å² | **the pair we build** |
 
-A DNA spring needs its anchors ~30 Å apart. Each tether — the Tet2-Et side chain, the
-sTCO adduct, the DNA's own terminal arm — is 10–15 Å on its own, and the built geometry
-holds the duplex ends 62–76 Å apart across a 31 Å Cβ–Cβ separation. Asked to span 4.6 Å,
-the duplex would simply lie alongside the protein; it could not load those two residues
-against each other at all.
+### What the tether actually does
 
-![where the sites are and why the geometry fails](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig8_attachment_sites.png)
+Measured on the built chimera, each tether spans **21.7 Å** from the protein Cβ to the
+DNA backbone phosphorus: 12.4–13.3 Å of clicked tetrazine–TCO adduct plus 10.8 Å of the
+DNA's own amino-modifier arm. Two arms and the anchor separation together set how far
+apart the duplex ends can sit:
+
+> maximum span = Cβ–Cβ separation + 2 × tether
+
+| anchors | separation | max span | 27 bp force there | tether extension needed |
+|---|---|---|---|---|
+| S147–Q204 | 4.6 Å | 48.0 Å | 4.6 pN | **100 % of contour** |
+| N149–S202 | 5.9 Å | 49.2 Å | 4.6 pN | **100 %** |
+| Tyr151–Ser208 | 28.0 Å | 71.3 Å | 6.5 pN | 100 % |
+| **D133–N149 (built)** | 31.3 Å | 74.7 Å | 7.2 pN | **89–93 % at its actual span** |
+
+So the close pairs *can* be reached — but only with both arms **fully extended and
+collinear with the anchor axis**. That is a knife-edge working point, not a design
+window: an arm at 100 % of its contour has no configurational entropy left, so its own
+entropic restoring force opposes the spring, and any fluctuation that shortens the span
+lets it go slack, at which point it transmits nothing. The built geometry sits at 89–93 %,
+which is already high but has margin.
+
+And the reward for that fragility is **less** force, not more: 4.6 pN against 7.2 pN.
+Which is the real answer to "should we re-site to the chromophore strands" — **you can,
+and it buys you nothing.**
+
+![the chromophore network, and the candidate anchors to scale](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/docs/figures/fig8_attachment_sites.png)
 
 ### Nor can any buildable pair on those strands pry them apart
 

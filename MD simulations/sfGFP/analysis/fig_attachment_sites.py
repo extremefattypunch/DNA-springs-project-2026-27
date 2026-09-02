@@ -2,18 +2,21 @@
 """Where the chromophore's hydrogen bonds are, and why the roGFP positions cannot take
 a DNA spring.
 
-The argument this figure has to carry
--------------------------------------
+What this figure shows, and what it does not
+--------------------------------------------
 A memo proposed moving our spring anchors to the positions roGFP uses for its redox
 disulfide -- Ser147/Gln204 and Asn149/Ser202 -- because those strands carry the
-chromophore's own hydrogen bonds and constraining them is known to swing the 400/490 nm
-excitation equilibrium.  The reasoning is sound and the target is right; the geometry is
-not.  A disulfide is a 2 A covalent bond, so roGFP's pairs sit 4.6-5.9 A apart.  A DNA
-spring needs ~31 A between anchors, because each tether -- the Tet2-Et side chain, the
-sTCO adduct, the DNA's own terminal arm -- is 10-15 A on its own.
+chromophore's own hydrogen bonds.  The target is well chosen.  This figure shows where
+those positions are relative to the chromophore's hydrogen-bond network, and how far
+apart they are compared with the pair we actually build.
 
-A reader should be able to see that in one glance, so the two panels are drawn to the
-same scale with the distances measured on the structure rather than annotated by hand.
+It does NOT show that a spring cannot be attached there, and an earlier caption claimed
+it did.  That claim was wrong: a tether adds reach rather than imposing a minimum anchor
+separation, and the measured 21.7 A arms can reach a 48 A span from anchors 4.6 A apart.
+The real objection is that doing so needs both arms at 100% of their contour -- a
+knife-edge working point -- and delivers 4.6 pN where the built geometry gives 7.2.  That
+is an argument from numbers, not from a picture, so it lives in the page rather than
+here.
 """
 from __future__ import annotations
 
@@ -140,14 +143,15 @@ def compose():
 
     ax = fig.add_subplot(gs[0, 1])
     ax.imshow(mpimg.imread(OUT / "_att_panelB.png")); ax.axis("off")
-    ax.set_title("why the roGFP positions cannot take a DNA spring",
+    ax.set_title("the candidate anchors, to scale",
                  fontsize=11.5, color=VS.INK, pad=8)
     ax.text(0.5, -0.02,
             f"orange, roGFP's disulfide pairs — S147–Q204 "
             f"{P['S147-Q204']['cb_cb_A']:.1f} Å and N149–S202 "
-            f"{P['N149-S202']['cb_cb_A']:.1f} Å apart\n"
+            f"{P['N149-S202']['cb_cb_A']:.1f} Å apart, because a disulfide is a 2 Å bond\n"
             f"blue, the pair we build — D133–N149, "
-            f"{P['D133-N149']['cb_cb_A']:.1f} Å, and its tethers alone are 10–15 Å each",
+            f"{P['D133-N149']['cb_cb_A']:.1f} Å. A 21.7 Å tether can still reach the "
+            f"orange pairs; it just gains nothing by it",
             transform=ax.transAxes, ha="center", va="top", fontsize=9.4,
             color=VS.INK_2, linespacing=1.5)
 
