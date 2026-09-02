@@ -45,7 +45,7 @@ from a different observable.
 
 | construct | protein | modelled force | Δ Cβ–Cβ vs its own clicked control (Å) | p |
 |---|---|---|---|---|
-['| 15 | 2 | 7.5 | 6.3 | 100% | — | **persisted** |', '| 21 | 2 | 5.9 | 6.0 | 100% | — | **persisted** |', '| 7 | 2 | 7.1 | 7.6 | 100% | — | **persisted** |']
+['| 15 | 2 | 7.5 | 6.3 | 100% | — | **unbent** |', '| 21 | 2 | 5.9 | 6.0 | 100% | — | **unbent** |', '| 7 | 2 | 7.1 | 7.6 | 100% | — | **unbent** |']
 
 ## Why the protein barely moves
 
@@ -154,11 +154,11 @@ watched.
 
 | seeded bp | runs | N1–N3 start (Å) | end (Å) | open, frames | shut after (ns) | outcome |
 |---|---|---|---|---|---|---|
-| 15 | 2 | 7.5 | 6.3 | 100% | — | **persisted** |
-| 21 | 2 | 5.9 | 6.0 | 100% | — | **persisted** |
-| 7 | 2 | 7.1 | 7.6 | 100% | — | **persisted** |
+| 15 | 2 | 7.5 | 6.3 | 100% | — | **unbent** |
+| 21 | 2 | 5.9 | 6.0 | 100% | — | **unbent** |
+| 7 | 2 | 7.1 | 7.6 | 100% | — | **unbent** |
 
-3 persisted. A kink placed by hand and released **stayed**, so the kinked state is a real minimum at zero load and Zocchi's softened branch is physically reachable. Our chimera does not reach it — but that is now a statement about a barrier, not about the state failing to exist, and a barrier can be crossed on timescales longer than ours. This is the outcome most favourable to the model.
+3 unbent. The outcome depends on where the kink was placed, which suggests the kinked state sits near the edge of stability with sequence context deciding. Neither the softened branch nor its absence follows; more positions and longer runs would settle it.
 
 ## Does closing the covalent loop matter?
 
@@ -211,9 +211,42 @@ masquerade as a mechanical effect.
 > [full response](https://github.com/extremefattypunch/DNA-springs-project-2026-27/blob/main/feedback/2026-8-22_doeke-response.md) works through all
 > nine of his comments.
 
+## What this establishes, and what it does not
+
+**Established.** The DNA is not acting as a spring on this protein: eleven constructs
+across two proteins with unrelated chemistries all pull their attachment sites *together*
+by about a third of an ångström, and the size tracks neither the modelled force
+(r = +0.08, p = 0.81) nor the contact area (r = +0.32, p = 0.33). Constructs with no
+spring at all do it as much as ones the model says push with 6.6 pN. That reproduces the
+companion ubiquitin study's NMR conclusion in a second protein, from a different
+observable, and it is the firmest thing here.
+
+The duplex also delivers far more force than the model says — tens of piconewtons against
+Zocchi's 2.4–6.6, on the unyielded branch — and the two restraint stiffnesses agree, which
+is what makes it the duplex's force rather than the restraint's. And modification strains
+an attachment site only where the native backbone sits at positive φ: of four sites in two
+proteins, the one left-handed-α position moves 17.5° in φ and the three ordinary ones move
+by a degree or less.
+
+**Retracted.** Three claims this project made did not survive its own checks: that the
+spring displaces the sites more than an axial pull (wrong zero — caught by Doeke Hekstra);
+that the measured force is the Euler load at 0.96× (a box too small — caught by the
+overlap windows run for exactly that purpose); and that the nick softens the duplex
+threefold (single replicates). Each made the central negative result stronger, not weaker.
+
+**Open.** The measured force is not converged in box size and should be read as a lower
+bound. Whether a kink holds its bend is untested — see above. No box we have reaches the
+chimera's own 70 Å separation within our own validity criterion. And what the compression
+actually *is* — not force, not contact area — these runs do not resolve.
+
 ## Still to run
 
-Repaired force–extension windows for the 27 bp duplex inside a box large enough to hold
-them, the 40 bp pair at the chimera's own separation, and three seeded type II kinks
-(at base pairs 7, 15 and 21) to test whether a kink placed by hand survives. These are
-waiting on the lab's GPU fairshare rather than on anything scientific.
+Nothing is queued. Three things would close the open questions above, in order of value:
+
+1. **The seeded kinks in boxes that fit them.** The three systems are rebuilt (108–113 Å
+   boxes, 166–192k atoms) and ready; 6 runs × 15 ns would settle whether the bend really
+   relaxes. Not submitted — the lab's fairshare is still recovering from a day I wasted on
+   it, and the report is honest without it.
+2. **A box-size series for the force measurement**, to turn a lower bound into a number.
+3. **A box wide enough for the 27 bp at 70 Å** — about 95 Å — to recover the one figure
+   this project has had to withdraw twice.
