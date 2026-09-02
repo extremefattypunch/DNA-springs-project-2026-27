@@ -385,6 +385,10 @@ watched.
  · [response to review]({REPO}/blob/main/feedback/2026-8-22_doeke-response.md)
  · [how it was built]({REPO}/blob/main/feedback/2026-8-22_setup-tutorial.md)
 
+> **[Choosing attachment sites →](Choosing-Attachment-Sites)** — where on sfGFP to put the
+> spring if the aim is to move the fluorescence *wavelengths* rather than its brightness.
+> Includes why the obvious answer, borrowed from roGFP, is geometrically impossible.
+
 Two amber codons put the tetrazine amino acid **Tet2-Et** at Asp133 and Asn149 on
 adjacent strands of sfGFP's β-barrel; a doubly-sTCO-modified DNA strand clicks onto both,
 closing a covalent loop. dsDNA is far too stiff to follow the barrel's curvature, so it
@@ -551,6 +555,23 @@ Nothing is queued. Three things would close the open questions above, in order o
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(md)
+
+    # A GitHub wiki renders _Sidebar.md on every page, and without one a second page is
+    # reachable only by typing its URL. Written here so navigation cannot drift from the
+    # set of pages that actually exist.
+    pages = [("Home", "the project: what the springs do and what it retracted"),
+             ("Choosing-Attachment-Sites",
+              "where to attach the DNA to move the fluorescence wavelengths")]
+    side = ["### DNA springs on sfGFP", ""]
+    for slug, blurb in pages:
+        side.append(f"- [[{slug.replace('-', ' ')}|{slug}]]  \n  <sub>{blurb}</sub>")
+    side += ["", "---", "",
+             "[full report](https://extremefattypunch.github.io/"
+             "DNA-springs-project-2026-27/)  ",
+             "[code](https://github.com/extremefattypunch/"
+             "DNA-springs-project-2026-27/tree/main/MD%20simulations/sfGFP)"]
+    (out.parent / "_Sidebar.md").write_text("\n".join(side) + "\n")
+    print(f"wrote {out.parent / '_Sidebar.md'} ({len(pages)} pages)")
     print(f"wrote {out} ({len(md.splitlines())} lines, "
           f"{len(vm)} constructs, {len(sp)} springs)")
     if fx and fx.get("stale"):

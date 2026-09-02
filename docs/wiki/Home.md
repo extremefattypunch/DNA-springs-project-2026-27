@@ -6,6 +6,10 @@
  · [response to review](https://github.com/extremefattypunch/DNA-springs-project-2026-27/blob/main/feedback/2026-8-22_doeke-response.md)
  · [how it was built](https://github.com/extremefattypunch/DNA-springs-project-2026-27/blob/main/feedback/2026-8-22_setup-tutorial.md)
 
+> **[Choosing attachment sites →](Choosing-Attachment-Sites)** — where on sfGFP to put the
+> spring if the aim is to move the fluorescence *wavelengths* rather than its brightness.
+> Includes why the obvious answer, borrowed from roGFP, is geometrically impossible.
+
 Two amber codons put the tetrazine amino acid **Tet2-Et** at Asp133 and Asn149 on
 adjacent strands of sfGFP's β-barrel; a doubly-sTCO-modified DNA strand clicks onto both,
 closing a covalent loop. dsDNA is far too stiff to follow the barrel's curvature, so it

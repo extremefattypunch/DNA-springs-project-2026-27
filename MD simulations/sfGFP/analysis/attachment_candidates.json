@@ -1,0 +1,242 @@
+{
+  "structure": "2b3p.pdb",
+  "residues": {
+    "96": {
+      "name": "ARG",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 11.9,
+      "min_dist_to_chromophore_A": 7.96
+    },
+    "133": {
+      "name": "ASP",
+      "atom": "CB",
+      "dssp": "T",
+      "sasa_A2": 107.6,
+      "min_dist_to_chromophore_A": 26.35
+    },
+    "147": {
+      "name": "SER",
+      "atom": "CB",
+      "dssp": " ",
+      "sasa_A2": 66.1,
+      "min_dist_to_chromophore_A": 6.42
+    },
+    "148": {
+      "name": "HIS",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 8.3,
+      "min_dist_to_chromophore_A": 3.76
+    },
+    "149": {
+      "name": "ASN",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 61.4,
+      "min_dist_to_chromophore_A": 7.93
+    },
+    "202": {
+      "name": "SER",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 32.0,
+      "min_dist_to_chromophore_A": 8.9
+    },
+    "203": {
+      "name": "THR",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 23.2,
+      "min_dist_to_chromophore_A": 3.56
+    },
+    "204": {
+      "name": "GLN",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 75.3,
+      "min_dist_to_chromophore_A": 7.21
+    },
+    "205": {
+      "name": "SER",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 17.0,
+      "min_dist_to_chromophore_A": 5.22
+    },
+    "222": {
+      "name": "GLU",
+      "atom": "CB",
+      "dssp": "E",
+      "sasa_A2": 36.4,
+      "min_dist_to_chromophore_A": 5.19
+    }
+  },
+  "pairs": {
+    "N149-S202": {
+      "resseq": [
+        149,
+        202
+      ],
+      "residues": "ASN149-SER202",
+      "cb_cb_A": 5.85,
+      "sasa_A2": [
+        61.4,
+        32.0
+      ],
+      "dssp": [
+        "E",
+        "E"
+      ],
+      "both_exposed": true,
+      "note": "flanks H148 and T203 on both supporting strands"
+    },
+    "S147-Q204": {
+      "resseq": [
+        147,
+        204
+      ],
+      "residues": "SER147-GLN204",
+      "cb_cb_A": 4.58,
+      "sasa_A2": [
+        66.1,
+        75.3
+      ],
+      "dssp": [
+        " ",
+        "E"
+      ],
+      "both_exposed": true,
+      "note": "brackets H148/T203 one residue further out; roGFP1 pair"
+    },
+    "N149-Q204": {
+      "resseq": [
+        149,
+        204
+      ],
+      "residues": "ASN149-GLN204",
+      "cb_cb_A": 10.62,
+      "sasa_A2": [
+        61.4,
+        75.3
+      ],
+      "dssp": [
+        "E",
+        "E"
+      ],
+      "both_exposed": true,
+      "note": "mixed: keeps the existing 149 handle, reaches past T203"
+    },
+    "S147-S202": {
+      "resseq": [
+        147,
+        202
+      ],
+      "residues": "SER147-SER202",
+      "cb_cb_A": 7.31,
+      "sasa_A2": [
+        66.1,
+        32.0
+      ],
+      "dssp": [
+        " ",
+        "E"
+      ],
+      "both_exposed": true,
+      "note": "the other mixed diagonal, for completeness"
+    },
+    "D133-N149": {
+      "resseq": [
+        133,
+        149
+      ],
+      "residues": "ASP133-ASN149",
+      "cb_cb_A": 31.3,
+      "sasa_A2": [
+        107.6,
+        61.4
+      ],
+      "dssp": [
+        "T",
+        "E"
+      ],
+      "both_exposed": true,
+      "note": "the pair this project has actually built"
+    }
+  },
+  "chromophore_resseq": 66,
+  "numbering": "2B3P == canonical avGFP; construct numbering is +1",
+  "design_search": {
+    "strand_H148": [
+      148,
+      155
+    ],
+    "strand_T203": [
+      199,
+      208
+    ],
+    "H148_T203_cb_cb_A": 5.14,
+    "buildable": [
+      {
+        "pair": "TYR151-SER208",
+        "resseq": [
+          151,
+          208
+        ],
+        "cb_cb_A": 27.95,
+        "alignment_with_H148_T203_axis": 0.389,
+        "interpretation": "pushes across the axis: twist, not separation"
+      },
+      {
+        "pair": "THR153-VAL206",
+        "resseq": [
+          153,
+          206
+        ],
+        "cb_cb_A": 28.26,
+        "alignment_with_H148_T203_axis": 0.289,
+        "interpretation": "pushes across the axis: twist, not separation"
+      },
+      {
+        "pair": "THR153-SER208",
+        "resseq": [
+          153,
+          208
+        ],
+        "cb_cb_A": 33.29,
+        "alignment_with_H148_T203_axis": 0.283,
+        "interpretation": "pushes across the axis: twist, not separation"
+      },
+      {
+        "pair": "ALA154-SER208",
+        "resseq": [
+          154,
+          208
+        ],
+        "cb_cb_A": 36.09,
+        "alignment_with_H148_T203_axis": 0.155,
+        "interpretation": "pushes across the axis: twist, not separation"
+      },
+      {
+        "pair": "ALA154-VAL206",
+        "resseq": [
+          154,
+          206
+        ],
+        "cb_cb_A": 31.22,
+        "alignment_with_H148_T203_axis": 0.139,
+        "interpretation": "pushes across the axis: twist, not separation"
+      },
+      {
+        "pair": "ALA154-GLN204",
+        "resseq": [
+          154,
+          204
+        ],
+        "cb_cb_A": 25.26,
+        "alignment_with_H148_T203_axis": 0.097,
+        "interpretation": "pushes across the axis: twist, not separation"
+      }
+    ]
+  }
+}
