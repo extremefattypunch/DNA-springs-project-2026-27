@@ -1,0 +1,162 @@
+{
+  "cb_cb_A": 31.299999999999997,
+  "tether_measured_A": 21.7,
+  "adduct_rigid_A": 13.0,
+  "arm_contour_A": 10.8,
+  "lp_alkyl_A": 4.0,
+  "n_bp": 27,
+  "x_c_A": 85.69294060635,
+  "contour_A": 89.1,
+  "wlc": [
+    {
+      "force_pN": 1,
+      "ext_frac": 0.0628836087442412
+    },
+    {
+      "force_pN": 2,
+      "ext_frac": 0.12132040154954385
+    },
+    {
+      "force_pN": 4,
+      "ext_frac": 0.22452285945692424
+    },
+    {
+      "force_pN": 7,
+      "ext_frac": 0.34686951107726516
+    },
+    {
+      "force_pN": 12,
+      "ext_frac": 0.48352219740818836
+    },
+    {
+      "force_pN": 20,
+      "ext_frac": 0.6043304482372296
+    }
+  ],
+  "force_at_90pct_pN": 262.9125000000001,
+  "force_at_99pct_pN": 25632.58499999995,
+  "linkers": [
+    {
+      "name": "tetrazine-sTCO (current, MEASURED)",
+      "tether_A": 21.7,
+      "span_rigid_A": 74.7,
+      "force_rigid_pN": 7.155353698456616,
+      "span_compliant_A": 59.061732982305145,
+      "force_compliant_pN": 5.155271442261361
+    },
+    {
+      "name": "inverted: tetrazine-DNA + TCO*-Lys",
+      "tether_A": 18.5,
+      "span_rigid_A": 68.3,
+      "force_rigid_pN": 6.035875440129216,
+      "span_compliant_A": 52.294699861463755,
+      "force_compliant_pN": 4.759456022703848
+    },
+    {
+      "name": "SPAAC, DBCO on DNA + azide-Lys",
+      "tether_A": 17.5,
+      "span_rigid_A": 66.3,
+      "force_rigid_pN": 5.795054667785809,
+      "span_compliant_A": 50.20260611095024,
+      "force_compliant_pN": 4.662506013388173
+    },
+    {
+      "name": "SPAAC, BCN on protein + azide-DNA",
+      "tether_A": 17.0,
+      "span_rigid_A": 65.3,
+      "force_rigid_pN": 5.687358278345486,
+      "span_compliant_A": 49.15978177545148,
+      "force_compliant_pN": 4.617733375684162
+    },
+    {
+      "name": "CuAAC, propargyl-Lys + azide-DNA",
+      "tether_A": 15.0,
+      "span_rigid_A": 61.3,
+      "force_rigid_pN": 5.322741587933121,
+      "span_compliant_A": 45.00712233837926,
+      "force_compliant_pN": 4.459691749723806
+    },
+    {
+      "name": "maleimide-cysteine + short arm",
+      "tether_A": 14.0,
+      "span_rigid_A": 59.3,
+      "force_rigid_pN": 5.172065675971959,
+      "span_compliant_A": 42.94058836081538,
+      "force_compliant_pN": 4.391559640592904
+    },
+    {
+      "name": "oxime, pAcF + aminooxy-DNA",
+      "tether_A": 13.3,
+      "span_rigid_A": 57.9,
+      "force_rigid_pN": 5.076587774214056,
+      "span_compliant_A": 41.49741700352244,
+      "force_compliant_pN": 4.3475889355418715
+    }
+  ],
+  "spread_rigid_pN": 2.0787659242425596,
+  "spread_compliant_pN": 0.8076825067194893,
+  "model_gap_pN": 2.000082256195255,
+  "anchor_motion_from_spread_A": 0.014848328030303996,
+  "pairs": [
+    {
+      "pair": "SER147-GLN204",
+      "cb_cb_A": 4.6000000000000005,
+      "tether_A": 15.523357388952814,
+      "span_A": 35.64671477790563,
+      "arm_ext_frac": 0.23364420268081604,
+      "force_pN": 4.195531570430386
+    },
+    {
+      "pair": "ASN149-SER202",
+      "cb_cb_A": 5.8999999999999995,
+      "tether_A": 15.538920182565912,
+      "span_A": 36.977840365131826,
+      "arm_ext_frac": 0.23508520208943634,
+      "force_pN": 4.226756614056269
+    },
+    {
+      "pair": "TYR151-SER208",
+      "cb_cb_A": 28.0,
+      "tether_A": 16.012274632624898,
+      "span_A": 60.024549265249796,
+      "arm_ext_frac": 0.2789143178356387,
+      "force_pN": 5.224592240690475
+    },
+    {
+      "pair": "ASP133-ASN149 (built)",
+      "cb_cb_A": 31.299999999999997,
+      "tether_A": 16.143458142278053,
+      "span_A": 63.586916284556104,
+      "arm_ext_frac": 0.29106093909981967,
+      "force_pN": 5.519417348737731
+    }
+  ],
+  "arm_ext_frac_measured": 0.8055555555555554,
+  "force_to_hold_measured_arm_pN": 73.46995464852591,
+  "levers": [
+    {
+      "lever": "as built (compliant arm)",
+      "force_pN": 5.519417348737731
+    },
+    {
+      "lever": "stiffen the arm at constant contour",
+      "force_pN": 8.466379081577518,
+      "pct": 53.392623652816276
+    },
+    {
+      "lever": "27 -> 25 bp",
+      "force_pN": 6.717194838675688,
+      "pct": 21.70115818858822
+    },
+    {
+      "lever": "27 -> 30 bp",
+      "force_pN": 4.494142283708561,
+      "pct": -18.575784367233016
+    },
+    {
+      "lever": "27 -> 40 bp",
+      "force_pN": 2.9577018726687623,
+      "pct": -46.41278805732679
+    }
+  ]
+}

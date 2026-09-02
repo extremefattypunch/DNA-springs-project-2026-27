@@ -29,6 +29,63 @@ def main():
     AB = ab["groups"]
     P, R = g["pairs"], g["residues"]
     ds = g.get("design_search", {})
+    tt = json.loads(Path("analysis/tether_tradeoff.json").read_text())
+
+    # --- tether compliance, from analysis/tether_tradeoff.py -------------------------
+    TT_XC = tt["x_c_A"]
+    _byname = {e["pair"]: e for e in tt["pairs"]}
+    _built = _byname["ASP133-ASN149 (built)"]
+    TT_BUILT = _built["force_pN"]
+    TT_CLOSE = min(e["force_pN"] for e in tt["pairs"])
+    TT_RIGID = next(e["force_rigid_pN"] for e in tt["linkers"] if "MEASURED" in e["name"])
+    TT_F90, TT_F99 = tt["force_at_90pct_pN"], tt["force_at_99pct_pN"]
+    _z = {e["force_pN"]: e["ext_frac"] for e in tt["wlc"]}
+    TT_Z2, TT_Z7 = 100 * _z[2], 100 * _z[7]
+    TT_ZM = 100 * tt["arm_ext_frac_measured"]
+    TT_FM = tt["force_to_hold_measured_arm_pN"]
+    _LABEL = {"SER147-GLN204": "S147–Q204", "ASN149-SER202": "N149–S202",
+              "TYR151-SER208": "Tyr151–Ser208",
+              "ASP133-ASN149 (built)": "**D133–N149 (built)**"}
+    TT_PAIRS = "\n".join(
+        f"| {_LABEL[e['pair']]} | {e['cb_cb_A']:.1f} Å | {e['span_A']:.1f} Å | "
+        f"{100*e['arm_ext_frac']:.0f} % | {e['force_pN']:.1f} pN |"
+        for e in tt["pairs"])
+
+    # --- the chemistry comparison ----------------------------------------------------
+    _KEEP = ["tetrazine-sTCO (current, MEASURED)", "inverted: tetrazine-DNA + TCO*-Lys",
+             "SPAAC, DBCO on DNA + azide-Lys", "SPAAC, BCN on protein + azide-DNA",
+             "CuAAC, propargyl-Lys + azide-DNA", "maleimide-cysteine + short arm",
+             "oxime, pAcF + aminooxy-DNA"]
+    _CHEM_LABEL = {
+        "tetrazine-sTCO (current, MEASURED)": "**tetrazine–sTCO (current, measured)**",
+        "inverted: tetrazine-DNA + TCO*-Lys": "inverted: tetrazine–DNA + TCO\\*-Lys",
+        "SPAAC, DBCO on DNA + azide-Lys": "SPAAC, DBCO–DNA + AzK",
+        "SPAAC, BCN on protein + azide-DNA": "SPAAC, BCN–protein + azide–DNA",
+        "CuAAC, propargyl-Lys + azide-DNA": "CuAAC, propargyl-Lys + azide–DNA",
+        "maleimide-cysteine + short arm": "maleimide–cysteine, short arm",
+        "oxime, pAcF + aminooxy-DNA": "oxime, pAcF + aminooxy–DNA"}
+    _RATE = {
+        "tetrazine-sTCO (current, MEASURED)": "**7.2 × 10⁴**",
+        "inverted: tetrazine-DNA + TCO*-Lys": "5.2 × 10³ – 1.7 × 10⁴",
+        "SPAAC, DBCO on DNA + azide-Lys": "0.8 – 0.9",
+        "SPAAC, BCN on protein + azide-DNA": "0.75 (aryl azide)",
+        "CuAAC, propargyl-Lys + azide-DNA": "10 – 100 (per 10–100 µM Cu)",
+        "maleimide-cysteine + short arm": "10¹ – 10³",
+        "oxime, pAcF + aminooxy-DNA": "10⁻³ – 10⁻¹ (aniline-catalysed)"}
+    _lk = {e["name"]: e for e in tt["linkers"]}
+    TT_CHEM = "\n".join(
+        f"| {_CHEM_LABEL[n]} | {_lk[n]['tether_A']:.1f} Å | "
+        f"{_lk[n]['force_rigid_pN']:.2f} pN | {_lk[n]['force_compliant_pN']:.2f} pN | "
+        f"{_RATE[n]} |" for n in _KEEP)
+    TT_SPREAD_R = tt["spread_rigid_pN"]
+    TT_SPREAD_C = tt["spread_compliant_pN"]
+    TT_GAP = tt["model_gap_pN"]
+    TT_MOTION = tt["anchor_motion_from_spread_A"]
+    _lev = {e["lever"]: e for e in tt["levers"]}
+    TT_STIFF = _lev["stiffen the arm at constant contour"]["force_pN"]
+    TT_STIFF_PCT = _lev["stiffen the arm at constant contour"]["pct"]
+    TT_25 = _lev["27 -> 25 bp"]["force_pN"]
+    TT_25_PCT = _lev["27 -> 25 bp"]["pct"]
 
     def pair_row(k, note):
         e = P[k]
@@ -41,6 +98,10 @@ Where to click the DNA spring if the aim is to move the fluorescence **wavelengt
 rather than its brightness. This page exists to answer a specific proposal — put the
 spring where roGFP puts its redox disulfide — and the short answer is that the target is
 well chosen and the delivery is impossible.
+
+It also answers the follow-up question, *"what if we used a different click linker instead
+of tetrazine?"* — [that section is here](#would-a-different-click-chemistry-help), and the
+answer is no, for reasons that turn out to be neither geometric nor spectroscopic.
 
 Everything geometric below is measured on **2B3P** (sfGFP, 1.40 Å, Pédelacq 2006) by
 [`analysis/attachment_candidates.py`]({REPO}/blob/main/MD%20simulations/sfGFP/analysis/attachment_candidates.py).
@@ -102,11 +163,11 @@ is already a signal of exactly that shape in your own data, [below](#there-is-al
 > **A retraction.** An earlier version of this page said a DNA spring **could not be
 > attached** at these positions at all, on the grounds that a spring "needs its anchors
 > ~30 Å apart" while roGFP's pairs are 4.6–5.9 Å apart. **That argument was wrong.** A
-> tether *adds* reach rather than imposing a minimum separation: with the measured 21.7 Å
-> arms, anchors 4.6 Å apart can hold a duplex spanning up to 48 Å, and a 27 bp duplex
-> there delivers **4.6 pN** against the 7.2 pN of the built geometry. The real objection
-> is narrower and is set out below. The figure's original caption was wrong for the same
-> reason.
+> compression spring does not need to be *stretched* to fit — if the anchors are closer
+> together the duplex simply bends further, and reach is never the binding constraint.
+> Anchors 4.6 Å apart hold a 27 bp duplex at a {TT_CLOSE:.1f} pN working point against
+> {TT_BUILT:.1f} pN at the built pair. The real objection is narrower and is set out
+> below. The figure's original caption was wrong for the same reason.
 
 The proposal was to anchor at **S147↔Q204** or **N149↔S202**, the pairs roGFP uses,
 because constraining those two β-strands is known to swing the 400/490 nm excitation
@@ -128,28 +189,46 @@ roGFP puts *cysteines* there, and a disulfide is a 2 Å bond. Measured Cβ–Cβ
 
 Measured on the built chimera, each tether spans **21.7 Å** from the protein Cβ to the
 DNA backbone phosphorus: 12.4–13.3 Å of clicked tetrazine–TCO adduct plus 10.8 Å of the
-DNA's own amino-modifier arm. Two arms and the anchor separation together set how far
-apart the duplex ends can sit:
+DNA's own amino-modifier arm.
 
-> maximum span = Cβ–Cβ separation + 2 × tether
+The obvious next move is to ask whether the arms are *long enough to reach* a given pair,
+and that is the wrong question. **A compression spring does not have to be stretched to
+fit.** If the anchors sit closer together, the duplex simply bends further. Reach is
+never the binding constraint; the span that results is, because the span sets the force.
 
-| anchors | separation | max span | 27 bp force there | tether extension needed |
+The clicked adduct is a strut — dihydropyridazine fused to the sTCO bicycle, no sp³ chain
+bonds anywhere in its 13 Å. The DNA-side amino-modifier arm is an alkyl chain, and is
+not. They carry the load in series, so the equilibrium span is a **fixed point**: the
+duplex pushes, the compliant arm extends until its tension matches, and the span that
+results sets the force. Marko–Siggia closes the loop
+([`analysis/tether_tradeoff.py`]({REPO}/blob/main/MD%20simulations/sfGFP/analysis/tether_tradeoff.py)):
+
+| anchor pair | Cβ–Cβ | equilibrium span | arm extension | 27 bp force |
 |---|---|---|---|---|
-| S147–Q204 | 4.6 Å | 48.0 Å | 4.6 pN | **100 % of contour** |
-| N149–S202 | 5.9 Å | 49.2 Å | 4.6 pN | **100 %** |
-| Tyr151–Ser208 | 28.0 Å | 71.3 Å | 6.5 pN | 100 % |
-| **D133–N149 (built)** | 31.3 Å | 74.7 Å | 7.2 pN | **89–93 % at its actual span** |
+{TT_PAIRS}
 
-So the close pairs *can* be reached — but only with both arms **fully extended and
-collinear with the anchor axis**. That is a knife-edge working point, not a design
-window: an arm at 100 % of its contour has no configurational entropy left, so its own
-entropic restoring force opposes the spring, and any fluctuation that shortens the span
-lets it go slack, at which point it transmits nothing. The built geometry sits at 89–93 %,
-which is already high but has margin.
+Every span is on the circular-arc branch below *x*<sub>c</sub> = {TT_XC:.1f} Å, where
+*f* = τ<sub>c</sub>/(2R√(1−(x/2R)²)) **diverges** as *x* → 2R. So closer anchors give a
+shorter span and, monotonically, **less force**. That is the real answer to "should we
+re-site to the chromophore strands": **you can, and it buys you nothing** — {TT_CLOSE:.1f} pN
+against {TT_BUILT:.1f} pN.
 
-And the reward for that fragility is **less** force, not more: 4.6 pN against 7.2 pN.
-Which is the real answer to "should we re-site to the chromophore strands" — **you can,
-and it buys you nothing.**
+> **A second correction to this section.** An earlier version said the close pairs could
+> be reached "only with both arms at 100 % of contour — a knife-edge". That was still too
+> generous to the idea. A few-pN spring cannot pull a flexible arm anywhere near taut:
+> holding a 4 Å-persistence-length chain at 90 % of contour takes **{TT_F90:,.0f} pN**, and
+> at 99 %, **{TT_F99:,.0f} pN**. At 2 pN such an arm is {TT_Z2:.0f} % extended and at 7 pN
+> {TT_Z7:.0f} %. There is no knife-edge because there is no reaching: added flexible
+> length is added contour the spring never sees.
+
+**Where this model and the measured geometry disagree, and by how much.** The MD tether
+is 21.7 Å, which puts the arm at {TT_ZM:.0f} % of its contour — entropic elasticity alone
+would need {TT_FM:.0f} pN to hold it there, which the spring does not have. Either the
+50 ns snapshot is not at mechanical equilibrium, or the arm is extended by excluded volume
+and solvation rather than by tension: an alkyl chain pinned between a charged backbone and
+a protein surface is not a free chain. **Both readings are kept.** The force at the built
+pair is **{TT_BUILT:.1f}–{TT_RIGID:.1f} pN**, and everything downstream on this page is
+linear in it.
 
 ![the chromophore network, and the candidate anchors to scale]({RAW}/fig8_attachment_sites.png)
 
@@ -166,6 +245,187 @@ The reason is unavoidable: two points far enough apart to span with a spring mus
 separated *along* the strands, and the strands run the height of the barrel — nearly
 perpendicular to the 5 Å direction that separates them. Such a spring shears or twists
 the strands; it does not pry them open.
+
+---
+
+## Would a different click chemistry help?
+
+**No — and both premises behind the question fail.** The mechanics say every alternative
+is weaker, and the spectroscopic case for switching, which is the one that looked strong,
+does not survive contact with the photophysics.
+
+Seven linkages, priced on the same 27 bp duplex at the built anchor pair. Force is given
+in both readings of the tether (rigid strut / compliant fixed point) because the gap
+between them is the whole story:
+
+| linkage | tether | *f* rigid | *f* compliant | *k*₂ (M⁻¹s⁻¹) |
+|---|---|---|---|---|
+{TT_CHEM}
+
+**The spread across all seven chemistries is {TT_SPREAD_R:.1f} pN.** The gap between the two
+ways of reading the *same* tether is **{TT_GAP:.1f} pN**. Chemistry choice therefore sits
+inside the error bar of the tether-stiffness model — and on our own measured clamp
+stiffness (140 pN Å⁻¹, `figures/fig1_force_response.csv`), {TT_SPREAD_R:.1f} pN moves the
+anchors **{TT_MOTION:.3f} Å**, which on the sensitivity established above is ~0.09 nm of
+wavelength. Mechanics cannot pick a chemistry, in either direction.
+
+### What *can* decide it: completeness
+
+The rate column spans five orders of magnitude, and that is the axis that matters,
+because **unreacted protein is spectroscopically indistinguishable from unloaded
+protein**. Tetrazine–sTCO is measured at **72,500 ± 1660 M⁻¹s⁻¹** on GFP-bound tetrazine
+in cellulo (Blizzard 2015) and delivers *">95 % encoding and labeling fidelity"* with
+*"quantitative"* reaction *"within 5 min at room temperature and physiological pH"*
+(Eddins 2024). At 10 µM protein against 100 µM duplex that is *t*<sub>95</sub> ≈ 0.4 s.
+
+The same arithmetic on the alternatives, from primary kinetics rather than supplier
+literature — Dommerholt's Table 2 gives DBCO/aliphatic azide 0.8–0.9 M⁻¹s⁻¹ and
+BCN/aryl azide 0.75 M⁻¹s⁻¹ in aqueous acetonitrile:
+
+| linkage | *t*<sub>95</sub> at 10 µM + 100 µM |
+|---|---|
+| tetrazine–sTCO | **0.4 s** |
+| CuAAC (50 M⁻¹s⁻¹ at 100 µM Cu) | 10 min |
+| maleimide–cysteine (10² M⁻¹s⁻¹) | 5 min |
+| SPAAC, DBCO + AzK | **9.8 h** |
+| oxime, aniline-catalysed (10⁻² M⁻¹s⁻¹) | 35 days |
+
+SPAAC is genuinely the cleanest chemistry on the list — azide, alkyne and triazole are
+all deep-UV absorbers, and a triazole-linked GFP heterodimer keeps normal photophysics
+(Pope 2021 route; Hartley 2016 for azF at 148). It is not disqualified by cleanliness but
+by the clock: an overnight incubation at ten-fold excess of a doubly-modified duplex,
+during which the reagent is also free to cap one end and stop. **One pairing detail worth
+having: DBCO pairs with alkyl azides and BCN with aryl azides. Getting it the wrong way
+round costs an order of magnitude** (Dommerholt 2016, Table 2).
+
+### The spectroscopic case for switching collapses
+
+The reason to move away from tetrazine is that it absorbs 450–570 nm, peaking ~515 nm,
+right on sfGFP's emission band, with *R*<sub>0</sub> = **2.6 nm** and **89 % FRET** at
+site 150 — measured, with FQY falling 0.65 → 0.070 (Tang 2022). That is a 9.1-fold
+quench, and it is real.
+
+**But it is a property of the *unreacted* state only.** Losing N₂ destroys the tetrazine's
+6π azadiene: *"reaction with sTCO disrupts the tetrazine conjugation, changes the S₀–S₁
+electronic transition to ππ\\*, increases the oscillator strength, and blue-shifts the
+reddest absorption peak to UV region … outside the GFP chromophore emission range"*
+(Tang 2022). The dihydropyridazine is colourless, and the quantum yields come back:
+
+| construct | FQY unreacted | FQY clicked | turn-on |
+|---|---|---|---|
+| GFP134-Tet (Asp133) | 0.53 ± 0.02 | 0.62 ± 0.02 | 1.2 ± 0.1 |
+| GFP150-Tet (Asn149) | 0.070 ± 0.002 | 0.64 ± 0.02 | 9.1 ± 0.4 |
+| sfGFP reference | — | 0.65 | — |
+
+**Our measurement is made on the clicked construct, where the quencher no longer exists.**
+0.62 and 0.64 against 0.65 is full recovery. So switching chemistry to escape the quench
+trades a solved problem for unsolved ones — and this retracts what I said earlier, that
+the case for a different linker had to be made on spectroscopy. It cannot be made there
+either.
+
+The residual photoinduced-electron-transfer quench of the dihydropyridazine product is
+real (Pinto-Pacheco 2020 — and it is the one argument for pairing tetrazine with a
+strained *alkyne* instead, which gives the aromatic pyridazine and *"better … maximum
+contrast ratio"*), but PET needs orbital contact and sfGFP's chromophore is buried 15.7 Å
+from a surface adduct. Geometrically excluded here, which is exactly why the FQYs recover.
+
+### The one inversion that would move the quencher off the protein — and why not to
+
+Put the tetrazine on the DNA and a genetically encoded strained alkene on the protein, and
+the absorber ends up on the partner that is consumed, added in excess, and washed away.
+This is not speculative: **TCO\\*-Lys is encoded at sfGFP position 150** by an engineered
+PylRS (*"Y271A, L274M, C313A"*, "TCORS") in *E. coli* and in HEK-293 (Lang 2012), it is
+*"stable for several days under physiological conditions"*, and rates stay usable —
+Beliu 2019 measured TCO against two of their tetrazine conjugates at
+**5,235 ± 258 and 17,248 ± 3132 M⁻¹s⁻¹**, 4–14× below 72,500 but still *t*½ ≈ 12 s at
+5 µM, so completeness survives.
+
+**It is disqualified by the bond it makes.** TCO\\*-Lys attaches its cyclooctene to the
+lysine ε-amine through a **carbamate**, and tetrazine + TCO-carbamate is the field's
+standard *click-to-release* linkage. Beliu 2019 watched it happen to TCO\\*-Lys itself —
+*"a slight but highly reproducible decrease in fluorescence intensity after the initial
+strong increase … attributed most likely to tautomerization of the TCO\\*-tetrazine
+conjugate resulting in the release of lysine by decarboxylative elimination"* — and
+linkers deliberately engineered around that motif reach *"up to 96 % elimination after
+2 hours"* (Keppel 2022) — an upper bound on how fast such a bond *can* break, not a
+prediction for TCO\\*-Lys, but the relevant bound when the same bond is asked to hold a
+load for hours. **Building a load-bearing anchor out of the bond the field uses when it
+wants a bond to break** is not a trade worth making for a load-bearing anchor.
+
+Two further costs, for completeness. It adds ~4 rotatable sp³ bonds where the current
+adduct has none — the wrong direction, given the section below. And it moves the
+quencher onto the **moving** part of the construct: a tetrazine on the DNA arm sits at a
+chromophore distance that *changes* when the duplex hybridises or the spring loads,
+manufacturing a force-dependent FRET signal indistinguishable from the effect being
+measured. The current quench's one virtue is that it is fixed.
+
+### What would actually help: stiffen the arm, don't change the click
+
+| lever | force | change |
+|---|---|---|
+| as built (compliant arm) | {TT_BUILT:.2f} pN | — |
+| **stiffen the DNA-side arm at constant contour** | **{TT_STIFF:.2f} pN** | **{TT_STIFF_PCT:+.0f} %** |
+| 27 → 25 bp | {TT_25:.2f} pN | {TT_25_PCT:+.0f} % |
+| best → worst chemistry swap | — | −{TT_SPREAD_C:.1f} pN |
+
+The one genuinely compliant segment in the whole linkage is the DNA-side amino-modifier
+arm; the protein half is fused-ring rigid. Replacing a flexible C6/C12 amino-modifier with
+a rigid aromatic or alkynyl spacer of the same contour is worth more than any chemistry on
+the list, and it is the cheapest component in the construct to change — one oligo order.
+
+**The constraint to respect while doing it.** Spampinato 2023 compared TCO- and
+BCN-modified nucleotides against tetrazine dyes and found *"the longer linker is crucial
+for efficient labeling"* — so **shortening** the arm to raise the force costs reaction
+efficiency, coupling force directly against completeness. But *stiffening at constant
+contour is not shortening*, and that option appears unexplored.
+
+### Hazards specific to this chemistry that the experiment must control
+
+1. **The tetrazine's redox state mimics a successful click.** Reduction to the
+   dihydrotetrazine both destroys reactivity *and* relieves the quench, so a chemically
+   dead protein looks spectroscopically identical to a clicked one:
+   *"when it is reduced, the sfGFP<sup>Tet2-Et</sup> will be fluorescent green"*
+   (Eddins 2024). Oxidation back is fast after desalting — *"a few minutes (up to 1 h at
+   most)"* — but **fluorescence recovery alone cannot be the completeness readout.** Use
+   the orthogonal gel shift with sTCO-PEG5000, as Eddins 2023 does — that paper's own
+   finding is that the dominant cause of unreactive protein is **near-cognate suppression
+   of the amber codon**, not the chemistry at all.
+2. **Do not run long 400–405 nm excitation on unclicked samples.** Tetrazine photolyses
+   there, producing a spurious turn-on that mimics clicking — at exactly the wavelength
+   the A-band measurement needs.
+3. **A doubly-sTCO duplex is a double-headed sTCO reagent, and that class misbehaves on
+   this exact protein.** Jang 2020: dh-sTCO *"only create protein dimers if the dh-sTCO is
+   the limiting reagent, because an excessive concentration … results in each Tet-protein
+   with a singly reacted dh-sTCO molecule."* Intermolecular crosslinks when limiting,
+   single-end caps when in excess — neither is the intended 1:1 loop, and no titration
+   window is published. **The completeness number is the yield of correctly looped monomer
+   by SEC or native gel, not tetrazine consumption.**
+4. **Tet2-Et at Asn149 perturbs the very observable we are reading.** Incorporation at
+   site 150 *"reduces the chromophore pKa (suppression of protonated state at same buffer
+   pH) and blue-shifts the deprotonated state absorption peak by 4 nm. Reaction with sTCO
+   partially mitigates these effects"* (Tang 2022). Our readout is the A-band ratio, which
+   is a direct measure of the protonated-state population. A 4 nm shift and a pKa change,
+   only partly reversed on clicking, are far larger than any mechanical effect — which is
+   the same trap as using unclicked protein as the zero, and the reason recommendation 4
+   below is the isogenic *clicked*, spring-free twin. At Asp133 the perturbation is
+   negligible: *"the absorption profile of GFP134-Tet almost matches sfGFP."*
+5. **Do not chase the S202Y fluorogenicity mutant** (31-fold turn-on) or the Y151A/Y200A
+   variants. The Y→A openings admit solvent to the chromophore — on-state FQY falls to
+   0.56–0.57 with a new ps solvent-quenching channel — and S202Y is a mutation in the
+   chromophore's own pocket, which corrupts the electrostatics the excitation ratio reads.
+
+### Gaps I could not close
+
+No molar extinction coefficient is published anywhere for the Tet-v2.0/Tet2-Et **visible**
+band; two independent derivations from Tang 2022's own reported quantities bracket it at
+**ε(515 nm) ≈ 4–8 × 10² M⁻¹cm⁻¹**, which makes the tetrazine a negligible inner filter but
+an efficient intramolecular FRET acceptor. No rate constant exists for Tet2-Et (the ethyl
+variant) separately from Tet-v2.0-Me. No crystal structure of a tetrazine-encoded sfGFP
+exists, so our 12.4–13.3 Å adduct span has nothing to be validated against — Tang 2022 say
+so and fall back on 50 ns MD themselves. And **no sTCO-oligonucleotide has been coupled to
+a genetically encoded tetrazine protein anywhere in the literature**: TCO-on-DNA is
+established, but always with an ordinary TCO or BCN reacting with a small tetrazine dye,
+i.e. the reverse polarity from this construct.
 
 ---
 
@@ -267,6 +527,12 @@ prediction from ~0.05 to ~0.35 nm — across, rather than below, the detection t
 A shorter, stiffer duplex costs one oligonucleotide. Measuring the force the *chimera*
 actually delivers is cheaper than building four constructs, and it gates everything else.
 
+**The cheapest single change available is the DNA-side arm.** Replacing the flexible
+C6/C12 amino-modifier with a rigid spacer of the same contour is worth
+**{TT_STIFF_PCT:+.0f} %** in force ({TT_BUILT:.1f} → {TT_STIFF:.1f} pN), which is more than
+any change of click chemistry can offer and more than going 27 → 25 bp. It is also one
+oligo order. [The argument is below.](#what-would-actually-help-stiffen-the-arm-dont-change-the-click)
+
 **2. Read a band ratio, not a peak position.** Follow the signal above: fit the 400 and
 490 nm bands and report their ratio at fixed emission wavelength. This is the observable
 the physics supports, the one the existing data already hints at, and the one a
@@ -286,13 +552,21 @@ has done is a *paired* comparison at identical chemistry — same clicks, same a
 spring versus slack — which is exactly what separates a mechanical effect from the
 Tet2-Et quenching. That value does not depend on picking the best site.
 
-### Two things the earlier version of this page got wrong
+### What earlier versions of this page got wrong
 
 **T203Y is not the amplifier it looks like.** Its red shift comes mainly from the **loss
 of a hydrogen bond**, not from π-stacking geometry: the aliphatic substitutions T203V and
 T203I produce a similar shift (Drobizhev 2015). Mechanically modulating a stacking
 distance therefore would not recover it, and an earlier version of this page recommended
 a **T203Y-sensitised background on that mistaken basis**.
+
+**"If you change the chemistry, do it for spectroscopy."** I said that in answer to
+the question about alternative click linkers, on the grounds that tetrazine absorbs where
+sfGFP emits. **The quench is a property of the unreacted tetrazine only** — the clicked
+dihydropyridazine is colourless and the quantum yield returns to 0.62–0.64 against
+sfGFP's 0.65. Since every measurement is made on the clicked construct, there is no
+spectroscopic case for switching either. Both premises of that question fail, and the
+[section above](#would-a-different-click-chemistry-help) is the corrected answer.
 
 **"Measure intensity instead" is confounded here, not free.** Tet2-Et quenches sfGFP at
 N150 and clicking relieves the quench, so amplitude on these constructs already carries a
@@ -312,7 +586,8 @@ with Tet2-Et at 133/149, and it will cost brightness and folding robustness.
 ## References
 
 Verified against the primary source. Where a claim above rests on a secondary source or
-on arithmetic of ours, it says so at that point.
+on arithmetic of ours, it says so at that point. References 23–34 were located and their
+bibliographic details confirmed through **PubMed**; every DOI below resolves.
 
 **The spring, and what force it delivers**
 1. Dietz H, Rief M (2006) Protein structure by mechanical triangulation. *PNAS* — GFP's directional spring constants, 1–17 N/m; fracture 356–548 pN. [10.1073/pnas.0602995103](https://doi.org/10.1073/pnas.0602995103)
@@ -357,6 +632,20 @@ on arithmetic of ours, it says so at that point.
 20. Pope JR *et al.* (2021) Association of fluorescent protein pairs… *Adv Sci* 8:2003167 — Q204 surface-exposed in sfGFP; PDB 5NI3. [10.1002/advs.202003167](https://doi.org/10.1002/advs.202003167)
 21. Reddington SC, Tippmann EM, Jones DD (2012) Residue choice defines efficiency of bioorthogonal modification. *Chem Commun* 48:8419 — a dye clicked at position 204. [10.1039/c2cc31887c](https://doi.org/10.1039/c2cc31887c)
 22. Xiong Q *et al.* (2022) Expanding protein functionality with genetically encoded DBTD. *Chem Sci* 13:3571 — N149 and Q204 as solvent-exposed sfGFP encoding sites. [10.1039/d1sc05710c](https://doi.org/10.1039/d1sc05710c)
+
+**The click chemistry: rates, encoding, and photophysics**
+23. Blizzard RJ, Backus DR, Brown W, Bazewicz CG, Li Y, Mehl RA (2015) Ideal bioorthogonal reactions using a site-specifically encoded tetrazine amino acid. *J Am Chem Soc* 137(32):10044 — Tet-v2.0 + sTCO at **72,500 ± 1660 M⁻¹s⁻¹**, measured on GFP-bound tetrazine in cellulo. [10.1021/jacs.5b03275](https://doi.org/10.1021/jacs.5b03275)
+24. Tang L, Bednar RM, Rozanov ND, Hemshorn ML, Mehl RA, Fang C (2022) Rational design for high bioorthogonal fluorogenicity of tetrazine-encoded green fluorescent proteins. *Nat Sci (Weinh)* 2:e20220028 — the full photophysics: tetrazine absorbs 450–570 nm, *R*₀ = 2.6 nm, 89 % FRET at site 150, FQY 0.070 → 0.64 on clicking, and the product's *"reddest absorption peak"* blue-shifted *"to UV region"*. Also the 4 nm shift and pKa change at site 150. [10.1002/ntls.20220028](https://doi.org/10.1002/ntls.20220028)
+25. Eddins AJ, Pung AH, Cooley RB, Mehl RA (2024) Tetrazine amino acid encoding for rapid and complete protein bioconjugation. *Bio-protocol* 14(16):e5048 — Tet2-Et, the pAJE-E7 machinery, >95 % encoding and labeling fidelity, ~200 mg L⁻¹; the redox equilibrium that makes a reduced protein look clicked. [10.21769/BioProtoc.5048](https://doi.org/10.21769/BioProtoc.5048)
+26. Eddins AJ, Bednar RM, Jana S, Pung AH, Mbengi L, Meyer K, Perona JJ, Cooley RB, Karplus PA, Mehl RA (2023) Truncation-free genetic code expansion with tetrazine amino acids for quantitative protein ligations. *Bioconjug Chem* 34(12):2243 — near-cognate suppression as the real cause of unreactive protein, and the sTCO-PEG5000 gel shift as the orthogonal completeness assay. [10.1021/acs.bioconjchem.3c00380](https://doi.org/10.1021/acs.bioconjchem.3c00380)
+27. Jang HS, Jana S, Blizzard RJ, Meeuwsen JC, Mehl RA (2020) Access to faster eukaryotic cell labeling with encoded tetrazine amino acids. *J Am Chem Soc* 142(16):7245 — Tet-v3.0; and the **double-headed sTCO** result: dimers when limiting, single-end caps in excess. [10.1021/jacs.9b11520](https://doi.org/10.1021/jacs.9b11520)
+28. Lang K, Davis L, Wallace S, Mahesh M, Cox DJ, Blackman ML, Fox JM, Chin JW (2012) Genetic encoding of bicyclononynes and *trans*-cyclooctenes for site-specific protein labeling. *J Am Chem Soc* 134(25):10317 — TCO\\*-Lys encoded at **sfGFP position 150** by TCORS (Y271A/L274M/C313A). [10.1021/ja302832g](https://doi.org/10.1021/ja302832g)
+29. Beliu G, Kurz AJ, Kuhlemann AC, Behringer-Pliess L, Meub M, Wolf N, Seibel J, Shi Z-D, Schnermann M, Grimm JB, Lavis LD, Doose S, Sauer M (2019) Bioorthogonal labeling with tetrazine-dyes for super-resolution microscopy. *Commun Biol* 2:261 — TCO\\*-Lys *"stable for several days"*; tetrazine absorption *"peaking at ~515 nm"*; and the **decarboxylative elimination** that releases the lysine. [10.1038/s42003-019-0518-z](https://doi.org/10.1038/s42003-019-0518-z)
+30. Keppel P, Sohr B, Kuba W, Goldeck M, Skrinjar P, Carlson JCT, Mikula H (2022) Tetrazine-triggered bioorthogonal cleavage of *trans*-cyclooctene-caged phenols using a minimal self-immolative linker strategy. *ChemBioChem* 23(20):e202200363 — *"up to 96 % elimination after 2 hours"*. **Read as an upper bound, not a prediction:** this is a linker deliberately engineered to eliminate. It bounds how fast a TCO-carbamate *can* break, which is the relevant number when the same bond is asked to hold a load. [10.1002/cbic.202200363](https://doi.org/10.1002/cbic.202200363)
+31. Pinto-Pacheco B, Carbery WP, Khan S, Turner DB, Buccella D (2020) Fluorescence quenching effects of tetrazines and their Diels-Alder products: mechanistic insight toward fluorogenic efficiency. *Angew Chem Int Ed* 59(49):22140 — the dihydropyridazine's residual **PET** quench, and why a strained *alkyne* gives *"maximum contrast ratio"*. [10.1002/anie.202008757](https://doi.org/10.1002/anie.202008757)
+32. Dommerholt J, Rutjes FPJT, van Delft FL (2016) Strain-promoted 1,3-dipolar cycloaddition of cycloalkynes and organic azides. *Top Curr Chem (Cham)* 374:16 — a **review**, so its rate tables are a compilation rather than one measurement — the primary SPAAC rate tables: BCN 0.14, DIBAC/DBCO 0.31 M⁻¹s⁻¹ with benzyl azide, and the DBCO↔alkyl / BCN↔aryl pairing rule. [10.1007/s41061-016-0016-4](https://doi.org/10.1007/s41061-016-0016-4)
+33. Spampinato A, Kuzmová E, Pohl R, Sýkorová V, Vrábel M, Kraus T, Hocek M (2023) *trans*-Cyclooctene- and bicyclononyne-linked nucleotides for click modification of DNA with fluorogenic tetrazines. *Bioconjug Chem* 34(4):772 — *"the longer linker is crucial for efficient labeling"*: shortening the DNA arm costs completeness. [10.1021/acs.bioconjchem.3c00064](https://doi.org/10.1021/acs.bioconjchem.3c00064)
+34. Uttamapinant C, Tangpeerachaikul A, Grecian S, Clarke S, Singh U, Slade P, Gee KR, Ting AY (2012) Fast, cell-compatible click chemistry with copper-chelating azides for biomolecular labeling. *Angew Chem Int Ed* 51(24):5852 — CuAAC at *"10–100 M⁻¹s⁻¹ per 10–100 µM Cu"*, and why a defensible protein-scale *k*₂ does not exist for it. [10.1002/anie.201108181](https://doi.org/10.1002/anie.201108181)
 
 **Cited in the original proposal, and not usable for the claim made**
 - Suto K *et al.* (2009) *Genes Cells* 14:727 — **wrong protein.** CpYGFP from the copepod *Chiridius poppei*, cited for T203Y in *Aequorea* GFP. [10.1111/j.1365-2443.2009.01305.x](https://doi.org/10.1111/j.1365-2443.2009.01305.x)
