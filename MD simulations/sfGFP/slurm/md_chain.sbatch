@@ -63,6 +63,12 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=8G
 #SBATCH --constraint=a100
+#
+# GOTCHA -- the a100 feature name differs by partition.  gpu_test's nodes advertise
+# `a100-mig` (they are a100_3g.20gb slices); only the billed partitions advertise `a100`
+# for full cards.  `--constraint=a100` on gpu_test fails at submit time with "Requested
+# node configuration is not available", which reads like a quota problem and is not.
+# Override it on the command line:  sbatch --partition=gpu_test --constraint=a100-mig ...
 #SBATCH --time=12:00:00
 #SBATCH --requeue
 #SBATCH --open-mode=append
