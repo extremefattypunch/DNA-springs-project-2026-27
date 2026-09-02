@@ -875,7 +875,12 @@ def build(args):
             "touching its own periodic image is larger than the one these runs used. An "
             "earlier draft quoted a measured force at the chimera&rsquo;s geometry; that "
             "figure came from a window whose target was 87 % of the box width and it "
-            "remains <strong>withdrawn</strong>. Windows in a larger box are running."
+            "remains <strong>withdrawn</strong>. The rebuilt 83 Å box was meant to reach "
+            "it and misses by a hair: the duplex settles at 70.7&ndash;71.0 Å, which is "
+            "0.854 of that box&rsquo;s width against the 0.85 this project will accept. "
+            "Two runs sit just the wrong side of our own line and are excluded, which is "
+            "what a criterion is for. Reaching 70 Å cleanly needs a box wider still "
+            "&mdash; about 95 Å &mdash; and that is the run this section is waiting on."
             + (f" The other lengths <em>are</em> covered at their own separations: "
                f"{others}." if others else "")
             + "</p>")
@@ -1164,7 +1169,19 @@ def build(args):
                 or b64(figdir / f"{args.anim}_{view}.gif", "image/gif"))
 
     def still_uri(view):
-        return b64(figdir / f"{args.anim}_{view}_still.png", "image/png")
+        # Fall back to whatever still exists, and NEVER return None: an f-string turns
+        # None into the literal src="None", which is a broken image rather than an
+        # absent one. --anim defaults to L3_loop27 while the stills on disk are
+        # S3_spring27_*, so the first three images in the report were broken.
+        got = b64(figdir / f"{args.anim}_{view}_still.png", "image/png")
+        if got:
+            return got
+        for cand in sorted(figdir.glob(f"*_{view}_still.png")):
+            got = b64(cand, "image/png")
+            if got:
+                print(f"  still: {args.anim}_{view} missing, using {cand.name}")
+                return got
+        return None
 
     anim = anim_uri("overview")
     # The chromophore and strain panels use the ray-traced labelled stills rather than
@@ -1658,10 +1675,10 @@ def build(args):
       left. On this timescale the duplex is not a softened, kinked spring; it is an
       elastic rod holding its buckling load.</p>
       <p>Two consequences. The forces in the table above are, if anything,
-      <strong>underestimates</strong>. And the reason the protein does not respond is not
-      that the force is small — it is that even 26 pN moved these attachment sites less
-      than the noise, because the barrel is stiff along that coordinate and the load is
-      not applied along it.</p></div>
+      <strong>underestimates</strong> — doubly so, since the larger box raises them
+      further. And the reason the protein does not respond is not that the force is small:
+      even 35 pN moved these attachment sites less than the noise, because the barrel is
+      stiff along that coordinate and the load is not applied along it.</p></div>
 
     <h3>Two restraint stiffnesses, one answer</h3>
     <p>Each separation was run at two restraint stiffnesses, 33 and 200 kJ mol⁻¹ nm⁻².
@@ -1716,8 +1733,8 @@ def build(args):
 
     {'<div class="tbl-wrap"><table><thead><tr><th>seeded bp</th><th>runs</th>'
      '<th>N1&ndash;N3 at the start (Å)</th><th>at the end (Å)</th>'
-     '<th>open, fraction of frames</th><th>shut after (ns)</th>'
-     '<th>outcome</th></tr></thead><tbody>' + seeded_rows +
+     '<th>open, fraction of frames</th><th>end-to-end / contour</th>'
+     '<th>end-to-end / box</th><th>outcome</th></tr></thead><tbody>' + seeded_rows +
      '</tbody></table></div>' if seeded_rows else
      '<p class="muted">The seeded-kink runs are on the cluster; this table fills in when '
      'they finish.</p>'}
@@ -2109,6 +2126,78 @@ def build(args):
 </section>
 
 <section>
+  <div class="sec-head"><h2>What this establishes, and what it does not</h2>
+    <span class="tag">read this if you read nothing else</span></div>
+  <div class="col">
+    <h3>Established</h3>
+    <p><strong>The DNA is not acting as a spring on this protein.</strong> Eleven
+    DNA-bearing constructs across two proteins with unrelated attachment chemistries all
+    move their attachment sites <em>together</em>, by about a third of an ångström, and the
+    size of that movement tracks neither the modelled force (r = +0.08, p = 0.81) nor the
+    contact area (r = +0.32, p = 0.33). Constructs carrying no spring at all — a slack
+    strand at provably zero tension, arms that cannot circularise — do it as much as
+    constructs the model says are pushing with 6.6 pN. This is the companion ubiquitin
+    study&rsquo;s NMR conclusion, reproduced independently in a second protein and read
+    from a different observable. It is the firmest thing here.</p>
+    <p><strong>The duplex delivers far more force than the model says</strong>, measured
+    from the force field rather than assumed: tens of piconewtons against Zocchi&rsquo;s
+    2.4&ndash;6.6, on the unyielded rather than the kinked branch, and the disagreement
+    grows as the simulation cell grows. The two restraint stiffnesses agree, which is what
+    makes it the duplex&rsquo;s force and not the restraint&rsquo;s.</p>
+    <p><strong>A design rule for the chemistry, tested where it was not derived.</strong>
+    Modification strains a site only where the native backbone sits at positive φ. Of four
+    sites across two proteins the one left-handed-α position moves 17.5° in φ; the three
+    ordinary ones move by a degree or less, despite an encoded tetrazine amino acid and a
+    cysteine-maleimide thioether having nothing chemically in common.</p>
+    <p><strong>The protein is stiffer than the model assumes</strong> — 230&ndash;350
+    k<sub>B</sub>T nm⁻² along the Cβ&ndash;Cβ coordinate against Zocchi&rsquo;s generic
+    ~100 — which is why a few piconewtons could not have moved these sites measurably even
+    if they had been delivered along that axis.</p>
+
+    <h3>Retracted</h3>
+    <p>Three claims this report previously made do not survive, and each was caught by a
+    check built to catch it rather than by a reviewer:</p>
+    <ul>
+      <li><strong>That the spring displaces the sites more than an axial pull.</strong> It
+      used the unclicked protein as its zero, and clicking alone moves the sites +0.65 Å —
+      fifteen to thirty times any force effect. Against the matched control the sign
+      inverts. Caught by Doeke Hekstra.</li>
+      <li><strong>That the measured force is the Euler load</strong> — 25.7 pN, 0.96 of
+      π²B/L², &ldquo;textbook elasticity&rdquo;. That was the one box small enough to land
+      on the textbook value; a matched comparison in a larger box gives 1.27× more
+      (p = 0.022). Caught by the overlap windows run for exactly this purpose.</li>
+      <li><strong>That the nick softens the duplex threefold.</strong> That came from
+      single replicates; across every valid run the nicked and intact duplexes are
+      indistinguishable. Worse for the model than the claim it replaces, but not the same
+      claim.</li>
+    </ul>
+
+    <h3>Open</h3>
+    <ul>
+      <li><strong>The measured force is not converged in box size.</strong> It rises with
+      the cell and we have two sizes, not a series. The number to quote is a lower bound.</li>
+      <li><strong>Whether a kink holds its bend.</strong> A seeded kink keeps its broken
+      pair for 30 ns and straightens out — but in boxes too small for the straightened
+      molecule, so the second half is untested. Rebuilt systems are running.</li>
+      <li><strong>The chimera&rsquo;s own separation.</strong> No box we have reaches 70 Å
+      for the 27 bp within our own validity criterion; the withdrawn figure there stays
+      withdrawn.</li>
+      <li><strong>What the compression actually is.</strong> Not force, not contact area.
+      Something about a large charged object tethered two nanometres away, which these runs
+      do not resolve.</li>
+    </ul>
+
+    <div class="note"><div class="h">On the retractions</div>
+      <p>Three retracted claims in one report is uncomfortable to write down. It is also
+      the point: each was caught by a control built into the work — a matched zero, an
+      overlap window, a replicate count — and every one of them made the project&rsquo;s
+      central negative result <em>stronger</em> rather than weaker. The claim that has
+      survived every check is the one that says the spring does not do what it was built
+      to do.</p></div>
+  </div>
+</section>
+
+<section>
   <div class="sec-head"><h2>Figures</h2>
     <span class="tag">every panel ships the CSV it was drawn from</span></div>
   {figs_html}
@@ -2209,6 +2298,14 @@ def build(args):
         print(f"  WARNING: {len(zeros) + len(ratio0)} suspicious zero-valued quantities "
               f"in the rendered page -- a renamed key defaulting to 0 looks exactly like "
               f"this. First: {(zeros + ratio0)[:3]}")
+    # An <img src="None"> is what a missing asset looks like after an f-string has had
+    # its way with a None. Strip such tags rather than publish broken images, and say so.
+    import re as _re3
+    broken = _re3.findall(r'<img[^>]*?src="(?:None|)"[^>]*>', html)
+    if broken:
+        html = _re3.sub(r'<img[^>]*?src="(?:None|)"[^>]*>', "", html)
+        print(f"  WARNING: removed {len(broken)} <img> with an unresolved src "
+              f"(a missing asset rendered as src=\"None\")")
     out.write_text(html)
     print(f"wrote {out} ({out.stat().st_size / 1e6:.2f} MB)")
     print(f"  PNG figures: {html.count('data:image/png')}, "
