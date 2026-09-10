@@ -264,7 +264,7 @@ def parse_merge(spec):
         sys.exit(f"--merge: expected DIR=NAME1,NAME2,...[:control], got {spec!r}")
 
 
-def build_payload(root: Path, constructs, extras=(), merges=(), display_order=()):
+def build_payload(root: Path, constructs, extras=(), merges=()):
     found, layout, series, levels = discover(root, constructs)
     if not found:
         return None
@@ -367,14 +367,6 @@ def build_payload(root: Path, constructs, extras=(), merges=(), display_order=()
         order += [v for v, par in variant_of.items() if par == c - 1]
     order += merged_order
     present = [g for g in order if any(t["group"] == g for t in traces)]
-    if display_order:
-        # Colour follows the entity, never its sample number: pin the declared
-        # constructs to a fixed order so a slot means the same thing on every page.
-        unknown = [g for g in display_order if g not in present]
-        if unknown:
-            sys.exit(f"--order: {', '.join(unknown)} not present in {root.name}")
-        ranked = [g for g in display_order if g in present]
-        present = ranked + [g for g in present if g not in ranked]
     groups = ([CALIBRATION] if any(t["group"] == CALIBRATION for t in traces) else []) + present
     reps = sorted({t["rep"] for t in traces if t["rep"]})
 
@@ -422,10 +414,8 @@ def build_payload(root: Path, constructs, extras=(), merges=(), display_order=()
     else:
         notes.append(
             ("Sample number → construct is an assignment, not a measurement: "
-             # Enumerate the real sample numbering, NOT the display order --
-             # --order may reorder the groups for colour stability, and the two
-             # are deliberately allowed to differ.
-             + "; ".join(f"{c} = {name_of(c)}" for c in levels)
+             + "; ".join(f"{i + 1} = {c}" for i, c in enumerate(present)
+                         if c not in merged_order)
              + ". Rebuild with --constructs to relabel.") if layout == "named" else
             ("Scan→sample assignment is declared, not inferred: 1 = calibration; "
              "2/5/8 = " + present[0] + "; 3/6/9 = " + present[1] +
@@ -1673,9 +1663,6 @@ def main(argv=None):
     ap.add_argument("--merge", action="append", default=[],
                     metavar="DIR=N1,N2,N3[:control]",
                     help="fold another run in as further groups (repeatable)")
-    ap.add_argument("--order", default=None,
-                    help="comma-separated display/colour order for the groups, "
-                         "independent of the sample numbering in --constructs")
     ap.add_argument("--title", default=None)
     args = ap.parse_args(argv)
 
@@ -1687,8 +1674,7 @@ def main(argv=None):
         sys.exit(f"not a directory: {root}")
 
     constructs = [c.strip() for c in args.constructs.split(",") if c.strip()]
-    display_order = [c.strip() for c in args.order.split(",") if c.strip()] if args.order else ()
-    payload = build_payload(root, constructs, args.extra, args.merge, display_order)
+    payload = build_payload(root, constructs, args.extra, args.merge)
     if not payload or not payload["traces"]:
         sys.exit(f"no recognised *_Data.csv files under {root}")
 

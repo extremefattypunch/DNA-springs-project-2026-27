@@ -1,12 +1,10 @@
 \documentclass{article}
 \usepackage{latex-screenshot}
 \usepackage{annotation} % Required for inserting images
-\addbibresource{../../global_reference.bib}
+\addbibresource{../global_reference.bib}
 \usetikzlibrary{patterns}
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}%center table column elements
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
-\hfuzz=80pt
-\hbadness=100000000
 \begin{document}
 
 \thispagestyle{empty}
@@ -17,19 +15,17 @@
 
 	{\Large\textsc{Personal Annotation Notes} \par}
 	\vspace{0.9cm}
-  {\LARGE DNA springs project 2026-27 \par}
+  {\LARGE Doeke Romke Research 2026-27 \par}
 	\vspace{0.5cm}
 	{\normalsize made with great love and curiosity\par}
 
 	\vfill
-
-  \includegraphics[width=0.3\textwidth]{assets/(cover)DNA springs project 2026-27.jpg}\par
-
+  \includegraphics[width=0.5\textwidth]{assets/DNAspringsCover.png}\par
 	\vfill
 
 	{\large Ian Poon\par}
 	\vspace{0.35cm}
-  {\normalsize July 2026\par}
+  {\normalsize June 2026\par}
 	\vspace{0.9cm}
 \end{center}
 
@@ -38,16 +34,817 @@
 \tableofcontents
 \newpage
 \begin{abstract}
- just a annotation document... 
+just a annotation document but here also serves as a research journal/diary/logbook
 \end{abstract}
-\section{27/07/2026  TCO ssDNA/PEG5K + Tet sfGFP}
+\section{2026/06/29}
+1st day of work! lab admin and project intro stuff mainly.
+\begin{itemize}
+  \item welcome, admin and brief overview with Doeke and Micheal before lunch
+  \item lab orientation and safety briefing by Martina
+  \item introduction to DNA spring project(Micheal presented his PhD mid term defense slides to me)
+\end{itemize}
+\begin{remark}
+Professor Doeke treated me lunch!
+\end{remark}
+
+\section{2026/06/30}
+\subsection{Reading: Zocchi Chimera methods 2021 Update}
+\subsubsection{intro}
+\begin{definition}
+  
+\textbf{Supra-molecular} = ``above a single molecule.'' So it is not just one molecule, but a multi-molecule assembly.
+
+\textbf{Complex} = several parts physically interacting with each other.
+\end{definition}
+
+\begin{theorem}[induced fit theory]
+\textbf{Induced fit theory} says that an enzyme's active site is \textbf{not perfectly pre-shaped and rigid} before the substrate binds.
+\end{theorem}
+
+Instead:
+\begin{enumerate}
+  \item The substrate first makes contact with the enzyme. 
+  \item Binding interactions cause the enzyme to \textbf{change shape slightly}.
+  \item The enzyme then fits more tightly around the substrate.
+  \item This deformed enzyme-substrate complex is the active, stabilized state.
+\end{enumerate}
+
+So compared with the older \textbf{lock-and-key model}:
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+\textbf{Model} & \textbf{Main idea} \\
+\hline
+Lock-and-key & Enzyme active site already has the exact shape for the substrate \\
+\hline
+Induced fit & Substrate binding causes the enzyme to reshape around the substrate \\
+\hline
+\end{tabularx}\end{table}
+
+\subsubsection{Enzyme-DNA chimera}
+\begin{definition}
+we have:
+\begin{itemize}
+  \item cDNA : complementary DNA
+  \item dsDNA : double stranded DNA
+  \item ssDNA : single stranded DNA
+\end{itemize}
+\end{definition}
+
+\begin{fact}
+hybridizing ssDNA to dsDNA makes DNA more rigid which applies stress to the enzyme
+\end{fact}
+this is one way in which forces on the enzyme can be controlled
+
+\subsubsection{principles of designing enzyme-DNA chimeras}
+When planning a chimera construction, one of the first questions is of course where to attach the DNA spring on the surface of the enzyme in order to obtain control of the enzymatic activity
+
+To construct the enzyme-DNA chimeras, it is desired to have exactly two cysteines on the surface of the enzyme, defining the DNA attachment points. These cysteines are generally introduced by mutagenesis; in doing so, the objective is to obtain reactive (i.e. exposed) Cys, and to avoid significantly perturbing the enzyme
+
+remove internal cysteins to prevent binding at wrong locations
+
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{assets/dna-springs-project-2026-27-2026-07-27-10-36-53.png}
-  \caption{}
-  \label{fig:dna-springs-project-2026-27-2026-07-27-10-36-53}
+  \includegraphics[width=0.7\textwidth]{assets/syntheiss2armchimeras.png}
+  \caption{Flowchart for synthesizing ligated two-arm chimera}
+  \label{fig:syntheiss2armchimeras}
 \end{figure}
+
+\section{2026/07/01}
+\textbf{follow up}: to follow up on readings(explain figures, present slides etc) to Micheal the next day thurs afternoon 3pm
+\subsection{Reading: zocchi luciferase 2013}
+
+source:  \cite{bhabhaDivergentEvolutionProtein2013}
+\subsubsection{introduction}
+Most of the work to date has been performed with the enzyme guanylate kinase (GK) although the method was originally demonstrated with the maltose binding protein (MBP); in particular, we showed how a spring pulling along the direction of the “hinge motion” of GK modulates the enzymatic activity
+
+this article talks about mechanical control of a different enzyme instead, Renilla luciferase(RLuc)
+
+results show similar modulation via mechanical stress but greater specificity in effects i.e nonstress-specific effects are observed more in GK
+
+\subsubsection{results}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{assets/RLucCrystalStruct.png}
+\caption{}
+  \label{fig:rluccrystalstruct}
+\end{figure}
+
+\begin{fact}
+Hybridization with a complementary 60mer results in a DNA spring with a nick in the middle. But if started off with an already ligated 2 arm ss chimera the resulting hybirdization to ds does not have a nick.
+\end{fact}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{assets/mechanicalstressEffects.png}
+  \caption{2c: 2 armed ss chimera i.e non ligated hybridized with 2 separate 30mer instead of a single complementary 60mer so the DNA spring(ds) is disjoint so no stress.This is a control in which results shows that, merely bringing DNA in close proximity to the enzyme, without stress, has no eﬀect on the enzymatic activity}
+  \label{fig:mechanicalstresseffects}
+\end{figure}
+
+\begin{definition}
+the symbols as a summary mean:
+\begin{itemize}
+  \item blue circles - no stress
+  \item green circles - small stress, nicked DNA spring
+  \item red triangles  - larger stress, ligated ds DNA spring
+\end{itemize}
+\end{definition}
+
+3). Within a Michaelis--Menten description of the reaction speed:
+
+\begin{align*}
+E + S \leftrightarrow ES \begin{cases} \xrightarrow{k_{\text{cat}}} EP \leftrightarrow E + P \\ \xrightarrow{k_{\text{d}}} E^*P(\text{dead}) \end{cases} \tag{1}\label{eq:1}
+\end{align*}
+\begin{remark}
+dead in a sense the enzme can no longer produce product since it cant detach from previous product.
+\end{remark}
+
+
+As for the luciferase activity(recall it is an enzyme which is meant to catalyuze reactions) it is given by:
+
+where $E$ is the enzyme, $S$ the substrate, $P$ the product, $k_{\text{cat}}$ the catalytic rate, and $k_{\text{d}}$ the inactivation rate of the enzyme, the rate of emitting photons is:
+
+\begin{align*}
+\frac{\text{d}}{\text{d}t} N_{\gamma} = \frac{[E]k_{\text{cat}}VQ}{1 + \frac{K_{\text{S}}}{[S]} + \frac{K_{\text{S}} [P]}{K_{\text{p}} [S]}} \tag{2}\label{eq:2}
+\end{align*}
+
+where $V$ is the reaction volume, $Q$ the quantum yield, $K_{\text{S}}$ and $K_{\text{p}}$ the Michaelis--Menten constants of substrate and product, $[S]$ and $[P]$ the concentration of substrate and product, respectively, and $[E] = [E](t)$ is the total concentration of active enzymes at time $t$, governed by the rate equation:
+
+\begin{align*}
+\frac{\text{d}[E]}{\text{d}t} = -[ES]k_{\text{d}} = -\frac{[E]k_{\text{d}}}{1 + \frac{K_{\text{S}}}{[S]} + \frac{K_{\text{S}} [P]}{K_{\text{p}} [S]}} \tag{3}\label{eq:3}
+\end{align*}
+
+\begin{align*}
+\Rightarrow \frac{\text{d}[E]}{\text{d}t} = -\frac{\text{d}N_{\gamma}}{\text{d}t} \frac{1}{VQ} \frac{k_{\text{d}}}{k_{\text{cat}}} \tag{4}\label{eq:4}
+\end{align*}
+\begin{definition}
+ $N_\gamma $  refers to number of photons emitted. And that Quantum yield $Q$ means:
+
+\begin{equation*}
+Q = \frac{\text{number of photons emitted}}{\text{number of substrate molecules reacted}}
+\end{equation*}
+\end{definition}
+
+
+To fit the time course measurements, we integrate the system of eqs \ref{eq:2} and \ref{eq:3} (see Experimental Section, keeping in mind that
+
+\begin{align*}
+\frac{\text{d}[S]}{\text{d}t} = -\frac{1}{VQ} \frac{\text{d}N_{\gamma}}{\text{d}t}, \frac{\text{d}}{\text{d}t}[P] = -\frac{\text{d}}{\text{d}t}[S] \tag{5}\label{eq:5}
+\end{align*}
+
+and adjust the parameters to reproduce the experimental curves. Some fits are shown in Figure 3, and the results are summarized in Table 1. In eq \ref{eq:4}, $k_{\text{cat}}/k_{\text{d}}$ represents the average turnover number of an enzyme before inactivation. 
+
+\begin{fact}
+Under mechanical stress, results essentially show that both $K_D $  and $K_S $ increase by $0.3 $ while B, a constant proportional to Q(found by fittinhg of results) decreases
+\end{fact}
+they inferred that then turnover rate before deactivation defined by $\frac{K_d}{K_\texttt{cat}}=  \frac{k_d\times 1.3}{k_\texttt{cat}\times 1.3}$ will clearly remain the same as seen. But then by definition Q decreased.
+
+\begin{fact}
+but results indicated that $K_S $  doubled while $K_P $ reduced by a factor of 4
+\end{fact}
+
+
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/experimentalDataLumiSUbstraConc.png}
+  \caption{These graphs essentially show $ I(t) = A \frac{dN_{\gamma}}{dt} $  the time course until deactivation(all dead) where the chimera is basically the enzyme reacting with different lengths of substrates. Here we see that clearly with stress, rate at which substrate reacted}
+  \label{fig:experimentaldatalumisubstraconc}
+\end{figure}
+\begin{remark}
+ this results also show that the fitted values are indepdent of initial value since shape is the same 
+\end{remark}
+
+the maths say:
+\begin{align*}
+\frac{d}{dt}N_{\gamma} &= VQ \frac{d[S]}{dt} \tag{9}\label{eq:9}
+\end{align*}
+\begin{align*}
+\Rightarrow I(t) &= BV \frac{d[S]}{dt} \text{ where } B = AQ \tag{10}\label{eq:10}
+\end{align*}
+The equations which evolve the quantities $[S]$, $[E]$, and $[P]$ are (see eqs 2--5)
+\begin{align*}
+\frac{d[S]}{dt} &= -\frac{[E]k_{cat}}{1 + \frac{K_s}{[S]} + \frac{K_s [P]}{K_p [S]}} \\
+\frac{d[E]}{dt} &= \frac{k_d}{k_{cat}} \frac{d[S]}{dt} \\
+\frac{d[P]}{dt} &= -\frac{d[S]}{dt} \tag{11}\label{eq:11}
+\end{align*}
+while the intensity at time zero is
+\begin{align*}
+I(0) &= I_0 = B \frac{[E]_0 k_{cat} V}{1 + \frac{K_s}{[S]_0}} \tag{12}\label{eq:12}
+\end{align*}
+directly substituting those changes to measured $K_P,K_S,k_\texttt{cat},k_d $ the value of $I(t) $ shown for the graphs will make sense. 
+
+\begin{proposition}
+ he increase
+in the rates kd and kcat causes the curve to be steeper at short times, while the decrease in KP (stronger product inhibition)  causes it to be ﬂatter at long times.
+\end{proposition}
+In contrast, if only the quantum yield Q were changing, then the curve under stress could be rescaled to look like the stress-free curve because then by
+\begin{align*}
+\frac{\mathrm{d}}{\mathrm{d}t}N_{\gamma} = \frac{[E]k_{\mathrm{cat}}VQ}{1 + \frac{K_S}{[S]} + \frac{K_S}{K_p} \frac{[P]}{[S]}}
+\end{align*}
+\[ I(t) = A \frac{\text{d}N_{\gamma}}{\text{d}t} \]
+we clearly see that stress vs stress free curves will have the same shape just vertically scaled but this is not what the graphs show(instead shape is different)
+here are the raw data used to plot that graph:
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LLLL}
+\hline
+ & substrate conc. (nM) & ss chimera $K_S = 1.2 \pm 0.2 \times 10^3$ (nM) & ds 60mer chimera $K_S = 2.4 \pm 0.5 \times 10^3$ (nM) \\ \hline
+ & 600 & $1.8 \times 10^{-2}$ & $2.4 \times 10^{-2}$ \\ \hline
+$k_d$ (1/s) & 750 & $1.5 \times 10^{-2}$ & $2.5 \times 10^{-2}$ \\ \hline
+ & 1000 & $1.6 \times 10^{-2}$ & $2.5 \times 10^{-2}$ \\ \hline
+ & 600 & 17 & 4.3 \\ \hline
+$K_P$ (nM) & 750 & 20 & 4.0 \\ \hline
+ & 1000 & 19 & 5.9 \\ \hline
+ & 600 & 1.3 & 1.8 \\ \hline
+$k_{cat}$ (1/s) & 750 & 1.3 & 1.7 \\ \hline
+ & 1000 & 1.2 & 1.9 \\ \hline
+ & 600 & 1.6 & 1.2 \\ \hline
+$B$ & 750 & 1.6 & 1.3 \\ \hline
+ & 1000 & 1.8 & 1.3 \\ \hline
+\end{tabularx}
+\caption{Table 1. Kinetic Parameters Obtained from Fitting the Time Course Measurements As in Figure 3, for the ss (no stress) and ds (stressed) Chimera$^a$}
+\end{table}
+
+\subsection{Reading: zocchi mechanical stress reaction rates 2014}
+source: \cite{josephAsymmetricEffectMechanical2014} 
+Here is the study on the aforementioend GK under mechanical stress.
+\subsubsection{results}
+essetially went from:
+ss chimera with nick or gap(low stress) then hybridized to ds non nicked version(high stress).
+\begin{remark}
+ there are 2 hybridization states, as one single 60mer strand or separate 30mer/28mer strands(nicked,zero to low stress) 
+\end{remark}
+
+
+we now investigate the effects of such enzyme states in its catalysis role of 
+
+\textbf{forward reaction}:
+\[
+ GMP+ATP\to GDP+ADP 
+\]
+\textbf{reverse reaction}
+\[
+ GDP+ADP\to GMP+ATP 
+\]
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/titrationcurvesGKchimera.png}
+  \caption{initial reaction speed vs. initial substrate concentration. panel A represents forwad reaction while panel B represents backward reaction}
+  \label{fig:titrationcurvesgkchimera}
+\end{figure}
+this show that the DNA spring in the ss
+form partially inhibits the enzyme, the inhibition being lifted by
+hybridization of the DNA, in the absence of stress (i.e. with the
+gap). Shows mechanical effect, only under no stress will hybridization life the partial inhibition of the enzyme in unhybrized state
+
+
+however when reaction was repeated with high "Mg" condtions instead of low Mg(another cofactor), the opposite reuslt occurs
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/titrationcurvesGKhighMg.png}
+  \caption{}
+  \label{fig:titrationcurvesgkhighmg}
+\end{figure}
+
+\section{2026/07/02}
+
+\subsection{Reading: Guanylate Kinase, Induced Fit, and the Allosteric Spring Probe}
+\subsubsection{introduction}
+The enzyme is guanylate kinase (GK), which transfers a phosphate from ATP to GMP.
+\begin{fact}
+via \vocab{ATP hyrolysis} which refers to
+\[
+  ATP \to ADP + P + \texttt{energy}
+\]
+\end{fact}
+
+\begin{definition}
+ASP: allosteric spring probe 
+\end{definition}
+
+\begin{proposition}
+GMP binding exerts no allosteric control over ATP binding
+\end{proposition}
+\begin{proof}
+even after biasing ASP to open configuration which reduced binding affinity for GMP, the binding affinity to ATP was unaffected. Therefore GMP binding of GK is independent of ATP binding to GK
+\end{proof}
+
+Howver because GMP binding is definitely relevant to enzyme function given GK does not hyrolize as efficiently without it as verified with experiments, allosteric control must be performed within GMP itself.
+
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/attachmentSitesGK.png}
+  \caption{the DNA strands are attached to the LID(red) and NMP-BD(red) sites of GK. Upon binding of GMP to the blue region, LID and NMP-BD joinly move towards the core region. This represents the "open" to "closed" transition}
+  \label{fig:attachmentsitesgk}
+\end{figure}
+\begin{example}
+therefore GMP binding is an example of \textbf{induced fit theory} as upon binding the substrate changes conformation
+\end{example}
+
+\subsubsection{methods}
+\begin{question}
+ how is lenghth of hybridization controlled? 
+\end{question}
+\begin{solution}
+By introducing in solution complementary strands of increasing lengths $L$ (from 12 to 60 bases; the ASP on the chimera is 60 bases long), the mechanical stress on the protein, which tends to keep the two domains in the ``open'' conformation, can be increased semicontinuously. -
+\end{solution}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/hybridizationlenght.png}
+  \caption{}
+  \label{fig:hybridizationlenght}
+\end{figure}
+\begin{remark}
+ $L=12 $  is a special control where the strand is not just a 12bp complementary strand but is actually 60bp one of which only 12 are complementary. This mutant although binds to the ssDNA of the chimera, does not cause mechanical stress.
+\end{remark}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/controlGKzerotension.png}
+  \caption{as you can see the mutant and ss only Chimera have same enzymatic activity}
+  \label{fig:controlgkzerotension}
+\end{figure}
+this control is necessary to shows that the modulation of enzymatic activity in Fig. 4 is not caused by nonspecific steric or charge effects originating from bringing a longer and longer charged polymer in close proximity to the enzyme. The same conclusion can be drawn
+
+
+\begin{fact}
+The purpose of the ATP titration is to ask: \textbf{Does mechanical tension change ATP binding?}
+
+Here, they vary \textbf{ATP concentration} while GMP is held fixed. 
+\end{fact}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/ATPtitration.png}
+  \caption{}
+  \label{fig:atptitration}
+\end{figure}
+conversely
+\begin{fact}
+The purpose of the GMP titration is to ask: \textbf{Does mechanical tension change the enzyme's apparent affinity for GMP?}
+
+Here, they vary \textbf{GMP concentration} while keeping ATP fixed. 
+\end{fact}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/GMPtitration.png}
+  \caption{L=60(high tension),L=40(moderate tension)}
+  \label{fig:gmptitration}
+\end{figure}
+
+
+\section{independence day celeberations}
+\subsection{assigment: how to perturb GFP}
+
+try to use cAMP?
+\href{https://en.wikipedia.org/wiki/GCaMP}{hey}
+
+\section{2026/07/08}
+\subsection*{review of key papers mechanical perturbation of GFP}
+\subsubsection*{Direct mechanical unfolding of GFP while monitoring fluorescence}
+
+These papers use single‑molecule force spectroscopy (optical tweezers or AFM) to unfold/refold GFP, simultaneously recording fluorescence to see how tension and partial unfolding affect emission.
+
+\textbf{``Mechanically switching single-molecule fluorescence of GFP by unfolding and refolding,'' PNAS 2017.}
+\begin{fact}[main idea]
+Optical tweezers are used to drive individual GFP molecules through folding and unfolding intermediates while recording fluorescence; they show that fluorescence is lost very early in unfolding and only recovers in the fully folded state, effectively mechanoswitching GFP between bright and dark states. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC5651744/}{\textbullet}
+\end{fact}
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/GFPcrystalstruct.png}
+  \caption{found from \href{https://www.science.org/doi/epdf/10.1126/science.273.5280.1392}{\textbullet}}
+  \label{fig:gfpcrystalstruct}
+\end{figure}
+attached cysteine molecules to the N,C termini of GFP
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/unfoldingGFPtweezers.png}
+  \caption{applied mechanical tension by varying trap lenghts to simulate folding and refolding}
+  \label{fig:unfoldinggfptweezers}
+\end{figure}
+builds upon the idea by this time applying forces via tweezers and directly measuring flurosence(single molecule at a time).
+
+\textbf{``Exploring the energy landscape of GFP by single-molecule mechanical experiments,'' 2004.}
+\begin{fact}[main idea]
+Single-molecule force spectroscopy (AFM‑style pulling) is used to map the mechanical unfolding pathway and intermediates in GFP's $\beta$‑barrel; while primarily mechanical, it's foundational for understanding how applied force perturbs GFP's structure and thus fluorescence capability. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC528946/}{\textbullet}
+\end{fact}
+jumps recorded at the start of alpha and beta regions, thus concluded these are intermediate states. sudden increases in contour lenghts correspond to unfolding events
+\subsubsection*{methods}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{assets/AFMGRPsetup.png}
+  \caption{GFP was sandwiched between four N-terminal and four C-terminal titin Ig domains, making an Ig8–GFP chimera. So when the AFM pulled the whole chain, the force was transmitted into GFP through the peptide backbone at GFP’s N-terminal end and C-terminal end.}
+  \label{fig:afmgrpsetup}
+\end{figure}
+basically only applying forces through N and C terminal
+\subsubsection*{results}
+
+Starting from the completely folded structure in the global minimum, the pathway is biased along the N-terminal-to-C-terminal direction. Upon unfolding of the N-terminal $\alpha$-helix, we arrive at a local minimum (GFP$\Delta\alpha$). It is important to note that now the direction of the pathway changes, because the protein will respond to the detachment of the $\alpha$-helix by turning and reorienting along the new N-terminal-to-C-terminal direction determined by the connecting line between the first structured residue at the N terminus and the last structured residue at the C terminus of the folded portion of the intermediate. The new bias induces detachment of a $\beta$-strand leading to the second local minimum (GFP$\Delta\alpha\Delta\beta$). 
+
+
+\textbf{``GFP's Mechanical Intermediate States,'' PLOS One 2012.}
+\begin{fact}
+Builds on mechanical unfolding studies to characterize intermediate states in the GFP unfolding pathway, showing how distinct mechanical intermediates correlate with the loss of native fluorescence. \href{https://journals.plos.org/plosone/article?id=10.1371\%2Fjournal.pone.0046962}{\textbullet}
+\end{fact}
+
+
+\textbf{``Mechanically switching single-molecule fluorescence of GFP \ldots{}'' explained in Softbites (2019).}
+\begin{fact}
+  
+    A didactic summary of the PNAS work, useful if you want a conceptual overview before diving into the data and methods. \href{https://softbites.org/2019/01/17/fold-and-unfold/}{\textbullet}
+\end{fact}
+
+
+\subsubsection*{GFP‑based force/tension sensors (GFP perturbed via force through a fusion construct)}
+
+These works don't usually apply force directly to bare GFP, but embed GFP (or cpGFP/FRET pairs involving GFP derivatives) in engineered tension sensors where mechanical load changes fluorescence.
+
+\begin{itemize}
+    \item \textbf{``Fluorescence‑Based Force/Tension Sensors: A Novel Tool to Study Mechanotransduction,'' 2014 review.}
+    Reviews FRET‑based and single‑fluorophore tension sensors, many of which use GFP or its derivatives as fluorophores whose fluorescence readout is altered by mechanical extension of a linker or protein domain. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC3924807/}{\textbullet}
+
+    \item \textbf{``FRET‑based Molecular Tension Microscopy,'' Methods in Cell Biology.}
+    Methodological review on FRET‑based molecular tension sensors, typically using CFP/YFP (GFP family) linked by an extensible peptide that is stretched under force, altering FRET efficiency. \href{https://www.sciencedirect.com/science/article/pii/S1046202315300268}{\textbullet}
+
+    \item \textbf{``Visualizing mechanical tension across membrane receptors with a fluorescent sensor,'' Nat Methods 2012.}
+    A FRET‑based molecular tension sensor is inserted into membrane receptors (e.g., integrins, EGFR); receptor tension stretches the linker and changes FRET between fluorescent proteins, thereby perturbing fluorescence in a mechanically dependent fashion. \href{https://www.nature.com/articles/nmeth.1747}{\textbullet}
+
+    \item \textbf{``Tension Sensor Based on Fluorescence Resonance Energy Transfer for Cellular Mechanotransduction,'' Front Cell Neurosci 2021.}
+    Applies FRET‑based tension sensors with GFP‑family fluorophores to probe forces across specific proteins; mechanical load modulates FRET and hence the observed fluorescence. \href{https://www.frontiersin.org/journals/cellular-neuroscience/articles/10.3389/fncel.2021.685044/full}{\textbullet}
+\end{itemize}
+
+\subsubsection*{Mechanosensitive cpGFP constructs (single‑fluorophore mechanosensors)}
+
+These explicitly exploit conformational changes under tension to modulate the fluorescence of a circularly permuted GFP insert.
+
+\begin{remark}
+  
+see also \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC4575167/}{\textbullet} GCaMP turns red upon exposure upon blue green light? GCamp = cGFP+CAM
+\end{remark}
+
+  
+
+\begin{itemize}
+    \item \textbf{``Mechanosensitive Channel‑Based Optical Membrane Tension Reporter,'' ACS Sensors 2023.}
+    Engineers an E. coli mechanosensitive channel (MscL‑type) with a circularly permuted GFP (cpGFP) inserted such that channel activation by membrane tension changes cpGFP fluorescence; applied tension in the membrane thus perturbs the GFP‑derived signal. \href{https://pubs.acs.org/doi/10.1021/acssensors.2c01921}{\textbullet}
+
+    \item \textbf{Preprint ``Mechanosensitive channel‑based optical membrane tension biosensor,'' bioRxiv 2022.}
+    Earlier version of the same concept; details the design and calibration of the cpGFP‑inserted mechanosensitive channel as a membrane tension reporter. \href{https://www.biorxiv.org/content/10.1101/2022.10.04.510821v1.full}{\textbullet}
+
+    \item \textbf{``Single‑Fluorophore Sensors for Mechanical Force in Living Cells,'' Honors thesis 2021.}
+    Discusses single‑fluorophore mechanical force sensors using hairpins or protein domains coupled to GFP‑like fluorophores, where force‑induced conformational changes alter fluorescence. \href{https://digitalcommons.lib.uconn.edu/cgi/viewcontent.cgi?article=1928\&context=srhonors\_theses}{\textbullet}
+\end{itemize}
+
+\subsubsection*{electron density map related insights}
+see 
+\href{https://www.pnas.org/doi/10.1073/pnas.2133463100#sec-1}{\textbullet} here
+\begin{proposition}
+GFP makes its chromophore because its folded $\beta $-barrel scaffold bends and strains the central helix, positioning Ser65, Tyr66, and Gly67 for cyclization, while nearby residues help stabilize the chemistry. 
+\end{proposition}
+
+\begin{fact}
+redox events can play a role too in reliability of fluorescence recording:
+\begin{itemize}
+  \item photobleaching
+  \item blinking states
+\end{itemize}
+see 
+\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC1871844/}{\textbullet}
+\end{fact}
+\textbf{Photobleached} means the GFP molecule has been permanently damaged by light so it can no longer fluoresce.
+
+For GFP, illumination excites the chromophore. Most of the time it returns to the ground state by emitting green light. But occasionally, the excited chromophore enters a reactive pathway, often involving oxygen or electron-transfer chemistry. That can chemically alter or break the chromophore, so the molecule becomes permanently dark. This is different from \textbf{blinking}, where GFP temporarily goes dark and then comes back. Photobleaching is usually irreversible on the experiment's timescale.
+
+In the PNAS paper, this distinction matters because the authors show two different ``dark'' GFP states:
+
+1. \textbf{Mechanically unfolded GFP}: dark but reversible. If the protein refolds correctly, fluorescence comes back.
+2. \textbf{Photobleached GFP}: dark and not reversible by unfolding/refolding. The authors explicitly report that once GFP was photobleached, unfolding and refolding did not recover fluorescence. \href{https://www.pnas.org/doi/full/10.1073/pnas.1704937114}{\textbullet}
+
+So in plain language: \textbf{unfolding turns off the GFP light switch by disrupting the chromophore's environment; photobleaching breaks the bulb.}
+
+\subsubsection*{How redox state affects GFP fluorescence}
+
+``Redox state'' means the balance between oxidation and reduction: whether electrons are being removed or donated in the local chemical environment. GFP fluorescence can be affected by redox chemistry in a few related but distinct ways.
+
+\subsubsection*{1. Ordinary GFP can be damaged through oxidative photochemistry}
+
+Photobleaching often involves the excited GFP chromophore reacting through oxygen/electron-transfer pathways. A computational/mechanistic study proposed that photoexcited GFP-type chromophores can transfer an electron to molecular oxygen, forming a chromophore--superoxide radical pair; subsequent reactions can decompose the chromophore and cause irreversible photobleaching. \href{https://iopenshell.usc.edu/pubs/pdf/jpcb-119-5444.pdf}{\textbullet}
+
+This means oxidizing conditions or reactive oxygen species can make GFP less stable under illumination. The key point is that this is not just ``GFP senses redox''; it is \textbf{redox chemistry damaging the fluorophore}.
+
+\subsubsection*{2. GFP can also enter reversible dark or altered fluorescent states}
+
+GFP-family proteins have complex photophysics: blinking, protonation changes, chromophore isomerization, triplet states, and redox-related dark states can all affect brightness. The PNAS paper notes that GFP photophysical properties depend on chromophore hydrogen bonding, solvation, isomerization state, and binding-pocket structure. \href{https://www.pnas.org/doi/full/10.1073/pnas.1704937114}{\textbullet}
+
+Some literature connects GFP blinking and chromophore structure to redox potentials; the PNAS reference list specifically cites Stein et al., ``Linking single-molecule blinking to chromophore structure and redox potentials.'' \href{https://www.pnas.org/doi/full/10.1073/pnas.1704937114}{\textbullet} The important interpretation is that \textbf{redox-related changes can shift GFP between emissive and non-emissive states}, but that is not necessarily the same as permanent photobleaching.
+
+\subsubsection*{3. Engineered redox-sensitive GFPs deliberately convert redox state into a fluorescence readout}
+
+The clearest redox-state literature is about \textbf{roGFP}, or reduction--oxidation-sensitive GFP. These are engineered GFP variants containing cysteine pairs that can form a reversible disulfide bond. When the cysteines are reduced, they are free thiols; when oxidized, they form a disulfide. That structural change alters the chromophore environment and shifts the excitation spectrum.
+
+Hanson et al. designed roGFPs by introducing surface-exposed cysteines into \textit{Aequorea victoria} GFP. These sensors have two excitation maxima, around \textbf{400 nm and 490 nm}, and the fluorescence excitation ratio changes with oxidation state, allowing redox potential to be monitored in live cells. \href{https://www.jbc.org/article/S0021-9258\%2819\%2964252-3/fulltext}{\textbullet}
+
+That ratiometric design is crucial: rather than asking ``is it brighter or dimmer?'', researchers measure the ratio of fluorescence after excitation at two wavelengths. This cancels out confounds like how much protein is present, expression level, or imaging depth. A JBC paper on mammalian-cell redox imaging states that ratios from excitation at 400 and 490 nm indicate the oxidation state and redox potential while canceling out indicator amount and absolute optical sensitivity. \href{https://www.jbc.org/article/S0021-9258\%2820\%2966844-2/fulltext}{\textbullet}
+
+\subsubsection*{4. roGFPs are usually fused to redox-relay proteins for specificity}
+
+A bare roGFP reports redox changes, but it may not tell you exactly which redox couple caused them. To make sensors more specific, researchers fuse roGFP to redox enzymes. For example, \textbf{Grx1-roGFP2} couples roGFP2 to glutaredoxin so it preferentially reports the glutathione redox potential, while \textbf{Orp1-roGFP} couples peroxide sensing to the roGFP readout. Reviews of genetically encoded redox probes describe these fusions as ways to target specific redox pathways such as glutathione redox potential or hydrogen peroxide. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC3871076/}{\textbullet}
+
+\subsubsection*{How this connects back to the PNAS paper}
+
+The PNAS authors mention redox state near the end because their force-plus-fluorescence method could, in principle, be extended beyond ``is GFP folded and fluorescent?'' to ask chemical-state questions. They write that combined single-molecule manipulation and optical probing could be expanded to probe other degrees of freedom, including \textbf{redox state} or ATP binding. \href{https://www.pnas.org/doi/full/10.1073/pnas.1704937114}{\textbullet}
+
+So the conceptual link is:
+
+\textbf{GFP fluorescence depends on both structure and chemistry.}
+The PNAS paper proves that native structural integrity is required for normal GFP fluorescence. Redox literature shows that the chromophore or engineered cysteine switches can also make GFP brightness/spectrum depend on oxidation-reduction chemistry.
+
+The clean distinction is:
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LLL}
+\hline
+Case & What changes? & Reversible? \\ \hline
+Mechanical unfolding & Protein barrel / chromophore pocket & Usually yes if refolding succeeds \\ \hline
+Photobleaching & Chromophore chemistry damaged by light & Usually no \\ \hline
+roGFP oxidation/reduction & Engineered cysteine disulfide state & Yes \\ \hline
+\end{tabularx}\end{table}
+
+\section{2026/07/09}
+\subsection{follow up from Micheal meeting}
+\begin{fact}
+ recap DNA springs as well as EFX have the unique advantage of BOTH 
+ \begin{itemize}
+   \item force application(dynamics over time)
+   \item atomic scale resolution
+ \end{itemize}
+\end{fact}
+
+\begin{problem}
+let us focus on:
+\begin{itemize}
+  \item not just existing theories how GFP emits fluorescence
+  \item BUT how to MEASURE the fluorescence
+\end{itemize}
+\end{problem}
+will we get intemediate states or an "all or nothing" event like previous optical tweezer studies(see right above)?
+\begin{remark}
+ in measuring we also want to find out if various mutants such as our chimera case will affect the emission and absorption spectrum? I feel that we should also look into how the electron density and redox state plays a role as well 
+\end{remark}
+
+\begin{question}
+ so what exactly does our DNA spring give in terms of output? what atomic resolution? maximum forces and range of directions that can be applied etc 
+\end{question}
+
+\begin{question}
+how have people measured FLUROSCENCE of GFP experimentally? 
+\end{question}
+
+Here are useful papers on \textbf{methods to measure GFP fluorescence}, grouped by technique.
+
+\subsubsection*{Best starting papers / protocols}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LLL}
+\hline
+Paper & Method & Why it is useful \\ \hline
+\textbf{Patterson et al., 1997 --- ``Use of the green fluorescent protein and its mutants in quantitative fluorescence microscopy''} & Quantitative fluorescence microscopy & Classic paper for measuring GFP brightness, photobleaching, and fluorescence behavior in cells. It is especially relevant if you want to quantify GFP by imaging rather than just observe it qualitatively. Cited in later FP benchmarking work as an important quantitative microscopy paper. \href{https://www.nature.com/articles/nmeth.3891}{\textbullet} \\ \hline
+\textbf{Chiu et al., 2014 --- ``Quantification of GFP Signals by Fluorescent Microscopy and Flow Cytometry''} & Fluorescence microscopy + flow cytometry & Practical protocol-style chapter. Flow cytometry is described as sensitive and quantitative for GFP intensity, while microscopy is useful for localization and spatial expression patterns. \href{https://experiments.springernature.com/articles/10.1007/978-1-4939-0799-1_3}{\textbullet} \\ \hline
+\textbf{Csibra \& Stan, 2022 --- ``Absolute protein quantification using fluorescence measurements with FPCountR''} & Microplate reader / fluorometer calibration & Very useful if you want to convert arbitrary fluorescence units into more absolute units using fluorescent protein calibrants. \href{https://www.nature.com/articles/s41467-022-34232-6}{\textbullet} \\ \hline
+\textbf{Cranfill et al., 2016 --- ``Quantitative Assessment of Fluorescent Proteins''} & Spectral characterization, brightness, photostability & Good overview of how fluorescent proteins are compared using excitation/emission spectra, extinction coefficient, quantum yield, brightness, maturation, and photostability. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC4927352/}{\textbullet} \\ \hline
+\textbf{Volkmer et al., 2000 --- ``One- and two-photon excited fluorescence lifetimes and anisotropy decays of GFP\ldots{}''} & Time-resolved fluorescence / FLIM-like measurements & Useful if you care about fluorescence lifetime rather than just intensity. They used one- and two-photon excitation with time-correlated single-photon counting to measure intensity and anisotropy decays. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC1300756/}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+\subsubsection*{Papers by measurement approach}
+
+\subsubsection*{1. Bulk fluorometer or plate-reader GFP fluorescence}
+
+These are best when you have \textbf{purified GFP}, GFP in lysate, or GFP-expressing cells in a plate/cuvette and want a population-average fluorescence signal.
+
+\textbf{Key papers:}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{FPCountR: Absolute protein quantification using fluorescence measurements} & How to calibrate microplate-reader fluorescence so arbitrary fluorescence units can be converted into absolute or comparable fluorescence units. \href{https://www.nature.com/articles/s41467-022-34232-6}{\textbullet} \\ \hline
+\textbf{Making GFP count: a validated framework for absolute protein quantification\ldots{}} & A newer high-throughput workflow for quantifying Emerald GFP in cell suspensions by direct fluorescence while correcting for signal attenuation. \href{https://link.springer.com/article/10.1007/s00253-026-13734-z}{\textbullet} \\ \hline
+\textbf{A curve fitting method of quantifying GFP\ldots{}} & Addresses a common issue: simple whole-sample GFP fluorescence can be distorted by fluorescence quenching, especially in dense bacterial samples. \href{https://www.sciencedirect.com/science/article/pii/S0167701209003844}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+Typical measurement: excite GFP/EGFP near $\sim 488$ nm and record emission near $\sim 509\text{--}520$ nm. For purified GFP, you can measure a full excitation/emission spectrum. For plate-reader assays, you often subtract background/autofluorescence and normalize to protein concentration, OD600, cell number, or lysate amount.
+
+\subsubsection*{2. Fluorescence microscopy}
+
+Use this when you need to know \textbf{where GFP is}, not just how much fluorescence is present.
+
+\textbf{Key papers:}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{Patterson et al., 1997 --- quantitative GFP microscopy} & Classic paper for quantitative microscopy of GFP mutants, including brightness and photobleaching behavior. \href{https://www.nature.com/articles/nmeth.3891}{\textbullet} \\ \hline
+\textbf{Quantification of GFP Signals by Fluorescent Microscopy and Flow Cytometry} & Practical method for GFP reporter measurement by microscopy and flow cytometry. Microscopy is emphasized for subcellular localization and spatial expression. \href{https://experiments.springernature.com/articles/10.1007/978-1-4939-0799-1_3}{\textbullet} \\ \hline
+\textbf{Quantitative Assessment of Fluorescent Proteins} & Explains how excitation/emission spectra, brightness, photostability, and maturation affect quantitative FP imaging. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC4927352/}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+Typical measurement: image GFP with a FITC/GFP filter set or 488-nm laser excitation. Quantify mean fluorescence intensity per cell, corrected total cell fluorescence, background-subtracted intensity, or fluorescence at a defined region of interest.
+
+\subsubsection*{3. Flow cytometry / FACS}
+
+Use this when you want \textbf{single-cell distributions} of GFP expression across thousands to millions of cells.
+
+\textbf{Key papers:}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{Chiu et al., 2014 --- Quantification of GFP Signals by Fluorescent Microscopy and Flow Cytometry} & Good starting protocol for GFP reporter analysis by flow cytometry. Flow cytometry is described as sensitive and quantitative for fluorescent intensity. \href{https://experiments.springernature.com/articles/10.1007/978-1-4939-0799-1_3}{\textbullet} \\ \hline
+\textbf{Green fluorescent protein is a quantitative reporter of gene expression\ldots{}} & Demonstrates GFP as a quantitative reporter and compares microscopy/flow-style measurement of GFP expression under different conditions. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC1242169/}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+Typical measurement: excite with a 488-nm laser and collect green emission in a FITC/GFP channel. Output is usually median fluorescence intensity, geometric mean fluorescence, percent GFP-positive cells, or fluorescence distributions.
+
+\subsubsection*{4. Fluorescence lifetime measurements / FLIM}
+
+Use this when you care about the \textbf{environment of the GFP chromophore}, not only intensity. Lifetime can change with chromophore environment, refractive index, quenching, pH, conformation, or interactions.
+
+\textbf{Key papers:}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{Volkmer et al., 2000 --- One- and two-photon excited fluorescence lifetimes and anisotropy decays\ldots{}} & Uses time-correlated single-photon counting to measure fluorescence lifetime and anisotropy of WT GFP and mutants. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC1300756/}{\textbullet} \\ \hline
+\textbf{Measurement of the fluorescence lifetime of GFP in high refractive index levitated droplets} & Measures GFP lifetime in controlled sucrose/water environments to study refractive-index-dependent lifetime changes. \href{https://pubs.rsc.org/en/content/articlehtml/2020/cp/c9cp06395a}{\textbullet} \\ \hline
+\textbf{Bright GFP with subnanosecond fluorescence lifetime} & Useful for understanding how GFP variants can be evaluated by lifetime, quantum yield, and brightness. \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6125319/}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+Typical measurement: excite GFP with pulsed laser light and record the time delay between excitation and emitted photons using TCSPC or FLIM. Instead of ``how bright is it?'', the readout is fluorescence decay lifetime, often in nanoseconds.
+
+\subsubsection*{5. Fluorescence anisotropy / polarization}
+
+Use this if you want to measure \textbf{rotational mobility, viscosity, binding, conformational restriction, or homo-FRET-like effects}.
+
+\textbf{Key papers:}
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{Pressure and temperature dependence of fluorescence anisotropy of GFP} & Measures steady-state anisotropy of GFP across pressure and temperature ranges. Useful for seeing how GFP rotational behavior/environment can be measured. \href{https://pubs.rsc.org/en/content/articlehtml/2022/ra/d1ra08977c}{\textbullet} \\ \hline
+\textbf{Volkmer et al., 2000} & Measures time-resolved anisotropy decays of GFP and mutants using one- and two-photon excitation. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC1300756/}{\textbullet} \\ \hline
+\textbf{Time-Resolved Fluorescence Anisotropy and Molecular Dynamics Analysis of Homodimeric GFPs} & Shows how polarization-resolved lifetime/anisotropy can probe relative orientation and homo-FRET between GFPs. \href{https://www.sciencedirect.com/science/article/pii/S0006349520332094}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+\subsubsection*{6. Single-molecule GFP fluorescence}
+
+Use this if you want to measure \textbf{individual GFP molecules}, photobleaching steps, single-molecule brightness, blinking, or molecule counting.
+
+\begin{table}[H]\noindent\begin{tabularx}{\linewidth}{LL}
+\hline
+Paper & What it teaches \\ \hline
+\textbf{Single-Molecule Fluorescence Detection of Green Fluorescent Protein} & Method-focused chapter on low-background single-molecule detection, especially using TIRF microscopy. \href{https://www.sciencedirect.com/science/chapter/bookseries/pii/S0091679X08619482}{\textbullet} \\ \hline
+\textbf{Metal-Enhanced Fluorescence of Single Green Fluorescent Protein} & Measures single GFP molecules, including photon counts before photobleaching and fluorescence lifetime by TCSPC. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC2613175/}{\textbullet} \\ \hline
+\textbf{Quantitative Microscopy based on Single-Molecule Fluorescence} & Reviews counting methods, including GFP-tagged protein counting by single-molecule photobleaching microscopy. \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC5654590/}{\textbullet} \\ \hline
+\end{tabularx}\end{table}
+
+\subsubsection*{Most relevant for your sfGFP-DNA chimera idea}
+
+For your case, where you may want to measure whether \textbf{DNA-generated mechanical tension changes sfGFP fluorescence}, I would prioritize:
+
+1. \textbf{Bulk plate-reader or fluorometer fluorescence}
+Best first-pass assay. Compare fluorescence of sfGFP-DNA constructs under different DNA hybridization states.
+
+2. \textbf{Full excitation/emission spectra}
+Important because tension or structural perturbation may shift excitation/emission peaks, not just reduce total intensity.
+
+3. \textbf{Fluorescence lifetime / FLIM or TCSPC}
+Very useful if fluorescence intensity changes are ambiguous. Lifetime can report chromophore environmental changes independent of concentration.
+
+4. \textbf{Microscopy or single-molecule fluorescence}
+Useful if your construct is surface-tethered, immobilized, heterogeneous, or if you suspect only a subset of molecules respond.
+
+The most directly useful starting set would be: \textbf{Chiu et al. 2014}, \textbf{Patterson et al. 1997}, \textbf{Csibra \& Stan 2022 FPCountR}, \textbf{Cranfill et al. 2016}, and \textbf{Volkmer et al. 2000}.
+
+
+\begin{question}
+ how about imaging of the chimera itself? 
+\end{question}
+\begin{solution}
+ micheal said that we have access to an electron microcope in the lab.  some limitations found tho 
+\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC6478846/?utm_source=chatgpt.com}{\textbullet}. GFP is not naturally electron rich and its too small to image directly. need some kind of scaffold. Our DNA strand attached must be electron rich enough i suppose.
+\end{solution}
+
+\begin{definition}
+  \textbf{DNA origami} is a method for folding DNA into a designed nanoscale shape, kind of like using DNA as molecular LEGO.
+\end{definition}
+
+post Doeke meeting plans for next week:
+\begin{fact}
+monday: 11:15 am  bus to med school
+
+cryoEM - pp2a
+flurometer - 
+cryoSPARC read up
+
+DTT, hyorgen peroxide control redox state
+
+concwnerated band = pure pp2a
+
+STAR system:
+\end{fact}
+
+
+\section{2026/07/10}
+just had a meeting with SeArre Abebe
+\begin{fact}
+key info
+\begin{itemize}
+  \item Pesonal statement vs Statment of purpose: the former talk about yourself(personal background) \textbf{that led to your decision to pursue research} the latter is more technical about research(\textbf{focus on how YOU came up with solution to a novel problem not what you did under supervision/instruction})
+  \item monthly join Gaudet and Hekstra lab group meeting
+  \item ask hekstra to add me to structural biology supergroup with Gaudet
+  \item starting fall during school acad year every friday 4pm MCO wide lab meeting(Gaudet attending) afterwards beach volleyball
+  \item end goal of GK $\to $ GFP $\to $ PP2a(biologically relevant protein)
+\end{itemize}
+\end{fact}
+
+\section{2026/08/09 Choosing attachment points for maximum sfGFP fluorescence change}
+\subsubsection*{the strongest papers and the force-application sites}
+
+\begin{table}[h]\noindent\begin{tabularx}{\linewidth}{llllll}
+\hline
+paper & gfp variant & where force is applied & mechanical condition & fluorescence effect & relevance \\ \hline
+longo et al., chem. commun. 2015 & wt gfp & residues \(39 \leftrightarrow 182\) & protein attached at both residues to stretched pdms via peg linkers & reversible decrease; up to \(\sim 60\%\) observed fluorescence reduction at 30\% substrate strain & best direct evidence for an internal residue pair producing reversible fluorescence modulation \\ \hline
+galior et al., nano lett. 2016 & sfgfp & effectively \(n\) terminus \(\leftrightarrow c\) terminus & integrin \(\rightarrow\) rgd \(\rightarrow\) sfgfp \(\rightarrow\) i27 \(\rightarrow\) aunp & sfgfp fluorescence quenched by cell-generated tension; interpreted as mechanical denaturation & best direct evidence specifically for sfgfp \\ \hline
+ganim \& rief, pnas 2017 & enhanced gfp-type mutant & \(n\) terminus \(\leftrightarrow c\) terminus & dna handles + optical tweezers; force jumps into 30--60 pn range & gfp switches fluorescent \(\rightarrow\) dark upon unfolding and returns after complete refolding & best calibrated pn-scale fluorescence-force experiment \\ \hline
+dietz et al., pnas 2006 & gfp & \(3 \leftrightarrow 212\), \(132 \leftrightarrow 212\), \(182 \leftrightarrow 212\), \(3 \leftrightarrow 132\), \(117 \leftrightarrow 182\) & afm pulling between engineered residue pairs & fluorescence not monitored during pulling & best experimental map of which attachment geometries are mechanically sensitive \\ \hline
+dietz \& rief, pnas 2004 & cycle-3 gfp & \(n\) terminus \(\leftrightarrow c\) terminus & afm & structural unfolding measured & shows first \(n\)-terminal structural transition around 35 pn near equilibrium \\ \hline
+saeger et al., plos one 2012 & egfp/eyfp & \(n \leftrightarrow c\) pulling modeled; \(n\)-terminal deletion mutants tested & smd + spectroscopy & removing progressively more of residues \(1--27\) progressively destroys fluorescence & explains where mechanically induced fluorescence loss begins \\ \hline
+\end{tabularx}\end{table}
+
+\subsubsection*{1. the most interesting residue pair: \(39 \leftrightarrow 182\)}
+
+they deliberately searched for two positions on opposite faces of the gfp \(\beta\)-barrel that were solvent accessible and could efficiently transmit tensile stress through the protein. they chose tyr\(39\) and tyr\(182\) and replaced them with the noncanonical amino acid para-azidophenylalanine, allowing the protein to be attached covalently through both positions. \href{https://pubs.rsc.org/en/content/articlehtml/2015/cc/c4cc07486f}{\textbullet}
+
+so their geometry was approximately:
+
+attachment --- residue \(39 \rightarrow\) gfp \(\beta\)-barrel/chromophore \(\rightarrow\) residue \(182\) --- attachment
+
+rather than:
+
+\(n\) terminus \(\rightarrow\) entire gfp sequence \(\rightarrow c\) terminus
+
+when the elastomer bearing the doubly attached gfp was stretched by \(10\%\), \(20\%\), and \(30\%\), they measured approximately \(23\%\), \(42\%\), and \(60\%\) decreases in fluorescence, respectively. when they released the strain, fluorescence returned essentially to its initial level. \href{https://pubs.rsc.org/en/content/articlehtml/2015/cc/c4cc07486f}{\textbullet}
+
+they also did an important control: gfp attached only at position \(39\) showed only about \(8\%\), \(15\%\), and \(22\%\) fluorescence reduction over those same substrate strains. after this correction, they estimated that at least roughly \(15\%\), \(27\%\), and \(38\%\) fluorescence decreases at \(10\%\), \(20\%\), and \(30\%\) strain were genuinely caused by mechanical deformation of gfp. \href{https://pubs.rsc.org/en/content/articlehtml/2015/cc/c4cc07486f}{\textbullet}
+
+\subsubsection*{2. direct evidence specifically on sfgfp: terminal pulling}
+
+their protein construct was:
+
+rgd --- sfgfp --- i27 --- cc
+
+where the \(n\)-terminal rgd sequence binds cellular integrins and two \(c\)-terminal cysteines bind the construct to a gold nanoparticle. sfgfp sits immediately \(n\)-terminal to the titin i\(27\) domain. \href{https://pmc.ncbi.nlm.nih.gov/articles/pmc5592801/}{\textbullet}
+
+they saw loss of sfgfp fluorescence specifically in force-generating focal-adhesion regions. an independently attached alexa\(647\) label remained there, indicating that the protein itself had not simply disappeared; instead, the sfgfp fluorescence was lost. \href{https://pmc.ncbi.nlm.nih.gov/articles/pmc5592801/}{\textbullet}
+
+\subsubsection*{3. \(n\) terminus \(\leftrightarrow c\) terminus gives a calibrated fluorescence switch}
+
+they engineered cysteines at the \(n\) and \(c\) termini of gfp, attached dna handles to those cysteines, and manipulated individual gfp molecules with dual-bead optical tweezers while simultaneously measuring fluorescence. \href{https://www.pnas.org/doi/pdf/10.1073/pnas.1704937114?download=true}{\textbullet}
+
+they found that fluorescence disappears extremely early during force-induced unfolding---about \(3.5\) ms before the first secondary-structure disruption that they could detect mechanically. \href{https://portal.fis.tum.de/en/publications/mechanically-switching-single-molecule-fluorescence-of-gfp-by-unf/}{\textbullet} they demonstrated repeated mechanical switching and described gfp as calibratable over roughly the \(30\)--\(60\) pn force range. \href{https://pmc.ncbi.nlm.nih.gov/articles/pmc5651744/}{\textbullet}
+
+\subsubsection*{4. the extremely important pulling-direction experiment}
+
+\begin{table}[h]\noindent\begin{tabularx}{\linewidth}{ll}
+\hline
+gfp attachment pair & mean fracture force \\ \hline
+\(3 \leftrightarrow 212\) & \(117 \pm 19\) pn at \(3.6\) \(\mu\)m/s \\ \hline
+\(132 \leftrightarrow 212\) & \(127 \pm 23\) pn at \(3.6\) \(\mu\)m/s \\ \hline
+\(182 \leftrightarrow 212\) & \(356 \pm 61\) pn at \(3.6\) \(\mu\)m/s \\ \hline
+\(3 \leftrightarrow 132\) & \(346 \pm 46\) pn at \(2\) \(\mu\)m/s \\ \hline
+\(117 \leftrightarrow 182\) & \(548 \pm 57\) pn at \(3.6\) \(\mu\)m/s \\ \hline
+\end{tabularx}\end{table}
+
+these values come directly from their force-spectroscopy measurements. \href{https://pubs.pmc.ncbi.nlm.nih.gov/articles/pmc1568916/}{\textbullet}
+
+\subsubsection*{6. why pulling the \(n\) terminus changes fluorescence so efficiently}
+
+they identified leu\(7\) and phe\(8\) as a hydrophobic "cork" holding the \(n\)-terminal region against the barrel and suggested that weakening this interaction might deliberately create gfp variants whose fluorescence is more sensitive to mechanical force. \href{https://journals.plos.org/plosone/article?id=10.1371\%2fjournal.pone.0046962}{\textbullet}
+
+\subsubsection*{7. terminal gfp can actually begin changing around much lower forces than the afm rupture numbers suggest}
+
+the earlier dietz \& rief study on gfp found that under \(n\)-to-\(c\) loading, the first structural transition---the detachment of the short \(n\)-terminal \(\alpha\)-helix---occurs near equilibrium at roughly \(35\) pn. \href{https://portal.fis.tum.de/en/publications/exploring-the-energy-landscape-of-gfp-by-single-molecule-mechanic-2/}{\textbullet}
+
+\section{2026/09/10 Helping Micheal with qual prep}
 
 \printbibliography
 \end{document}
