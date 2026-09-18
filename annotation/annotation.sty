@@ -1,8 +1,15 @@
 \ProvidesPackage{lindrew}[2022/11/17] % with much help from Jason Chen; thank you!
 %ian custom packages-----
 \usepackage[T1]{fontenc}
-\usepackage{minted}
-\usemintedstyle{friendly}   % colorful syntax highlighting
+% ---------------------------------------------------------------
+% minted is DISABLED on purpose. Use verbatim / \texttt instead.
+% Loading minted pulls in fvextra -> lineno, and lineno replaces LaTeX's
+% output routine so that any block which cannot be placed makes the
+% compiler emit blank pages FOREVER instead of warning. That is what made
+% documents "never finish compiling". minted also needs -shell-escape.
+% ---------------------------------------------------------------
+% \usepackage{minted}
+% \usemintedstyle{friendly}   % colorful syntax highlighting
 \usepackage{authblk}
 \usepackage{wrapfig}
 \usepackage{quiver}
@@ -37,12 +44,12 @@
 % that provides T1 small-caps shapes.
 \DeclareTextFontCommand{\textsc}{\rmfamily\scshape}
 
-% Ensure minted uses a monospaced family that has needed shapes,
+% Ensure verbatim / \texttt use a monospaced family that has the needed shapes,
 % even when cmbright is active.
 \usepackage{lmodern}
 \renewcommand{\ttdefault}{lmtt}
-\setminted{fontseries=m}
-\setmintedinline{fontseries=m}
+% \setminted{fontseries=m}
+% \setmintedinline{fontseries=m}
 
 \iflinindent
 \else
@@ -108,7 +115,14 @@
 \titleformat{\subsection}{\Large}{\thesubsection \bfseries}{0.4cm}{} 
 
 % Blackboard bold
-\renewcommand{\AA}{\mathbb A}
+% \AA is LaTeX's standard TEXT command for the Angstrom sign (A with a ring).
+% Overwriting it outright with \mathbb A broke every text-mode use: a
+% crystallography cell such as "1.40 \AA" then fails with
+% "LaTeX Error: \mathbb allowed only in math mode".
+% Keep Angstrom in text mode AND blackboard-bold A in math mode, so both
+% spellings work. The \ifdefined guard keeps a double load from recursing.
+\ifdefined\annoTextAngstrom\else\let\annoTextAngstrom\AA\fi
+\renewcommand{\AA}{\ifmmode\mathbb{A}\else\annoTextAngstrom\fi}
 \newcommand{\CC}{\mathbb C}
 \newcommand{\DD}{\mathbb D}
 \newcommand{\EE}{\mathbb E}
