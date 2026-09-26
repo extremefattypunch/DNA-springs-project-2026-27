@@ -11,9 +11,10 @@ map- and model-level reproduction from EMD-48300 / PDB 9MIP (Aα-B56γ-Cα) and 
 picking) is not reproducible and is not attempted. The MD half (Fig 1A–C, Videos S1/S2) is Tier 1: one 100 ns
 run per isoform, in OpenMM because NAMD is behind a registration wall on this cluster.
 
-**Status (2026-09-26).** Cryo-EM: complete. MD: systems built (Aα 163,423 particles, Aβ 225,676; 16 Å padding,
-OPC, 150 mM NaCl); the Aα 1 ns benchmark is running on `gpu_test` and an orchestrator job feeds the 100 ns
-chunks one after another (one MIG slice at a time → 4–7 days); §A is filled in as they finish.
+**Status (2026-09-26, 18:20).** Cryo-EM: complete. MD: systems built (Aα 163,423 particles, Aβ 225,676; 16 Å
+padding, OPC, 150 mM NaCl); the Aα 1 ns benchmark ran at 53.8 ns/day (2 fs, one gpu_test A100 slice), so each
+100 ns run needs ≈1.9 days; the Aα production chain started 18:19 and an orchestrator job feeds 12 h chunks one
+after another (Aα, then Aβ). §A is filled in when they finish (≈2026-09-30).
 
 ## Headline comparison with the paper
 
