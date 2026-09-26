@@ -95,7 +95,7 @@ def make_sim(st, system, dt, platform_name):
 
 
 def save_state(sim, path):
-    state = sim.context.getState(getPositions=True, getVelocities=True, enforcePeriodicBox=True)
+    state = sim.context.getState(getPositions=True, getVelocities=True, getEnergy=True, enforcePeriodicBox=True)
     Path(path).write_text(mm.XmlSerializer.serialize(state))
     return state
 
