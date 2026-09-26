@@ -3,10 +3,9 @@
 #
 #  * gpu_test only (Gres/gpu billing weight 0; the `gpu` partition costs 836.5 per GPU-hour).  MIG A100
 #    3g.20gb slices: a 165k-particle OPC system uses ~3 GB and one host core, so -c 1 / --mem=8G.
-#  * The engine resumes from state.chk + progress.json.  At exit, if production is short of NS, this
-#    script resubmits itself with --dependency=afterany and a --time sized from the measured ns/day
-#    (x1.15, capped at 12 h) so the last link does not trip the Job Defense Shield's "<50 % of the
-#    walltime used" rule.  A 1 ns benchmark (NS=1) is the first submission of every system.
+#  * The engine resumes from state.chk + progress.json.  slurm/pp2a_md_orchestrator.sbatch submits the
+#    next chunk when the GPU slot is free, with --time sized from the measured ns/day (x1.15, <= 12 h) so the
+#    last link does not trip the Job Defense Shield's "<50 % of the walltime used" rule.
 # Usage:  SYS=Aa NS=100 sbatch slurm/pp2a_md_chain.sbatch      (SYS in {Aa, Ab}; SEED default 2001)
 #SBATCH -J pp2a-md
 #SBATCH -p gpu_test
@@ -39,17 +38,9 @@ rc=$?
 set -e
 kill $SAMPLER 2>/dev/null || true
 
-# self-resubmit if production is not finished (engine exits 0 after each checkpointed chunk only when done)
+# Progress summary; the next chunk is submitted by slurm/pp2a_md_orchestrator.sbatch (gpu_test's 2-job QOS
+# rejects a --dependency resubmission while this job is still running).
 if [ -f "$RUN/progress.json" ]; then
-  read -r done total speed <<<"$("$DNASPRING_PY" -c "import json;d=json.load(open('$RUN/progress.json'));print(d.get('ns_done',0),d.get('ns_total',$NS),d.get('ns_per_day_this_job',0))")"
-  echo "== progress: $done / $total ns at $speed ns/day (rc=$rc)"
-  if "$DNASPRING_PY" -c "import sys; sys.exit(0 if float('$done') < float('$total') - 1e-6 else 1)"; then
-    hours=$("$DNASPRING_PY" -c "
-rem=float('$total')-float('$done'); sp=float('$speed') or 20.0
-h=min(12.0, max(0.5, 1.15*rem/sp*24)); print(f'{int(h)}:{int((h-int(h))*60):02d}:00')")
-    echo "== resubmitting for the remaining $("$DNASPRING_PY" -c "print(round(float('$total')-float('$done'),2))") ns with --time=$hours"
-    SYS=$SYS NS=$NS SEED=$SEED HMR=$HMR sbatch --dependency=afterany:$SLURM_JOB_ID -t "$hours" \
-        "$PP2A_REPO/slurm/pp2a_md_chain.sbatch"
-  fi
+  "$DNASPRING_PY" -c "import json;d=json.load(open('$RUN/progress.json'));print('== progress:',d.get('ns_done'),'/',d.get('ns_total'),'ns at',d.get('ns_per_day_this_job'),'ns/day')"
 fi
 exit $rc

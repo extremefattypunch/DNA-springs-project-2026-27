@@ -12,8 +12,8 @@ picking) is not reproducible and is not attempted. The MD half (Fig 1A–C, Vide
 run per isoform, in OpenMM because NAMD is behind a registration wall on this cluster.
 
 **Status (2026-09-26).** Cryo-EM: complete. MD: systems built (Aα 163,423 particles, Aβ 225,676; 16 Å padding,
-OPC, 150 mM NaCl); the 1 ns benchmark and the 100 ns chains are queued on `gpu_test` and will be reported in §A
-when they finish (one MIG slice at a time → 4–7 days).
+OPC, 150 mM NaCl); the Aα 1 ns benchmark is running on `gpu_test` and an orchestrator job feeds the 100 ns
+chunks one after another (one MIG slice at a time → 4–7 days); §A is filled in as they finish.
 
 ## Headline comparison with the paper
 
@@ -117,12 +117,14 @@ fewer ordered B56γ residues (38–403 vs 21–449) — and 28 vs 30 at the Cα 
 
 ## G. Does EMReady on the half-map average reproduce the deposited sharpened map?
 
-Partly. EMReady v1.1 (the version the paper cites) applied to the Aα half-map average gives a map whose real-space
-correlation with the deposited primary map is 0.89 overall and 0.86 in the top 1 % of deposited density, and the
-FSC between the two maps falls to 0.5 at 3.98 Å. That is EMReady-like sharpening (RELION's B-factor-sharpened map
-is visibly different) but not the same map: the deposited map was presumably produced from the refinement's own
-unsharpened output and possibly a different EMReady release, and our resampling from EMReady's 1.0 Å grid back to
-1.056 Å adds interpolation error. The pre-registered CC > 0.95 is not met. Aβ numbers are added when its job finishes.
+Partly. EMReady v1.1 (the version the paper cites) applied to the half-map averages gives maps whose real-space
+correlation with the deposited primary maps is 0.89 (Aα) and 0.80 (Aβ) over all voxels, 0.86 and 0.69 within the
+top 1 % of deposited density, and the FSC between our map and the deposited one falls to 0.5 at 3.98 Å (Aα) and
+4.51 Å (Aβ). That is EMReady-like sharpening (RELION's B-factor-sharpened map looks quite different) but not the
+same map: the deposited maps were presumably made from the refinement's own unsharpened output, possibly with a
+later EMReady release, and our resampling from EMReady's 1.0 Å grid back to the deposited grid adds interpolation
+error. The pre-registered CC > 0.95 is not met for either isoform, and the Aβ agreement is clearly poorer, which
+is consistent with its weaker B56γ density (EMReady's local enhancement is most sensitive where the input is weakest).
 
 ## H. What could not be reproduced, and why
 

@@ -32,3 +32,6 @@ em,Ab,local resolution range (1-99 pct within 3 A of model),CryoSPARC v5 Local R
 em,Aa,EMReady(raw) vs deposited map real-space CC (all voxels),EMReady v1.1 on half-map average,0.890,,,pre-registered > 0.95
 em,Aa,EMReady(raw) vs deposited map real-space CC (top 1% of deposited density),EMReady v1.1 on half-map average,0.856,,,question G
 em,Aa,FSC 0.5 between EMReady(raw) and deposited map,"numpy shells, unmasked",3.976,A,,question G
+em,Ab,EMReady(raw) vs deposited map real-space CC (all voxels),EMReady v1.1 on half-map average,0.804,,,pre-registered > 0.95
+em,Ab,EMReady(raw) vs deposited map real-space CC (top 1% of deposited density),EMReady v1.1 on half-map average,0.693,,,question G
+em,Ab,FSC 0.5 between EMReady(raw) and deposited map,"numpy shells, unmasked",4.514,A,,question G

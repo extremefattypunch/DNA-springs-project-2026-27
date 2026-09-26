@@ -15,8 +15,8 @@ for s in Aa Ab; do
   dep=${prev:+--dependency=afterany:$prev}
   b=$(SYS=$s NS=1 sbatch --parsable $dep -t 1:30:00 -J pp2a-md-bench-$s slurm/pp2a_md_chain.sbatch)
   echo "benchmark $s: job $b ${dep:+(after $prev)}"
-  c=$(SYS=$s NS=100 sbatch --parsable --dependency=afterany:$b -J pp2a-md-$s slurm/pp2a_md_chain.sbatch)
-  echo "100 ns chain $s: job $c (after $b; resubmits itself until 100 ns)"
-  prev=$c
+  : # the 100 ns chunks are submitted by slurm/pp2a_md_orchestrator.sbatch (QOS allows no queued dependency)
+
+  prev=$b
 done
 squeue -u "$USER" -o "%i %P %j %T %M %E" | grep -E "pp2a-md|JOBID"
