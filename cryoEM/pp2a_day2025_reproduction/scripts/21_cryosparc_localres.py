@@ -66,11 +66,20 @@ def wait(job, key, state, t0):
     return job
 
 
-def run_job(cs, state, key, puid, wuid, jtype, connections, params, title):
+def run_job(cs, state, key, puid, wuid, jtype, connections, params, title, extra_results=()):
+    """extra_results: (result_name, source_job_uid, source_output_name, source_result_name) tuples
+    added into connection 0 of the 'volume' input - CryoSPARC's half-map inputs are ONE group with
+    two slots, and Import Volumes produces one slot per job, so the second half map (and the
+    local-res map for Local Filtering) are attached slot-by-slot with jobs.connect_result."""
     if key in state["jobs"]:
         print(f"[{key}] already done: {state['jobs'][key]}")
         return cs.find_job(puid, state["jobs"][key])
     job = cs.create_job(puid, wuid, jtype, connections=connections, params=params, title=title)
+    for result_name, sjob, sout, sres in extra_results:
+        cs.api.jobs.connect_result(puid, job.uid, "volume", 0, result_name,
+                                   source_output_name=sout, source_result_name=sres, source_job_uid=sjob)
+        print(f"[{key}] {job.uid}: attached {sres} from {sjob}.{sout}", flush=True)
+    job.refresh()
     print(f"[{key}] created {job.uid} ({jtype}) -> queue on {LANE}", flush=True)
     t0 = time.time()
     job.queue(lane=LANE)
@@ -111,23 +120,25 @@ def main():
                                   "volume_out_name": slot},
                           title=f"{iso} import EMD-{emd} {slot}")
             imports[slot] = job
-        # local resolution from the two half maps
-        conn_halves = {"volume": [(imports["map_half_A"].uid, "imported_volume_1"),
-                                  (imports["map_half_B"].uid, "imported_volume_1")]}
+        # local resolution from the two half maps (one input group, slots map_half_A + map_half_B)
+        jA, jB = imports["map_half_A"].uid, imports["map_half_B"].uid
+        conn_A = {"volume": [(jA, "imported_volume_1")]}
+        half_B = [("map_half_B", jB, "imported_volume_1", "map_half_B")]
         locres = run_job(cs, state, f"{iso}_locres", puid, wuid, "local_resolution",
-                         connections=conn_halves,
+                         connections=conn_A, extra_results=half_B,
                          params={"locres_fsc_thresh": 0.5, "locres_use_mask": 0, "locres_compute_facility": "GPU"},
                          title=f"{iso} local resolution (EMD-{emd} half maps, FSC 0.5)")
+        locres_out = [o for o in locres.model.spec.outputs.root if o.type == "volume"] if hasattr(locres.model.spec, "outputs") else []
+        locres_out_name = locres_out[0].name if locres_out else "volume"
         # locally filtered map: half maps + local-res map
         run_job(cs, state, f"{iso}_locfilt", puid, wuid, "local_filter",
-                connections={"volume": [(imports["map_half_A"].uid, "imported_volume_1"),
-                                        (imports["map_half_B"].uid, "imported_volume_1"),
-                                        (locres.uid, "volume")]},
+                connections=conn_A,
+                extra_results=half_B + [("map_locres", locres.uid, locres_out_name, "map_locres")],
                 params={"localfilter_use_mask": 0},
                 title=f"{iso} local filtering")
         # gold-standard FSC with an auto-generated mask
         run_job(cs, state, f"{iso}_fsc", puid, wuid, "validation",
-                connections=conn_halves,
+                connections=conn_A, extra_results=half_B,
                 params={"validate_generate_new_mask": 1, "validate_compute_facility": "GPU"},
                 title=f"{iso} validation (FSC) EMD-{emd}")
 

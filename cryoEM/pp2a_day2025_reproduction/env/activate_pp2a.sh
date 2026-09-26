@@ -23,7 +23,11 @@ PHENIX_ENV=/n/lab_storage/hekstra_lab/people/aldama/software/phenix2/phenix_env.
 [ -r "$PHENIX_ENV" ] && source "$PHENIX_ENV"
 
 # Tools built by slurm/pp2a_build_software.sbatch (each block is a no-op until installed).
-[ -d $PP2A_SW/relion-3.1/bin ]      && export PATH=$PP2A_SW/relion-3.1/bin:$PATH
+if [ -d $PP2A_SW/relion-3.1/bin ]; then           # built with gcc 12 + OpenMPI: needs their runtime libs
+  command -v module >/dev/null 2>&1 || source /etc/profile.d/lmod.sh
+  module load gcc/12.2.0-fasrc01 openmpi/4.1.5-fasrc03 2>/dev/null
+  export PATH=$PP2A_SW/relion-3.1/bin:$PATH
+fi
 [ -d $PP2A_SW/relion-4.0/bin ]      && export PATH=$PP2A_SW/relion-4.0/bin:$PATH
 if [ -r $PP2A_SW/gromacs-2023.3/bin/GMXRC ]; then   # GMXRC is not nounset-clean; guard it
   _nounset=$(set -o | awk '$1=="nounset"{print $2}'); set +u
