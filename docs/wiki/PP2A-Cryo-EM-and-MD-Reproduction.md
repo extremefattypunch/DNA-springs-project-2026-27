@@ -53,13 +53,13 @@ the deposited half maps lands at ≈3.50 / 3.33 Å with CryoSPARC v5, Phenix and
 0.1 Å in the paper comes from the refinement's own tighter FSC mask — a RELION sweep of eight masks moves
 the number from 3.93 Å (tight, contour-matched mask) to a 3.56 Å plateau (loose mask).
 
-![FSC curves](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/figS5_fsc.png)
+![FSC curves](images/pp2a/figS5_fsc.png)
 
 ### Fig 2 — the maps, and the B56γ C-terminal helix
 
 The deposited (EMReady-sharpened) maps, coloured by nearest subunit (A red/grey, B56γ blue, Cα orange):
 
-![Fig 2A analogue](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/fig2a_maps.png)
+![Fig 2A analogue](images/pp2a/fig2a_maps.png)
 
 **Fig 2B reproduces.** 9MIP models B56γ to residue 449, 9MF5 only to 403; residues 402–436 of 9MIP chain B
 form the helix that reaches the Aα N-terminus (6.9 Å away). Carrying that helix into the Aβ frame (B56γ
@@ -69,7 +69,7 @@ regions on the A and C subunits give 1.0 in both maps. Visually the ribbon is en
 Aα and sits outside the density in Aβ. Pre-registered thresholds (≥ 0.6 and ≤ 0.25) were missed by a hair
 on both sides: the two-fold contrast is real, "absent" overstates it.
 
-![Fig 2B analogue](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/fig2b_lowpass6.png)
+![Fig 2B analogue](images/pp2a/fig2b_lowpass6.png)
 
 ### Fig 3 — Aβ is more concave; the interfaces are conserved
 
@@ -83,9 +83,9 @@ The Aα–Aβ difference in the HEAT1–15 distance is 2.9 Å here against the p
 values are 0.6–0.8 Å higher, a HEAT-boundary-definition effect). The per-repeat centroid shift after
 superposing on HEAT 12–15 has the paper's profile — 2–3 Å across HEAT 1–7, falling to ~0 at HEAT 13–14:
 
-![Fig 3B analogue](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/fig3b_com_shift.png)
+![Fig 3B analogue](images/pp2a/fig3b_com_shift.png)
 
-![Fig 3C analogue](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/fig3c_salt_bridge.png)
+![Fig 3C analogue](images/pp2a/fig3c_salt_bridge.png)
 
 ### Fig S5 — local resolution
 
@@ -93,7 +93,7 @@ RELION 3.1 (the paper's tool) and CryoSPARC v5 agree that Aβ is the more unifor
 B56γ periphery is the worst region. Within 3 Å of the model: RELION 3.48–4.47 Å (Aα) and 3.30–3.91 Å (Aβ);
 CryoSPARC 3.21–6.67 / 3.00–4.99 Å (paper's Table S1 ranges 5.87–3.04 / 5.22–2.82 Å).
 
-![Fig S5 analogue](https://raw.githubusercontent.com/extremefattypunch/DNA-springs-project-2026-27/main/cryoEM/pp2a_day2025_reproduction/figures/figS5_localres.png)
+![Fig S5 analogue](images/pp2a/figS5_localres.png)
 
 ### EMReady
 
