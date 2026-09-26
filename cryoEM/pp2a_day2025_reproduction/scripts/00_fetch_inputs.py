@@ -84,7 +84,7 @@ def main():
         fetch(f"https://rest.uniprot.org/uniprotkb/{acc}.fasta", os.path.join(AF, f"{acc}.fasta"), manifest)
     print("AlphaFold models")
     af3 = sorted(f for f in os.listdir(os.path.join(REPO, "inputs", "af3")) if f.endswith((".cif", ".pdb")))
-    source = "AlphaFold Server (AF3), supplied by Ian" if af3 else "AlphaFold DB v4 (AF2)"
+    source = "AlphaFold Server (AF3), supplied by Ian" if af3 else "AlphaFold DB (AF2)"
     if af3:
         for f in af3:
             shutil.copy(os.path.join(REPO, "inputs", "af3", f), os.path.join(AF, f))
