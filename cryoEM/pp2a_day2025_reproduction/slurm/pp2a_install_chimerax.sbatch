@@ -21,7 +21,7 @@ TMP=/scratch/${USER}_${SLURM_JOB_ID}; mkdir -p "$TMP" "$SW/containers"; trap 'rm
 export SINGULARITY_CACHEDIR=$TMP/sifcache SINGULARITY_TMPDIR=$TMP APPTAINER_CACHEDIR=$TMP/sifcache APPTAINER_TMPDIR=$TMP
 VER=1.12; RPM="$VER/centos-9/ucsf-chimerax-$VER-1.el9.x86_64.rpm"
 
-if [ ! -x "$CX/opt/UCSF/ChimeraX/bin/ChimeraX" ]; then
+if [ ! -x "$CX/usr/libexec/UCSF-ChimeraX/bin/ChimeraX" ]; then
   cd "$TMP"
   # Two-step handshake, exactly what the browser does: POST 'Accept' on the licence form returns a
   # page whose <meta refresh> carries a one-time ident token; GET that URL to receive the rpm.
@@ -36,7 +36,7 @@ if [ ! -x "$CX/opt/UCSF/ChimeraX/bin/ChimeraX" ]; then
   rm -rf "$CX"; mkdir -p "$CX"; cd "$CX"; rpm2cpio "$TMP/chimerax.rpm" | cpio -idm --quiet
   rm -f "$TMP/chimerax.rpm"
 fi
-ls "$CX/opt/UCSF/ChimeraX/bin" | head
+ls "$CX/usr/libexec/UCSF-ChimeraX/bin" | head
 
 # Rocky 9 runtime with the X/GL client libraries ChimeraX links against.
 if [ ! -f "$SIF" ]; then
@@ -67,9 +67,9 @@ save $TMP/test.png width 600 height 450 supersample 2
 exit
 EOF
 set +e
-singularity exec -B /n,/scratch "$SIF" "$CX/opt/UCSF/ChimeraX/bin/ChimeraX" --nogui --offscreen --silent "$TMP/test.cxc" 2>&1 | tail -20
+singularity exec -B /n,/scratch "$SIF" "$CX/usr/libexec/UCSF-ChimeraX/bin/ChimeraX" --nogui --offscreen --silent "$TMP/test.cxc" 2>&1 | tail -20
 rc=$?; set -e
 if [ -s "$TMP/test.png" ]; then echo "OFFSCREEN RENDER OK: $(stat -c %s "$TMP/test.png") bytes"; cp "$TMP/test.png" /n/netscratch/hekstra_lab/Lab/ian_poon/pp2a_day2025/em/chimerax/smoke_test.png
-else echo "offscreen render failed (rc=$rc); missing libraries:"; singularity exec -B /n "$SIF" ldd "$CX/opt/UCSF/ChimeraX/bin/ChimeraX" 2>/dev/null | grep "not found" | head -20 || true; fi
+else echo "offscreen render failed (rc=$rc); missing libraries:"; singularity exec -B /n "$SIF" ldd "$CX/usr/libexec/UCSF-ChimeraX/bin/ChimeraX" 2>/dev/null | grep "not found" | head -20 || true; fi
 find "$CX" \( -name "*.rpm" -o -name "*.tar.gz" \) -delete 2>/dev/null || true
 du -sh "$CX" "$SIF"; echo "holylabs:"; quota /n/holylabs/hekstra_lab | tail -1
