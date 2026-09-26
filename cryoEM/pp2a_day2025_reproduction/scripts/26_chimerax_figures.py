@@ -62,7 +62,7 @@ def fig2a():
     cx = ""
     for i, (iso, m) in enumerate(ISO.items()):
         mdl, vol = f"#{2*i+1}", f"#{2*i+2}"
-        cx += f"open {M}/{m['pdb']}.cif\nopen {E}/{iso}/emd_{m['emd']}.map\n"
+        cx += f"open {M}/{m['pdb']}.cif id {2*i+1}\nopen {E}/{iso}/emd_{m['emd']}.map id {2*i+2}\n"
         cx += chain_colors(mdl, m["acolor"])
         cx += f"volume {vol} level {m['contour']} style surface step 1\ncolor zone {vol} near {mdl} distance 4\nhide {mdl} models\n"
     # same orientation for both isoforms: superpose Abeta model on Aalpha, carry its map along
@@ -78,7 +78,7 @@ def fig2a():
 
 def fig2b():
     # raw_lp6.mrc from RELION (22_relion_postprocess.sh); helix 402-436 of 9MIP chain B as reference in both frames
-    cx = f"open {M}/9MIP.cif\nopen {R}/Aa/raw_lp6.mrc\nopen {M}/9MF5.cif\nopen {R}/Ab/raw_lp6.mrc\nopen {M}/9MIP.cif\n"
+    cx = f"open {M}/9MIP.cif id 1\nopen {R}/Aa/raw_lp6.mrc id 2\nopen {M}/9MF5.cif id 3\nopen {R}/Ab/raw_lp6.mrc id 4\nopen {M}/9MIP.cif id 5\n"
     cx += "matchmaker #5/B:38-403 to #3/B:38-403\n"          # second copy of 9MIP carried into the Abeta frame
     cx += "matchmaker #3/A to #1/A\n"                        # then Abeta (with its map? no - maps stay; keep frames separate)
     cx += "hide #1,3,5 models\nhide #1,3,5 atoms\ncartoon hide\n"
@@ -97,7 +97,7 @@ def fig2b():
 
 
 def fig3a():
-    cx = f"open {M}/9MIP.cif\nopen {M}/9MF5.cif\n"
+    cx = f"open {M}/9MIP.cif id 1\nopen {M}/9MF5.cif id 2\n"
     cx += "hide atoms\nhide #1,2/B,C cartoon\nhide #1,2/B,C atoms\n"
     cx += "align #2/A:449-601@CA toAtoms #1/A:437-589@CA\n"       # HEAT 12-15 superposition (Abeta = Aalpha + 12)
     cx += f"color #1/A {ISO['Aa']['acolor']}\ncolor #2/A {ISO['Ab']['acolor']}\n"
@@ -117,15 +117,15 @@ def fig3c():
     for i, (iso, m) in enumerate(ISO.items()):
         mdl, vol = f"#{2*i+1}", f"#{2*i+2}"
         r1, e1 = (113, 191) if iso == "Aa" else (125, 203)
-        cx += f"open {M}/{m['pdb']}.cif\nopen {E}/{iso}/emd_{m['emd']}.map\n"
+        cx += f"open {M}/{m['pdb']}.cif id {2*i+1}\nopen {E}/{iso}/emd_{m['emd']}.map id {2*i+2}\n"
         cx += f"hide {mdl} atoms\ncartoon {mdl}/A\nhide {mdl}/B,C cartoon\ncolor {mdl}/A {m['acolor']}\n"
         cx += f"show {mdl}/A:{r1},{e1} atoms\nstyle {mdl}/A:{r1},{e1} stick\ncolor {mdl}/A:{r1},{e1} byhetero\n"
         cx += f"distance {mdl}/A:{r1}@CA {mdl}/A:{e1}@CA\n"
         cx += f"volume {vol} style mesh level {m['contour']} step 1\nvolume zone {vol} nearAtoms {mdl}/A:{r1},{e1} range 3\n"
         cx += f"transparency {vol} 40\n"
     cx += "set bgColor white\nlighting soft\n"
-    cx += f"view #1/A:113,191\nsave {FIG}/fig3c_salt_bridge_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:125,203\nsave {FIG}/fig3c_salt_bridge_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1/A:113,191 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Aa.png width {W} height {H} supersample 3\n"
+    cx += f"view #3/A:125,203 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Ab.png width {W} height {H} supersample 3\n"
     run("fig3c", cx)
 
 
@@ -138,16 +138,16 @@ def fig3de():
         off = m["off"]
         rb = ",".join(str(r + off) for r in iface_b)
         rc = ",".join(str(r + off) for r in iface_c)
-        cx += f"open {M}/{m['pdb']}.cif\nopen {E}/{iso}/emd_{m['emd']}.map\n"
+        cx += f"open {M}/{m['pdb']}.cif id {2*i+1}\nopen {E}/{iso}/emd_{m['emd']}.map id {2*i+2}\n"
         cx += f"hide {mdl} atoms\ncolor {mdl}/A {m['acolor']}\ncolor {mdl}/B {B56}\ncolor {mdl}/C {CA}\n"
         cx += f"show {mdl}/A:{rb},{rc} atoms\nstyle {mdl}/A:{rb},{rc} stick\ncolor {mdl}/A:{rb},{rc} byhetero\n"
         cx += f"label {mdl}/A:{rb},{rc} residues text '{{0.name}}{{0.number}}' height 1.2\n"
         cx += f"volume {vol} style mesh level {m['contour']} step 1\nvolume zone {vol} nearAtoms {mdl}/A:{rb},{rc} range 2.5\n"
     cx += "set bgColor white\nlighting soft\n"
-    cx += f"view #1/A:{','.join(map(str, iface_b))}\nsave {FIG}/fig3d_ifaceB56_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:{','.join(str(r+12) for r in iface_b)}\nsave {FIG}/fig3d_ifaceB56_Ab.png width {W} height {H} supersample 3\n"
-    cx += f"view #1/A:{','.join(map(str, iface_c))}\nsave {FIG}/fig3e_ifaceC_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:{','.join(str(r+12) for r in iface_c)}\nsave {FIG}/fig3e_ifaceC_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1/A:{','.join(map(str, iface_b))} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Aa.png width {W} height {H} supersample 3\n"
+    cx += f"view #3/A:{','.join(str(r+12) for r in iface_b)} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1/A:{','.join(map(str, iface_c))} pad 0.4\nsave {FIG}/fig3e_ifaceC_Aa.png width {W} height {H} supersample 3\n"
+    cx += f"view #3/A:{','.join(str(r+12) for r in iface_c)} pad 0.4\nsave {FIG}/fig3e_ifaceC_Ab.png width {W} height {H} supersample 3\n"
     run("fig3de", cx)
 
 
@@ -155,7 +155,7 @@ def figS5():
     cx = ""
     for i, (iso, m) in enumerate(ISO.items()):
         filt, loc = f"#{2*i+1}", f"#{2*i+2}"
-        cx += f"open {R}/{iso}/locres_filtered.mrc\nopen {R}/{iso}/relion_locres.mrc\n"
+        cx += f"open {R}/{iso}/locres_filtered.mrc id {2*i+1}\nopen {R}/{iso}/relion_locres.mrc id {2*i+2}\n"
         cx += f"volume {filt} sdLevel 4 style surface step 1\nhide {loc} models\n"
         cx += f"color sample {filt} map {loc} palette 3.0,red:3.5,orange:4.0,yellow:4.5,green:5.0,blue\n"
     cx += "set bgColor white\nlighting soft\nview\n"
