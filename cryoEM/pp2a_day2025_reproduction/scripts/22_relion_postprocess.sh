@@ -19,7 +19,9 @@ esac
 : "${PP2A_DATA:?source env/activate_pp2a.sh first}"
 command -v relion_postprocess >/dev/null || { echo "relion not on PATH (build job finished?)"; exit 1; }
 E=$PP2A_DATA/em/emdb/$iso; OUT=$PP2A_DATA/em/relion/$iso; mkdir -p "$OUT"; cd "$OUT"
-H1=$E/emd_${emd}_half_map_1.map; H2=$E/emd_${emd}_half_map_2.map
+# RELION decides the format from the extension and treats ".map" as SPIDER -> use .mrc symlinks
+ln -sf "$E/emd_${emd}_half_map_1.map" half1.mrc; ln -sf "$E/emd_${emd}_half_map_2.map" half2.mrc; ln -sf "$E/emd_${emd}.map" sharp.mrc
+H1=half1.mrc; H2=half2.mrc
 relion_postprocess --version 2>&1 | head -1 || true
 
 # 1. raw map = average of the half maps
@@ -27,7 +29,7 @@ relion_postprocess --version 2>&1 | head -1 || true
 # 2. mask.  The deposited contour belongs to the sharpened map; for the unsharpened average
 #    use a threshold at the same enclosed volume, found by matching the voxel count.
 if [ ! -f mask.mrc ]; then
-  thr=$("$DNASPRING_PY" - "$E/emd_${emd}.map" raw.mrc $contour <<'EOF'
+  thr=$("$DNASPRING_PY" - sharp.mrc raw.mrc $contour <<'EOF'
 import sys, numpy as np, mrcfile
 sharp = mrcfile.open(sys.argv[1]).data; raw = mrcfile.open(sys.argv[2]).data; c = float(sys.argv[3])
 n = int((sharp > c).sum())
@@ -46,5 +48,5 @@ ls -la relion_locres.mrc locres_filtered.mrc 2>/dev/null || ls
 # 5. Fig 2B input
 [ -f raw_lp6.mrc ] || relion_image_handler --i raw.mrc --lowpass 6 --angpix $apix --o raw_lp6.mrc
 # also 6 A lowpass of the deposited sharpened map for comparison
-[ -f sharp_lp6.mrc ] || relion_image_handler --i "$E/emd_${emd}.map" --lowpass 6 --angpix $apix --o sharp_lp6.mrc
+[ -f sharp_lp6.mrc ] || relion_image_handler --i sharp.mrc --lowpass 6 --angpix $apix --o sharp_lp6.mrc
 echo "done: $OUT"
