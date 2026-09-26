@@ -1,5 +1,6 @@
 track,system,quantity,selection_or_method,value,unit,paper_value,notes
 em,Aa,HEAT1-HEAT15 CoM distance,"Calpha CoM, nominal HEAT bounds",63.269,A,62.7,Fig 3A
+em,Aa,HEAT1-HEAT15 CoM distance,"Calpha CoM, dssp HEAT bounds",68.883,A,62.7,Fig 3A
 em,Ab,HEAT1-HEAT15 CoM distance,"Calpha CoM, nominal HEAT bounds",60.436,A,59.6,Fig 3A
 em,Ab-vs-Aa,HEAT1 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",3.162,A,,Fig 3B
 em,Ab-vs-Aa,HEAT2 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.305,A,,Fig 3B

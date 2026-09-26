@@ -80,7 +80,7 @@ def ca_xyz(traj, chain, resseqs):
 def dssp_helices(traj, chain, min_len=7):
     sel = traj.topology.select(f"chainid {chain.index}")
     sub = traj.atom_slice(sel)
-    ss = md.compute_dssp(sub, simplified=True)[0]
+    ss = list(md.compute_dssp(sub, simplified=True)[0])   # list, not ndarray: ndarray + ["X"] would concatenate strings
     resseq = [r.resSeq for r in sub.topology.residues]
     segs, start = [], None
     for i, s in enumerate(ss + ["X"]):

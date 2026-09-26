@@ -25,7 +25,11 @@ PHENIX_ENV=/n/lab_storage/hekstra_lab/people/aldama/software/phenix2/phenix_env.
 # Tools built by slurm/pp2a_build_software.sbatch (each block is a no-op until installed).
 [ -d $PP2A_SW/relion-3.1/bin ]      && export PATH=$PP2A_SW/relion-3.1/bin:$PATH
 [ -d $PP2A_SW/relion-4.0/bin ]      && export PATH=$PP2A_SW/relion-4.0/bin:$PATH
-[ -r $PP2A_SW/gromacs-2023.3/bin/GMXRC ] && source $PP2A_SW/gromacs-2023.3/bin/GMXRC
+if [ -r $PP2A_SW/gromacs-2023.3/bin/GMXRC ]; then   # GMXRC is not nounset-clean; guard it
+  _nounset=$(set -o | awk '$1=="nounset"{print $2}'); set +u
+  source $PP2A_SW/gromacs-2023.3/bin/GMXRC
+  [ "$_nounset" = on ] && set -u; unset _nounset
+fi
 [ -d $PP2A_SW/chimerax/bin ]        && export PATH=$PP2A_SW/chimerax/bin:$PATH
 [ -d $PP2A_SW/emready ]             && export EMREADY_HOME=$PP2A_SW/emready
 [ -d $PP2A_SW/namd-3.0.1 ]          && export PATH=$PP2A_SW/namd-3.0.1:$PATH

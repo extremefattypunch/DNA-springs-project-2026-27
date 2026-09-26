@@ -18,7 +18,7 @@
 #SBATCH -e /n/netscratch/hekstra_lab/Lab/ian_poon/logs/%x-%j.err
 set -euo pipefail
 source /etc/profile.d/lmod.sh
-module load gcc/12.2.0-fasrc01 cmake/3.28.3-fasrc01
+module load gcc/12.2.0-fasrc01 openmpi/4.1.5-fasrc03 cmake/3.28.3-fasrc01   # RELION needs MPI (hierarchical module: appears after gcc)
 
 SW=/n/holylabs/hekstra_lab/Everyone/ianpoon/software
 TMP=/scratch/${USER}_${SLURM_JOB_ID}
@@ -35,11 +35,11 @@ if [ ! -x "$SW/relion-3.1/bin/relion_postprocess" ]; then
   rc=$?; set -e
   if [ $rc -ne 0 ]; then
     echo "RELION 3.1 failed with gcc 12 - retrying with gcc 10.2"
-    module swap gcc/12.2.0-fasrc01 gcc/10.2.0-fasrc01
+    module purge; module load gcc/10.2.0-fasrc01 openmpi/4.1.3-fasrc01 cmake/3.28.3-fasrc01
     rm -rf "$TMP/relion31/build"/*; cd "$TMP/relion31/build"
     cmake -DCMAKE_INSTALL_PREFIX="$SW/relion-3.1" -DGUI=OFF -DCUDA=OFF -DALTCPU=OFF \
           -DFORCE_OWN_FFTW=ON -DCMAKE_BUILD_TYPE=Release .. && make -j8 install
-    module swap gcc/10.2.0-fasrc01 gcc/12.2.0-fasrc01
+    module purge; module load gcc/12.2.0-fasrc01 openmpi/4.1.5-fasrc03 cmake/3.28.3-fasrc01
   fi
   rm -rf "$TMP/relion31"
 fi
@@ -57,7 +57,7 @@ if [ ! -x "$SW/gromacs-2023.3/bin/gmx" ]; then
   make -j8 install
   rm -rf "$TMP/gromacs-2023.3"
 fi
-source "$SW/gromacs-2023.3/bin/GMXRC"; gmx --version 2>&1 | grep -E "GROMACS version|SIMD" || true
+set +u; source "$SW/gromacs-2023.3/bin/GMXRC"; set -u; gmx --version 2>&1 | grep -E "GROMACS version|SIMD" || true
 
 # Hygiene: no tarballs anywhere under software/
 find "$SW/relion-3.1" "$SW/gromacs-2023.3" \( -name "*.tar.gz" -o -name "*.tgz" -o -name "*.zip" \) -delete 2>/dev/null || true
