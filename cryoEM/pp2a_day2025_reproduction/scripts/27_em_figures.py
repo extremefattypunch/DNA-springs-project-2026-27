@@ -171,13 +171,11 @@ def main():
             curves.append(("Phenix mtriage map vs model (masked)", x, y, "#ff7f0e", "-"))
         for cs_txt in sorted(glob.glob(os.path.join(DATA, "em", "cryosparc", f"{iso}_fsc_*fsc*.txt"))):
             try:
-                arr = np.loadtxt(cs_txt, skiprows=1)
-                # CryoSPARC fsc txt: wave_number, fsc_nomask, fsc_sphericalmask, fsc_loosemask, fsc_tightmask, fsc_noisesub_...
-                n_box = 256
-                psize = 1.056 if iso == "Aa" else 1.058
-                x = arr[:, 0] / (n_box * psize)
+                arr = np.loadtxt(cs_txt, skiprows=2)
+                # CryoSPARC v5 Validation (FSC) txt: wave_number, frequency (1/A), fsc_nomask, fsc_sphericalmask, fsc_resmask
+                x = arr[:, 1]
                 y = arr[:, -1]
-                curves.append(("CryoSPARC v5 Validation (FSC), corrected", x, y, "#9467bd", ":"))
+                curves.append(("CryoSPARC v5 Validation (FSC), auto res-mask", x, y, "#9467bd", ":"))
                 r = res_at(x, y, 0.143)
                 row(iso, "half-map resolution FSC 0.143", "CryoSPARC v5 Validation (FSC)", r, "A", PAPER_S1["Map resolution (FSC 0.143) [A]"][iso], "Table S1")
                 table["Map resolution (FSC 0.143) [A]"][iso] += f"; {r:.2f} (CryoSPARC v5)"
