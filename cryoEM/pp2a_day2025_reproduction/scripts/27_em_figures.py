@@ -173,13 +173,18 @@ def main():
             r = res_at(x, y, 0.143)
             row(iso, "half-map resolution FSC 0.143", "deposited FSC XML", r, "A", PAPER_S1["Map resolution (FSC 0.143) [A]"][iso], "Table S1")
             table["Map resolution (FSC 0.143) [A]"][iso] = f"{r:.2f} (deposited curve)"
-        pp = os.path.join(DATA, "em", "relion", iso, "postprocess.star")
-        if os.path.exists(pp):
-            x, y = read_relion_postprocess(pp)
-            curves.append(("RELION 3.1 postprocess (masked, phase-randomisation corrected)", x, y, "#1f77b4", "-"))
-            r = res_at(x, y, 0.143)
-            row(iso, "half-map resolution FSC 0.143", "RELION 3.1 relion_postprocess", r, "A", PAPER_S1["Map resolution (FSC 0.143) [A]"][iso], "Table S1")
-            table["Map resolution (FSC 0.143) [A]"][iso] += f"; {r:.2f} (RELION)"
+        # RELION: the contour-matched (tight) mask from 22_relion_postprocess.sh, and the loose 15 A-lowpass mask
+        # from the sweep (22b) where the resolution has plateaued - the mask dependence is itself a finding
+        for pp, label, col, tag in ((os.path.join(DATA, "em", "relion", iso, "mask_sweep", "pp_m5_f0.2_s6.star"),
+                                     "RELION 3.1 postprocess, loose mask (15 Å-lowpass, 0.2× thr, corrected)", "#1f77b4", "RELION loose mask"),
+                                    (os.path.join(DATA, "em", "relion", iso, "postprocess.star"),
+                                     "RELION 3.1 postprocess, tight contour-matched mask (corrected)", "#17becf", "RELION tight mask")):
+            if os.path.exists(pp):
+                x, y = read_relion_postprocess(pp)
+                curves.append((label, x, y, col, "-"))
+                r = res_at(x, y, 0.143)
+                row(iso, "half-map resolution FSC 0.143", f"RELION 3.1 relion_postprocess ({tag})", r, "A", PAPER_S1["Map resolution (FSC 0.143) [A]"][iso], "Table S1")
+                table["Map resolution (FSC 0.143) [A]"][iso] += f"; {r:.2f} ({tag})"
         mt = os.path.join(DATA, "em", "phenix", iso, "fsc_half_maps.masked.mtriage.xml")
         if os.path.exists(mt):
             x, y = read_xml_fsc(mt)
@@ -286,6 +291,15 @@ def main():
         fig.tight_layout()
         fig.savefig(os.path.join(FIG, "fig3b_com_shift.png"), dpi=200)
         plt.close(fig)
+
+    # ---------------- EMReady re-sharpening vs deposited map (report question G)
+    for iso in ISO:
+        cj = os.path.join(DATA, "em", "emready", iso, "compare.json")
+        if os.path.exists(cj):
+            c = json.load(open(cj))
+            row(iso, "EMReady(raw) vs deposited map real-space CC (all voxels)", "EMReady v1.1 on half-map average", c["cc_all"], "", "", "pre-registered > 0.95")
+            row(iso, "EMReady(raw) vs deposited map real-space CC (top 1% of deposited density)", "EMReady v1.1 on half-map average", c["cc_top1pct"], "", "", "question G")
+            row(iso, "FSC 0.5 between EMReady(raw) and deposited map", "numpy shells, unmasked", c["fsc05_between_maps_A"], "A", "", "question G")
 
     # ---------------- write tables
     with open(os.path.join(RES, "tableS1_comparison.csv"), "w", newline="") as f:

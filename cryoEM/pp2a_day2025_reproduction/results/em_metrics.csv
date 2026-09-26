@@ -1,9 +1,11 @@
 track,system,quantity,selection_or_method,value,unit,paper_value,notes
 em,Aa,half-map resolution FSC 0.143,deposited FSC XML,3.418,A,3.4,Table S1
-em,Aa,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess,3.932,A,3.4,Table S1
+em,Aa,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess (RELION loose mask),3.535,A,3.4,Table S1
+em,Aa,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess (RELION tight mask),3.932,A,3.4,Table S1
 em,Aa,half-map resolution FSC 0.143,CryoSPARC v5 Validation (FSC),3.500,A,3.4,Table S1
 em,Ab,half-map resolution FSC 0.143,deposited FSC XML,3.222,A,3.2,Table S1
-em,Ab,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess,3.553,A,3.2,Table S1
+em,Ab,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess (RELION loose mask),3.327,A,3.2,Table S1
+em,Ab,half-map resolution FSC 0.143,RELION 3.1 relion_postprocess (RELION tight mask),3.553,A,3.2,Table S1
 em,Ab,half-map resolution FSC 0.143,CryoSPARC v5 Validation (FSC),3.328,A,3.2,Table S1
 em,Aa,model resolution FSC 0.5,phenix.mtriage masked,3.800,A,3.8,Table S1
 em,Aa,half-map resolution FSC 0.143,phenix.mtriage masked,3.500,A,3.4,Table S1
@@ -27,3 +29,6 @@ em,Aa,local resolution range (1-99 pct within 3 A of model),RELION 3.1 --locres,
 em,Aa,local resolution range (1-99 pct within 3 A of model),CryoSPARC v5 Local Resolution,3.21-6.67,A,5.87-3.04,"Fig S5A,E"
 em,Ab,local resolution range (1-99 pct within 3 A of model),RELION 3.1 --locres,3.30-3.91,A,5.22-2.82,"Table S1 / Fig S5A,E"
 em,Ab,local resolution range (1-99 pct within 3 A of model),CryoSPARC v5 Local Resolution,3.00-4.99,A,5.22-2.82,"Fig S5A,E"
+em,Aa,EMReady(raw) vs deposited map real-space CC (all voxels),EMReady v1.1 on half-map average,0.890,,,pre-registered > 0.95
+em,Aa,EMReady(raw) vs deposited map real-space CC (top 1% of deposited density),EMReady v1.1 on half-map average,0.856,,,question G
+em,Aa,FSC 0.5 between EMReady(raw) and deposited map,"numpy shells, unmasked",3.976,A,,question G
