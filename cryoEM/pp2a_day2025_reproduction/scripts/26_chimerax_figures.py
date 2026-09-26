@@ -59,21 +59,16 @@ def run(name, cxc):
 
 
 def fig2a():
-    cx = ""
-    for i, (iso, m) in enumerate(ISO.items()):
-        mdl, vol = f"#{2*i+1}", f"#{2*i+2}"
-        cx += f"open {M}/{m['pdb']}.cif id {2*i+1}\nopen {E}/{iso}/emd_{m['emd']}.map id {2*i+2}\n"
-        cx += chain_colors(mdl, m["acolor"])
-        cx += f"volume {vol} level {m['contour']} style surface step 1\ncolor zone {vol} near {mdl} distance 4\nhide {mdl} models\n"
-    # same orientation for both isoforms: superpose Abeta model on Aalpha, carry its map along
-    cx += "matchmaker #3/A to #1/A\nview position #4 sameAsModels #3\n"
-    cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\n"
-    cx += "view orient\n"          # principal axes of the (superposed) complexes onto the screen axes: same view for both
-    for iso, vol, other in (("Aa", "#2", "#4"), ("Ab", "#4", "#2")):
-        cx += f"hide {other} models\nshow {vol} models\nview #2 pad 0.05\n"
-        cx += f"save {FIG}/fig2a_maps_{iso}.png width {W} height {H} supersample 3\n"
-        cx += f"turn y 90\nsave {FIG}/fig2a_maps_{iso}_view2.png width {W} height {H} supersample 3\nturn y -90\n"
-    run("fig2a", cx)
+    """One ChimeraX run per isoform (two concurrent runs sharing state hung under OSMesa); the same
+    'view orient' rule gives both complexes the same principal-axis orientation."""
+    for iso, m in ISO.items():
+        cx = f"open {M}/{m['pdb']}.cif id 1\nopen {E}/{iso}/emd_{m['emd']}.map id 2\n"
+        cx += chain_colors("#1", m["acolor"])
+        cx += f"volume #2 level {m['contour']} style surface step 1\ncolor zone #2 near #1 distance 4\nhide #1 models\n"
+        cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\nview orient\nview #2 pad 0.05\n"
+        cx += f"save {FIG}/fig2a_maps_{iso}.png width {W} height {H} supersample 2\n"
+        cx += f"turn y 90\nview #2 pad 0.05\nsave {FIG}/fig2a_maps_{iso}_view2.png width {W} height {H} supersample 2\n"
+        run(f"fig2a_{iso}", cx)
 
 
 def fig2b():
@@ -91,8 +86,8 @@ def fig2b():
     cx += chain_colors("#1", ISO["Aa"]["acolor"]) + chain_colors("#3", ISO["Ab"]["acolor"])
     cx += "color zone #2 near #1 distance 5\ncolor zone #4 near #3 distance 5\n"
     cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\n"
-    cx += f"view #1,2\nsave {FIG}/fig2b_lowpass6_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3,4,5\nsave {FIG}/fig2b_lowpass6_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1,2\nsave {FIG}/fig2b_lowpass6_Aa.png width {W} height {H} supersample 2\n"
+    cx += f"view #3,4,5\nsave {FIG}/fig2b_lowpass6_Ab.png width {W} height {H} supersample 2\n"
     run("fig2b", cx)
 
 
@@ -108,7 +103,7 @@ def fig3a():
         cx += f"2dlabels text 'HEAT {k}' size 14\n" if False else ""
     cx += "distance sel:h1a sel:h15a\n" if False else ""
     cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\nview\n"
-    cx += f"save {FIG}/fig3a_heat_com.png width {W} height {H} supersample 3\n"
+    cx += f"save {FIG}/fig3a_heat_com.png width {W} height {H} supersample 2\n"
     run("fig3a", cx)
 
 
@@ -124,8 +119,8 @@ def fig3c():
         cx += f"volume {vol} style mesh level {m['contour']} step 1\nvolume zone {vol} nearAtoms {mdl}/A:{r1},{e1} range 3\n"
         cx += f"transparency {vol} 40\n"
     cx += "set bgColor white\nlighting soft\n"
-    cx += f"view #1/A:113,191 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:125,203 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1/A:113,191 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Aa.png width {W} height {H} supersample 2\n"
+    cx += f"view #3/A:125,203 pad 0.6\nsave {FIG}/fig3c_salt_bridge_Ab.png width {W} height {H} supersample 2\n"
     run("fig3c", cx)
 
 
@@ -144,10 +139,10 @@ def fig3de():
         cx += f"label {mdl}/A:{rb},{rc} residues text '{{0.name}}{{0.number}}' height 1.2\n"
         cx += f"volume {vol} style mesh level {m['contour']} step 1\nvolume zone {vol} nearAtoms {mdl}/A:{rb},{rc} range 2.5\n"
     cx += "set bgColor white\nlighting soft\n"
-    cx += f"view #1/A:{','.join(map(str, iface_b))} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:{','.join(str(r+12) for r in iface_b)} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Ab.png width {W} height {H} supersample 3\n"
-    cx += f"view #1/A:{','.join(map(str, iface_c))} pad 0.4\nsave {FIG}/fig3e_ifaceC_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"view #3/A:{','.join(str(r+12) for r in iface_c)} pad 0.4\nsave {FIG}/fig3e_ifaceC_Ab.png width {W} height {H} supersample 3\n"
+    cx += f"view #1/A:{','.join(map(str, iface_b))} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Aa.png width {W} height {H} supersample 2\n"
+    cx += f"view #3/A:{','.join(str(r+12) for r in iface_b)} pad 0.4\nsave {FIG}/fig3d_ifaceB56_Ab.png width {W} height {H} supersample 2\n"
+    cx += f"view #1/A:{','.join(map(str, iface_c))} pad 0.4\nsave {FIG}/fig3e_ifaceC_Aa.png width {W} height {H} supersample 2\n"
+    cx += f"view #3/A:{','.join(str(r+12) for r in iface_c)} pad 0.4\nsave {FIG}/fig3e_ifaceC_Ab.png width {W} height {H} supersample 2\n"
     run("fig3de", cx)
 
 
@@ -159,10 +154,10 @@ def figS5():
         cx += f"volume {filt} sdLevel 4 style surface step 1\nhide {loc} models\n"
         cx += f"color sample {filt} map {loc} palette 3.0,red:3.5,orange:4.0,yellow:4.5,green:5.0,blue\n"
     cx += "set bgColor white\nlighting soft\nview\n"
-    cx += f"view #1\nsave {FIG}/figS5_localres_Aa.png width {W} height {H} supersample 3\n"
-    cx += f"turn y 90\nsave {FIG}/figS5_localres_Aa_view2.png width {W} height {H} supersample 3\n"
-    cx += f"view #3\nsave {FIG}/figS5_localres_Ab.png width {W} height {H} supersample 3\n"
-    cx += f"turn y 90\nsave {FIG}/figS5_localres_Ab_view2.png width {W} height {H} supersample 3\n"
+    cx += f"view #1\nsave {FIG}/figS5_localres_Aa.png width {W} height {H} supersample 2\n"
+    cx += f"turn y 90\nsave {FIG}/figS5_localres_Aa_view2.png width {W} height {H} supersample 2\n"
+    cx += f"view #3\nsave {FIG}/figS5_localres_Ab.png width {W} height {H} supersample 2\n"
+    cx += f"turn y 90\nsave {FIG}/figS5_localres_Ab_view2.png width {W} height {H} supersample 2\n"
     run("figS5", cx)
 
 
