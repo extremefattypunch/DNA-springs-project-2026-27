@@ -114,7 +114,7 @@ def main():
                         "n_particles_total": int(n_atoms), "protein_charge_before_ions": float(charge[0]) if charge else None}
         print(f"{name}: extent {ext.round(1)} A, box {box.round(1)} A, waters {n_wat}, Na+ {n_na} (neutralising {n_na_neut}), "
               f"Cl- {n_cl}, particles {n_atoms}, padding lo {pad_lo.round(1)} hi {pad_hi.round(1)}")
-        assert n_atoms < 200_000, "system larger than planned - check orientation"
+        assert n_atoms < 260_000, "system larger than planned - check orientation"   # Abeta: the 25-residue AF tail sticks out; 226k particles with paper-faithful 16 A padding
         assert (pad_lo > 14).all() and (pad_hi > 14).all(), "padding below 16 A somewhere"
     json.dump(report, open(os.path.join(SYS, "build.json"), "w"), indent=2)
 
