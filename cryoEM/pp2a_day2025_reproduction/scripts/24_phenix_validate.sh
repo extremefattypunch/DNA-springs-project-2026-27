@@ -21,10 +21,10 @@ phenix.version | head -3
 
 echo "== mtriage ($iso, $pdb vs EMD-$emd) =="
 phenix.mtriage "$E/emd_${emd}.map" "$E/emd_${emd}_half_map_1.map" "$E/emd_${emd}_half_map_2.map" \
-  "$M/$pdb.cif" resolution=$res output.file_name_prefix=mtriage_$iso > mtriage_$iso.log 2>&1 || { tail -30 mtriage_$iso.log; exit 1; }
+  "$M/$pdb.cif" resolution=$res output.prefix=mtriage_$iso > mtriage_$iso.log 2>&1 || { tail -30 mtriage_$iso.log; exit 1; }
 grep -E "Resolution|d99|d_model|d_fsc|FSC|Map-model|half" mtriage_$iso.log | head -40
 
 echo "== molprobity ($pdb) =="
-phenix.molprobity "$M/$pdb.cif" output.prefix=molprobity_$iso > molprobity_$iso.log 2>&1 || { tail -30 molprobity_$iso.log; exit 1; }
-grep -E -A14 "Summary" molprobity_$iso.out | head -30 || grep -E "Ramachandran|Rotamer|Clashscore|MolProbity|RMS\(bonds\)|RMS\(angles\)" molprobity_$iso.log
+phenix.molprobity "$M/$pdb.cif" > molprobity_$iso.log 2>&1 || { tail -30 molprobity_$iso.log; exit 1; }
+grep -E -A14 "Summary" molprobity.out | head -30 || grep -E "Ramachandran|Rotamer|Clashscore|MolProbity|RMS\(bonds\)|RMS\(angles\)" molprobity_$iso.log
 echo "outputs in $OUT"

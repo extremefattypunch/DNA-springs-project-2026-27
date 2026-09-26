@@ -83,9 +83,10 @@ def main():
     # project / workspace
     if "project" not in state:
         os.makedirs(PROJECT_PARENT, exist_ok=True)
-        proj = cs.create_project(PROJECT_TITLE, PROJECT_PARENT,
-                                 desc="Day et al. 2025 PP2A Aa/Ab-B56g-Ca: analysis of deposited EMDB maps (no particles).")
-        state["project"] = proj.uid
+        # cryosparc-tools 5.x: projects are created through the typed API namespace
+        pmodel = cs.api.projects.create(title=PROJECT_TITLE, parent_dir=PROJECT_PARENT,
+                                        description="Day et al. 2025 PP2A Aa/Ab-B56g-Ca: analysis of deposited EMDB maps (no particles).")
+        state["project"] = pmodel.uid
         save_state(state)
     puid = state["project"]
     proj = cs.find_project(puid)
