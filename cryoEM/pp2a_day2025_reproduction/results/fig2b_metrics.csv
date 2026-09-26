@@ -1,0 +1,7 @@
+track,system,quantity,selection_or_method,value,unit,paper_value,notes
+em,Aa,Fig2B helix/B56-core density ratio,"raw_lp6 map, 9MIP B402-436 mask 3 A",0.595,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 1.07, C-core control 1.06"
+em,Aa,Fig2B helix/B56-core density ratio,"sharp_lp6 map, 9MIP B402-436 mask 3 A",0.599,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 1.07, C-core control 1.06"
+em,Aa,Fig2B helix/B56-core density ratio,"raw map, 9MIP B402-436 mask 3 A",0.589,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 1.05, C-core control 1.05"
+em,Ab,Fig2B helix/B56-core density ratio,"raw_lp6 map, 9MIP B402-436 mask 3 A",0.298,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 1.00, C-core control 1.06"
+em,Ab,Fig2B helix/B56-core density ratio,"sharp_lp6 map, 9MIP B402-436 mask 3 A",0.308,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 0.99, C-core control 1.05"
+em,Ab,Fig2B helix/B56-core density ratio,"raw map, 9MIP B402-436 mask 3 A",0.301,,>=0.6 (Aa) / <=0.25 (Ab) pre-registered,"HEAT7 control 0.99, C-core control 1.06"

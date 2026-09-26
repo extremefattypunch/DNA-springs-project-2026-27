@@ -44,7 +44,8 @@ relion_postprocess --i "$H1" --i2 "$H2" --mask mask.mrc --angpix $apix --auto_bf
 grep -E "FINAL RESOLUTION|B-factor|FINAL_RESOLUTION|bfactor" postprocess.log | head -5
 # 4. local resolution (paper: RELION 3.1)
 relion_postprocess --i "$H1" --i2 "$H2" --mask mask.mrc --angpix $apix --locres --locres_sampling 15 --locres_maskrad 25 --o ./locres > locres.log 2>&1 || ls relion_locres.mrc
-ls -la relion_locres.mrc locres_filtered.mrc 2>/dev/null || ls
+ln -sf locres_locres.mrc relion_locres.mrc; ln -sf locres_locres_filtered.mrc locres_filtered.mrc   # RELION prefixes outputs with the rootname
+ls -la relion_locres.mrc locres_filtered.mrc
 # 5. Fig 2B input
 [ -f raw_lp6.mrc ] || relion_image_handler --i raw.mrc --lowpass 6 --angpix $apix --o raw_lp6.mrc
 # also 6 A lowpass of the deposited sharpened map for comparison

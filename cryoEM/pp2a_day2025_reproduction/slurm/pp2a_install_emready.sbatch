@@ -39,10 +39,13 @@ cd "$DEST"
 if ! ls interp3d*.so >/dev/null 2>&1; then
   "$DEST/venv/bin/python" -m numpy.f2py -c ./interp3d.f90 -m interp3d
 fi
+# NumPy 2 removed np.asfarray, which EMReady's 2022 utils.py uses
+sed -i 's/np\.asfarray(\(.*\), dtype=np\.float32)/np.asarray(\1, dtype=np.float32)/' utils.py
+grep -c "asfarray" utils.py || true
 # Point EMReady.sh at this install (it expects a conda activator; we substitute the venv).
-sed -i "s|^EMReady_home=.*|EMReady_home=\"$DEST\"|" EMReady.sh
-sed -i "s|^activate=.*|activate=\"$DEST/venv/bin/activate\"|" EMReady.sh
-sed -i "s|^EMReady_env=.*|EMReady_env=\"\"|" EMReady.sh
+sed -i "s|^\s*EMReady_home=.*|EMReady_home=\"$DEST\"|" EMReady.sh
+sed -i "s|^\s*activate=.*|activate=\"$DEST/venv/bin/activate\"|" EMReady.sh
+sed -i "s|^\s*EMReady_env=.*|EMReady_env=\"\"|" EMReady.sh
 grep -nE "^(EMReady_home|activate|EMReady_env|source)" EMReady.sh | head
 # smoke test: imports + model load on CPU
 "$DEST/venv/bin/python" - <<'EOF'

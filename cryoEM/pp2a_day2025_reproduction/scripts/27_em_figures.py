@@ -122,16 +122,35 @@ def parse_molprobity(out_file):
             "molprobity": g(r"MolProbity score\s*=\s*([\d.]+)")}
 
 
-def locres_stats(mrc_path, mask_path=None):
+def model_mask(mrc_path, iso, dilate_A=3.0):
+    """Voxels within dilate_A of the deposited model's heavy atoms (the paper's range is quoted for the
+    molecule, not for the solvent-inclusive RELION mask)."""
+    import mdtraj as md
     import mrcfile
-    m = mrcfile.open(mrc_path).data.astype(np.float32)
-    vals = m[np.isfinite(m) & (m > 0)]
-    if mask_path and os.path.exists(mask_path):
-        mk = mrcfile.open(mask_path).data > 0.5
-        vals = m[mk & np.isfinite(m) & (m > 0)]
+    from scipy.ndimage import binary_dilation, generate_binary_structure
+    m = mrcfile.open(mrc_path, permissive=True)
+    vs = float(m.voxel_size.x)
+    origin = np.array([float(m.header.origin.x), float(m.header.origin.y), float(m.header.origin.z)])
+    pdb = {"Aa": "9MIP", "Ab": "9MF5"}[iso]
+    t = md.load(os.path.join(DATA, "em", "models", pdb + ".pdb"))
+    xyz = t.xyz[0, t.topology.select("not element H")] * 10.0
+    ijk = np.round((xyz - origin) / vs).astype(int)
+    shape = m.data.shape
+    ok = np.all((ijk >= 0) & (ijk < np.array(shape)[::-1]), axis=1)
+    ijk = ijk[ok]
+    mask = np.zeros(shape, dtype=bool)
+    mask[ijk[:, 2], ijk[:, 1], ijk[:, 0]] = True
+    return binary_dilation(mask, structure=generate_binary_structure(3, 1), iterations=int(round(dilate_A / vs)))
+
+
+def locres_stats(mrc_path, iso):
+    import mrcfile
+    m = mrcfile.open(mrc_path, permissive=True).data.astype(np.float32)
+    mk = model_mask(mrc_path, iso)
+    vals = m[mk & np.isfinite(m) & (m > 0)]
     if len(vals) == 0:
         return None
-    return {"min": float(np.percentile(vals, 0.5)), "max": float(np.percentile(vals, 99.5)), "median": float(np.median(vals)), "values": vals}
+    return {"min": float(np.percentile(vals, 1)), "max": float(np.percentile(vals, 99)), "median": float(np.median(vals)), "values": vals}
 
 
 def main():
@@ -227,19 +246,19 @@ def main():
         mask = os.path.join(DATA, "em", "relion", iso, "mask.mrc")
         parts = []
         if os.path.exists(rel):
-            st = locres_stats(rel, mask)
+            st = locres_stats(rel, iso)
             if st:
                 any_lr = True
                 ax.hist(st["values"], bins=60, range=(2, 8), color=meta["color"], alpha=0.7, label=f"RELION 3.1 locres ({st['min']:.2f}–{st['max']:.2f} Å)")
                 parts.append(f"{st['min']:.2f}-{st['max']:.2f} (RELION)")
-                row(iso, "local resolution range (0.5-99.5 pct in mask)", "RELION 3.1 --locres", f"{st['min']:.2f}-{st['max']:.2f}", "A", PAPER_S1["Map resolution range [A]"][iso], "Table S1 / Fig S5A,E")
+                row(iso, "local resolution range (1-99 pct within 3 A of model)", "RELION 3.1 --locres", f"{st['min']:.2f}-{st['max']:.2f}", "A", PAPER_S1["Map resolution range [A]"][iso], "Table S1 / Fig S5A,E")
         for cs_lr in sorted(glob.glob(os.path.join(DATA, "em", "cryosparc", f"{iso}_locres_*map_locres*.mrc"))):
-            st = locres_stats(cs_lr, mask if os.path.exists(mask) else None)
+            st = locres_stats(cs_lr, iso)
             if st:
                 any_lr = True
                 ax.hist(st["values"], bins=60, range=(2, 8), histtype="step", color="#9467bd", lw=1.5, label=f"CryoSPARC v5 ({st['min']:.2f}–{st['max']:.2f} Å)")
                 parts.append(f"{st['min']:.2f}-{st['max']:.2f} (CryoSPARC)")
-                row(iso, "local resolution range (0.5-99.5 pct in mask)", "CryoSPARC v5 Local Resolution", f"{st['min']:.2f}-{st['max']:.2f}", "A", PAPER_S1["Map resolution range [A]"][iso], "Fig S5A,E")
+                row(iso, "local resolution range (1-99 pct within 3 A of model)", "CryoSPARC v5 Local Resolution", f"{st['min']:.2f}-{st['max']:.2f}", "A", PAPER_S1["Map resolution range [A]"][iso], "Fig S5A,E")
                 break
         table["Map resolution range [A]"][iso] = "; ".join(parts)
         ax.set_title(meta["label"], fontsize=10)

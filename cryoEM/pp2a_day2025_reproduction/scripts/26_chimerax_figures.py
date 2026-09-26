@@ -72,23 +72,20 @@ def fig2a():
 
 
 def fig2b():
-    # raw_lp6.mrc from RELION (22_relion_postprocess.sh); helix 402-436 of 9MIP chain B as reference in both frames
-    cx = f"open {M}/9MIP.cif id 1\nopen {R}/Aa/raw_lp6.mrc id 2\nopen {M}/9MF5.cif id 3\nopen {R}/Ab/raw_lp6.mrc id 4\nopen {M}/9MIP.cif id 5\n"
-    cx += "matchmaker #5/B:38-403 to #3/B:38-403\n"          # second copy of 9MIP carried into the Abeta frame
-    cx += "matchmaker #3/A to #1/A\n"                        # then Abeta (with its map? no - maps stay; keep frames separate)
-    cx += "hide #1,3,5 models\nhide #1,3,5 atoms\ncartoon hide\n"
-    cx += "show #1/B:402-436 cartoon\nshow #5/B:402-436 cartoon\ncolor #1/B:402-436 blue\ncolor #5/B:402-436 blue\n"
-    cx += "show #1,5 models\n"
-    for vol, mdl, m in (("#2", "#1", ISO["Aa"]), ("#4", "#3", ISO["Ab"])):
-        cx += f"volume {vol} style surface step 1 transparency 0.25\n"
-    cx += "volume #2 sdLevel 3.0\nvolume #4 sdLevel 3.0\n"   # matched sigma level for both raw low-pass maps
-    cx += "color zone #2 near #1 distance 5\ncolor zone #4 near #3 distance 5\n"
-    cx += chain_colors("#1", ISO["Aa"]["acolor"]) + chain_colors("#3", ISO["Ab"]["acolor"])
-    cx += "color zone #2 near #1 distance 5\ncolor zone #4 near #3 distance 5\n"
-    cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\n"
-    cx += f"view #1,2\nsave {FIG}/fig2b_lowpass6_Aa.png width {W} height {H} supersample 2\n"
-    cx += f"view #3,4,5\nsave {FIG}/fig2b_lowpass6_Ab.png width {W} height {H} supersample 2\n"
-    run("fig2b", cx)
+    """6 A low-pass raw maps (RELION relion_image_handler) with the 9MIP B56g C-terminal helix (B402-436) as
+    a blue ribbon; for Abeta a second copy of 9MIP is superposed on the 9MF5 B56g core (38-403) to place the
+    helix in the Abeta frame.  Each isoform is rendered in its own frame (no model is moved relative to its map)."""
+    for iso, m in ISO.items():
+        cx = f"open {M}/{m['pdb']}.cif id 1\nopen {R}/{iso}/raw_lp6.mrc id 2\nopen {M}/9MIP.cif id 3\n"
+        if iso == "Ab":
+            cx += "matchmaker #3/B:38-403 to #1/B:38-403\n"
+        cx += "hide #1,3 atoms\ncartoon hide #1,3\ncartoon #3/B:402-436\ncolor #3/B:402-436 blue\n"
+        cx += chain_colors("#1", m["acolor"])
+        cx += "volume #2 sdLevel 3.0 style surface step 1 transparency 0.35\ncolor zone #2 near #1 distance 5\n"
+        cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\nview orient\nview #2 pad 0.05\n"
+        cx += f"save {FIG}/fig2b_lowpass6_{iso}.png width {W} height {H} supersample 2\n"
+        cx += f"view #3/B:402-436 pad 1.5\nsave {FIG}/fig2b_lowpass6_{iso}_zoom.png width {W} height {H} supersample 2\n"
+        run(f"fig2b_{iso}", cx)
 
 
 def fig3a():

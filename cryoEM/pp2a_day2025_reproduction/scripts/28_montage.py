@@ -26,7 +26,8 @@ LAYOUTS = {
                        [["Aα-B56γ-Cα (EMD-48300)", "rotated 90°"], ["Aβ-B56γ-Cα (EMD-48224)", "rotated 90°"]]),
     "fig2b_lowpass6.png": ("Fig 2B analogue: half-map averages low-passed to 6 Å at matched σ; blue ribbon = B56γ C-terminal "
                            "helix (9MIP B402–436), carried into the Aβ frame by superposing the B56γ cores",
-                           [["fig2b_lowpass6_Aa.png", "fig2b_lowpass6_Ab.png"]], [["Aα", "Aβ"]]),
+                           [["fig2b_lowpass6_Aa.png", "fig2b_lowpass6_Ab.png"], ["fig2b_lowpass6_Aa_zoom.png", "fig2b_lowpass6_Ab_zoom.png"]],
+                           [["Aα", "Aβ"], ["Aα, helix region", "Aβ, helix region"]]),
     "fig3c_salt_bridge.png": ("Fig 3C analogue: HEAT3–HEAT5 salt bridge with deposited map mesh; Cα–Cα distance labelled",
                               [["fig3c_salt_bridge_Aa.png", "fig3c_salt_bridge_Ab.png"]], [["Aα R113–E191", "Aβ R125–E203"]]),
     "fig3de_interfaces.png": ("Fig 3D/E analogue: A-subunit residues at the B56γ (top) and Cα (bottom) interfaces",
