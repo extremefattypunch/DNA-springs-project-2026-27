@@ -104,7 +104,7 @@ def main():
         state["workspace"] = ws.uid
         save_state(state)
     wuid = state["workspace"]
-    print(f"project {puid} ({proj.dir()}), workspace {wuid}")
+    print(f"project {puid} ({proj.dir}), workspace {wuid}")
 
     for iso, meta in ISO.items():
         emd, psize = meta["emd"], meta["psize"]
@@ -128,8 +128,7 @@ def main():
                          connections=conn_A, extra_results=half_B,
                          params={"locres_fsc_thresh": 0.5, "locres_use_mask": 0, "locres_compute_facility": "GPU"},
                          title=f"{iso} local resolution (EMD-{emd} half maps, FSC 0.5)")
-        locres_out = [o for o in locres.model.spec.outputs.root if o.type == "volume"] if hasattr(locres.model.spec, "outputs") else []
-        locres_out_name = locres_out[0].name if locres_out else "volume"
+        locres_out_name = "volume"     # Local Resolution's single output group: map_half_A/B, map_locres, mask_refine
         # locally filtered map: half maps + local-res map
         run_job(cs, state, f"{iso}_locfilt", puid, wuid, "local_filter",
                 connections=conn_A,
@@ -147,7 +146,7 @@ def main():
     os.makedirs(out, exist_ok=True)
     for key, uid in state["jobs"].items():
         if key.endswith(("_locres", "_locfilt", "_fsc")):
-            jdir = os.path.join(proj.dir(), uid)
+            jdir = os.path.join(proj.dir, uid)
             for f in os.listdir(jdir):
                 if f.endswith((".mrc", ".txt", ".png", ".json")) and os.path.getsize(os.path.join(jdir, f)) < 300e6:
                     shutil.copy(os.path.join(jdir, f), os.path.join(out, f"{key}_{f}"))

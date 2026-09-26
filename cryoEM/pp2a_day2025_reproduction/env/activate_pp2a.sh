@@ -34,9 +34,12 @@ if [ -r $PP2A_SW/gromacs-2023.3/bin/GMXRC ]; then   # GMXRC is not nounset-clean
   source $PP2A_SW/gromacs-2023.3/bin/GMXRC
   [ "$_nounset" = on ] && set -u; unset _nounset
 fi
-# ChimeraX 1.12 is an el9 build run inside a Rocky 9 container (nodes are Rocky 8); $CHIMERAX is the launcher.
-if [ -x $PP2A_SW/chimerax/usr/libexec/UCSF-ChimeraX/bin/ChimeraX ] && [ -f $PP2A_SW/containers/rocky9-chimerax.sif ]; then
-  export CHIMERAX="singularity exec -B /n,/scratch,/tmp $PP2A_SW/containers/rocky9-chimerax.sif $PP2A_SW/chimerax/usr/libexec/UCSF-ChimeraX/bin/ChimeraX"
+# ChimeraX 1.12 (CentOS Stream 9 build) runs inside a Stream 9 container on these Rocky 8 nodes, with the
+# X11/GL/OSMesa runtime libraries unpacked from Stream 9 rpms into chimerax/sysroot (no root needed).
+# $CHIMERAX is the launcher: e.g.  $CHIMERAX --nogui --offscreen --silent render.cxc
+if [ -x $PP2A_SW/chimerax/usr/libexec/UCSF-ChimeraX/bin/ChimeraX ] && [ -f $PP2A_SW/containers/centos-stream9.sif ]; then
+  _CXSYS=$PP2A_SW/chimerax/sysroot
+  export CHIMERAX="singularity exec -B /n,/scratch,/tmp --env LD_LIBRARY_PATH=$_CXSYS/usr/lib64:$_CXSYS/usr/lib64/dri --env FONTCONFIG_PATH=$_CXSYS/etc/fonts $PP2A_SW/containers/centos-stream9.sif $PP2A_SW/chimerax/usr/libexec/UCSF-ChimeraX/bin/ChimeraX"
 fi
 [ -d $PP2A_SW/emready ]             && export EMREADY_HOME=$PP2A_SW/emready
 [ -d $PP2A_SW/namd-3.0.1 ]          && export PATH=$PP2A_SW/namd-3.0.1:$PATH
