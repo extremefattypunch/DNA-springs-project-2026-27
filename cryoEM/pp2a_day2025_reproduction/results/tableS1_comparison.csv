@@ -1,0 +1,12 @@
+row,paper Aa,ours Aa,paper Ab,ours Ab
+Map resolution (FSC 0.143) [A],3.4,3.42 (deposited curve); 3.93 (RELION),3.2,3.22 (deposited curve); 3.55 (RELION)
+Map resolution range [A],5.87-3.04,,5.22-2.82,
+Model resolution (FSC 0.5) [A],3.8,3.80 (mtriage masked; unmasked 4.17),3.6,3.63 (mtriage masked; unmasked 3.95)
+MolProbity score,1.25,1.25,1.15,1.15
+Clashscore,4.88,4.88,3.59,3.59
+Poor rotamers [%],0,0,0,0
+Ramachandran favored [%],98.08,98.08,98.22,98.22
+Ramachandran allowed [%],1.92,1.92,1.78,1.78
+Ramachandran disallowed [%],0,0,0,0
+RMS bond lengths [A],0.01,0.0102,0.009,0.0089
+RMS bond angles [deg],1.291,1.29,1.241,1.24
