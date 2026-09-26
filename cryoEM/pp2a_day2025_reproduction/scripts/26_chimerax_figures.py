@@ -46,7 +46,7 @@ def run(name, cxc):
     if not CHIMERAX:
         print(f"[{name}] wrote {path} (CHIMERAX not set - not rendered)")
         return
-    cmd = shlex.split(CHIMERAX) + ["--nogui", "--offscreen", "--silent", path]
+    cmd = shlex.split(CHIMERAX) + ["--nogui", "--offscreen", path]   # no --silent: the log must show which command failed
     print(f"[{name}] rendering ...", flush=True)
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
     log = r.stdout + r.stderr
@@ -65,11 +65,14 @@ def fig2a():
         cx += f"open {M}/{m['pdb']}.cif\nopen {E}/{iso}/emd_{m['emd']}.map\n"
         cx += chain_colors(mdl, m["acolor"])
         cx += f"volume {vol} level {m['contour']} style surface step 1\ncolor zone {vol} near {mdl} distance 4\nhide {mdl} models\n"
-    # place Abeta beside Aalpha: align models, then translate the second pair
-    cx += "matchmaker #3/A to #1/A\n"   # moves #3 only; move its map with it
-    cx += "view orient\nview\nset bgColor white\nlighting soft\ngraphics silhouettes true\n"
-    cx += f"move x 140 models #3,#4 coordinateSystem #1\nview\nsave {FIG}/fig2a_maps.png width {W} height {H} supersample 3\n"
-    cx += f"turn y 90\nview\nsave {FIG}/fig2a_maps_view2.png width {W} height {H} supersample 3\n"
+    # same orientation for both isoforms: superpose Abeta model on Aalpha, carry its map along
+    cx += "matchmaker #3/A to #1/A\nview position #4 sameAsModels #3\n"
+    cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\n"
+    cx += "view orient\n"          # principal axes of the (superposed) complexes onto the screen axes: same view for both
+    for iso, vol, other in (("Aa", "#2", "#4"), ("Ab", "#4", "#2")):
+        cx += f"hide {other} models\nshow {vol} models\nview #2 pad 0.05\n"
+        cx += f"save {FIG}/fig2a_maps_{iso}.png width {W} height {H} supersample 3\n"
+        cx += f"turn y 90\nsave {FIG}/fig2a_maps_{iso}_view2.png width {W} height {H} supersample 3\nturn y -90\n"
     run("fig2a", cx)
 
 
