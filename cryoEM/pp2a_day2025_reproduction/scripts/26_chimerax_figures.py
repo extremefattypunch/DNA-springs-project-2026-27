@@ -84,7 +84,9 @@ def fig2b():
         cx += "volume #2 sdLevel 3.0 style surface step 1 transparency 0.35\ncolor zone #2 near #1 distance 5\n"
         cx += "set bgColor white\nlighting soft\ngraphics silhouettes true\nview orient\nview #2 pad 0.05\n"
         cx += f"save {FIG}/fig2b_lowpass6_{iso}.png width {W} height {H} supersample 2\n"
-        cx += f"view #3/B:402-436 pad 1.5\nsave {FIG}/fig2b_lowpass6_{iso}_zoom.png width {W} height {H} supersample 2\n"
+        # zoom: mesh map around the helix so the ribbon is visible inside (Aa) or outside (Ab) the density
+        cx += "volume #2 style mesh transparency 0\nvolume zone #2 nearAtoms #3/B:402-436 range 8\n"
+        cx += f"view #3/B:402-436\nzoom 0.7\nsave {FIG}/fig2b_lowpass6_{iso}_zoom.png width {W} height {H} supersample 2\n"
         run(f"fig2b_{iso}", cx)
 
 
