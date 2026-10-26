@@ -1113,19 +1113,19 @@
       "softening_points": {
         "27 bp": {
           "x_c_A": 87.0,
-          "radius_kinked_A": 44.4,
+          "half_rod_chord_A": 44.4,
           "curvature_at_x_c_deg_per_bp": 1.62,
           "curvature_at_span_deg_per_bp": null
         },
         "40 bp": {
           "x_c_A": 125.0,
-          "radius_kinked_A": 65.4,
+          "half_rod_chord_A": 65.4,
           "curvature_at_x_c_deg_per_bp": 1.63,
           "curvature_at_span_deg_per_bp": 3.76
         },
         "50 bp": {
           "x_c_A": 151.4,
-          "radius_kinked_A": 81.4,
+          "half_rod_chord_A": 81.4,
           "curvature_at_x_c_deg_per_bp": 1.64,
           "curvature_at_span_deg_per_bp": 3.86
         }
