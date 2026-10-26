@@ -42,9 +42,21 @@ RING = {"DA": ("N9", "C8", "N7", "C5", "C6", "N1", "C2", "N3", "C4"),
 SHARP_TURN_DEG = 90.0
 STACK_A = 4.5
 CONTACT_A = 4.5
-AXIS_WINDOW = 3          # nucleotides averaged before differencing, the ssDNA analogue of the
-                         # duplex's one-turn smoothing (mechanics.py); a raw C4'-C4' angle on a
-                         # single strand is dominated by the sugar-phosphate zigzag
+STRAIGHT_HELIX = Path(__file__).resolve().parents[1] / "build" / "03_dna" / "straight_50nt.pdb"
+
+
+def axis_window(n):
+    """One helical turn, as the duplex analysis smooths (mechanics.py): min(11, max(3, n//3)), odd."""
+    w = int(min(11, max(3, n // 3)))
+    return w - (w % 2 == 0)
+
+
+def axis_curvature(xyz, w):
+    """Bend per step of a C4' axis smoothed over w nucleotides: (frames, n-w-1) degrees."""
+    n = xyz.shape[1]
+    sm = np.stack([xyz[:, i:i + w].mean(1) for i in range(n - w + 1)], axis=1)
+    sv = sm[:, 1:] - sm[:, :-1]
+    return angle_deg(sv[:, :-1], sv[:, 1:])
 # backbone torsions of nucleotide i (IUPAC): atom, residue offset
 TORSIONS = {
     "alpha": (("O3'", -1), ("P", 0), ("O5'", 0), ("C5'", 0)),
@@ -59,8 +71,9 @@ CHI = {"DA": ("O4'", "C1'", "N9", "C4"), "DG": ("O4'", "C1'", "N9", "C4"),
 
 
 def circ_mean_deg(a, axis=0):
+    """Circular mean in degrees, ignoring NaN (undefined torsions at the strand's ends)."""
     r = np.radians(a)
-    return np.degrees(np.arctan2(np.sin(r).mean(axis), np.cos(r).mean(axis)))
+    return np.degrees(np.arctan2(np.nanmean(np.sin(r), axis), np.nanmean(np.cos(r), axis)))
 
 
 def torsions(t, nts):
@@ -151,19 +164,29 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     # --- does the DNA kink: bend along the strand, torsions, and where ---
     # Two bend measures.  (i) the raw angle between successive C4'->C4' vectors, whose
     # sharp (> 90 deg) turns are the single-strand analogue of a duplex kink; (ii) the
-    # curvature of a smoothed axis (C4' positions averaged over AXIS_WINDOW nucleotides
-    # before differencing), in degrees per nucleotide -- the same construction the duplex
-    # analysis uses over one helical turn, so the two projects quote a comparable number.
+    # curvature of a smoothed axis (C4' positions averaged over one helical turn before
+    # differencing, the duplex analysis's construction in mechanics.py), in degrees per
+    # nucleotide.  Analogous to the duplex number but not numerically comparable with it:
+    # a WLC of persistence length xi bends thermally by ~sqrt(2a/(xi w)) per step, so the
+    # same construction on an ideal straight B-form strand (the baseline recorded below)
+    # already gives a few degrees per nucleotide from the helix's own spiral.
     seq = [r.name.rstrip("35")[1] for r in nts]
     c4 = np.array([next(a.index for a in r.atoms if a.name == "C4'") for r in nts])
     xyz = t.xyz[:, c4] * 10.0
     v = xyz[:, 1:] - xyz[:, :-1]
     bend = angle_deg(v[:, :-1], v[:, 1:])            # frames x (n-2), at nt 2..n-1
-    w = AXIS_WINDOW
-    sm = np.stack([xyz[:, i:i + w].mean(1) for i in range(n - w + 1)], axis=1)
-    sv = sm[:, 1:] - sm[:, :-1]
-    curv = angle_deg(sv[:, :-1], sv[:, 1:])          # frames x (n-w-1), at nt 1+w//2+1 ...
+    w = axis_window(n)
+    curv = axis_curvature(xyz, w)                     # frames x (n-w-1), at nt 1+w//2+1 ...
     curv_nt = np.arange(2 + w // 2, 2 + w // 2 + curv.shape[1])
+    baseline = None
+    if STRAIGHT_HELIX.exists():                        # the same measure on an ideal B-form strand
+        try:
+            ideal = md.load(str(STRAIGHT_HELIX))
+            ch = next(c for c in ideal.topology.chains)
+            c4i = [next(a.index for a in r.atoms if a.name == "C4'") for r in ch.residues][:n]
+            baseline = float(axis_curvature(ideal.xyz[:, c4i] * 10.0, w).mean())
+        except Exception:                              # noqa: BLE001
+            baseline = None
     tor = torsions(t, nts)
     ez = (tor["epsilon"] - tor["zeta"] + 180.0) % 360.0 - 180.0     # BI ~ -90, BII ~ +90
     bii = ez > 0
@@ -182,6 +205,8 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
                        f"curvature = bend of a {w}-nt smoothed C4' axis per nucleotide step"),
         "trace_bend_per_nt_mean_deg": summ(bend.mean(1)),
         "axis_curvature_deg_per_nt": summ(curv.mean(1)),
+        "axis_curvature_baseline_straight_helix_deg_per_nt": None if baseline is None else round(baseline, 2),
+        "axis_window_nt": int(w),
         "axis_curvature_max_deg_per_nt": summ(curv.max(1)),
         "sharp_turns_per_frame": summ(rows["sharp_turns"]),
         "frames_with_any_sharp_turn": round(float((rows["sharp_turns"] > 0).mean()), 4),
@@ -196,7 +221,7 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     summary["trace_bend"] = {"hottest_nt": summary["kink"]["hottest_nt"],
                              "sharp_turns_per_frame": summary["kink"]["sharp_turns_per_frame"]}
     for k, v in tor.items():
-        rows[f"{k}_mean_deg"] = circ_mean_deg(np.nan_to_num(v, nan=0.0), axis=1)
+        rows[f"{k}_mean_deg"] = circ_mean_deg(v, axis=1)
     prof_df = pd.DataFrame({"nt": np.arange(1, n + 1), "base": seq,
                             "step_in": ["-"] + steps})
     prof_df["bend_deg_mean"] = np.r_[np.nan, prof, np.nan]
@@ -204,7 +229,7 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     prof_df["sharp_turn_fraction"] = np.r_[np.nan, sharp.mean(0), np.nan]
     cv = np.full(n, np.nan); cv[curv_nt - 1] = curv.mean(0)
     prof_df["axis_curvature_deg_per_nt"] = cv
-    prof_df["bii_fraction"] = np.nanmean(bii, axis=0)
+    prof_df["bii_fraction"] = np.where(np.isnan(ez).all(0), np.nan, bii.mean(0))
     for k, v in tor.items():
         prof_df[f"{k}_deg"] = [None if np.isnan(v[:, i]).all() else round(float(circ_mean_deg(v[:, i])), 1)
                                for i in range(n)]

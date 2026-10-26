@@ -265,6 +265,8 @@
     "hottest_step": "CpC-CpA",
     "bii_fraction": 0.153,
     "frames_with_any_sharp_turn": 0.0667,
+    "hottest_nt_sharp_turn_fraction": 0.0244,
+    "axis_curvature_baseline": null,
     "fraction_of_strand_on_protein": 0.0477,
     "end_to_end_pbc": "raw (one molecule, contiguous as written)",
     "protein_residues_touched_over_half": "TDP553;TDP7;ASP5;MET1;ALA2;ALA3;ALA4;TYR11",
@@ -1001,8 +1003,8 @@
     "sources": {
       "spring": "Zocchi, Molecular Machines (2018) eqs 2.188-2.206, 3.51-3.52; Tseng & Zocchi JACS 135:11879 (2013) eq 6",
       "parameters": "B = 200 pN nm^2, tau_c = 27 (nicked) / 34 (continuous) pN nm, rise 0.33 nm/bp, kT = 4.2 pN nm",
-      "ssDNA": "Marko-Siggia with xi = 1.5 nm (Zocchi 2021 chapter), 0.59 nm/nt (Smith, Cui & Bustamante 1996)",
-      "protein": "book pp. 117-119: kappa ~ 100 kT/nm^2, yield ~4 pN at 3 A (eq. 3.100); sfGFP clamp ladder 230-350 kT/nm^2",
+      "ssDNA": "Marko-Siggia with xi = 1.5 nm (Zocchi 2021 chapter) and 0.59 nm/nt (Smith, Cui & Bustamante 1996); the 2018 book uses l_s ~ 0.8 nm (p. 72, eq. 2.173 text; p. 80 fit 0.764 nm), evaluated too",
+      "protein": "book pp. 117-119, eq. 3.100: kappa ~ 100 kT/nm^2 on the linear branch, softening at x_e ~ 3 A (kappa x_e ~ 30 kT/nm ~ 125 pN) to a constant restoring force f_e ~ 1 kT/nm ~ 4 pN; >= ~1 kT injected modulates activity (p. 117); sfGFP clamp ladder 230-350 kT/nm^2",
       "implementation": "sfGFP/analysis/spring_model.py (reproduces RLuc 1.5 pN, 40-mer 2.4 pN, GK 6.6 kT)"
     },
     "span": {
@@ -1103,7 +1105,15 @@
       "state": "matched",
       "tension_pN_clipped": 1.78,
       "tension_pN_unclipped": 1.78,
-      "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme"
+      "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme (his geometry: a 60-mer spanning 6.1 nm, i.e. well inside the chain's rms size)",
+      "book_xi_0p8": {
+        "xi_nm": 0.8,
+        "natural_rms_nm": 6.87,
+        "state": "stretched (pulls)",
+        "tension_pN": 3.338,
+        "ideal_chain_pN": 2.595,
+        "source": "Molecular Machines p. 72 (l_s ~ 0.8 nm); p. 80 fit l_s = 0.764 nm"
+      }
     },
     "kink": {
       "critical_curvature_deg_per_bp": {
@@ -1148,14 +1158,19 @@
     "protein_spring": {
       "zocchi_generic_kT_nm2": 100,
       "sfGFP_measured_kT_nm2": "230-350",
-      "method": "kappa = kT / var(Cb-Cb), from each run's own fluctuation (equipartition; slow drift inflates the variance, so this is a lower bound on the local stiffness; read it against the block SEM)",
+      "method": "kappa = kT / var(Cb-Cb), equipartition on each run's own fluctuation, N-terminal tail included; a single-run estimate whose bias has no fixed sign: the slow opening and closing of the horseshoe IS the compliance, and 100 ns samples it only partly.  The HEAT1-HEAT15 aperture is given beside it to show the softness is the horseshoe's, not the tail's",
+      "criterion": "book p. 117: >= ~1 kT injected into the enzyme modulates activity (figs 3.28-3.30, eqs 3.97-3.100)",
       "P0_apo": {
         "mean_A": 56.42,
         "sd_A": 7.05,
         "kappa_kT_nm2": 2.01,
         "kappa_pN_per_nm": 8.44,
         "displacement_per_pN_A": 1.18,
-        "displacement_at_2pN_A": 2.37
+        "displacement_at_2pN_A": 2.37,
+        "energy_at_2pN_kT": 0.056,
+        "thermal_rms_A": 7.1,
+        "aperture_sd_A": 6.74,
+        "kappa_aperture_kT_nm2": 2.2
       },
       "P1_tet": {
         "mean_A": 78.55,
@@ -1163,7 +1178,11 @@
         "kappa_kT_nm2": 1.75,
         "kappa_pN_per_nm": 7.35,
         "displacement_per_pN_A": 1.36,
-        "displacement_at_2pN_A": 2.72
+        "displacement_at_2pN_A": 2.72,
+        "energy_at_2pN_kT": 0.065,
+        "thermal_rms_A": 7.6,
+        "aperture_sd_A": 7.59,
+        "kappa_aperture_kT_nm2": 1.74
       },
       "P2_clicked": {
         "mean_A": 80.87,
@@ -1171,7 +1190,11 @@
         "kappa_kT_nm2": 1.25,
         "kappa_pN_per_nm": 5.26,
         "displacement_per_pN_A": 1.9,
-        "displacement_at_2pN_A": 3.8
+        "displacement_at_2pN_A": 3.8,
+        "energy_at_2pN_kT": 0.09,
+        "thermal_rms_A": 8.9,
+        "aperture_sd_A": 7.5,
+        "kappa_aperture_kT_nm2": 1.78
       },
       "P3_ss50": {
         "mean_A": 79.77,
@@ -1179,7 +1202,11 @@
         "kappa_kT_nm2": 1.1,
         "kappa_pN_per_nm": 4.6,
         "displacement_per_pN_A": 2.17,
-        "displacement_at_2pN_A": 4.35
+        "displacement_at_2pN_A": 4.35,
+        "energy_at_2pN_kT": 0.103,
+        "thermal_rms_A": 9.6,
+        "aperture_sd_A": 7.83,
+        "kappa_aperture_kT_nm2": 1.63
       }
     }
   }

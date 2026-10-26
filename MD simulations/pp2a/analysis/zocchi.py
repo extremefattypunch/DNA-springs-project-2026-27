@@ -74,8 +74,8 @@ def main():
     out = {"sources": {
         "spring": "Zocchi, Molecular Machines (2018) eqs 2.188-2.206, 3.51-3.52; Tseng & Zocchi JACS 135:11879 (2013) eq 6",
         "parameters": f"B = {B_DEFAULT:.0f} pN nm^2, tau_c = {TAU_C_NICKED:.0f} (nicked) / {TAU_C_CONTINUOUS:.0f} (continuous) pN nm, rise {RISE} nm/bp, kT = {KT} pN nm",
-        "ssDNA": f"Marko-Siggia with xi = {XI_SS} nm (Zocchi 2021 chapter), 0.59 nm/nt (Smith, Cui & Bustamante 1996)",
-        "protein": "book pp. 117-119: kappa ~ 100 kT/nm^2, yield ~4 pN at 3 A (eq. 3.100); sfGFP clamp ladder 230-350 kT/nm^2",
+        "ssDNA": f"Marko-Siggia with xi = {XI_SS} nm (Zocchi 2021 chapter) and 0.59 nm/nt (Smith, Cui & Bustamante 1996); the 2018 book uses l_s ~ 0.8 nm (p. 72, eq. 2.173 text; p. 80 fit 0.764 nm), evaluated too",
+        "protein": "book pp. 117-119, eq. 3.100: kappa ~ 100 kT/nm^2 on the linear branch, softening at x_e ~ 3 A (kappa x_e ~ 30 kT/nm ~ 125 pN) to a constant restoring force f_e ~ 1 kT/nm ~ 4 pN; >= ~1 kT injected modulates activity (p. 117); sfGFP clamp ladder 230-350 kT/nm^2",
         "implementation": "sfGFP/analysis/spring_model.py (reproduces RLuc 1.5 pN, 40-mer 2.4 pN, GK 6.6 kT)"}}
 
     # --- the span: the DNA end-to-end the chimera settles at, else the build target ---
@@ -104,7 +104,14 @@ def main():
     out["ssDNA_at_span"] = {"n_nt": 50, "contour_nm": round(ss.L0, 2), "natural_rms_nm": round(ss.rms_end_to_end, 3),
                             "state": ss.state(x_nm), "tension_pN_clipped": round(ss.tension(x_nm), 3),
                             "tension_pN_unclipped": round((KT / XI_SS) * (1 / (4 * (1 - s) ** 2) - 0.25 + s), 3),
-                            "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme"}
+                            "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme (his geometry: a 60-mer spanning 6.1 nm, i.e. well inside the chain's rms size)"}
+    ss_b = SsSpring(50, xi=0.8)
+    s_b = min(x_nm / ss_b.L0, 0.999)
+    out["ssDNA_at_span"]["book_xi_0p8"] = {
+        "xi_nm": 0.8, "natural_rms_nm": round(ss_b.rms_end_to_end, 3), "state": ss_b.state(x_nm),
+        "tension_pN": round((KT / 0.8) * (1 / (4 * (1 - s_b) ** 2) - 0.25 + s_b), 3),
+        "ideal_chain_pN": round(3 * KT * x_nm / (2 * 0.8 * ss_b.L0), 3),
+        "source": "Molecular Machines p. 72 (l_s ~ 0.8 nm); p. 80 fit l_s = 0.764 nm"}
     # the force curve for the figure
     xs = np.linspace(2.0, 17.0, 301)
     curves = {"x_A": (xs * 10).round(2).tolist()}
@@ -158,8 +165,11 @@ def main():
 
     # --- 3. the protein spring, by equipartition on Cb-Cb ---
     prot = {"zocchi_generic_kT_nm2": 100, "sfGFP_measured_kT_nm2": "230-350",
-            "method": "kappa = kT / var(Cb-Cb), from each run's own fluctuation (equipartition; slow drift inflates the variance, so this is "
-                      "a lower bound on the local stiffness; read it against the block SEM)"}
+            "method": ("kappa = kT / var(Cb-Cb), equipartition on each run's own fluctuation, N-terminal tail included; "
+                       "a single-run estimate whose bias has no fixed sign: the slow opening and closing of the horseshoe "
+                       "IS the compliance, and 100 ns samples it only partly.  The HEAT1-HEAT15 aperture is given beside "
+                       "it to show the softness is the horseshoe's, not the tail's"),
+            "criterion": "book p. 117: >= ~1 kT injected into the enzyme modulates activity (figs 3.28-3.30, eqs 3.97-3.100)"}
     for s in SYSTEMS:
         m = Path(str(analysis_prefix(s)) + "_mechanics.csv")
         if not m.exists():
@@ -170,7 +180,16 @@ def main():
         prot[s] = {"mean_A": round(float(x.mean()) * 10, 2), "sd_A": round(float(x.std()) * 10, 2),
                    "kappa_kT_nm2": round(kappa, 2), "kappa_pN_per_nm": round(kappa * KT_PN_NM, 2),
                    "displacement_per_pN_A": round(10.0 / (kappa * KT_PN_NM), 2),
-                   "displacement_at_2pN_A": round(2.0 * 10.0 / (kappa * KT_PN_NM), 2)}
+                   "displacement_at_2pN_A": round(2.0 * 10.0 / (kappa * KT_PN_NM), 2),
+                   "energy_at_2pN_kT": round(2.0 ** 2 / (2.0 * kappa * KT_PN_NM) / KT_PN_NM, 3),
+                   "thermal_rms_A": round(10.0 * (1.0 / kappa) ** 0.5, 1)}
+        h = Path(str(analysis_prefix(s)) + "_heat.csv")
+        if h.exists():
+            ap_ = pd.read_csv(h)
+            if "aperture_H1_H15_A" in ap_:
+                v = ap_["aperture_H1_H15_A"].to_numpy() / 10.0
+                prot[s]["aperture_sd_A"] = round(float(v.std()) * 10, 2)
+                prot[s]["kappa_aperture_kT_nm2"] = round(1.0 / float(v.var()), 2)
     out["protein_spring"] = prot
 
     Path(a.out).write_text(json.dumps(out, indent=2))

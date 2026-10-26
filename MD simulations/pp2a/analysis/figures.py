@@ -350,7 +350,7 @@ def fig_zocchi(df, out):
     fig, ax = plt.subplots(figsize=(7.4, 4.4))
     for i, n in enumerate((27, 40, 50)):
         col = VS.SERIES[i]
-        ax.plot(cv.x_A, cv[f"f_{n}bp_nicked_pN"], color=col, lw=1.6, label=f"{n} bp duplex, nicked τc (kinked branch)")
+        ax.plot(cv.x_A, cv[f"f_{n}bp_nicked_pN"], color=col, lw=1.6, label=f"{n} bp duplex, nicked τc (full model: kinked below x_c, bent above)")
         ax.plot(cv.x_A, cv[f"f_{n}bp_continuous_pN"], color=col, lw=1.0, ls="--", alpha=0.8)
         ax.plot(cv.x_A, cv[f"f_{n}bp_nicked_unkinked_pN"], color=col, lw=0.8, ls=":", alpha=0.8)
     ax.plot(cv.x_A, -cv["ss50_pull_pN"], color=VS.INK, lw=1.8, label="50 nt single strand, Marko–Siggia (pulls)")
@@ -368,7 +368,7 @@ def fig_zocchi(df, out):
     ax.set_ylim(-6, 28); ax.set_xlim(20, 170)
     ax.set_xlabel(r"end-to-end distance the spring must span ($\mathrm{\AA}$)")
     ax.set_ylabel("force on the anchors (pN; + pushes apart, − pulls together)")
-    ax.set_title("Zocchi's spring at this span — solid: kinked branch (nicked τc), dashed: continuous τc, dotted: unkinked rod")
+    ax.set_title("Zocchi's spring at this span — solid: f(x) with kinking (nicked τc), dashed: continuous τc, dotted: bent branch without a kink")
     ax.legend(fontsize=7, loc="upper right")
     ax.grid(alpha=0.5)
     fig.savefig(out / "pp2a_fig9_zocchi_model.png")

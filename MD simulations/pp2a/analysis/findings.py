@@ -117,6 +117,8 @@ def main(summary=None, out=None):
             "hottest_step": col(s, "ssdna.kink.hottest_step"),
             "bii_fraction": col(s, "ssdna.kink.bii_fraction.mean"),
             "frames_with_any_sharp_turn": col(s, "ssdna.kink.frames_with_any_sharp_turn"),
+            "hottest_nt_sharp_turn_fraction": col(s, "ssdna.kink.hottest_nt_sharp_turn_fraction"),
+            "axis_curvature_baseline": col(s, "ssdna.kink.axis_curvature_baseline_straight_helix_deg_per_nt"),
             "fraction_of_strand_on_protein": col(s, "ssdna.protein_contact.fraction_of_strand"),
             "end_to_end_pbc": col(s, "ssdna.end_to_end.pbc.convention"),
         }
