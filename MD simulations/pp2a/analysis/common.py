@@ -36,6 +36,26 @@ PROTEIN_SKIP = {"WAT", "HOH", "Na+", "Cl-", "MG", "K+", "DA", "DT", "DG", "DC",
                 "DA5", "DT5", "DG5", "DC5", "DA3", "DT3", "DG3", "DC3", "DNL", "DNP", "DNH"}
 
 
+SCRATCH = Path(__import__("os").environ.get("PP2A_MD_SCRATCH",
+                                             "/n/netscratch/hekstra_lab/Lab/ian_poon/pp2a-md"))
+# Fixed system -> colour slot (vizstyle.SERIES) and display label, so a figure that drops a
+# system never repaints the survivors.  P0 is the cryo-EM reproduction's apo run.
+SYSTEMS = {
+    "P0_apo": {"label": "apo Aα (ff19SB/OPC)", "slot": 0, "marker": "o"},
+    "P1_tet": {"label": "2× Tet2-Et, unclicked", "slot": 1, "marker": "s"},
+    "P2_clicked": {"label": "clicked, no DNA", "slot": 5, "marker": "D"},
+    "P3_ss50": {"label": "50 nt ssDNA, closed loop", "slot": 2, "marker": "^"},
+}
+CONTROL = "P2_clicked"
+
+
+def analysis_prefix(system, replicate="rep1"):
+    """Where a run's per-frame analysis CSVs live (``<prefix>_rmsd.csv`` etc.)."""
+    if system == "P0_apo":
+        return SCRATCH / "apo_analysis" / "analysis"
+    return SCRATCH / "runs" / system / replicate / "03_production" / "analysis"
+
+
 def heat_ranges():
     """Nominal 39-residue grid (cryoEM/.../25_geometry.py): HEAT k = 8+39(k-1) .. 8+39k-1."""
     return {k: (HEAT_START + HEAT_LEN * (k - 1), min(HEAT_START + HEAT_LEN * k - 1, N_RES))
@@ -111,7 +131,7 @@ def angle_deg(u, v):
 
 
 def dihedral_deg(p0, p1, p2, p3):
-    b0, b1, b2 = p1 - p0, p2 - p1, p3 - p2
+    b0, b1, b2 = p0 - p1, p2 - p1, p3 - p2      # b0 points back, per the standard formula
     b1n = b1 / np.linalg.norm(b1, axis=-1, keepdims=True)
     v = b0 - (b0 * b1n).sum(-1, keepdims=True) * b1n
     w = b2 - (b2 * b1n).sum(-1, keepdims=True) * b1n

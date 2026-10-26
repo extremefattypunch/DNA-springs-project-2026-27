@@ -16,7 +16,7 @@
 # 12 h, so the orchestrator resubmits itself 15 min before its own limit.
 #
 #SBATCH -J pp2amd-orch
-#SBATCH -p test
+#SBATCH -p shared
 #SBATCH -c 1
 #SBATCH --mem=1G
 #SBATCH -t 12:00:00

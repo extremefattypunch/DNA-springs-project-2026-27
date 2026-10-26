@@ -56,7 +56,7 @@ WATER = {"HOH", "WAT"}
 
 
 def dihedral(p0, p1, p2, p3):
-    b0, b1, b2 = p1 - p0, p2 - p1, p3 - p2
+    b0, b1, b2 = p0 - p1, p2 - p1, p3 - p2      # b0 points back, per the standard formula
     b1 /= np.linalg.norm(b1)
     v = b0 - np.dot(b0, b1) * b1
     w = b2 - np.dot(b2, b1) * b1

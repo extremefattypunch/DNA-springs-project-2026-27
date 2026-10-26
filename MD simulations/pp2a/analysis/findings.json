@@ -1,0 +1,178 @@
+{
+  "total_ns": 100.0,
+  "n_runs": 1,
+  "systems_present": [
+    "P0_apo"
+  ],
+  "labels": {
+    "P0_apo": "apo A\u03b1 (ff19SB/OPC)"
+  },
+  "control": "P2_clicked",
+  "sites": {
+    "native_AF": {
+      "7": {
+        "phi": 64.7,
+        "psi": 57.3,
+        "resname": "ASP",
+        "plddt": 52.28
+      },
+      "553": {
+        "phi": -61.6,
+        "psi": -27.1,
+        "resname": "ASN",
+        "plddt": 94.25
+      }
+    },
+    "CB_CB_AF_A": 54.41,
+    "numbering_note": "File numbering is UniProt P30153 (Met1 = 1).  The construct labels D6X/N552X count from Ala2 (construct n = UniProt n+1): D6X = Asp7, N552X = Asn553.  UniProt 6 is Gly (no CB) and 552 is Asp, so the literal reading is impossible.  Confirmed with Ian 2026-10-26.  Yilmaz et al.'s 'N29-F577' is the same convention = Asn30-Phe578 here.",
+    "P0_apo": {
+      "label": "apo A\u03b1 (ff19SB/OPC)",
+      "7": {
+        "residue": "ASP",
+        "phi": -88.74,
+        "phi_sd": 41.07,
+        "psi": 3.28,
+        "psi_sd": 74.99,
+        "ring_neighbours_per_frame": null
+      },
+      "553": {
+        "residue": "ASN",
+        "phi": -57.66,
+        "phi_sd": 8.74,
+        "psi": -35.99,
+        "psi_sd": 8.51,
+        "ring_neighbours_per_frame": null
+      }
+    }
+  },
+  "block_method": "10 blocks per run after the discard; Welch t on block means",
+  "extension": {
+    "P0_apo": {
+      "mean_A": 56.62417194214876,
+      "sd_A": 7.217803221749826,
+      "sem_block_A": 2.008023676966762,
+      "min_A": 39.047836,
+      "max_A": 76.740555,
+      "blocks_A": [
+        58.974,
+        55.017,
+        53.726,
+        48.716,
+        47.357,
+        52.899,
+        61.293,
+        68.025,
+        58.431,
+        62.013
+      ]
+    }
+  },
+  "extension_vs_control": {},
+  "clicked_vs_tet": null,
+  "rigidity": {
+    "P0_apo": {
+      "rmsd.rmsd_core_A.mean": 2.753,
+      "rmsd.rmsd_core_A.max": 6.098,
+      "rmsd.rmsd_tail_corefit_A.mean": 11.584,
+      "rmsd.rmsd_all_A.mean": 3.277,
+      "rmsd.rmsf_A.mean_core": 2.13,
+      "rmsd.rmsf_A.mean_tail": 16.602,
+      "rmsd.rmsf_A.max": 64.023,
+      "rmsd.rmsf_A.argmax_resnum": 1.0,
+      "rmsd.rmsf_A.at_sites.7": 6.931,
+      "rmsd.rmsf_A.at_sites.553": 3.995,
+      "rmsd.helix_fraction_core": 0.7801,
+      "rmsd.helix_fraction_at_sites.7": 0.238,
+      "rmsd.helix_fraction_at_sites.553": 0.992,
+      "rmsf_per_heat": {
+        "0": 24.865,
+        "1": 4.8,
+        "2": 3.346,
+        "3": 2.439,
+        "4": 1.826,
+        "5": 1.42,
+        "6": 1.28,
+        "7": 1.212,
+        "8": 1.243,
+        "9": 1.232,
+        "10": 1.309,
+        "11": 1.724,
+        "12": 2.083,
+        "13": 2.314,
+        "14": 2.951,
+        "15": 3.633
+      }
+    }
+  },
+  "rigidity_vs_control": {},
+  "heat": {
+    "P0_apo": {
+      "heat.bend.total_deg.mean": 150.397,
+      "heat.bend.total_deg.sd": 8.937,
+      "heat.bend.sum_deg.mean": 345.14,
+      "heat.twist.sum_deg.mean": 320.578,
+      "heat.aperture_H1_H15_A.mean": 53.675,
+      "heat.aperture_H1_H15_A.sd": 6.817,
+      "heat.axis_straightness.mean": 0.349,
+      "heat.literature_pair.A.mean": 42.203,
+      "heat.literature_pair.A.sd": 5.65,
+      "heat.salt_bridge_backbone.A.mean": 12.841,
+      "heat.salt_bridge_sidechain.fraction_formed_below_5A": 0.822,
+      "heat.sites_CA_CA_A.mean": 57.199,
+      "heat.bend.most_variable_repeat": 12.0,
+      "region_rmsd_A": {
+        "N (HEAT 1-3)": 1.201,
+        "central (HEAT 4-12)": 1.483,
+        "C (HEAT 13-15)": 0.723
+      },
+      "bend_per_repeat_mean": {
+        "2": 16.89,
+        "3": 29.12,
+        "4": 59.04,
+        "5": 16.7,
+        "6": 25.62,
+        "7": 14.69,
+        "8": 18.11,
+        "9": 32.65,
+        "10": 40.36,
+        "11": 24.8,
+        "12": 19.89,
+        "13": 32.08,
+        "14": 15.19
+      },
+      "bend_per_repeat_sd": {
+        "2": 2.95,
+        "3": 2.29,
+        "4": 2.47,
+        "5": 2.13,
+        "6": 3.49,
+        "7": 2.45,
+        "8": 3.12,
+        "9": 2.25,
+        "10": 1.88,
+        "11": 2.48,
+        "12": 3.99,
+        "13": 2.93,
+        "14": 1.96
+      },
+      "repeat_centroid_rmsf": {
+        "1": 4.65,
+        "2": 3.18,
+        "3": 2.18,
+        "4": 1.63,
+        "5": 1.09,
+        "6": 0.97,
+        "7": 0.96,
+        "8": 1.0,
+        "9": 0.96,
+        "10": 1.03,
+        "11": 1.4,
+        "12": 1.78,
+        "13": 1.92,
+        "14": 2.58,
+        "15": 3.3
+      }
+    }
+  },
+  "hinge_vs_control": {}
+}
