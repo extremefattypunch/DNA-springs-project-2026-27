@@ -12,7 +12,7 @@ instance and open-source tools installed for the purpose. Separate from the DNA-
  · [result tables](https://github.com/extremefattypunch/DNA-springs-project-2026-27/tree/main/cryoEM/pp2a_day2025_reproduction/results)
  · [figures](https://github.com/extremefattypunch/DNA-springs-project-2026-27/tree/main/cryoEM/pp2a_day2025_reproduction/figures)
 
-*Status 2026-09-26:* cryo-EM part **done**; MD part **running** (see [Pending](#pending)).
+*Status 2026-10-26:* cryo-EM part **done**; both 100 ns apo runs **finished** (Aα 2026-09-28 at 54 ns/day, Aβ 2026-10-05 at 39 ns/day on gpu_test MIG slices); their analysis against Fig 1 is still [pending](#pending). The Aα trajectory is now also the apo baseline of the **[DNA spring on PP2A Aα](PP2A-DNA-Spring-MD)** page.
 
 ---
 
