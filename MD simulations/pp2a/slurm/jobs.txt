@@ -1,0 +1,21 @@
+# One run per line, read by slurm/orchestrator.sbatch.  Fields: KEY=VALUE, space separated.
+#   SYS      system in build/systems/
+#   NS       production length (ns); the chain resumes from state.chk until progress.json says NS
+#   REP      replicate (seeds 1000+REP / 2000+REP)                       [default 1]
+#   PART     gpu_test | gpu_requeue | gpu                                [default gpu_test]
+#   X0 K RAMP_PS   harmonic window between the two anchor atoms (bare strand only)
+#   HOURS    wall-time to ask for; if absent, sized from the measured ns/day x 1.15
+#   SUFFIX   appended to the run directory name (benchmarks)
+# A paid line (gpu_requeue/gpu) is not submitted until the free 1 ns benchmark of the
+# same SYS has finished, so its --time is sized from a measurement, not a guess.
+# Order matters: the chimera first (the result), then its zero reference, then the
+# unclicked protein, then the force windows (free partition, one at a time).
+SYS=P3_ss50     NS=1   REP=1 PART=gpu_test  HOURS=2 SUFFIX=_bench
+SYS=P3_ss50     NS=100 REP=1 PART=gpu_requeue
+SYS=P2_clicked  NS=1   REP=1 PART=gpu_test  HOURS=1 SUFFIX=_bench
+SYS=P2_clicked  NS=100 REP=1 PART=gpu_requeue
+SYS=P1_tet      NS=1   REP=1 PART=gpu_test  HOURS=1 SUFFIX=_bench
+SYS=P1_tet      NS=100 REP=1 PART=gpu_requeue
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=60  K=33 RAMP_PS=3000
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=80  K=33 RAMP_PS=2000
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=100 K=33 RAMP_PS=2000

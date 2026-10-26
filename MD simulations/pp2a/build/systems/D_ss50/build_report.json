@@ -1,0 +1,35 @@
+{
+  "system": "D_ss50",
+  "solute_pdb": "/n/home05/ianpoon/DNA-springs-project-2026-27/MD simulations/pp2a/build/03_dna/solute_D_ss50.pdb",
+  "pad_A": 24.0,
+  "waters_pass1": 92208,
+  "nacl_pairs": 249,
+  "mgcl2": 8,
+  "salt_M_requested": 0.15,
+  "mg_M_requested": 0.005,
+  "leap_total_charge": null,
+  "close_contacts_reported": 0,
+  "extra_bonds": [],
+  "atoms": 277063,
+  "residues": 92258,
+  "bonds": 276614,
+  "net_charge": 0.0,
+  "box": [
+    156.588,
+    156.588,
+    156.588,
+    109.471,
+    109.471,
+    109.471
+  ],
+  "waters": 91637,
+  "ions": {
+    "Na+": 298,
+    "Cl-": 265,
+    "MG": 8
+  },
+  "bonds_verified": [],
+  "dihedrals": 6599,
+  "angles": 3092,
+  "problems": []
+}

@@ -1,0 +1,195 @@
+{
+  "source_pdb": "/n/netscratch/hekstra_lab/Lab/ian_poon/pp2a_day2025/md/systems/Aa/protein.pdb",
+  "source_model": "AlphaFold DB v6, AF-P30153-F1 (the apo run's start model)",
+  "uniprot": "P30153",
+  "numbering_note": "File numbering is UniProt P30153 (Met1 = 1).  The construct labels D6X/N552X count from Ala2 (construct n = UniProt n+1): D6X = Asp7, N552X = Asn553.  UniProt 6 is Gly (no CB) and 552 is Asp, so the literal reading is impossible.  Confirmed with Ian 2026-10-26.  Yilmaz et al.'s 'N29-F577' is the same convention = Asn30-Phe578 here.",
+  "chosen_pair": "ASP7-ASN553",
+  "construct_labels": {
+    "7": "D6X",
+    "553": "N552X"
+  },
+  "termini": "free 1-589, charged termini, no caps (as the apo run Aa_rep1)",
+  "pairs": {
+    "ASP7-ASN553": {
+      "site_a": {
+        "resi": 7,
+        "resname": "ASP",
+        "construct_label": "D6X",
+        "anchor_atom": "CB",
+        "sasa_A2": 85.1,
+        "plddt": 52.28,
+        "xyz": [
+          -3.271,
+          23.272,
+          -47.149
+        ],
+        "phi_deg": -115.3,
+        "psi_deg": -122.7
+      },
+      "site_b": {
+        "resi": 553,
+        "resname": "ASN",
+        "construct_label": "N552X",
+        "anchor_atom": "CB",
+        "sasa_A2": 106.2,
+        "plddt": 94.25,
+        "xyz": [
+          37.373,
+          16.731,
+          -11.579
+        ],
+        "phi_deg": 118.4,
+        "psi_deg": 152.9
+      },
+      "d_anchor_anchor_A": 54.41,
+      "d_CA_CA_A": 54.39
+    }
+  },
+  "literature_pair": {
+    "resi": [
+      30,
+      578
+    ],
+    "label": "Yilmaz/Bahar 2025 'N29-F577' (Met1-less)",
+    "d_CA_CA_A": 38.78,
+    "apo_MD_reference_A": "66.5 +/- 9.7 (CHARMM36, 3 x 704 ns)"
+  },
+  "heat_repeats_nominal": {
+    "1": [
+      8,
+      46
+    ],
+    "2": [
+      47,
+      85
+    ],
+    "3": [
+      86,
+      124
+    ],
+    "4": [
+      125,
+      163
+    ],
+    "5": [
+      164,
+      202
+    ],
+    "6": [
+      203,
+      241
+    ],
+    "7": [
+      242,
+      280
+    ],
+    "8": [
+      281,
+      319
+    ],
+    "9": [
+      320,
+      358
+    ],
+    "10": [
+      359,
+      397
+    ],
+    "11": [
+      398,
+      436
+    ],
+    "12": [
+      437,
+      475
+    ],
+    "13": [
+      476,
+      514
+    ],
+    "14": [
+      515,
+      553
+    ],
+    "15": [
+      554,
+      589
+    ]
+  },
+  "aromatic_within_8A_of_anchor": [
+    {
+      "site": 7,
+      "resn": "TYR",
+      "resi": 11,
+      "min_dist_to_anchor_A": 6.69
+    }
+  ],
+  "histidine_tautomers": {
+    "87": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 3.28 A (NE2 4.21), so NE2-H"
+    },
+    "117": {
+      "name": "HID",
+      "reason": "NE2 has a partner at 3.64 A (ND1 4.34), so ND1-H"
+    },
+    "119": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 2.89 A (NE2 3.70), so NE2-H"
+    },
+    "127": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 3.52 A (NE2 4.37), so NE2-H"
+    },
+    "304": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 3.32 A (NE2 4.90), so NE2-H"
+    },
+    "340": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 3.89 A (NE2 4.36), so NE2-H"
+    },
+    "364": {
+      "name": "HIE",
+      "reason": "ND1 3.69 A, NE2 3.69 A -- too close to call, HIE"
+    },
+    "454": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 4.55 A (NE2 5.64), so NE2-H"
+    },
+    "479": {
+      "name": "HID",
+      "reason": "NE2 has a partner at 3.42 A (ND1 4.17), so ND1-H"
+    },
+    "497": {
+      "name": "HIE",
+      "reason": "ND1 has a partner at 2.86 A (NE2 3.29), so NE2-H"
+    },
+    "520": {
+      "name": "HIE",
+      "reason": "ND1 3.58 A, NE2 3.42 A -- too close to call, HIE"
+    }
+  },
+  "plddt": {
+    "mean_all": 94.9,
+    "res_1_13": [
+      37.19,
+      35.75,
+      35.72,
+      38.41,
+      37.16,
+      41.44,
+      52.28,
+      54.22,
+      66.19,
+      74.56,
+      80.56,
+      79.31,
+      81.25
+    ],
+    "at_sites": {
+      "7": 52.28,
+      "553": 94.25
+    }
+  }
+}

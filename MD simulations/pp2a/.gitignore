@@ -1,0 +1,37 @@
+# Trajectories and restart state live on netscratch, never in git.
+data
+*.dcd
+*.h5
+*.xtc
+*.nc
+*.chk
+*.rst7
+*.inpcrd
+*.prmtop
+*.parm7
+*.log
+slurm/logs/
+__pycache__/
+*.pyc
+# QM scratch
+*.wfn
+*.molden
+psi.*.clean
+timer.dat
+build/systems/*/system.pdb
+build/systems/*/*.out
+build/systems/*/*.in
+build/02_params/*/ANTECHAMBER*
+build/02_params/*/ATOMTYPE.INF
+build/02_params/*/sqm.*
+build/02_params/*/*.log
+build/03_dna/straight_*.pdb
+build/03_dna/*.pml
+build/systems/*/*.pdb
+build/systems/*/*.frcmod
+build/systems/*/*.prepin
+build/04_assemble/*.pdb
+figures/_work_*
+figures/*.gif
+figures/web/
+report/*.html
