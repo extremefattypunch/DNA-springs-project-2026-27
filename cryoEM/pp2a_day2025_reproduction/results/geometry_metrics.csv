@@ -1,0 +1,28 @@
+track,system,quantity,selection_or_method,value,unit,paper_value,notes
+em,Aa,HEAT1-HEAT15 CoM distance,"Calpha CoM, nominal HEAT bounds",63.269,A,62.7,Fig 3A
+em,Aa,HEAT1-HEAT15 CoM distance,"Calpha CoM, dssp HEAT bounds",68.883,A,62.7,Fig 3A
+em,Ab,HEAT1-HEAT15 CoM distance,"Calpha CoM, nominal HEAT bounds",60.436,A,59.6,Fig 3A
+em,Ab-vs-Aa,HEAT1 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",3.162,A,,Fig 3B
+em,Ab-vs-Aa,HEAT2 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.305,A,,Fig 3B
+em,Ab-vs-Aa,HEAT3 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.522,A,2-3 (HEAT 3-6 largest),Fig 3B
+em,Ab-vs-Aa,HEAT4 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.888,A,2-3 (HEAT 3-6 largest),Fig 3B
+em,Ab-vs-Aa,HEAT5 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.737,A,2-3 (HEAT 3-6 largest),Fig 3B
+em,Ab-vs-Aa,HEAT6 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.839,A,2-3 (HEAT 3-6 largest),Fig 3B
+em,Ab-vs-Aa,HEAT7 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.499,A,,Fig 3B
+em,Ab-vs-Aa,HEAT8 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",2.193,A,,Fig 3B
+em,Ab-vs-Aa,HEAT9 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",1.791,A,,Fig 3B
+em,Ab-vs-Aa,HEAT10 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",1.240,A,,Fig 3B
+em,Ab-vs-Aa,HEAT11 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",0.851,A,,Fig 3B
+em,Ab-vs-Aa,HEAT12 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",0.657,A,,Fig 3B
+em,Ab-vs-Aa,HEAT13 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",0.308,A,,Fig 3B
+em,Ab-vs-Aa,HEAT14 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",0.210,A,,Fig 3B
+em,Ab-vs-Aa,HEAT15 CoM shift,"after HEAT12-15 Calpha fit (nominal), n_fit=153",0.833,A,,Fig 3B
+em,Aa,salt bridge R113-E191 backbone distance,Calpha-Calpha,12.653,A,13.2,Fig 3C
+em,Aa,salt bridge R113-E191 side-chain distance,min Arg N - Glu O,2.875,A,,Fig 3C
+em,Ab,salt bridge R125-E203 backbone distance,Calpha-Calpha,12.381,A,12.4,Fig 3C
+em,Ab,salt bridge R125-E203 side-chain distance,min Arg N - Glu O,2.774,A,,Fig 3C
+em,Aa,A-B56g interface residues within 4 A,heavy atoms,32,count,,paper's 4 residues found: 4/4  (Fig 3D)
+em,Aa,A-Calpha interface residues within 4 A,heavy atoms,28,count,,paper's 7 residues found: 7/7  (Fig 3E)
+em,Ab,A-B56g interface residues within 4 A,heavy atoms,17,count,,paper's 4 residues found: 4/4  (Fig 3D)
+em,Ab,A-Calpha interface residues within 4 A,heavy atoms,30,count,,paper's 7 residues found: 7/7  (Fig 3E)
+em,Aa,B56g 404-449 min Calpha distance to A N-terminus (7-20),9MIP,6.888,A,,Fig 2B region check

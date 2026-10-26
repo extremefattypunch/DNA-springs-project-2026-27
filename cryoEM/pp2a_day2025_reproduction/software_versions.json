@@ -1,0 +1,30 @@
+{
+  "host_os": "Rocky Linux release 8.10 (Green Obsidian)",
+  "cryosparc_master": "Current CryoSPARC version: v5.0.7+260904",
+  "relion": "3.1.4-commit-2448e0",
+  "gromacs": "2023.3",
+  "phenix": "2.2",
+  "phenix_release": "6143",
+  "chimerax": "1.12 (2026-06-12)",
+  "chimerax_container": "centos-stream9.sif",
+  "emready": "v1.1 (He, Li & Huang 2023; huanglab tarball EMReady_v1.1.tgz) + torch 2.14.0+cu130",
+  "namd": "not installed (registration-gated download; OpenMM 8.6 used instead)",
+  "vmd": "not installed (registration download; ChimeraX/MDAnalysis used)",
+  "python_dnaspring": "Python 3.11.15",
+  "cryosparc_tools": "5.0.3",
+  "alphafold_models": "AlphaFold DB v6 (AF2) AF-P30153-F1 / AF-P30154-F1 (AlphaFold Server AF3 not supplied)",
+  "dnaspring_packages": {
+    "openmm": "8.6.0",
+    "parmed": "4.3.1",
+    "mdtraj": "1.11.1",
+    "MDAnalysis": "2.10.0",
+    "mrcfile": "1.5.4",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "matplotlib": "3.11.1",
+    "biopython": "1.88",
+    "pymol": "3.1.0"
+  },
+  "ambertools": "24.8",
+  "git_commit": "73d1493"
+}
