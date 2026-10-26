@@ -7,9 +7,11 @@
     "implementation": "sfGFP/analysis/spring_model.py (reproduces RLuc 1.5 pN, 40-mer 2.4 pN, GK 6.6 kT)"
   },
   "span": {
-    "source": "build target (assemble_chimera.py anchor span); the chimera has not run",
-    "A": 90.01,
-    "sd_A": 0.0
+    "source": "P3_ss50 DNA end-to-end (5'P to 3'O3'), simulated",
+    "A": 97.22514162073097,
+    "sd_A": 9.063417558056031,
+    "p5_A": 82.742254,
+    "p95_A": 112.64880799999999
   },
   "duplex_springs_at_span": [
     {
@@ -45,9 +47,9 @@
       "euler_pN": 11.48,
       "feasible": true,
       "regime": "kinked",
-      "force_pN": 2.84,
-      "unkinked_force_pN": 10.48,
-      "energy_kT": 5.22
+      "force_pN": 3.08,
+      "unkinked_force_pN": 10.27,
+      "energy_kT": 4.71
     },
     {
       "n_bp": 40,
@@ -60,9 +62,9 @@
       "euler_pN": 11.48,
       "feasible": true,
       "regime": "kinked",
-      "force_pN": 3.62,
-      "unkinked_force_pN": 10.48,
-      "energy_kT": 6.53
+      "force_pN": 3.93,
+      "unkinked_force_pN": 10.27,
+      "energy_kT": 5.89
     },
     {
       "n_bp": 50,
@@ -75,9 +77,9 @@
       "euler_pN": 7.35,
       "feasible": true,
       "regime": "kinked",
-      "force_pN": 1.99,
-      "unkinked_force_pN": 6.79,
-      "energy_kT": 6.33
+      "force_pN": 2.07,
+      "unkinked_force_pN": 6.73,
+      "energy_kT": 5.98
     },
     {
       "n_bp": 50,
@@ -90,9 +92,9 @@
       "euler_pN": 7.35,
       "feasible": true,
       "regime": "kinked",
-      "force_pN": 2.54,
-      "unkinked_force_pN": 6.79,
-      "energy_kT": 7.93
+      "force_pN": 2.64,
+      "unkinked_force_pN": 6.73,
+      "energy_kT": 7.48
     }
   ],
   "ssDNA_at_span": {
@@ -100,8 +102,8 @@
     "contour_nm": 29.5,
     "natural_rms_nm": 9.407,
     "state": "matched",
-    "tension_pN_clipped": 0.0,
-    "tension_pN_unclipped": 1.604,
+    "tension_pN_clipped": 1.78,
+    "tension_pN_unclipped": 1.78,
     "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme"
   },
   "kink": {
@@ -120,13 +122,13 @@
         "x_c_A": 125.0,
         "radius_kinked_A": 65.4,
         "curvature_at_x_c_deg_per_bp": 1.63,
-        "curvature_at_span_deg_per_bp": 4.17
+        "curvature_at_span_deg_per_bp": 3.76
       },
       "50 bp": {
         "x_c_A": 151.4,
         "radius_kinked_A": 81.4,
         "curvature_at_x_c_deg_per_bp": 1.64,
-        "curvature_at_span_deg_per_bp": 4.1
+        "curvature_at_span_deg_per_bp": 3.86
       }
     },
     "sfGFP_empirical": {
@@ -135,19 +137,50 @@
       "chimera_deg_per_bp": "4.8-5.2",
       "curuksu_typeII_deg_per_bp": "8.6-9.3",
       "source": "sfGFP page, bare-duplex restraint windows (docs/wiki/Home.md)"
+    },
+    "strand_measured": {
+      "axis_curvature_deg_per_nt": 31.619,
+      "sharp_turns_per_frame": 0.069,
+      "hottest_nt": 49,
+      "hottest_step": "CpC-CpA",
+      "bii_fraction": 0.153
     }
   },
   "protein_spring": {
     "zocchi_generic_kT_nm2": 100,
     "sfGFP_measured_kT_nm2": "230-350",
-    "method": "kappa = kT / var(Cb-Cb), from each run's own fluctuation (equipartition; an upper bound on the stiffness if the motion is not harmonic, and sensitive to slow drift)",
+    "method": "kappa = kT / var(Cb-Cb), from each run's own fluctuation (equipartition; slow drift inflates the variance, so this is a lower bound on the local stiffness; read it against the block SEM)",
     "P0_apo": {
-      "mean_A": 56.47,
-      "sd_A": 7.16,
-      "kappa_kT_nm2": 1.95,
-      "kappa_pN_per_nm": 8.19,
-      "displacement_per_pN_A": 1.22,
-      "displacement_at_2pN_A": 2.44
+      "mean_A": 56.42,
+      "sd_A": 7.05,
+      "kappa_kT_nm2": 2.01,
+      "kappa_pN_per_nm": 8.44,
+      "displacement_per_pN_A": 1.18,
+      "displacement_at_2pN_A": 2.37
+    },
+    "P1_tet": {
+      "mean_A": 78.55,
+      "sd_A": 7.56,
+      "kappa_kT_nm2": 1.75,
+      "kappa_pN_per_nm": 7.35,
+      "displacement_per_pN_A": 1.36,
+      "displacement_at_2pN_A": 2.72
+    },
+    "P2_clicked": {
+      "mean_A": 80.87,
+      "sd_A": 8.93,
+      "kappa_kT_nm2": 1.25,
+      "kappa_pN_per_nm": 5.26,
+      "displacement_per_pN_A": 1.9,
+      "displacement_at_2pN_A": 3.8
+    },
+    "P3_ss50": {
+      "mean_A": 79.77,
+      "sd_A": 9.55,
+      "kappa_kT_nm2": 1.1,
+      "kappa_pN_per_nm": 4.6,
+      "displacement_per_pN_A": 2.17,
+      "displacement_at_2pN_A": 4.35
     }
   }
 }

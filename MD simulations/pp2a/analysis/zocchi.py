@@ -120,7 +120,7 @@ def main():
     kink = {"critical_curvature_deg_per_bp": {"nicked_27": round(critical_curvature_deg_per_bp(TAU_C_NICKED), 2),
                                               "continuous_34": round(critical_curvature_deg_per_bp(TAU_C_CONTINUOUS), 2)},
             "softening_points": {f"{n} bp": {"x_c_A": round(Spring(n).x_c * 10, 1),
-                                             "radius_kinked_A": round(Spring(n).R * 10, 1)}
+                                             "half_rod_chord_A": round(Spring(n).R * 10, 1)   # book eqs 2.189/2.197: the kink-to-anchor chord, ~L/2}
                                  for n in (27, 40, 50)},
             "sfGFP_empirical": SFGFP_THRESHOLDS}
     for n in (27, 40, 50):

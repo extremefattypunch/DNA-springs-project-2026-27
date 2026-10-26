@@ -86,13 +86,13 @@ def main():
                     f"protein without DNA (p = {p_txt(w['p'])} on ten block means each, {verdict}). "
                     f"The strand itself spends **{100 * (ss.get('fraction_of_frames_stretched') or 0):.0f} %** of "
                     f"the run beyond its own natural size, so by the model it is **{ss.get('state', '?')}** and pulls with "
-                    f"{num(ss.get('tension_pN_clipped'))} pN "
-                    f"({num(ss.get('tension_pN_unclipped'))} pN if the Marko–Siggia interpolation is trusted below the "
-                    f"chain's rms size).")
+                    f"**{num(ss.get('tension_pN_unclipped'))} pN** (Marko–Siggia, Zocchi eq. 2.207; ideal chain "
+                    f"{num(ss.get('ideal_chain_pN'))} pN; {num(ss.get('tension_pN_clipped'))} pN under the sfGFP page's "
+                    f"zero-below-rms convention).")
     elif have(chim) and ss:
         headline = (f"The chimera run is finished: the attachment sites sit at "
                     f"**{num(g(ext, chim, 'mean_A'), '{:.1f}')} ± {num(g(ext, chim, 'sd_A'), '{:.1f}')} Å**, and the strand is "
-                    f"**{ss.get('state', '?')}** at {num(ss.get('tension_pN_clipped'))} pN by the model. "
+                    f"**{ss.get('state', '?')}** at {num(ss.get('tension_pN_unclipped'))} pN by the model. "
                     f"*The displacement against the clicked zero ({labels.get(ctrl, ctrl)}) is written here once "
                     f"that control run has finished.*")
     else:
@@ -156,11 +156,10 @@ natural rms size of {num((ss.get('natural_rms_nm') or 0) * 10, '{:.0f}')} Å. It
 **{num(ss.get('nt_in_contact'), '{:.0f}')} of 50 nucleotides on the protein** at any moment
 ({100 * (ss.get('fraction_of_strand_on_protein') or 0):.0f} % of the strand, time-averaged). Protein residues it touches more than half the
 time: {ss.get('protein_residues_touched_over_half') or 'none'}."""
-        ms_txt = f"""Marko–Siggia applied frame by frame to the strand's end-to-end distance gives
-**{num(ss.get('tension_pN_clipped'))} pN** as the repository uses it (zero below the chain's rms size) and
-{num(ss.get('tension_pN_unclipped'))} pN if the interpolation formula is trusted all the way down;
-the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives {num(ss.get('ideal_chain_pN'))} pN. All three are
-**models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
+        ms_txt = f"""Marko–Siggia (Zocchi eq. 2.207) applied frame by frame to the strand's end-to-end distance gives
+**{num(ss.get('tension_pN_unclipped'))} pN** of pull; the Gaussian-chain limit 3k<sub>B</sub>T·x/(2ξL) (eq. 2.173)
+gives {num(ss.get('ideal_chain_pN'))} pN; the sfGFP page's convention of calling the tension zero below the
+chain's rms size gives {num(ss.get('tension_pN_clipped'))} pN. All three are **models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
 spring at this span on its kinked branch at 1.7–3.3 pN of *push* — and outside the
 model's own validity range (γ > 1 for L > ~45 bp). The sign is the point: nothing here
 pushes."""
@@ -217,7 +216,7 @@ Where they can be compared: {'; '.join(agree) if agree else 'no window has a val
     zk = z.get("kink", {})
     crit = zk.get("critical_curvature_deg_per_bp", {})
     soft = zk.get("softening_points", {})
-    soft_rows = "\n".join(f"| {n} | {v['x_c_A']:.0f} | {v['radius_kinked_A']:.0f} | {v['curvature_at_x_c_deg_per_bp']:.2f} | "
+    soft_rows = "\n".join(f"| {n} | {v['x_c_A']:.0f} | {v['half_rod_chord_A']:.0f} | {v['curvature_at_x_c_deg_per_bp']:.2f} | "
                           f"{num(v.get('curvature_at_span_deg_per_bp'), '{:.2f}', 'stretched')} |" for n, v in soft.items())
     emp = zk.get("sfGFP_empirical", {})
     zprot = z.get("protein_spring", {})
@@ -302,9 +301,12 @@ sTCO-modified at both ends, clicks onto both, closing a covalent loop. The monom
 simulated alone, without the B and C subunits.
 
 A single strand is not the leaf spring the duplex constructs are. It is an entropic chain
-that pulls its ends **together**, and only once stretched beyond its natural size: for 50
-nucleotides that size is {num((ss.get('natural_rms_nm') or 9.407) * 10, '{:.0f}')} Å (contour {num(ss.get('contour_nm') or 29.5, '{:.1f}')} nm,
-persistence 1.5 nm). The two Cβ atoms are {pair['d_anchor_anchor_A']:.1f} Å apart in the AlphaFold model and the
+that pulls its ends **together** at any separation — with a tension 3k<sub>B</sub>T·x/(2ξL) of about
+1.3 pN at the 90 Å build span (Marko–Siggia 1.6 pN) that climbs steeply only as the span approaches
+the contour. For 50 nucleotides the free chain's rms size is {num((ss.get('natural_rms_nm') or 9.407) * 10, '{:.0f}')} Å
+(contour {num(ss.get('contour_nm') or 29.5, '{:.1f}')} nm, persistence 1.5 nm); it says whether the strand is slack or taut,
+not whether it pulls. The sfGFP page quotes the tension as zero below that size — a clipping
+convention of that analysis, kept here only as a second column. The two Cβ atoms are {pair['d_anchor_anchor_A']:.1f} Å apart in the AlphaFold model and the
 tethers reach a further 22 and 26 Å, so the strand *can* be stretched to ~{pair['d_anchor_anchor_A'] + 48:.0f} Å by the
 protein — but only if the horseshoe opens.
 
@@ -403,8 +405,8 @@ The chimera carries none of these. Its 50 nt **single strand** is Zocchi's "ss s
 2021 chapter says *"with the DNA spring in the ss state there is essentially no stress on the
 enzyme"*: a worm-like chain with ξ = 1.5 nm and a contour of {num(zss.get('contour_nm'), '{:.1f}')} nm whose natural rms size is
 {num((zss.get('natural_rms_nm') or 9.4) * 10, '{:.0f}')} Å. At this span it is **{zss.get('state', '?')}**, pulling with
-{num(zss.get('tension_pN_clipped'))} pN as the model is used ({num(zss.get('tension_pN_unclipped'))} pN if the Marko–Siggia
-interpolation is trusted below the rms size). Every number in this section is a **model**, not a measurement.
+**{num(zss.get('tension_pN_unclipped'))} pN** by Marko–Siggia (eq. 2.207; {num(zss.get('tension_pN_clipped'))} pN under the
+sfGFP page's zero-below-rms convention). Every number in this section is a **model**, not a measurement.
 
 {fig9_block}
 
@@ -425,9 +427,12 @@ interpolation is trusted below the rms size). Every number in this section is a 
 **By the model.** A rod of bending modulus B yields at the critical torque τ<sub>c</sub>, i.e. at a
 curvature τ<sub>c</sub>/B = **{num(crit.get('nicked_27'), '{:.2f}')}° per bp** (nicked) to
 **{num(crit.get('continuous_34'), '{:.2f}')}° per bp** (continuous) — Zocchi's kink. Below the softening
-span x<sub>c</sub> the duplex sits in the kinked state with a hinge of radius R:
+span x<sub>c</sub> the duplex is two nearly straight arms meeting at a constant-torque kink (book
+fig. 2.31); R is the chord of each half-rod from the kink to its anchor, R ≈ L/2 (eqs 2.189, 2.197),
+not a radius of curvature. The two "uniform curvature" columns are what a *smoothly* bent rod of the
+same chord would have, for scale against the thresholds:
 
-| duplex | x<sub>c</sub> (Å) | R of the kinked state (Å) | uniform curvature at x<sub>c</sub> (°/bp) | uniform curvature at this span (°/bp) |
+| duplex | x<sub>c</sub> (Å) | half-rod chord R (Å) | uniform curvature at x<sub>c</sub> (°/bp) | uniform curvature at this span (°/bp) |
 |---|---|---|---|---|
 {soft_rows}
 
