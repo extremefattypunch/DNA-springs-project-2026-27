@@ -1,5 +1,5 @@
 {
-  "total_ns": 369.6,
+  "total_ns": 400.0,
   "n_runs": 4,
   "systems_present": [
     "P0_apo",
@@ -92,19 +92,19 @@
       "label": "50 nt ssDNA, closed loop",
       "7": {
         "residue": "TDP",
-        "phi": 47.5,
-        "phi_sd": 12.9,
-        "psi": 35.95,
-        "psi_sd": 14.35,
-        "ring_neighbours_per_frame": 0.434
+        "phi": 49.05,
+        "phi_sd": 12.25,
+        "psi": 32.6,
+        "psi_sd": 14.57,
+        "ring_neighbours_per_frame": 0.392
       },
       "553": {
         "residue": "TDP",
-        "phi": -58.71,
-        "phi_sd": 8.87,
-        "psi": -35.76,
-        "psi_sd": 8.59,
-        "ring_neighbours_per_frame": 0.086
+        "phi": -58.97,
+        "phi_sd": 8.84,
+        "psi": -35.43,
+        "psi_sd": 8.49,
+        "ring_neighbours_per_frame": 0.091
       }
     }
   },
@@ -168,22 +168,22 @@
       ]
     },
     "P3_ss50": {
-      "mean_A": 79.77098628280407,
-      "sd_A": 9.552505079184533,
-      "sem_block_A": 2.8097492356622227,
+      "mean_A": 77.78816426231579,
+      "sd_A": 9.139756723436673,
+      "sem_block_A": 2.6582408194283405,
       "min_A": 53.66672,
       "max_A": 99.97406,
       "blocks_A": [
-        63.969,
-        67.933,
-        76.524,
-        81.025,
-        82.454,
-        75.624,
-        83.271,
-        91.774,
-        89.272,
-        85.9
+        63.334,
+        74.389,
+        80.279,
+        80.728,
+        81.772,
+        90.297,
+        87.717,
+        79.322,
+        71.953,
+        68.127
       ]
     }
   },
@@ -215,11 +215,11 @@
       "label": "2\u00d7 Tet2-Et, unclicked"
     },
     "P3_ss50": {
-      "delta": -1.0925000000000011,
-      "sem_delta": 3.6224203132098785,
-      "t": -0.3015939359703737,
-      "dof": 17.28584824040319,
-      "p": 0.7665597771103964,
+      "delta": -3.075300000000013,
+      "sem_delta": 3.5062682671340353,
+      "t": -0.8770863395782638,
+      "dof": 17.605988388379906,
+      "p": 0.3922509891664202,
       "n_blocks": [
         10,
         10
@@ -246,38 +246,38 @@
       "n": 50,
       "topology": "ss",
       "x_A": {
-        "mean": 97.202,
-        "sd": 9.046,
-        "min": 76.29,
+        "mean": 95.35,
+        "sd": 8.578,
+        "min": 75.397,
         "max": 122.121
       },
-      "extension_A": 79.771,
-      "rg_A": 39.716,
+      "extension_A": 77.788,
+      "rg_A": 38.223,
       "strand": {
-        "sharp_turns_per_frame": 0.069,
-        "hottest_nt": 49.0,
-        "hottest_step": "CpC-CpA",
-        "bii_fraction": 0.153,
-        "frames_with_any_sharp_turn": 0.0667,
-        "hottest_nt_sharp_turn_fraction": 0.0244,
-        "axis_curvature_deg_per_nt": 31.619,
-        "axis_curvature_baseline": null,
-        "sharp_turns_at_unstacked_steps": 1.0
+        "sharp_turns_per_frame": 0.18,
+        "hottest_nt": 3.0,
+        "hottest_step": "CpT-TpT",
+        "bii_fraction": 0.15,
+        "frames_with_any_sharp_turn": 0.1768,
+        "hottest_nt_sharp_turn_fraction": 0.1179,
+        "axis_curvature_deg_per_nt": 11.52,
+        "axis_curvature_baseline": 4.43,
+        "sharp_turns_at_unstacked_steps": 0.9953
       },
-      "stacked_fraction": 0.799,
-      "nt_in_contact": 2.384,
-      "fraction_of_strand_on_protein": 0.0477,
-      "contacts_over_half": "TDP553;TDP7;ASP5;MET1;ALA2;ALA3;ALA4;TYR11",
+      "stacked_fraction": 0.785,
+      "nt_in_contact": 3.054,
+      "fraction_of_strand_on_protein": 0.0611,
+      "contacts_over_half": "TDP553;MET1;TDP7;ALA2;ASP5;ALA3;ALA4;SER554;GLN557",
       "model": {
         "kind": "Marko-Siggia WLC (pulls)",
         "contour_nm": 29.5,
         "natural_rms_nm": 9.407,
         "state": "matched",
-        "force_pN": 1.79,
+        "force_pN": 1.742,
         "force_sign": "pull",
-        "ideal_chain_pN": 1.384,
-        "tension_pN_clipped": 1.197,
-        "fraction_of_frames_stretched": 0.6192
+        "ideal_chain_pN": 1.358,
+        "tension_pN_clipped": 0.985,
+        "fraction_of_frames_stretched": 0.5162
       }
     }
   },
@@ -287,30 +287,30 @@
     "natural_rms_nm": 9.407,
     "state": "matched",
     "x_A": {
-      "mean": 97.202,
-      "sd": 9.046,
-      "min": 76.29,
+      "mean": 95.35,
+      "sd": 8.578,
+      "min": 75.397,
       "max": 122.121
     },
-    "tension_pN_clipped": 1.197,
-    "tension_pN_unclipped": 1.79,
-    "ideal_chain_pN": 1.384,
-    "fraction_of_frames_stretched": 0.6192,
-    "rg_A": 39.716,
-    "sharp_turns_per_frame": 0.069,
-    "hottest_nt": 49.0,
-    "stacked_fraction": 0.799,
-    "nt_in_contact": 2.384,
-    "axis_curvature_deg_per_nt": 31.619,
-    "sharp_turns_at_unstacked_steps": 1.0,
-    "hottest_step": "CpC-CpA",
-    "bii_fraction": 0.153,
-    "frames_with_any_sharp_turn": 0.0667,
-    "hottest_nt_sharp_turn_fraction": 0.0244,
-    "axis_curvature_baseline": null,
-    "fraction_of_strand_on_protein": 0.0477,
+    "tension_pN_clipped": 0.985,
+    "tension_pN_unclipped": 1.742,
+    "ideal_chain_pN": 1.358,
+    "fraction_of_frames_stretched": 0.5162,
+    "rg_A": 38.223,
+    "sharp_turns_per_frame": 0.18,
+    "hottest_nt": 3.0,
+    "stacked_fraction": 0.785,
+    "nt_in_contact": 3.054,
+    "axis_curvature_deg_per_nt": 11.52,
+    "sharp_turns_at_unstacked_steps": 0.9953,
+    "hottest_step": "CpT-TpT",
+    "bii_fraction": 0.15,
+    "frames_with_any_sharp_turn": 0.1768,
+    "hottest_nt_sharp_turn_fraction": 0.1179,
+    "axis_curvature_baseline": 4.43,
+    "fraction_of_strand_on_protein": 0.0611,
     "end_to_end_pbc": "raw (one molecule, contiguous as written)",
-    "protein_residues_touched_over_half": "TDP553;TDP7;ASP5;MET1;ALA2;ALA3;ALA4;TYR11",
+    "protein_residues_touched_over_half": "TDP553;MET1;TDP7;ALA2;ASP5;ALA3;ALA4;SER554;GLN557",
     "protein_residues_ever_touched": 16.0
   },
   "windows": [
@@ -331,7 +331,26 @@
       "ns": 20.0,
       "independent_samples": 101.5,
       "kink.sharp_turns_per_frame": 0.016,
-      "kink.axis_curvature_deg_per_nt": 32.014
+      "kink.axis_curvature_deg_per_nt": 11.534
+    },
+    {
+      "system": "D_ss50",
+      "tag": "D_ss50_x80A_k33",
+      "x0_A": 80.0,
+      "mean_r_A": 80.091,
+      "sd_r_A": 2.693,
+      "force_pN": 0.497,
+      "force_sem_pN": 1.42,
+      "box_ok": 1.0,
+      "box_width_A": 125.6,
+      "ms_tension_pN": 0.0,
+      "ms_tension_unclipped_pN": 1.3791495297181169,
+      "ideal_chain_pN": 1.1402786440677968,
+      "ms_state": "matched",
+      "ns": 18.6,
+      "independent_samples": 108.0,
+      "kink.sharp_turns_per_frame": 0.009,
+      "kink.axis_curvature_deg_per_nt": 12.038
     }
   ],
   "rigidity": {
@@ -438,37 +457,37 @@
       }
     },
     "P3_ss50": {
-      "rmsd.rmsd_core_A.mean": 5.031,
+      "rmsd.rmsd_core_A.mean": 4.809,
       "rmsd.rmsd_core_A.max": 8.496,
-      "rmsd.rmsd_tail_corefit_A.mean": 11.712,
-      "rmsd.rmsd_all_A.mean": 5.441,
-      "rmsd.rmsd_core_to_mean_A.mean": 2.281,
-      "rmsd.rmsf_A.mean_core": 2.281,
-      "rmsd.rmsf_A.mean_tail": 6.479,
-      "rmsd.rmsf_A.max": 9.84,
+      "rmsd.rmsd_tail_corefit_A.mean": 10.354,
+      "rmsd.rmsd_all_A.mean": 5.173,
+      "rmsd.rmsd_core_to_mean_A.mean": 2.276,
+      "rmsd.rmsf_A.mean_core": 2.261,
+      "rmsd.rmsf_A.mean_tail": 6.992,
+      "rmsd.rmsf_A.max": 9.507,
       "rmsd.rmsf_A.argmax_resnum": 1.0,
-      "rmsd.rmsf_A.at_sites.7": 5.869,
-      "rmsd.rmsf_A.at_sites.553": 5.17,
-      "rmsd.helix_fraction_core": 0.7736,
+      "rmsd.rmsf_A.at_sites.7": 6.424,
+      "rmsd.rmsf_A.at_sites.553": 4.615,
+      "rmsd.helix_fraction_core": 0.7733,
       "rmsd.helix_fraction_at_sites.7": 0.0,
-      "rmsd.helix_fraction_at_sites.553": 0.997,
+      "rmsd.helix_fraction_at_sites.553": 0.998,
       "rmsf_per_heat": {
-        "0": 7.343,
-        "1": 4.414,
-        "2": 3.16,
-        "3": 2.308,
-        "4": 1.828,
-        "5": 1.367,
-        "6": 1.275,
-        "7": 1.336,
-        "8": 1.437,
-        "9": 1.508,
-        "10": 1.603,
-        "11": 1.672,
-        "12": 2.013,
-        "13": 2.589,
-        "14": 3.628,
-        "15": 4.766
+        "0": 7.729,
+        "1": 4.477,
+        "2": 3.079,
+        "3": 2.276,
+        "4": 1.789,
+        "5": 1.333,
+        "6": 1.261,
+        "7": 1.358,
+        "8": 1.474,
+        "9": 1.559,
+        "10": 1.648,
+        "11": 1.745,
+        "12": 2.216,
+        "13": 2.581,
+        "14": 3.414,
+        "15": 4.477
       }
     }
   },
@@ -500,11 +519,11 @@
       "quantity": "core RMSD about the run mean, block means"
     },
     "P3_ss50": {
-      "delta": -0.11473144527769463,
-      "sem_delta": 0.2874664375440436,
-      "t": -0.3991124886017912,
-      "dof": 17.45467642247731,
-      "p": 0.6946511041095825,
+      "delta": -0.11901562826098289,
+      "sem_delta": 0.261800786817053,
+      "t": -0.45460378369355814,
+      "dof": 17.999006646130475,
+      "p": 0.6548292890185189,
       "n_blocks": [
         10,
         10
@@ -716,70 +735,70 @@
       }
     },
     "P3_ss50": {
-      "heat.bend.total_deg.mean": 160.666,
-      "heat.bend.total_deg.sd": 7.176,
-      "heat.bend.sum_deg.mean": 322.778,
-      "heat.twist.sum_deg.mean": 475.119,
-      "heat.aperture_H1_H15_A.mean": 75.108,
-      "heat.aperture_H1_H15_A.sd": 7.829,
-      "heat.axis_straightness.mean": 0.49,
-      "heat.literature_pair.A.mean": 62.013,
-      "heat.literature_pair.A.sd": 7.414,
-      "heat.salt_bridge_backbone.A.mean": 12.737,
-      "heat.salt_bridge_sidechain.fraction_formed_below_5A": 0.992,
-      "heat.sites_CA_CA_A.mean": 80.248,
+      "heat.bend.total_deg.mean": 158.973,
+      "heat.bend.total_deg.sd": 7.322,
+      "heat.bend.sum_deg.mean": 324.06,
+      "heat.twist.sum_deg.mean": 491.86,
+      "heat.aperture_H1_H15_A.mean": 73.882,
+      "heat.aperture_H1_H15_A.sd": 7.463,
+      "heat.axis_straightness.mean": 0.482,
+      "heat.literature_pair.A.mean": 61.022,
+      "heat.literature_pair.A.sd": 7.087,
+      "heat.salt_bridge_backbone.A.mean": 12.782,
+      "heat.salt_bridge_sidechain.fraction_formed_below_5A": 0.975,
+      "heat.sites_CA_CA_A.mean": 78.197,
       "heat.bend.most_variable_repeat": 12.0,
       "region_rmsd_A": {
-        "N (HEAT 1-3)": 1.197,
-        "central (HEAT 4-12)": 2.271,
-        "C (HEAT 13-15)": 0.726
+        "N (HEAT 1-3)": 1.309,
+        "central (HEAT 4-12)": 2.225,
+        "C (HEAT 13-15)": 0.721
       },
       "bend_per_repeat_mean": {
-        "2": 14.18,
-        "3": 26.63,
-        "4": 56.65,
-        "5": 14.55,
-        "6": 22.55,
-        "7": 13.17,
-        "8": 15.91,
-        "9": 28.7,
-        "10": 37.47,
-        "11": 25.45,
-        "12": 21.77,
-        "13": 30.95,
-        "14": 14.81
+        "2": 15.77,
+        "3": 25.57,
+        "4": 56.09,
+        "5": 14.89,
+        "6": 22.66,
+        "7": 13.44,
+        "8": 15.77,
+        "9": 28.88,
+        "10": 36.96,
+        "11": 25.18,
+        "12": 22.86,
+        "13": 30.62,
+        "14": 15.37
       },
       "bend_per_repeat_sd": {
-        "2": 3.85,
-        "3": 2.31,
-        "4": 1.74,
-        "5": 2.25,
-        "6": 3.13,
-        "7": 2.86,
-        "8": 2.42,
-        "9": 2.27,
-        "10": 2.9,
-        "11": 2.73,
-        "12": 3.92,
-        "13": 2.99,
-        "14": 2.41
+        "2": 4.4,
+        "3": 2.98,
+        "4": 2.23,
+        "5": 2.26,
+        "6": 3.05,
+        "7": 2.8,
+        "8": 2.29,
+        "9": 2.54,
+        "10": 3.27,
+        "11": 3.02,
+        "12": 5.01,
+        "13": 3.07,
+        "14": 2.51
       },
       "repeat_centroid_rmsf": {
-        "1": 4.34,
-        "2": 3.04,
-        "3": 2.21,
-        "4": 1.71,
-        "5": 1.12,
+        "1": 4.35,
+        "2": 2.94,
+        "3": 2.14,
+        "4": 1.64,
+        "5": 1.06,
         "6": 0.93,
-        "7": 1.04,
-        "8": 1.23,
-        "9": 1.3,
-        "10": 1.37,
-        "11": 1.26,
-        "12": 1.56,
-        "13": 2.09,
-        "14": 3.18,
-        "15": 4.35
+        "7": 1.08,
+        "8": 1.27,
+        "9": 1.34,
+        "10": 1.35,
+        "11": 1.23,
+        "12": 1.69,
+        "13": 2.07,
+        "14": 2.95,
+        "15": 4.08
       }
     }
   },
@@ -959,82 +978,82 @@
     "P3_ss50": {
       "per_repeat": {
         "2": {
-          "delta_deg": 2.11783968750656,
-          "p": 0.06974725226539737,
-          "sd_ratio": 1.0791335699576143
+          "delta_deg": 3.710886183418163,
+          "p": 0.008528930312634884,
+          "sd_ratio": 1.2334839963153972
         },
         "3": {
-          "delta_deg": -1.1473131729527708,
-          "p": 0.026684863120543845,
-          "sd_ratio": 0.9251937193906337
+          "delta_deg": -2.2046033042909805,
+          "p": 0.009596168812660719,
+          "sd_ratio": 1.1963870920396413
         },
         "4": {
-          "delta_deg": 0.5362648855066752,
-          "p": 0.1930446076788127,
-          "sd_ratio": 0.8335807207439101
+          "delta_deg": -0.02478771578036998,
+          "p": 0.9645334351316447,
+          "sd_ratio": 1.0683198463128032
         },
         "5": {
-          "delta_deg": -1.9825267061300433,
-          "p": 0.00020180574641205738,
-          "sd_ratio": 0.9327611718955937
+          "delta_deg": -1.6436217395430237,
+          "p": 0.0007901233237195474,
+          "sd_ratio": 0.9402361361520039
         },
         "6": {
-          "delta_deg": -0.1014247159043613,
-          "p": 0.8884550988861585,
-          "sd_ratio": 0.9499219870584598
+          "delta_deg": 0.01705730703281816,
+          "p": 0.979636230240733,
+          "sd_ratio": 0.9231815171017735
         },
         "7": {
-          "delta_deg": 0.5880227662790531,
-          "p": 0.4387927230288316,
-          "sd_ratio": 1.0133749670162637
+          "delta_deg": 0.8570729626381866,
+          "p": 0.20973566672124205,
+          "sd_ratio": 0.9920493401798332
         },
         "8": {
-          "delta_deg": 0.9485773072807149,
-          "p": 0.1850488655417018,
-          "sd_ratio": 0.9526083405821537
+          "delta_deg": 0.8096566847891946,
+          "p": 0.21734306296831984,
+          "sd_ratio": 0.9033855844755821
         },
         "9": {
-          "delta_deg": 0.30921516418915473,
-          "p": 0.5734529049232209,
-          "sd_ratio": 0.8649687741921689
+          "delta_deg": 0.4885367989523566,
+          "p": 0.424250916157932,
+          "sd_ratio": 0.9670917822568827
         },
         "10": {
-          "delta_deg": -1.2177809112356357,
-          "p": 0.2240054991621434,
-          "sd_ratio": 0.8152177347408208
+          "delta_deg": -1.7265794709615463,
+          "p": 0.09841549612851987,
+          "sd_ratio": 0.9170514904829283
         },
         "11": {
-          "delta_deg": -1.031688617551353,
-          "p": 0.2362325376734423,
-          "sd_ratio": 0.7773749695964122
+          "delta_deg": -1.2961089391207565,
+          "p": 0.12571120114953274,
+          "sd_ratio": 0.8573492028866958
         },
         "12": {
-          "delta_deg": 0.3610079246931832,
-          "p": 0.7005222890216617,
-          "sd_ratio": 0.9171545903663008
+          "delta_deg": 1.4443316762310197,
+          "p": 0.29975525980083395,
+          "sd_ratio": 1.170982857445291
         },
         "13": {
-          "delta_deg": -2.2460383418116976,
-          "p": 0.004368301320076484,
-          "sd_ratio": 0.871594243418311
+          "delta_deg": -2.5729953285033815,
+          "p": 0.0016339834715330486,
+          "sd_ratio": 0.8941489371452568
         },
         "14": {
-          "delta_deg": -0.5639449518245954,
-          "p": 0.19685160596462345,
-          "sd_ratio": 1.1583583228284746
+          "delta_deg": -0.005165127932164282,
+          "p": 0.9902999011340028,
+          "sd_ratio": 1.2086892558312068
         }
       },
       "largest_shifts": [
         5,
         13,
-        3
+        2
       ],
       "aperture": {
-        "delta": 2.0837653607271704,
-        "sem_delta": 2.914333829531665,
-        "t": 0.7150057208998711,
-        "dof": 17.010553730690493,
-        "p": 0.4843039984039033,
+        "delta": 0.8468270698425471,
+        "sem_delta": 2.8075188565511278,
+        "t": 0.30162827503955736,
+        "dof": 17.42080307089937,
+        "p": 0.7665064021446014,
         "n_blocks": [
           10,
           10
@@ -1053,22 +1072,22 @@
     },
     "span": {
       "source": "P3_ss50 DNA end-to-end (5'P to 3'O3'), simulated",
-      "A": 97.22514162073097,
-      "sd_A": 9.063417558056031,
-      "p5_A": 82.742254,
-      "p95_A": 112.64880799999999
+      "A": 95.35037172126316,
+      "sd_A": 8.578348399404932,
+      "p5_A": 82.3969048,
+      "p95_A": 111.12934299999999
     },
     "chimeras": {
       "P3_ss50": {
         "n": 50,
         "topology": "ss",
-        "span_A": 97.22514162073097,
-        "span_sd_A": 9.063417558056031,
+        "span_A": 95.35037172126316,
+        "span_sd_A": 8.578348399404932,
         "duplex_model": {
           "regime": "kinked",
-          "force_pN": 2.07,
-          "unkinked_force_pN": 6.73,
-          "energy_kT": 5.98,
+          "force_pN": 2.05,
+          "unkinked_force_pN": 6.74,
+          "energy_kT": 6.07,
           "euler_pN": 7.35,
           "x_c_A": 151.4,
           "gamma": 1.114
@@ -1076,8 +1095,8 @@
         "ssDNA_model": {
           "state": "matched",
           "natural_rms_A": 94.1,
-          "tension_pN": 1.78,
-          "ideal_chain_pN": 1.384
+          "tension_pN": 1.733,
+          "ideal_chain_pN": 1.358
         }
       }
     },
@@ -1115,9 +1134,9 @@
         "euler_pN": 11.48,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 3.08,
-        "unkinked_force_pN": 10.27,
-        "energy_kT": 4.71
+        "force_pN": 3.01,
+        "unkinked_force_pN": 10.33,
+        "energy_kT": 4.85
       },
       {
         "n_bp": 40,
@@ -1130,9 +1149,9 @@
         "euler_pN": 11.48,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 3.93,
-        "unkinked_force_pN": 10.27,
-        "energy_kT": 5.89
+        "force_pN": 3.84,
+        "unkinked_force_pN": 10.33,
+        "energy_kT": 6.06
       },
       {
         "n_bp": 50,
@@ -1145,9 +1164,9 @@
         "euler_pN": 7.35,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 2.07,
-        "unkinked_force_pN": 6.73,
-        "energy_kT": 5.98
+        "force_pN": 2.05,
+        "unkinked_force_pN": 6.74,
+        "energy_kT": 6.07
       },
       {
         "n_bp": 50,
@@ -1160,9 +1179,9 @@
         "euler_pN": 7.35,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 2.64,
-        "unkinked_force_pN": 6.73,
-        "energy_kT": 7.48
+        "force_pN": 2.61,
+        "unkinked_force_pN": 6.74,
+        "energy_kT": 7.6
       },
       {
         "n_bp": 80,
@@ -1175,9 +1194,9 @@
         "euler_pN": 2.87,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 1.15,
+        "force_pN": 1.14,
         "unkinked_force_pN": 2.62,
-        "energy_kT": 7.58
+        "energy_kT": 7.63
       },
       {
         "n_bp": 80,
@@ -1192,7 +1211,7 @@
         "regime": "kinked",
         "force_pN": 1.48,
         "unkinked_force_pN": 2.62,
-        "energy_kT": 9.47
+        "energy_kT": 9.54
       }
     ],
     "ssDNA_at_span": {
@@ -1200,15 +1219,15 @@
       "contour_nm": 29.5,
       "natural_rms_nm": 9.407,
       "state": "matched",
-      "tension_pN_clipped": 1.78,
-      "tension_pN_unclipped": 1.78,
+      "tension_pN_clipped": 1.733,
+      "tension_pN_unclipped": 1.733,
       "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme (his geometry: a 60-mer spanning 6.1 nm, i.e. well inside the chain's rms size)",
       "book_xi_0p8": {
         "xi_nm": 0.8,
         "natural_rms_nm": 6.87,
         "state": "stretched (pulls)",
-        "tension_pN": 3.338,
-        "ideal_chain_pN": 2.595,
+        "tension_pN": 3.25,
+        "ideal_chain_pN": 2.545,
         "source": "Molecular Machines p. 72 (l_s ~ 0.8 nm); p. 80 fit l_s = 0.764 nm"
       }
     },
@@ -1228,19 +1247,19 @@
           "x_c_A": 125.0,
           "half_rod_chord_A": 65.4,
           "curvature_at_x_c_deg_per_bp": 1.63,
-          "curvature_at_span_deg_per_bp": 3.76
+          "curvature_at_span_deg_per_bp": 3.87
         },
         "50 bp": {
           "x_c_A": 151.4,
           "half_rod_chord_A": 81.4,
           "curvature_at_x_c_deg_per_bp": 1.64,
-          "curvature_at_span_deg_per_bp": 3.86
+          "curvature_at_span_deg_per_bp": 3.93
         },
         "80 bp": {
           "x_c_A": 208.1,
           "half_rod_chord_A": 127.3,
           "curvature_at_x_c_deg_per_bp": 1.67,
-          "curvature_at_span_deg_per_bp": 3.15
+          "curvature_at_span_deg_per_bp": 3.17
         }
       },
       "sfGFP_empirical": {
@@ -1252,19 +1271,19 @@
       },
       "strand_measured_by_chimera": {
         "P3_ss50": {
-          "axis_curvature_deg_per_nt": 31.619,
-          "sharp_turns_per_frame": 0.069,
-          "hottest_nt": 49,
-          "hottest_step": "CpC-CpA",
-          "bii_fraction": 0.153
+          "axis_curvature_deg_per_nt": 11.52,
+          "sharp_turns_per_frame": 0.18,
+          "hottest_nt": 3,
+          "hottest_step": "CpT-TpT",
+          "bii_fraction": 0.15
         }
       },
       "strand_measured": {
-        "axis_curvature_deg_per_nt": 31.619,
-        "sharp_turns_per_frame": 0.069,
-        "hottest_nt": 49,
-        "hottest_step": "CpC-CpA",
-        "bii_fraction": 0.153
+        "axis_curvature_deg_per_nt": 11.52,
+        "sharp_turns_per_frame": 0.18,
+        "hottest_nt": 3,
+        "hottest_step": "CpT-TpT",
+        "bii_fraction": 0.15
       }
     },
     "protein_spring": {
@@ -1309,16 +1328,16 @@
         "kappa_aperture_kT_nm2": 1.78
       },
       "P3_ss50": {
-        "mean_A": 79.77,
-        "sd_A": 9.55,
-        "kappa_kT_nm2": 1.1,
-        "kappa_pN_per_nm": 4.6,
-        "displacement_per_pN_A": 2.17,
-        "displacement_at_2pN_A": 4.35,
-        "energy_at_2pN_kT": 0.103,
-        "thermal_rms_A": 9.6,
-        "aperture_sd_A": 7.83,
-        "kappa_aperture_kT_nm2": 1.63
+        "mean_A": 77.79,
+        "sd_A": 9.14,
+        "kappa_kT_nm2": 1.2,
+        "kappa_pN_per_nm": 5.03,
+        "displacement_per_pN_A": 1.99,
+        "displacement_at_2pN_A": 3.98,
+        "energy_at_2pN_kT": 0.095,
+        "thermal_rms_A": 9.1,
+        "aperture_sd_A": 7.46,
+        "kappa_aperture_kT_nm2": 1.8
       }
     }
   }
