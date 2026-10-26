@@ -65,6 +65,17 @@ case "${SLURM_JOB_PARTITION:-}" in
         echo "== REFUSING ${SLURM_JOB_PARTITION}: not a partition this project uses." >&2; exit 2 ;;
 esac
 
+# Some gpu_requeue nodes hand out a GPU OpenMM cannot open ("No compatible CUDA device
+# is available" on holygpu8a19102, 2026-10-26, while the same build runs on its neighbour).
+# Test the platform before spending an hour on minimisation; a node that fails is recorded
+# and the orchestrator excludes it from then on.
+if ! "$DNASPRING_PY" -c "import openmm as mm; p = mm.Platform.getPlatformByName('CUDA'); s = mm.System(); s.addParticle(1.0); mm.Context(s, mm.VerletIntegrator(0.001), p)" 2> "$RUNDIR/.cudatest.err"; then
+    echo "== CUDA unusable on $(hostname -s): $(tail -1 "$RUNDIR/.cudatest.err")" >&2
+    echo "$(hostname -s)" >> "$PP2A_MD_SCRATCH/bad_nodes.txt"
+    exit 3
+fi
+rm -f "$RUNDIR/.cudatest.err"
+
 USAGE="$RUNDIR/resource_usage.csv"
 [[ -s "$USAGE" ]] || echo "iso,gpu_util_pct,gpu_mem_used_MiB,gpu_mem_total_MiB,host_rss_MiB" > "$USAGE"
 (

@@ -93,7 +93,8 @@ while true; do
     [ -n "$X0" ] && env_args="$env_args,RESTRAINT_X0=$X0,RESTRAINT_K=$K,RESTRAINT_RAMP_PS=$RAMP_PS"
     [ "$PART" = gpu ] && env_args="$env_args,ALLOW_EXPENSIVE_GPU=1"
     echo "$(date -Is) submit $name on $PART: $rem ns left at $speed ns/day -> --time=$h"
-    jid=$(sbatch --parsable -J "$name" -p "$PART" $cons -t "$h" --export=ALL,$env_args "$PP2A_MD_REPO/slurm/md_chain.sbatch") \
+    excl=""; [ -s "$PP2A_MD_SCRATCH/bad_nodes.txt" ] && excl="--exclude=$(sort -u "$PP2A_MD_SCRATCH/bad_nodes.txt" | paste -sd,)"
+    jid=$(sbatch --parsable -J "$name" -p "$PART" $cons $excl -t "$h" --export=ALL,$env_args "$PP2A_MD_REPO/slurm/md_chain.sbatch") \
       && echo "   job $jid" || echo "   sbatch FAILED"
     submitted=$((submitted+1))
     case $PART in gpu_test) queued_test=$((queued_test+1));; *) queued_paid=$((queued_paid+1));; esac
