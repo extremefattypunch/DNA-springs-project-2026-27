@@ -1,0 +1,16 @@
+{
+  "chains": [
+    "A"
+  ],
+  "phosphate_atoms_dropped": 3,
+  "anchor_5prime": {
+    "chain": "A",
+    "resi": 1,
+    "atom": "O5'"
+  },
+  "anchor_3prime": {
+    "chain": "A",
+    "resi": 80,
+    "atom": "O3'"
+  }
+}

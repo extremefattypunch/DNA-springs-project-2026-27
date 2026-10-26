@@ -22,7 +22,7 @@ sys.path.insert(0, str(HERE))
 from common import SCRATCH, dedup_mdtraj_load  # noqa: E402
 import ssdna  # noqa: E402
 import force_extension as fx  # noqa: E402  (sfGFP)
-from spring_model import SsSpring, KT, XI_SS  # noqa: E402
+from spring_model import Spring, SsSpring, KT, XI_SS  # noqa: E402
 
 
 def main():
@@ -75,6 +75,11 @@ def main():
                 "ms_tension_unclipped_pN": (KT / XI_SS) * (1.0 / (4.0 * (1.0 - s) ** 2) - 0.25 + s),
                 "ideal_chain_pN": 3.0 * KT * x / (2.0 * XI_SS * sp.L0),
                 "ms_state": sp.state(x), **kink}
+        if r.get("n_strands") == 2:                      # a duplex: Zocchi's rod at the same <r>
+            zs = Spring(n_nt)
+            flat["zocchi_force_pN"] = round(zs.force(x), 3) if zs.is_feasible(x) else None
+            flat["zocchi_regime"] = ("kinked" if x < zs.x_c else "bent") if zs.is_feasible(x) else "infeasible"
+            flat["zocchi_unkinked_pN"] = round(zs.unkinked_force(x), 3) if zs.is_feasible(x) else None
         for kk, vv in r.items():
             if isinstance(vv, dict):
                 for k2, v2 in vv.items():

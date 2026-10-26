@@ -1,0 +1,52 @@
+{
+  "sequence": "ATCAGTGCATCAGCTGCTTGGATGGTACCGTGGACTCCTGCCAGCAACTCACGGTCTAGGCTCCACACTCTGACTAGCAT",
+  "straight": {
+    "chains": [
+      "A",
+      "B"
+    ],
+    "n_bp": 80,
+    "C1'-C1' mean_A": 10.688,
+    "bp_centre_spacing_A": [
+      3.576,
+      0.0
+    ],
+    "axial_rise_A": [
+      3.375,
+      0.001
+    ],
+    "straightness_rms_A": 1.906,
+    "twist_deg": [
+      36.0,
+      0.0
+    ],
+    "five_prime_z_A": [
+      -135.15,
+      135.15
+    ],
+    "five_prime_separation_A": 270.9,
+    "same_strand_anchor_separation_A": 268.99
+  },
+  "bend": {
+    "contour_A": 266.63,
+    "radius_A": 62.52,
+    "arc_deg": 244.3,
+    "anchor_span_after_A": 89.98,
+    "five_prime_separation_after_A": 103.38,
+    "O3prime_P_after": [
+      1.619,
+      0.222,
+      1.959
+    ],
+    "bend_azimuth_deg": 266.0,
+    "solve": {
+      "radius_A": 62.52,
+      "azimuth_deg": 266.0,
+      "anchor_span_A": 90.0,
+      "target_A": 90.0,
+      "straight_anchor_span_A": 268.99,
+      "azimuth_step_deg": 2.0
+    }
+  },
+  "nick_after": null
+}

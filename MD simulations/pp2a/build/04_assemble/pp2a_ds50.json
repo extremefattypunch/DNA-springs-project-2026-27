@@ -1,0 +1,89 @@
+{
+  "protein": "build/01_protein/pp2a_prepped.pdb",
+  "dna": "build/03_dna/spring_50bp.pdb",
+  "sites": [
+    7,
+    553
+  ],
+  "arms": {
+    "7": [
+      "TDP",
+      "DNL"
+    ],
+    "553": [
+      "TDP",
+      "DNP"
+    ]
+  },
+  "protein_residue": "TDP",
+  "tether": {
+    "TDP + DNL": {
+      "chain": "TDP + DNL",
+      "linker": "DNL",
+      "dna_atom": "OL*",
+      "n_rotatable_bonds": 14,
+      "CB_to_dna_atom_A": 17.28,
+      "sTCO cyclopropane sides_A": [
+        1.516,
+        1.515,
+        1.512
+      ],
+      "dihydropyridazine planarity_rms_A": 0.064,
+      "azadiene_torsion_deg": 171.87,
+      "rings_checked": 2
+    },
+    "TDP + DNP": {
+      "chain": "TDP + DNP",
+      "linker": "DNP",
+      "dna_atom": "P*",
+      "n_rotatable_bonds": 17,
+      "CB_to_dna_atom_A": 22.65,
+      "sTCO cyclopropane sides_A": [
+        1.508,
+        1.516,
+        1.511
+      ],
+      "dihydropyridazine planarity_rms_A": 0.235,
+      "azadiene_torsion_deg": 152.96,
+      "rings_checked": 2
+    }
+  },
+  "reach_A": {
+    "7": 22.39,
+    "553": 26.14
+  },
+  "sites_CB_CB_A": 54.41,
+  "duplex_anchor_span_A": 90.01,
+  "a_offsets_A": [
+    15.82,
+    19.78
+  ],
+  "b_offset_A": 11.74,
+  "duplex_spin_deg": 345,
+  "arm_reports": {
+    "7": {
+      "score": 21.102,
+      "dna_atom": "OL*",
+      "to_target_A": 1.672,
+      "bond_objective": 1.61,
+      "clash": 42.197,
+      "bond_length_A": 1.672,
+      "arm": "TDP + DNL"
+    },
+    "553": {
+      "score": 16.098,
+      "dna_atom": "P*",
+      "to_target_A": 1.603,
+      "bond_objective": 1.61,
+      "clash": 32.196,
+      "bond_length_A": 1.603,
+      "arm": "TDP + DNP"
+    }
+  },
+  "waters_kept": 0,
+  "waters_dropped": 0,
+  "tleap_bonds": [
+    "7@CN:590@N",
+    "553@CN:641@N"
+  ]
+}

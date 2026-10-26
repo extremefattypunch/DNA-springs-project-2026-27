@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from common import CONTROL, SITES, SYSTEMS, analysis_prefix, heat_ranges
+from common import CHIMERAS, CONTROL, SITES, SYSTEMS, analysis_prefix, heat_ranges
 
 HERE = Path(__file__).resolve().parent
 N_BLOCKS = 10
@@ -94,7 +94,49 @@ def main(summary=None, out=None):
     f["clicked_vs_tet"] = (welch(f["extension"][CONTROL]["blocks_A"], f["extension"]["P1_tet"]["blocks_A"])
                            if CONTROL in f["extension"] and "P1_tet" in f["extension"] else None)
 
-    # ---- the strand ----
+    # ---- the springs: one block per chimera (ss: Marko-Siggia on the strand; ds: Zocchi on the duplex) ----
+    f["chimeras"] = {}
+    for s, meta in CHIMERAS.items():
+        if s not in present or col(s, "ssdna.n_nt") is None:
+            continue
+        c = {"label": SYSTEMS[s]["label"], "n": meta["n"], "topology": meta["topology"],
+             "x_A": {k: col(s, f"ssdna.end_to_end.A.{k}") for k in ("mean", "sd", "min", "max")},
+             "extension_A": col(s, "mech.anchor_CB_CB_A.mean"),
+             "rg_A": col(s, "ssdna.rg_A.mean"),
+             "strand": {k: col(s, f"ssdna.kink.{k2}") for k, k2 in (
+                 ("sharp_turns_per_frame", "sharp_turns_per_frame.mean"), ("hottest_nt", "hottest_nt"),
+                 ("hottest_step", "hottest_step"), ("bii_fraction", "bii_fraction.mean"),
+                 ("frames_with_any_sharp_turn", "frames_with_any_sharp_turn"),
+                 ("hottest_nt_sharp_turn_fraction", "hottest_nt_sharp_turn_fraction"),
+                 ("axis_curvature_deg_per_nt", "axis_curvature_deg_per_nt.mean"),
+                 ("axis_curvature_baseline", "axis_curvature_baseline_straight_helix_deg_per_nt"),
+                 ("sharp_turns_at_unstacked_steps", "sharp_turns_at_unstacked_steps"))},
+             "stacked_fraction": col(s, "ssdna.stacking.fraction.mean"),
+             "nt_in_contact": col(s, "ssdna.protein_contact.nt_in_contact_per_frame.mean"),
+             "fraction_of_strand_on_protein": col(s, "ssdna.protein_contact.fraction_of_strand"),
+             "contacts_over_half": col(s, "contact.residues_over_half")}
+        if meta["topology"] == "ss":
+            c["model"] = {"kind": "Marko-Siggia WLC (pulls)", "contour_nm": col(s, "ssdna.marko_siggia.contour_nm"),
+                          "natural_rms_nm": col(s, "ssdna.marko_siggia.natural_rms_end_to_end_nm"),
+                          "state": col(s, "ssdna.marko_siggia.state_at_mean_x"),
+                          "force_pN": col(s, "ssdna.marko_siggia.tension_pN_unclipped.mean"),
+                          "force_sign": "pull", "ideal_chain_pN": col(s, "ssdna.marko_siggia.ideal_chain_pN.mean"),
+                          "tension_pN_clipped": col(s, "ssdna.marko_siggia.tension_pN_clipped.mean"),
+                          "fraction_of_frames_stretched": col(s, "ssdna.marko_siggia.fraction_of_frames_stretched")}
+        else:
+            c["model"] = {"kind": "Zocchi kinked rod (pushes)", "contour_nm": col(s, "mech.spring.contour_nm"),
+                          "tau_c": col(s, "mech.spring.tau_c_pN_nm"), "regime": col(s, "mech.spring.regime"),
+                          "force_pN": col(s, "mech.spring.force_pN_mean"), "force_sign": "push",
+                          "force_sd_pN": col(s, "mech.spring.force_pN_sd"), "energy_kT": col(s, "mech.spring.energy_kT_mean"),
+                          "x_mean_A": col(s, "mech.spring.x_mean_A")}
+            c["duplex"] = {"bend_per_step_deg": col(s, "mech.bend.per_step_mean_deg"),
+                           "bend_per_step_max_deg": col(s, "mech.bend.per_step_max_mean_deg"),
+                           "hottest_bp": col(s, "mech.bend.hottest_bp"),
+                           "total_bend_deg": col(s, "mech.bend.total_bend_deg_mean"),
+                           "total_bend_sd": col(s, "mech.bend.total_bend_deg_sd"),
+                           "bp_open_mean_count": col(s, "mech.base_pair_opening.mean_open_count"),
+                           "most_open_bp": col(s, "mech.base_pair_opening.most_open_bp")}
+        f["chimeras"][s] = c
     if "P3_ss50" in present and col("P3_ss50", "ssdna.n_nt") is not None:
         s = "P3_ss50"
         f["ss_spring"] = {
@@ -131,9 +173,12 @@ def main(summary=None, out=None):
     if fxp.exists():
         fx = pd.read_csv(fxp)
         f["windows"] = [{k: (None if pd.isna(r[k]) else (float(r[k]) if isinstance(r[k], (int, float, np.floating)) else r[k]))
-                         for k in ("tag", "x0_A", "mean_r_A", "sd_r_A", "force_pN", "force_sem_pN", "box_ok",
+                         for k in ("system", "tag", "x0_A", "mean_r_A", "sd_r_A", "force_pN", "force_sem_pN", "box_ok",
                                    "box_width_A", "ms_tension_pN", "ms_tension_unclipped_pN", "ideal_chain_pN",
-                                   "ms_state", "ns", "independent_samples")}
+                                   "ms_state", "ns", "independent_samples", "zocchi_force_pN", "zocchi_regime",
+                                   "kink.sharp_turns_per_frame", "kink.axis_curvature_deg_per_nt",
+                                   "bend.max_step_deg", "bend.per_step_mean_deg", "wc.n_internal_open", "wc.kinked")
+                         if k in fx.columns}
                         for _, r in fx.iterrows()]
 
     # ---- rigidity ----

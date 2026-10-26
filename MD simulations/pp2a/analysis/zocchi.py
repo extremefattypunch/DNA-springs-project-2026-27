@@ -33,7 +33,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from common import SYSTEMS, analysis_prefix
+from common import CHIMERAS, SYSTEMS, analysis_prefix
 from spring_model import (B_DEFAULT, KT, RISE, TAU_C_CONTINUOUS, TAU_C_NICKED, Spring, SsSpring,
                           XI_SS)
 
@@ -51,7 +51,7 @@ def critical_curvature_deg_per_bp(tau_c, B=B_DEFAULT):
 
 def spring_table(x_nm):
     rows = []
-    for n in (27, 40, 50):
+    for n in (27, 40, 50, 80):
         for tau, kind in ((TAU_C_NICKED, "nicked"), (TAU_C_CONTINUOUS, "continuous")):
             sp = Spring(n, tau_c=tau)
             row = {"n_bp": n, "tau_c_pN_nm": tau, "kind": kind, "contour_nm": round(sp.L, 2),
@@ -96,6 +96,29 @@ def main():
             span = {"source": "default", "A": 90.0, "sd_A": 0.0}
     x_nm = span["A"] / 10.0
     out["span"] = span
+    # every chimera at its own simulated span, so ss/ds and 50/80 can be read side by side
+    out["chimeras"] = {}
+    for s_, meta in CHIMERAS.items():
+        mm = Path(str(analysis_prefix(s_)) + "_mechanics.csv")
+        if not mm.exists():
+            continue
+        dd = pd.read_csv(mm)
+        if "spring_end_to_end_A" not in dd:
+            continue
+        xx = dd["spring_end_to_end_A"].to_numpy()
+        xn = float(xx.mean()) / 10.0
+        sp_ = Spring(meta["n"])
+        ssn = SsSpring(meta["n"])
+        sn = min(xn / ssn.L0, 0.999)
+        out["chimeras"][s_] = {
+            "n": meta["n"], "topology": meta["topology"], "span_A": float(xx.mean()), "span_sd_A": float(xx.std()),
+            "duplex_model": ({"regime": "kinked" if xn < sp_.x_c else "bent", "force_pN": round(sp_.force(xn), 2),
+                              "unkinked_force_pN": round(sp_.unkinked_force(xn), 2), "energy_kT": round(sp_.energy(xn) / KT, 2),
+                              "euler_pN": round(10.0 * sp_.B / sp_.L ** 2, 2), "x_c_A": round(sp_.x_c * 10, 1),
+                              "gamma": round(sp_.gamma, 3)} if sp_.is_feasible(xn) else {"feasible": False}),
+            "ssDNA_model": {"state": ssn.state(xn), "natural_rms_A": round(ssn.rms_end_to_end * 10, 1),
+                            "tension_pN": round((KT / XI_SS) * (1 / (4 * (1 - sn) ** 2) - 0.25 + sn), 3),
+                            "ideal_chain_pN": round(3 * KT * xn / (2 * XI_SS * ssn.L0), 3)}}
 
     # --- 1. the spring at this span ---
     out["duplex_springs_at_span"] = spring_table(x_nm)
@@ -115,12 +138,18 @@ def main():
     # the force curve for the figure
     xs = np.linspace(2.0, 17.0, 301)
     curves = {"x_A": (xs * 10).round(2).tolist()}
-    for n in (27, 40, 50):
+    for n in (27, 40, 50, 80):
         for tau, kind in ((TAU_C_NICKED, "nicked"), (TAU_C_CONTINUOUS, "continuous")):
             sp = Spring(n, tau_c=tau)
             curves[f"f_{n}bp_{kind}_pN"] = [round(sp.force(v), 3) if sp.is_feasible(v) else None for v in xs]
             curves[f"f_{n}bp_{kind}_unkinked_pN"] = [round(sp.unkinked_force(v), 3) if sp.is_feasible(v) else None for v in xs]
     curves["ss50_pull_pN"] = [round(ss.tension(v), 3) if v < ss.L0 else None for v in xs]
+    ss80 = SsSpring(80)
+    curves["ss80_pull_pN"] = [round(ss80.tension(v), 3) if v < ss80.L0 else None for v in xs]
+    for nn, key in ((50, "ss50"), (80, "ss80")):
+        sx = SsSpring(nn)
+        curves[f"{key}_pull_unclipped_pN"] = [round((KT / XI_SS) * (1 / (4 * (1 - min(v / sx.L0, 0.999)) ** 2) - 0.25 + min(v / sx.L0, 0.999)), 3)
+                                              if v < sx.L0 else None for v in xs]
     pd.DataFrame(curves).to_csv(HERE / "zocchi_curves.csv", index=False)
 
     # --- 2. the kink ---  (R is the kink-to-anchor chord of each half-rod, book eqs 2.189/2.197, ~L/2)
@@ -128,9 +157,9 @@ def main():
                                               "continuous_34": round(critical_curvature_deg_per_bp(TAU_C_CONTINUOUS), 2)},
             "softening_points": {f"{n} bp": {"x_c_A": round(Spring(n).x_c * 10, 1),
                                              "half_rod_chord_A": round(Spring(n).R * 10, 1)}
-                                 for n in (27, 40, 50)},
+                                 for n in (27, 40, 50, 80)},
             "sfGFP_empirical": SFGFP_THRESHOLDS}
-    for n in (27, 40, 50):
+    for n in (27, 40, 50, 80):
         sp = Spring(n)
         # a uniformly bent rod of contour L with chord x has arc angle theta: x = (L/theta)*2 sin(theta/2)
         def chord(theta, L=sp.L):
@@ -154,13 +183,17 @@ def main():
                     hi2 = mid
             theta = lo2
         kink["softening_points"][f"{n} bp"]["curvature_at_span_deg_per_bp"] = (round(math.degrees(theta / n), 2) if theta else None)
-    ssj = Path(str(analysis_prefix("P3_ss50")) + "_ssdna.json")
-    if ssj.exists():
-        k = json.loads(ssj.read_text()).get("kink", {})
-        kink["strand_measured"] = {"axis_curvature_deg_per_nt": k.get("axis_curvature_deg_per_nt", {}).get("mean"),
-                                   "sharp_turns_per_frame": k.get("sharp_turns_per_frame", {}).get("mean"),
-                                   "hottest_nt": k.get("hottest_nt"), "hottest_step": k.get("hottest_step"),
-                                   "bii_fraction": k.get("bii_fraction", {}).get("mean")}
+    kink["strand_measured_by_chimera"] = {}
+    for s_ in CHIMERAS:
+        ssj = Path(str(analysis_prefix(s_)) + "_ssdna.json")
+        if ssj.exists():
+            k = json.loads(ssj.read_text()).get("kink", {})
+            kink["strand_measured_by_chimera"][s_] = {
+                "axis_curvature_deg_per_nt": k.get("axis_curvature_deg_per_nt", {}).get("mean"),
+                "sharp_turns_per_frame": k.get("sharp_turns_per_frame", {}).get("mean"),
+                "hottest_nt": k.get("hottest_nt"), "hottest_step": k.get("hottest_step"),
+                "bii_fraction": k.get("bii_fraction", {}).get("mean")}
+    kink["strand_measured"] = kink["strand_measured_by_chimera"].get("P3_ss50", {})
     out["kink"] = kink
 
     # --- 3. the protein spring, by equipartition on Cb-Cb ---

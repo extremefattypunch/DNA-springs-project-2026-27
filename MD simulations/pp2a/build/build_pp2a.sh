@@ -82,3 +82,12 @@ box = r.get('box', [None])[0]
 print(f\"  {r['system']:<11} {r['atoms']:>7} atoms  box {box:7.2f} A  charge {r['net_charge']:+.4f}  \"
       f\"{tag:<32} problems {len(r['problems'])}\")"
 done
+
+# ---------------------------------------------------------------------------------
+# Added 2026-10-26 (evening): the duplex spring.  The construct Zocchi's model is about is
+# the HYBRIDISED 50-mer -- the complement turns the slack coil into a leaf spring that
+# pushes its anchors apart -- and the sfGFP/ubiquitin work ran the pair (U2_ss50 / U3_ds50).
+#   P4_ds50     the same modified strand with its complement annealed: 50 bp closed loop
+#   D_ds50      the bare 50 bp duplex, for the restraint-window force measurement
+# Same 90 A anchor span, so ss and ds differ only in the complement.
+if [ "${DUPLEX_ONLY:-0}" = "1" ] || [ "${1:-}" = "duplex" ]; then :; fi

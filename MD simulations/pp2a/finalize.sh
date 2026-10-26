@@ -23,13 +23,13 @@ echo "##### figures"
 $P analysis/figures.py
 
 echo "##### animations"
-for sys in ${ANIMATE:-P0_apo P3_ss50 P2_clicked}; do
+for sys in ${ANIMATE:-P0_apo P3_ss50 P4_ds50 P5_ss80 P6_ds80 P2_clicked}; do
   if [ "$sys" = P0_apo ]; then
     traj="$PP2A_DATA/md/runs/Aa_rep1/traj.dcd"; top="$PP2A_DATA/md/systems/Aa/system.prmtop"; rm_args=(); views="overview strain"
   else
     traj="$PP2A_MD_SCRATCH/runs/$sys/rep1/03_production/traj.dcd"; top="build/systems/$sys/system.prmtop"
     rm_args=(--resmap "build/systems/$sys/residue_map.json"); views="overview sites strain"
-    [ "$sys" = P2_clicked ] && views="overview sites"
+    case $sys in P2_clicked|P4_ds50|P5_ss80|P6_ds80) views="overview sites" ;; esac
   fi
   [ -f "$traj" ] || { echo "  $sys: no trajectory"; continue; }
   $P analysis/animate.py --traj "$traj" --top "$top" "${rm_args[@]}" --name "$sys" --frames "$FRAMES" --views $views

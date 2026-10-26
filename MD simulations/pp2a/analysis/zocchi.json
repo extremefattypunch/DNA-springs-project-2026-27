@@ -13,6 +13,29 @@
     "p5_A": 82.742254,
     "p95_A": 112.64880799999999
   },
+  "chimeras": {
+    "P3_ss50": {
+      "n": 50,
+      "topology": "ss",
+      "span_A": 97.22514162073097,
+      "span_sd_A": 9.063417558056031,
+      "duplex_model": {
+        "regime": "kinked",
+        "force_pN": 2.07,
+        "unkinked_force_pN": 6.73,
+        "energy_kT": 5.98,
+        "euler_pN": 7.35,
+        "x_c_A": 151.4,
+        "gamma": 1.114
+      },
+      "ssDNA_model": {
+        "state": "matched",
+        "natural_rms_A": 94.1,
+        "tension_pN": 1.78,
+        "ideal_chain_pN": 1.384
+      }
+    }
+  },
   "duplex_springs_at_span": [
     {
       "n_bp": 27,
@@ -95,6 +118,36 @@
       "force_pN": 2.64,
       "unkinked_force_pN": 6.73,
       "energy_kT": 7.48
+    },
+    {
+      "n_bp": 80,
+      "tau_c_pN_nm": 27.0,
+      "kind": "nicked",
+      "contour_nm": 26.4,
+      "gamma": 1.782,
+      "in_validity_range": false,
+      "x_c_nm": 20.81,
+      "euler_pN": 2.87,
+      "feasible": true,
+      "regime": "kinked",
+      "force_pN": 1.15,
+      "unkinked_force_pN": 2.62,
+      "energy_kT": 7.58
+    },
+    {
+      "n_bp": 80,
+      "tau_c_pN_nm": 34.0,
+      "kind": "continuous",
+      "contour_nm": 26.4,
+      "gamma": 2.244,
+      "in_validity_range": false,
+      "x_c_nm": 17.54,
+      "euler_pN": 2.87,
+      "feasible": true,
+      "regime": "kinked",
+      "force_pN": 1.48,
+      "unkinked_force_pN": 2.62,
+      "energy_kT": 9.47
     }
   ],
   "ssDNA_at_span": {
@@ -137,6 +190,12 @@
         "half_rod_chord_A": 81.4,
         "curvature_at_x_c_deg_per_bp": 1.64,
         "curvature_at_span_deg_per_bp": 3.86
+      },
+      "80 bp": {
+        "x_c_A": 208.1,
+        "half_rod_chord_A": 127.3,
+        "curvature_at_x_c_deg_per_bp": 1.67,
+        "curvature_at_span_deg_per_bp": 3.15
       }
     },
     "sfGFP_empirical": {
@@ -145,6 +204,15 @@
       "chimera_deg_per_bp": "4.8-5.2",
       "curuksu_typeII_deg_per_bp": "8.6-9.3",
       "source": "sfGFP page, bare-duplex restraint windows (docs/wiki/Home.md)"
+    },
+    "strand_measured_by_chimera": {
+      "P3_ss50": {
+        "axis_curvature_deg_per_nt": 31.619,
+        "sharp_turns_per_frame": 0.069,
+        "hottest_nt": 49,
+        "hottest_step": "CpC-CpA",
+        "bii_fraction": 0.153
+      }
     },
     "strand_measured": {
       "axis_curvature_deg_per_nt": 31.619,

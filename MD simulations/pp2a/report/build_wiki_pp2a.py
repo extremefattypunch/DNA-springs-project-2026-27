@@ -183,29 +183,71 @@ pushes."""
     # ---------- windows ----------
     if win:
         wrows = "\n".join(
-            f"| {w['x0_A']:.0f} | {w['mean_r_A']:.1f} ± {w['sd_r_A']:.1f} | **{-w['force_pN']:+.2f} ± {w['force_sem_pN']:.2f}** | "
-            f"{w['ms_tension_pN']:.2f} ({w['ms_tension_unclipped_pN']:.2f}) | {w['ms_state']} | {'yes' if w['box_ok'] else '**no**'} |"
+            f"| {w.get('system', '?')[2:]} | {w['x0_A']:.0f} | {w['mean_r_A']:.1f} ± {w['sd_r_A']:.1f} | **{w['force_pN']:+.2f} ± {w['force_sem_pN']:.2f}** | "
+            + (f"−{w['ms_tension_unclipped_pN']:.2f} (Marko–Siggia, {w['ms_state']})" if str(w.get('system', '')).startswith('D_ss')
+               else f"+{num(w.get('zocchi_force_pN'))} (Zocchi, {w.get('zocchi_regime', '?')})")
+            + " | " + (f"{num(w.get('kink.sharp_turns_per_frame'), '{:.2f}')} turns/frame" if str(w.get('system', '')).startswith('D_ss')
+                       else f"{num(w.get('bend.max_step_deg'), '{:.1f}')}° max step, {num(w.get('wc.n_internal_open'), '{:.0f}')} bp open")
+            + f" | {'yes' if w['box_ok'] else '**no**'} |"
             for w in win)
         ok = [w for w in win if w["box_ok"]]
         agree = []
         for w in ok:
-            meas = -w["force_pN"]          # pull positive
-            model = w["ms_tension_unclipped_pN"]
-            agree.append(f"at {w['mean_r_A']:.0f} Å the force field gives {meas:+.2f} ± {w['force_sem_pN']:.2f} pN of pull "
-                         f"against {model:.2f} pN by Marko–Siggia"
-                         + (" — agreement within the error" if abs(meas - model) <= 2 * w["force_sem_pN"] else " — not within the error"))
-        win_txt = f"""A bare 50 nt strand, no protein, held at a series of end-to-end separations by a soft harmonic restraint
-(k = 33 kJ mol⁻¹ nm⁻²) between the atoms the linkers would bond to. The mean restraint force ⟨k(r − x₀)⟩ *is* the force the strand
+            is_ss = str(w.get("system", "")).startswith("D_ss")
+            meas = w["force_pN"]            # push positive, as stored
+            model = (-w["ms_tension_unclipped_pN"]) if is_ss else (w.get("zocchi_force_pN") or float("nan"))
+            agree.append(f"{w.get('system', '?')[2:]} at {w['mean_r_A']:.0f} Å: force field {meas:+.2f} ± {w['force_sem_pN']:.2f} pN against "
+                         f"{model:+.2f} pN by {'Marko–Siggia' if is_ss else 'Zocchi'}"
+                         + (" (within the error)" if abs(meas - model) <= 2 * w["force_sem_pN"] else " (outside the error)"))
+        win_txt = f"""Each bare spring — the 50 and 80 nt strands and the 50 and 80 bp duplexes, no protein — held at a series of
+end-to-end separations by a soft harmonic restraint (k = 33 kJ mol⁻¹ nm⁻²) between the atoms the linkers
+would bond to, exactly as the sfGFP duplexes were. The mean restraint force ⟨k(r − x₀)⟩ *is* the force the strand
 exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** its ends together
 (`force_extension.csv` stores the opposite, push-positive, sign).
 
-| target x₀ (Å) | settled ⟨r⟩ (Å) | measured pull (pN) | Marko–Siggia pull (unclipped) | model's verdict | box valid? |
-|---|---|---|---|---|---|
+| spring | target x₀ (Å) | settled ⟨r⟩ (Å) | measured force (pN; + push, − pull) | model at ⟨r⟩ (pN) | kinking in the window | box valid? |
+|---|---|---|---|---|---|---|
 {wrows}
 
 Where they can be compared: {'; '.join(agree) if agree else 'no window has a valid box yet'}."""
     else:
         win_txt = "*The restraint windows have not run yet.*"
+
+    # ---------- the four chimeras side by side ----------
+    ch = f.get("chimeras", {})
+    zch = (f.get("zocchi", {}) or {}).get("chimeras", {})
+    cmp_rows = ""
+    for s_, c in ch.items():
+        w = vs.get(s_)
+        mdl = c.get("model", {})
+        force = mdl.get("force_pN")
+        sign = "+" if mdl.get("force_sign") == "push" else "−"
+        zc = zch.get(s_, {})
+        dm = zc.get("duplex_model", {})
+        dtxt = f"{w['delta']:+.1f} ± {w['sem_delta']:.1f} (p = {p_txt(w['p'])})" if w else NA
+        cmp_rows += (f"| {c['label']} | {num(g(c, 'x_A', 'mean'), '{:.0f}')} ± {num(g(c, 'x_A', 'sd'), '{:.0f}')} | "
+                     f"{num(c.get('extension_A'), '{:.1f}')} | {dtxt} | "
+                     f"{sign}{num(force)} ({'Zocchi, ' + str(mdl.get('regime')) if c['topology'] == 'ds' else 'Marko–Siggia, ' + str(mdl.get('state'))}) | "
+                     f"{num(dm.get('force_pN'), '{:.2f}', 'infeasible')} {('(' + dm.get('regime', '') + ')') if dm.get('regime') else ''} | "
+                     f"{num(c.get('nt_in_contact'), '{:.0f}')} of {c['n']} | "
+                     + (f"{num(g(c, 'duplex', 'bend_per_step_deg'), '{:.1f}')}°/bp, {num(g(c, 'duplex', 'bp_open_mean_count'), '{:.2f}')} bp open (bp {num(g(c, 'duplex', 'most_open_bp'), '{:.0f}')})"
+                        if c['topology'] == 'ds' else
+                        f"{num(g(c, 'strand', 'sharp_turns_per_frame'), '{:.2f}')} turns/frame, {num(g(c, 'strand', 'axis_curvature_deg_per_nt'), '{:.1f}')}°/nt") + " |\n")
+    if not cmp_rows:
+        cmp_rows = "| *no chimera analysed yet* | | | | | | | |\n"
+    length_txt = ""
+    if len(ch) >= 2:
+        pairs = []
+        for topo in ("ss", "ds"):
+            a_, b_ = f"P{3 if topo == 'ss' else 4}_{topo}50", f"P{5 if topo == 'ss' else 6}_{topo}80"
+            if a_ in vs and b_ in vs:
+                pairs.append(f"{topo}: Δ = {vs[a_]['delta']:+.1f} Å at 50 → {vs[b_]['delta']:+.1f} Å at 80")
+        for n_ in (50, 80):
+            a_, b_ = f"P{3 if n_ == 50 else 5}_ss{n_}", f"P{4 if n_ == 50 else 6}_ds{n_}"
+            if a_ in vs and b_ in vs:
+                pairs.append(f"{n_}-mer: ss {vs[a_]['delta']:+.1f} Å vs ds {vs[b_]['delta']:+.1f} Å")
+        length_txt = ("Read along the two axes of the design — hybridisation and length — the site displacement goes "
+                      + "; ".join(pairs) + "." if pairs else "")
 
     # ---------- Zocchi's model at this span ----------
     z = f.get("zocchi", {})
@@ -281,19 +323,27 @@ strand straightens it is read off the restraint windows (the squares in the last
         "| `P0_apo` | the AlphaFold Aα monomer alone (the cryo-EM reproduction's run; ff19SB/OPC, 100 ns) | 163,423 | 129 × 144 × 78 Å box |",
         build_row("P1_tet", "Tet2-Et at Asp7 and Asn553, unclicked"),
         build_row("P2_clicked", "both tethers clicked to aminohexanol, no DNA — **the zero**"),
-        build_row("P3_ss50", "the chimera: one 50 nt strand clicked at both ends, covalent loop"),
-        build_row("D_ss50", "the strand alone, for the restraint windows"),
+        build_row("P3_ss50", "50 nt single strand clicked at both ends, covalent loop (the coil)"),
+        build_row("P4_ds50", "the same strand with its complement annealed: 50 bp duplex, covalent loop (the spring)"),
+        build_row("P5_ss80", "80 nt single strand, covalent loop"),
+        build_row("P6_ds80", "80 bp duplex, covalent loop"),
+        build_row("D_ss50", "bare 50 nt strand, for the restraint windows"),
+        build_row("D_ds50", "bare 50 bp duplex, for the restraint windows"),
+        build_row("D_ss80", "bare 80 nt strand"),
+        build_row("D_ds80", "bare 80 bp duplex"),
     ])
     loop = g(builds, "P3_ss50", "covalent_loop", "closed")
     ns_total = f.get("total_ns", 0)
 
     still_block = ""
-    for s_, cap in (("P3_ss50", "the chimera"), ("P0_apo", "the apo A\u03b1 monomer, while the chimera runs")):
+    for s_, cap in (("P4_ds50", "the 50 bp duplex spring on the horseshoe"), ("P3_ss50", "the 50 nt single-strand chimera"),
+                    ("P0_apo", "the apo A\u03b1 monomer, while the chimeras run")):
         if (ROOT / f"docs/figures/pp2a_{s_}_overview_still.png").exists():
             still_block = f"![{cap}]({FIG}/pp2a_{s_}_overview_still.png)\n*{cap}.*"
             break
     anim_block = ""
-    for s, cap in (("P3_ss50", "the chimera: horseshoe, strand, tethers"),
+    for s, cap in (("P3_ss50", "the 50 nt coil: horseshoe, strand, tethers"),
+                   ("P4_ds50", "the 50 bp spring"), ("P5_ss80", "the 80 nt coil"), ("P6_ds80", "the 80 bp spring"),
                    ("P2_clicked", "the clicked control"),
                    ("P0_apo", "the apo monomer (cryo-EM reproduction run)")):
         for v in ("overview", "sites", "strain"):
@@ -334,6 +384,16 @@ protein — but only if the horseshoe opens.
 ## The headline
 
 {headline}
+
+Zocchi's construct is the *pair*: the same strand clicked at both ends, unhybridised (an entropic
+coil that can only pull) and hybridised (a leaf spring that pushes its anchors apart — the book's
+point that the duplex, with its 50 nm persistence length, delivers far more force than the coil).
+Both are run at 50 and 80 nt, so the two axes of the design can be read separately:
+
+| chimera | DNA end-to-end (Å) | Cβ7–Cβ553 (Å) | Δ vs clicked zero (Å) | modelled force (pN; + push, − pull) | Zocchi f(x) a duplex of this length would give at this span | nucleotides on the protein | kinking |
+|---|---|---|---|---|---|---|---|
+{cmp_rows}
+{length_txt}
 
 ![the attachment-point separation against the clicked zero]({FIG}/pp2a_fig7_headline.png)
 
@@ -447,7 +507,7 @@ Every number in this section is a **model**, not a measurement.
 
 ## What it delivers, measured
 
-**The strand in the chimera.** {strand_txt}
+**The DNA in the chimeras.** {strand_txt}
 
 {ms_txt}
 

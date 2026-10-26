@@ -78,7 +78,7 @@ while true; do
       gpu_test) [ "$queued_test" -ge 1 ] && continue; cons="--constraint=a100-mig"; cap=12 ;;
       gpu_requeue|gpu)
         [ "$queued_paid" -ge "$MAX_PAID" ] && continue
-        if ! is_done "$(ns_done "$bench_prog")" 1; then continue; fi   # wait for the free benchmark
+        if [ -z "$X0" ] && ! is_done "$(ns_done "$bench_prog")" 1; then continue; fi   # production waits for its free benchmark; windows carry HOURS
         cons="--constraint=h200|h100|a100"; cap=72 ;;   # no MIG slices at full price
       *) echo "bad PART $PART"; continue ;;
     esac

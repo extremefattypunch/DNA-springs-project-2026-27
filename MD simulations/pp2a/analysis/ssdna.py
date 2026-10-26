@@ -103,10 +103,18 @@ def torsions(t, nts):
 
 
 def strand(top, resmap):
-    nts = [(num, top.residue(i)) for i, (num, name, chain) in resmap.items()
-           if name.rstrip("35") in DNA_NAMES]
-    nts.sort(key=lambda p: p[0])
-    return [r for _, r in nts]
+    """The modified strand, 5'->3': the first DNA chain in the build (chain C in a chimera,
+    A in a bare spring).  A duplex's complement is a different chain and is not part of
+    the strand whose ends the linkers hold."""
+    chains = {}
+    for i, (num, name, chain) in resmap.items():
+        if name.rstrip("35") in DNA_NAMES:
+            chains.setdefault(chain, []).append((num, top.residue(i)))
+    if not chains:
+        return [], 0
+    first = sorted(chains)[0]
+    nts = sorted(chains[first], key=lambda p: p[0])
+    return [r for _, r in nts], len(chains)
 
 
 def end_atoms(top, resmap, nts):
@@ -128,12 +136,13 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     t = load(traj, top_path, stride, skip, report_ps)
     top = t.topology
     resmap = load_resmap(top, resmap_path)
-    nts = strand(top, resmap)
+    nts, n_strands = strand(top, resmap)
     if not nts:
         return {"has_dna": False}
     n = len(nts)
     rows = {"time_ps": t.time if t.time is not None else np.arange(t.n_frames)}
-    summary = {"has_dna": True, "n_nt": n}
+    summary = {"has_dna": True, "n_nt": n, "n_strands": n_strands,
+               "topology": "ds" if n_strands == 2 else "ss"}
 
     (i, j), how = end_atoms(top, resmap, nts)
     mols = geometry.molecule_ids(top)
@@ -155,6 +164,7 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     rows["ideal_chain_pN"] = 3.0 * KT * (x / 10.0) / (2.0 * XI_SS * sp.L0)
     summary["marko_siggia"] = {
         "model": "Marko-Siggia WLC, xi 1.5 nm, 0.59 nm/nt; MODELLED, not measured",
+        "applicable": n_strands == 1,       # a duplex is Zocchi's rod, handled by mechanics.py
         "contour_nm": round(sp.L0, 2), "natural_rms_end_to_end_nm": round(sp.rms_end_to_end, 3),
         "state_at_mean_x": sp.state(float(x.mean()) / 10.0),
         "tension_pN_clipped": summ(clipped), "tension_pN_unclipped": summ(raw),

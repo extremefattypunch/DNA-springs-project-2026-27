@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt          # noqa: E402
 import numpy as np                        # noqa: E402
 import pandas as pd                       # noqa: E402
 
-from common import CONTROL, SCRATCH, SITES, SYSTEMS, analysis_prefix, heat_ranges  # noqa: E402
+from common import BARE, CHIMERAS, CONTROL, SCRATCH, SITES, SYSTEMS, analysis_prefix, heat_ranges  # noqa: E402
 SCRATCH_RUNS = SCRATCH / "runs"
 import vizstyle as VS                     # noqa: E402  (sfGFP)
 from figures import labels_right          # noqa: E402  (sfGFP helper)
-from spring_model import SsSpring, KT, XI_SS  # noqa: E402
+from spring_model import SsSpring, Spring, KT, XI_SS, TAU_C_NICKED, TAU_C_CONTINUOUS  # noqa: E402
 
 VS.apply(matplotlib)
 HERE = Path(__file__).resolve().parent
@@ -162,49 +162,69 @@ def fig_end_to_end(df, out):
     return "pp2a_fig3_end_to_end"
 
 
-def fig_force_extension(df, out):
-    fxp = HERE / "force_extension.csv"
-    fig, ax = plt.subplots(figsize=(7.2, 4.2))
-    sp = SsSpring(50)
-    x = np.linspace(20, 180, 400)
+def _ms_curves(n, x):
+    sp = SsSpring(n)
     s = np.clip(x / 10.0 / sp.L0, 0, 0.999)
     unclipped = (KT / XI_SS) * (1.0 / (4.0 * (1.0 - s) ** 2) - 0.25 + s)
     clipped = np.array([sp.tension(v / 10.0) for v in x])
-    ideal = 3.0 * KT * (x / 10.0) / (2.0 * XI_SS * sp.L0)
-    ax.plot(x, -unclipped, color=VS.INK_MUTED, lw=1.2, ls="--", label="Marko–Siggia (Zocchi eq. 2.207)")
-    ax.plot(x, -clipped, color=VS.INK, lw=1.6, label="Marko–Siggia, sfGFP convention (zero below the rms size)")
-    ax.plot(x, -ideal, color=VS.INK_MUTED, lw=1.0, ls=":", label="ideal chain 3kT x / (2ξL)")
-    ax.axvline(sp.rms_end_to_end * 10, color=VS.GRID, lw=1.2)
-    ax.text(sp.rms_end_to_end * 10 + 1, ax.get_ylim()[0] + 0.1, "rms size 94 Å", fontsize=7, color=VS.INK_MUTED)
+    return unclipped, clipped
+
+
+def fig_force_extension(df, out):
+    """Measured restraint force of every bare spring against the models: Marko-Siggia for
+    the strands (pull), Zocchi's f(x) for the duplexes (push)."""
+    fxp = HERE / "force_extension.csv"
+    fig, ax = plt.subplots(figsize=(8.2, 6.0))
+    x = np.linspace(20, 260, 500)
+    for i, n in enumerate((50, 80)):
+        unclipped, clipped = _ms_curves(n, x)
+        ax.plot(x, -unclipped, color=VS.SERIES[2 if n == 50 else 4], lw=1.4, ls="--",
+                label=f"{n} nt strand, Marko–Siggia (pulls)")
+        for kind, ls in (("nicked", "-"), ("continuous", ":")):
+            sp = Spring(n, tau_c=TAU_C_NICKED if kind == "nicked" else TAU_C_CONTINUOUS)
+            # the bent branch diverges as x -> L (the -kT/(L-x) term); stop the curve at 0.95 L
+            f = [sp.force(v / 10.0) if v / 10.0 < 0.95 * sp.L else np.nan for v in x]
+            ax.plot(x, f, color=VS.SERIES[3 if n == 50 else 6], lw=1.4, ls=ls,
+                    label=f"{n} bp duplex, Zocchi f(x), {kind} τc (pushes)" if kind == "nicked" else None)
     rows = None
     if fxp.exists():
         rows = pd.read_csv(fxp)
-        ok = rows[rows.box_ok.astype(bool)]
-        bad = rows[~rows.box_ok.astype(bool)]
-        ax.errorbar(ok.mean_r_A, ok.force_pN, yerr=ok.force_sem_pN, fmt="o", color=VS.SERIES[2], ms=6,
-                    capsize=3, label="measured: bare 50 nt strand, k = 33 kJ mol⁻¹ nm⁻²")
-        if len(bad):
-            ax.errorbar(bad.mean_r_A, bad.force_pN, yerr=bad.force_sem_pN, fmt="o", mfc="none",
-                        color=VS.SERIES[2], ms=6, capsize=3, label="measured, box too small")
-        for _, r in rows.iterrows():
-            ax.annotate(f"x₀ {r.x0_A:.0f}", (r.mean_r_A, r.force_pN), xytext=(5, 5),
-                        textcoords="offset points", fontsize=7, color=VS.INK_2)
-    # where the chimera actually sits
-    m = per_frame("P3_ss50", "mechanics")
-    if m is not None and "spring_end_to_end_A" in m:
-        v = m.spring_end_to_end_A
-        ax.axvspan(v.quantile(0.05), v.quantile(0.95), color=VS.SERIES[2], alpha=0.12, lw=0)
-        ax.text(v.mean(), ax.get_ylim()[1] * 0.9, "chimera's own\nend-to-end (5–95 %)", ha="center",
-                fontsize=7.5, color=VS.INK_2)
+        for sysname, g in rows.groupby("system"):
+            meta = BARE.get(sysname, {})
+            col = VS.SERIES[{("ss", 50): 2, ("ss", 80): 4, ("ds", 50): 3, ("ds", 80): 6}.get((meta.get("topology"), meta.get("n")), 7)]
+            ok = g[g.box_ok.astype(bool)]
+            bad = g[~g.box_ok.astype(bool)]
+            ax.errorbar(ok.mean_r_A, ok.force_pN, yerr=ok.force_sem_pN, fmt="o", color=col, ms=7, capsize=3,
+                        mec="white", label=f"measured: bare {sysname[2:]} (k = 33 kJ mol⁻¹ nm⁻²)")
+            if len(bad):
+                ax.errorbar(bad.mean_r_A, bad.force_pN, yerr=bad.force_sem_pN, fmt="o", mfc="none", color=col, ms=7,
+                            capsize=3, label=f"{sysname[2:]}, box too small")
+            for _, r in g.iterrows():
+                ax.annotate(f"x₀ {r.x0_A:.0f}", (r.mean_r_A, r.force_pN), xytext=(5, 5), textcoords="offset points",
+                            fontsize=6.5, color=VS.INK_2)
+    for s_, meta in CHIMERAS.items():
+        m = per_frame(s_, "mechanics")
+        if m is not None and "spring_end_to_end_A" in m:
+            v = m.spring_end_to_end_A
+            ax.axvspan(v.quantile(0.05), v.quantile(0.95), color=color(s_), alpha=0.08, lw=0)
+            ax.text(v.mean(), ax.get_ylim()[1] * 0.95, label(s_).split(",")[0], ha="center", fontsize=6.5, color=color(s_))
     ax.axhline(0, color=VS.INK_MUTED, lw=0.6)
-    ax.set_xlabel(r"end-to-end distance of the strand ($\mathrm{\AA}$)")
+    ax.set_ylim(-8, 30)
+    ax.set_xlabel(r"end-to-end distance of the spring ($\mathrm{\AA}$)")
     ax.set_ylabel("force on the anchors (pN; + pushes apart, − pulls together)")
-    ax.set_title("What the single strand delivers: model against force field")
-    ax.legend(fontsize=7.5, loc="lower left")
+    ax.set_title("What the springs deliver: force field (points) against the models (lines); shaded: where each chimera sits", fontsize=9.5)
+    ax.legend(fontsize=6.5, loc="upper center", ncols=2, bbox_to_anchor=(0.5, -0.18))
     ax.grid(alpha=0.5)
     fig.savefig(out / "pp2a_fig4_force_extension.png")
-    pd.DataFrame({"x_A": x, "ms_unclipped_pull_pN": unclipped, "ms_clipped_pull_pN": clipped,
-                  "ideal_chain_pull_pN": ideal}).to_csv(out / "pp2a_fig4_force_extension_model.csv", index=False)
+    model = {"x_A": x}
+    for n in (50, 80):
+        u, c = _ms_curves(n, x)
+        model[f"ss{n}_pull_pN"] = u
+        model[f"ss{n}_pull_clipped_pN"] = c
+        for kind in ("nicked", "continuous"):
+            sp = Spring(n, tau_c=TAU_C_NICKED if kind == "nicked" else TAU_C_CONTINUOUS)
+            model[f"ds{n}_{kind}_push_pN"] = [sp.force(v / 10.0) if sp.is_feasible(v / 10.0) else np.nan for v in x]
+    pd.DataFrame(model).to_csv(out / "pp2a_fig4_force_extension_model.csv", index=False)
     if rows is not None:
         rows.to_csv(out / "pp2a_fig4_force_extension.csv", index=False)
     plt.close(fig)
@@ -246,135 +266,235 @@ def fig_heat_bend(df, out):
 
 
 def fig_ssdna(df, out):
-    """Does the DNA kink?  Where the strand bends, how sharply, and whether stretching it
-    (the bare-strand windows) straightens it -- the single-strand analogue of the sfGFP
-    base-pair-opening-against-curvature figure."""
-    s = "P3_ss50"
-    prof = Path(str(analysis_prefix(s)) + "_ssdna_profile.csv")
-    d = per_frame(s, "ssdna")
-    if d is None or not prof.exists():
-        print("  ssdna: no P3_ss50 analysis yet"); return None
-    pr = pd.read_csv(prof)
-    fig, axes = plt.subplots(2, 2, figsize=(11, 6.6))
-    c = color(s)
-    ax = axes[0, 0]
-    ax.plot(pr.nt, pr.bend_deg_mean, color=c, lw=1.4, label="C4′-trace bend, chimera")
-    ax.fill_between(pr.nt, pr.bend_deg_mean - pr.bend_deg_sd, pr.bend_deg_mean + pr.bend_deg_sd, color=c, alpha=0.15, lw=0)
-    ax.plot(pr.nt, pr.axis_curvature_deg_per_nt, color=VS.INK_2, lw=1.2, ls="--", label="smoothed-axis curvature (°/nt)")
-    # the bare-strand windows, if analysed: same profile at each held separation
+    """Does the DNA kink?  One panel row per chimera: where the modified strand bends, how
+    sharply, its torsion state, and curvature against extension with the duplex thresholds
+    for scale.  The bare springs' windows are overlaid where analysed."""
+    present_ch = [s_ for s_ in CHIMERAS if per_frame(s_, "ssdna") is not None
+                  and Path(str(analysis_prefix(s_)) + "_ssdna_profile.csv").exists()]
+    if not present_ch:
+        print("  dna kink: no chimera analysed yet"); return None
     fxp = HERE / "force_extension.csv"
     win_rows = pd.read_csv(fxp) if fxp.exists() else None
-    if win_rows is not None:
-        for i, (_, r) in enumerate(win_rows.sort_values("x0_A").iterrows()):
-            wp = Path(SCRATCH_RUNS / r.tag / "rep1" / "03_production" / "analysis_ssdna_profile.csv")
-            if wp.exists():
-                w = pd.read_csv(wp)
-                ax.plot(w.nt, w.bend_deg_mean, color=VS.SERIES[3 + i % 4], lw=0.9, alpha=0.8,
-                        label=f"bare strand held at ⟨r⟩ = {r.mean_r_A:.0f} Å")
-    ax2 = ax.twinx()
-    ax2.bar(pr.nt, pr.sharp_turn_fraction, color=VS.SERIES[7], alpha=0.35, width=0.8)
-    ax2.set_ylabel("fraction of frames with a > 90° turn", fontsize=8, color=VS.SERIES[7])
-    ax2.set_ylim(0, max(0.05, float(pr.sharp_turn_fraction.max() or 0) * 1.3))
-    ax.set_xlabel("nucleotide (5′ → 3′)"); ax.set_ylabel("bend (°)")
-    ax.set_title("Where the strand bends, and where it turns sharply")
-    ax.legend(fontsize=6.5, loc="upper left")
-    ax = axes[0, 1]
-    ax.plot(pr.nt, pr.bii_fraction, color=c, lw=1.3, label="BII fraction (ε − ζ > 0)")
-    ax.plot(pr.nt, pr.unstacked_fraction_step_in, color=VS.INK_2, lw=1.1, ls="--", label="incoming step unstacked")
-    ax.set_ylim(0, 1); ax.set_xlabel("nucleotide (5′ → 3′)"); ax.set_ylabel("fraction of frames")
-    ax.set_title("Backbone torsion state and base stacking along the strand")
-    ax.legend(fontsize=7.5)
-    ax = axes[1, 0]
-    t = time_ns(d, s)
-    ax.plot(t, d.sharp_turns, color=c, lw=0.8, label="sharp turns per frame")
-    ax.plot(t, d.axis_curvature_max_deg_per_nt / 10.0, color=VS.INK_2, lw=0.8, ls="--", label="max axis curvature / 10 (°/nt)")
-    ax.set_xlabel("time (ns)"); ax.set_ylabel("count  |  °/nt ÷ 10"); ax.legend(fontsize=7.5)
-    ax.set_title("Kinks over time")
-    ax = axes[1, 1]
-    ax.scatter(d.end_to_end_A, d.axis_curvature_mean_deg_per_nt, s=5, alpha=0.3, color=c, lw=0, label="chimera, per frame")
-    if win_rows is not None and "kink.axis_curvature_deg_per_nt" in win_rows:
-        ok = win_rows.dropna(subset=["kink.axis_curvature_deg_per_nt"])
-        ax.scatter(ok.mean_r_A, ok["kink.axis_curvature_deg_per_nt"], s=60, marker="s", color=VS.SERIES[3],
-                   edgecolor="white", zorder=4, label="bare strand, restraint windows")
-    for y, lab in ((2.55, "Zocchi τc/B, nicked 2.6°/bp"), (3.21, "continuous 3.2°/bp"), (5.5, "sfGFP duplex opening onset 5.5°/bp")):
-        ax.axhline(y, color=VS.INK_MUTED, lw=0.7, ls=":")
-        ax.text(ax.get_xlim()[0] if False else d.end_to_end_A.min(), y + 0.3, lab, fontsize=6.5, color=VS.INK_MUTED)
-    ax.set_xlabel(r"strand end-to-end ($\mathrm{\AA}$)"); ax.set_ylabel("mean axis curvature (°/nt)")
-    ax.set_title("Curvature against extension — the duplex kink thresholds for scale")
-    ax.legend(fontsize=7.5, loc="upper right")
-    for ax in axes.flat:
-        ax.grid(alpha=0.5)
-    fig.suptitle("Does the DNA kink?", fontsize=11.5)
+    fig, axes = plt.subplots(len(present_ch), 3, figsize=(14, 3.6 * len(present_ch)), squeeze=False)
+    made = []
+    for row, s_ in enumerate(present_ch):
+        d = per_frame(s_, "ssdna")
+        pr = pd.read_csv(Path(str(analysis_prefix(s_)) + "_ssdna_profile.csv"))
+        c = color(s_)
+        ax = axes[row, 0]
+        ax.plot(pr.nt, pr.bend_deg_mean, color=c, lw=1.4, label=f"C4′-trace bend, {label(s_)}")
+        ax.fill_between(pr.nt, pr.bend_deg_mean - pr.bend_deg_sd, pr.bend_deg_mean + pr.bend_deg_sd, color=c, alpha=0.15, lw=0)
+        ax.plot(pr.nt, pr.axis_curvature_deg_per_nt, color=VS.INK_2, lw=1.2, ls="--", label="one-turn smoothed curvature (°/nt)")
+        bare = "D_" + s_.split("_")[1]
+        if win_rows is not None:
+            for i, (_, r) in enumerate(win_rows[win_rows.system == bare].sort_values("x0_A").iterrows()):
+                wp = SCRATCH_RUNS / r.tag / "rep1" / "03_production" / "analysis_ssdna_profile.csv"
+                if wp.exists():
+                    w = pd.read_csv(wp)
+                    ax.plot(w.nt, w.bend_deg_mean, color=VS.SERIES[(3 + i) % 8], lw=0.9, alpha=0.8,
+                            label=f"bare, held at ⟨r⟩ = {r.mean_r_A:.0f} Å")
+        ax2 = ax.twinx()
+        ax2.bar(pr.nt, pr.sharp_turn_fraction, color=VS.SERIES[7], alpha=0.35, width=0.8)
+        ax2.set_ylabel("fraction of frames with a > 90° turn", fontsize=7, color=VS.SERIES[7])
+        ax2.set_ylim(0, max(0.05, float(np.nanmax(pr.sharp_turn_fraction) or 0) * 1.3))
+        ax.set_xlabel("nucleotide of the modified strand (5′ → 3′)"); ax.set_ylabel("bend (°)")
+        ax.set_title(f"{label(s_)}: where the strand bends and turns sharply", fontsize=9.5)
+        ax.legend(fontsize=6, loc="upper left")
+        ax = axes[row, 1]
+        ax.plot(pr.nt, pr.bii_fraction, color=c, lw=1.3, label="BII fraction (ε − ζ > 0)")
+        ax.plot(pr.nt, pr.unstacked_fraction_step_in, color=VS.INK_2, lw=1.1, ls="--", label="incoming step unstacked")
+        ax.set_ylim(0, 1); ax.set_xlabel("nucleotide (5′ → 3′)"); ax.set_ylabel("fraction of frames")
+        ax.set_title("backbone torsion state and base stacking", fontsize=9.5)
+        ax.legend(fontsize=7)
+        ax = axes[row, 2]
+        ax.scatter(d.end_to_end_A, d.axis_curvature_mean_deg_per_nt, s=5, alpha=0.3, color=c, lw=0, label="chimera, per frame")
+        if win_rows is not None and "kink.axis_curvature_deg_per_nt" in win_rows:
+            ok = win_rows[(win_rows.system == bare)].dropna(subset=["kink.axis_curvature_deg_per_nt"])
+            ax.scatter(ok.mean_r_A, ok["kink.axis_curvature_deg_per_nt"], s=60, marker="s", color=VS.SERIES[3],
+                       edgecolor="white", zorder=4, label="bare spring, restraint windows")
+        for y, lab in ((2.55, "Zocchi τc/B, nicked 2.6°/bp"), (5.5, "sfGFP duplex opening onset 5.5°/bp"), (8.7, "opening certain 8.7°/bp")):
+            ax.axhline(y, color=VS.INK_MUTED, lw=0.7, ls=":")
+            ax.text(float(d.end_to_end_A.min()), y + 0.3, lab, fontsize=6.5, color=VS.INK_MUTED)
+        ax.set_xlabel(r"spring end-to-end ($\mathrm{\AA}$)"); ax.set_ylabel("mean axis curvature (°/nt)")
+        ax.set_title("curvature against extension; duplex kink thresholds for scale", fontsize=9.5)
+        ax.legend(fontsize=7, loc="upper right")
+        for ax in axes[row]:
+            ax.grid(alpha=0.5)
+        d.assign(time_ns=time_ns(d, s_)).to_csv(out / f"pp2a_fig6_dna_kink_{s_}.csv", index=False)
+        pr.to_csv(out / f"pp2a_fig6_dna_kink_{s_}_profile.csv", index=False)
+    fig.suptitle("Does the DNA kink?  The modified strand of each chimera", fontsize=11.5)
     fig.savefig(out / "pp2a_fig6_dna_kink.png")
-    d.assign(time_ns=t).to_csv(out / "pp2a_fig6_dna_kink.csv", index=False)
-    pr.to_csv(out / "pp2a_fig6_dna_kink_profile.csv", index=False)
     plt.close(fig)
     return "pp2a_fig6_dna_kink"
 
 
-def fig_strand(df, out):
-    s = "P3_ss50"
-    d = per_frame(s, "ssdna")
-    if d is None:
+def fig_duplex_kink(df, out):
+    """The duplex chimeras by the sfGFP measures: helical-axis bend per base-pair step and
+    base-pair opening along the duplex, against the thresholds."""
+    ds = [s_ for s_, m in CHIMERAS.items() if m["topology"] == "ds"
+          and Path(str(analysis_prefix(s_)) + "_bend_profile.csv").exists()]
+    if not ds:
         return None
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.4))
-    t = time_ns(d, s)
-    c = color(s)
-    axes[0].plot(t, d.end_to_end_A, color=c, lw=1.0, label="end-to-end")
-    axes[0].plot(t, d.rg_A, color=VS.INK_2, lw=1.0, label="radius of gyration")
-    axes[0].axhline(94.1, color=VS.INK_MUTED, lw=0.8, ls=":")
-    axes[0].text(t[0], 95, "rms size of a free 50-mer (model)", fontsize=7, color=VS.INK_MUTED)
-    axes[0].set_ylabel(r"$\mathrm{\AA}$"); axes[0].legend(fontsize=7.5); axes[0].set_title("The strand's size")
-    axes[1].plot(t, d.ms_tension_unclipped_pN, color=VS.INK_MUTED, lw=1.0, ls="--", label="Marko–Siggia (Zocchi eq. 2.207)")
-    axes[1].plot(t, d.ms_tension_pN, color=c, lw=1.2, label="Marko–Siggia, sfGFP zero-below-rms convention")
-    axes[1].plot(t, d.stacked_fraction, color=VS.SERIES[7], lw=0.8, alpha=0.7, label="stacked fraction (0–1)")
-    axes[1].set_ylabel("modelled pull (pN)  |  fraction"); axes[1].legend(fontsize=7.5)
-    axes[1].set_title("Modelled tension at that end-to-end distance")
+    fig, axes = plt.subplots(1, 2, figsize=(11, 3.8))
+    rows = []
+    for s_ in ds:
+        bp = pd.read_csv(Path(str(analysis_prefix(s_)) + "_bend_profile.csv"))
+        axes[0].plot(bp.bp, bp.bend_deg_mean, color=color(s_), lw=1.4, label=label(s_))
+        axes[0].fill_between(bp.bp, bp.bend_deg_mean - bp.bend_deg_sd, bp.bend_deg_mean + bp.bend_deg_sd,
+                             color=color(s_), alpha=0.15, lw=0)
+        mj = Path(str(analysis_prefix(s_)) + "_mechanics.json")
+        if mj.exists():
+            m = json.loads(mj.read_text())
+            fo = (m.get("base_pair_opening") or {}).get("fraction_open_per_bp")
+            if fo:
+                axes[1].plot(np.arange(1, len(fo) + 1), fo, color=color(s_), lw=1.4, marker=SYSTEMS[s_]["marker"], ms=3, label=label(s_))
+        rows.append(bp.assign(system=s_))
+    for y, lab in ((2.55, "Zocchi τc/B 2.6°/bp"), (5.5, "sfGFP opening onset 5.5°/bp"), (8.7, "certain 8.7°/bp")):
+        axes[0].axhline(y, color=VS.INK_MUTED, lw=0.7, ls=":")
+        axes[0].text(1, y + 0.15, lab, fontsize=6.5, color=VS.INK_MUTED)
+    axes[0].set_xlabel("base-pair step"); axes[0].set_ylabel("helical-axis bend per step (°)")
+    axes[0].set_title("Where the duplex bends (one-turn smoothed axis, as on sfGFP)")
+    axes[0].legend(fontsize=7.5)
+    axes[1].set_xlabel("base pair"); axes[1].set_ylabel("fraction of frames open (WC distance > 4 Å)")
+    axes[1].set_title("Base-pair opening along the duplex")
+    axes[1].set_ylim(0, max(0.1, axes[1].get_ylim()[1]))
+    axes[1].legend(fontsize=7.5)
+    for ax in axes:
+        ax.grid(alpha=0.5)
+    fig.savefig(out / "pp2a_fig10_duplex_kink.png")
+    if rows:
+        pd.concat(rows).to_csv(out / "pp2a_fig10_duplex_kink.csv", index=False)
+    plt.close(fig)
+    return "pp2a_fig10_duplex_kink"
+
+
+def fig_strand(df, out):
+    present_ch = [s_ for s_ in CHIMERAS if per_frame(s_, "ssdna") is not None]
+    if not present_ch:
+        return None
+    fig, axes = plt.subplots(1, 2, figsize=(11, 3.6))
+    for s_ in present_ch:
+        d = per_frame(s_, "ssdna")
+        t = time_ns(d, s_)
+        axes[0].plot(t, d.end_to_end_A, color=color(s_), lw=0.9, label=f"{label(s_)}: end-to-end")
+        axes[0].plot(t, d.rg_A, color=color(s_), lw=0.8, ls=":", alpha=0.8)
+        if CHIMERAS[s_]["topology"] == "ss":
+            axes[1].plot(t, d.ms_tension_unclipped_pN, color=color(s_), lw=1.0, label=f"{label(s_)}: Marko–Siggia pull")
+        else:
+            m = per_frame(s_, "mechanics")
+            if m is not None and "spring_force_pN" in m:
+                axes[1].plot(time_ns(m, s_), -m.spring_force_pN, color=color(s_), lw=1.0, label=f"{label(s_)}: Zocchi f(x) push (shown negative)")
+        d.assign(time_ns=t).to_csv(out / f"pp2a_fig8_strand_{s_}.csv", index=False)
+    for n, y in ((50, 94.1), (80, 119.0)):
+        axes[0].axhline(y, color=VS.INK_MUTED, lw=0.7, ls=":")
+        axes[0].text(axes[0].get_xlim()[0], y + 1, f"rms size of a free {n}-mer", fontsize=6.5, color=VS.INK_MUTED)
+    axes[0].set_ylabel(r"$\mathrm{\AA}$ (dotted: radius of gyration)"); axes[0].legend(fontsize=6.5); axes[0].set_title("The springs' size")
+    axes[1].axhline(0, color=VS.INK_MUTED, lw=0.6)
+    axes[1].set_ylabel("modelled force (pN; pull +, push −)"); axes[1].legend(fontsize=6.5)
+    axes[1].set_title("Modelled force at each frame's end-to-end distance")
     for ax in axes:
         ax.set_xlabel("time (ns)"); ax.grid(alpha=0.5)
     fig.savefig(out / "pp2a_fig8_strand.png")
-    d.assign(time_ns=t).to_csv(out / "pp2a_fig8_strand.csv", index=False)
     plt.close(fig)
     return "pp2a_fig8_strand"
 
 
 def fig_zocchi(df, out):
-    """Zocchi's f(x) for the duplexes that would push at this span, with the single
-    strand's Marko-Siggia pull and the chimera's own span distribution."""
+    """Zocchi's f(x) for 27/40/50/80 bp duplexes with the single strands' Marko-Siggia pull,
+    and where each chimera sits."""
     zp = HERE / "zocchi.json"
     cp = HERE / "zocchi_curves.csv"
     if not (zp.exists() and cp.exists()):
         return None
     z = json.loads(zp.read_text())
     cv = pd.read_csv(cp)
-    fig, ax = plt.subplots(figsize=(7.4, 4.4))
-    for i, n in enumerate((27, 40, 50)):
+    fig, ax = plt.subplots(figsize=(8, 4.6))
+    for i, n in enumerate((27, 40, 50, 80)):
         col = VS.SERIES[i]
         ax.plot(cv.x_A, cv[f"f_{n}bp_nicked_pN"], color=col, lw=1.6, label=f"{n} bp duplex, nicked τc (full model: kinked below x_c, bent above)")
         ax.plot(cv.x_A, cv[f"f_{n}bp_continuous_pN"], color=col, lw=1.0, ls="--", alpha=0.8)
         ax.plot(cv.x_A, cv[f"f_{n}bp_nicked_unkinked_pN"], color=col, lw=0.8, ls=":", alpha=0.8)
-    ax.plot(cv.x_A, -cv["ss50_pull_pN"], color=VS.INK, lw=1.8, label="50 nt single strand, Marko–Siggia (pulls)")
-    sp = z.get("span", {})
-    if sp.get("sd_A"):
-        ax.axvspan(sp.get("p5_A", sp["A"] - sp["sd_A"]), sp.get("p95_A", sp["A"] + sp["sd_A"]),
-                   color=VS.SERIES[2], alpha=0.12, lw=0)
-    ax.axvline(sp.get("A", 90), color=VS.SERIES[2], lw=1.0)
-    ax.text(sp.get("A", 90) + 1, ax.get_ylim()[1] * 0.92 if False else 20, f"span {sp.get('A', 90):.0f} Å\n({'simulated' if 'simulated' in sp.get('source', '') else 'build target'})",
-            fontsize=7.5, color=VS.INK_2)
+    for key, lab, col in (("ss50", "50 nt single strand, Marko–Siggia (pulls)", VS.INK), ("ss80", "80 nt single strand (pulls)", VS.INK_2)):
+        if f"{key}_pull_unclipped_pN" in cv:
+            ax.plot(cv.x_A, -cv[f"{key}_pull_unclipped_pN"], color=col, lw=1.6, label=lab)
+    for s_, c in (z.get("chimeras") or {}).items():
+        ax.axvspan(c["span_A"] - c["span_sd_A"], c["span_A"] + c["span_sd_A"], color=color(s_), alpha=0.1, lw=0)
+        ax.axvline(c["span_A"], color=color(s_), lw=1.0)
+        ax.text(c["span_A"] + 1, 24 - 3 * list(z["chimeras"]).index(s_), f"{label(s_).split(',')[0]}: {c['span_A']:.0f} Å", fontsize=7, color=color(s_))
     for n, r in z["kink"]["softening_points"].items():
         ax.axvline(r["x_c_A"], color=VS.INK_MUTED, lw=0.6, ls=":")
-        ax.text(r["x_c_A"] + 1, -4.5, f"x_c {n}", fontsize=6.5, color=VS.INK_MUTED, rotation=90, va="bottom")
+        ax.text(r["x_c_A"] + 1, -5.5, f"x_c {n}", fontsize=6.5, color=VS.INK_MUTED, rotation=90, va="bottom")
     ax.axhline(0, color=VS.INK_MUTED, lw=0.6)
-    ax.set_ylim(-6, 28); ax.set_xlim(20, 170)
+    ax.set_ylim(-6, 28); ax.set_xlim(20, 260)
     ax.set_xlabel(r"end-to-end distance the spring must span ($\mathrm{\AA}$)")
     ax.set_ylabel("force on the anchors (pN; + pushes apart, − pulls together)")
-    ax.set_title("Zocchi's spring at this span — solid: f(x) with kinking (nicked τc), dashed: continuous τc, dotted: bent branch without a kink")
-    ax.legend(fontsize=7, loc="upper right")
+    ax.set_title("Zocchi's spring by length — solid: f(x) with kinking (nicked τc), dashed: continuous τc, dotted: bent branch without a kink")
+    ax.legend(fontsize=6.5, loc="upper right")
     ax.grid(alpha=0.5)
     fig.savefig(out / "pp2a_fig9_zocchi_model.png")
     cv.to_csv(out / "pp2a_fig9_zocchi_model.csv", index=False)
     plt.close(fig)
     return "pp2a_fig9_zocchi_model"
+
+
+def fig_length(df, out):
+    """The length dependence, as the sfGFP page read it across 27/40 bp: for ss and ds at 50
+    and 80, the site displacement against the clicked zero, the modelled force, the measured
+    window force nearest the chimera's own span, and the kink measures."""
+    fp = HERE / "findings.json"
+    if not fp.exists():
+        return None
+    f = json.loads(fp.read_text())
+    ch = f.get("chimeras", {})
+    if not ch:
+        return None
+    vs = f.get("extension_vs_control", {})
+    fxp = HERE / "force_extension.csv"
+    win = pd.read_csv(fxp) if fxp.exists() else None
+    fig, axes = plt.subplots(1, 4, figsize=(14, 3.5))
+    rows = []
+    for s_, c in ch.items():
+        n, topo = c["n"], c["topology"]
+        col, mk = color(s_), SYSTEMS[s_]["marker"]
+        w = vs.get(s_)
+        if w:
+            axes[0].errorbar(n, w["delta"], yerr=w["sem_delta"], fmt=mk, color=col, ms=8, capsize=3, mec="white", label=label(s_))
+        fm = c.get("model", {}).get("force_pN")
+        if fm is not None:
+            axes[1].plot(n, fm if topo == "ds" else -fm, marker=mk, color=col, ms=8, mec="white", ls="none", label=label(s_))
+        meas = None
+        if win is not None and c.get("x_A", {}).get("mean") is not None:
+            g = win[win.system == f"D_{topo}{n}"]
+            g = g[g.box_ok.astype(bool)]
+            if len(g):
+                r = g.iloc[(g.mean_r_A - c["x_A"]["mean"]).abs().argsort().iloc[0]]
+                meas = (float(r.force_pN), float(r.force_sem_pN), float(r.mean_r_A))
+                axes[2].errorbar(n, meas[0], yerr=meas[1], fmt=mk, color=col, ms=8, capsize=3, mec="white", label=f"{label(s_)} (window at {meas[2]:.0f} Å)")
+        k = c.get("strand", {})
+        if topo == "ds" and c.get("duplex", {}).get("bend_per_step_deg") is not None:
+            axes[3].plot(n, c["duplex"]["bend_per_step_deg"], marker=mk, color=col, ms=8, mec="white", ls="none", label=f"{label(s_)}: duplex bend °/bp")
+        elif k.get("axis_curvature_deg_per_nt") is not None:
+            axes[3].plot(n, k["axis_curvature_deg_per_nt"], marker=mk, color=col, ms=8, mec="white", ls="none", label=f"{label(s_)}: strand curvature °/nt")
+        rows.append({"system": s_, "n": n, "topology": topo, "delta_vs_control_A": w["delta"] if w else None,
+                     "sem_A": w["sem_delta"] if w else None, "modelled_force_pN": fm, "measured_window_force_pN": meas[0] if meas else None,
+                     "measured_window_sem_pN": meas[1] if meas else None, "window_r_A": meas[2] if meas else None,
+                     "bend_deg_per_unit": (c.get("duplex", {}).get("bend_per_step_deg") if topo == "ds" else k.get("axis_curvature_deg_per_nt"))})
+    axes[0].axhline(0, color=VS.INK_MUTED, lw=0.6)
+    axes[0].set_ylabel(r"Δ Cβ7–Cβ553 vs clicked zero ($\mathrm{\AA}$)"); axes[0].set_title("Site displacement")
+    axes[1].axhline(0, color=VS.INK_MUTED, lw=0.6)
+    axes[1].set_ylabel("modelled force (pN; push +, pull −)"); axes[1].set_title("By the model at the simulated span")
+    axes[2].axhline(0, color=VS.INK_MUTED, lw=0.6)
+    axes[2].set_ylabel("measured force (pN; push +)"); axes[2].set_title("Bare spring, force field, nearest window")
+    axes[3].axhline(5.5, color=VS.INK_MUTED, lw=0.7, ls=":"); axes[3].text(50, 5.7, "duplex opening onset 5.5°/bp", fontsize=6.5, color=VS.INK_MUTED)
+    axes[3].set_ylabel("bend per step (°)"); axes[3].set_title("Kinking measure")
+    for ax in axes:
+        ax.set_xlabel("spring length (nt / bp)"); ax.set_xticks([50, 80]); ax.set_xlim(40, 90); ax.grid(alpha=0.5)
+        ax.legend(fontsize=6, loc="best")
+    fig.suptitle("The effect of spring length and hybridisation", fontsize=11.5)
+    fig.savefig(out / "pp2a_fig11_length.png")
+    pd.DataFrame(rows).to_csv(out / "pp2a_fig11_length.csv", index=False)
+    plt.close(fig)
+    return "pp2a_fig11_length"
 
 
 def fig_ramachandran(df, out):
@@ -481,8 +601,8 @@ def main():
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     made = []
-    for fn in (fig_rmsd, fig_rmsf, fig_end_to_end, fig_force_extension, fig_heat_bend, fig_ssdna,
-               fig_strand, fig_zocchi, fig_ramachandran, fig_headline):
+    for fn in (fig_rmsd, fig_rmsf, fig_end_to_end, fig_force_extension, fig_heat_bend, fig_ssdna, fig_duplex_kink,
+               fig_strand, fig_zocchi, fig_ramachandran, fig_headline, fig_length):
         try:
             r = fn(df, out)
             if r:

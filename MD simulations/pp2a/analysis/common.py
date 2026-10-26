@@ -45,8 +45,17 @@ SYSTEMS = {
     "P1_tet": {"label": "2× Tet2-Et, unclicked", "slot": 1, "marker": "s"},
     "P2_clicked": {"label": "clicked, no DNA", "slot": 5, "marker": "D"},
     "P3_ss50": {"label": "50 nt ssDNA, closed loop", "slot": 2, "marker": "^"},
+    "P4_ds50": {"label": "50 bp dsDNA, closed loop", "slot": 3, "marker": "v"},
+    "P5_ss80": {"label": "80 nt ssDNA, closed loop", "slot": 4, "marker": "<"},
+    "P6_ds80": {"label": "80 bp dsDNA, closed loop", "slot": 6, "marker": ">"},
 }
 CONTROL = "P2_clicked"
+# the spring chimeras: the same strand unhybridised (an entropic coil that can only pull)
+# and hybridised (Zocchi's leaf spring, which pushes), at two lengths
+CHIMERAS = {"P3_ss50": {"n": 50, "topology": "ss"}, "P4_ds50": {"n": 50, "topology": "ds"},
+            "P5_ss80": {"n": 80, "topology": "ss"}, "P6_ds80": {"n": 80, "topology": "ds"}}
+BARE = {"D_ss50": {"n": 50, "topology": "ss"}, "D_ds50": {"n": 50, "topology": "ds"},
+        "D_ss80": {"n": 80, "topology": "ss"}, "D_ds80": {"n": 80, "topology": "ds"}}
 
 
 def analysis_prefix(system, replicate="rep1"):
