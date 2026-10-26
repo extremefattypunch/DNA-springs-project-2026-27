@@ -29,7 +29,7 @@ import mdtraj as md
 import numpy as np
 import pandas as pd
 
-from common import angle_deg, load, load_resmap, summ, SFGFP_ANALYSIS  # noqa: F401
+from common import angle_deg, load, load_resmap, protein_residues, summ, SFGFP_ANALYSIS  # noqa: F401
 import geometry                                  # sfGFP analysis, on sys.path via common
 from spring_model import SsSpring, KT, XI_SS
 
@@ -66,8 +66,8 @@ def end_atoms(top, resmap, nts):
     return [first, last], "O5'/P of nt 1 and O3' of nt N (no linkers)"
 
 
-def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
-    t = load(traj, top_path, stride, skip)
+def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps=None):
+    t = load(traj, top_path, stride, skip, report_ps)
     top = t.topology
     resmap = load_resmap(top, resmap_path)
     nts = strand(top, resmap)
@@ -138,7 +138,9 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
                            "per_step_fraction": [round(float(f), 3) for f in stacked.mean(0)]}
 
     # --- contact with the protein ---
-    prot_idx = top.select("protein and not element H")
+    # the residue map's protein (keeps TDP, drops the DNL/DNP linkers that mdtraj calls protein)
+    prot_idx = np.array([a.index for _, res in protein_residues(top, resmap)
+                         for a in res.atoms if a.element.symbol != "H"], dtype=int)
     if prot_idx.size:
         per_nt = np.zeros((t.n_frames, n))
         for k, r in enumerate(nts):
@@ -148,7 +150,7 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
             per_nt[:, k] = (d.min(1) < CONTACT_A)
         rows["nt_in_contact"] = per_nt.sum(1)
         summary["protein_contact"] = {
-            "criterion": f"any nucleotide heavy atom < {CONTACT_A} A from a protein heavy atom",
+            "criterion": f"any nucleotide heavy atom < {CONTACT_A} A from a protein heavy atom (Tet/TDP included, DNA linkers excluded)",
             "nt_in_contact_per_frame": summ(rows["nt_in_contact"]),
             "fraction_of_strand": round(float(per_nt.mean()), 4),
             "per_nt_fraction": [round(float(f), 3) for f in per_nt.mean(0)]}

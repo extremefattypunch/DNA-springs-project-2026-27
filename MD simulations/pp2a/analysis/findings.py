@@ -134,7 +134,7 @@ def main(summary=None, out=None):
     for s in present:
         f["rigidity"][s] = {k: col(s, k) for k in (
             "rmsd.rmsd_core_A.mean", "rmsd.rmsd_core_A.max", "rmsd.rmsd_tail_corefit_A.mean",
-            "rmsd.rmsd_all_A.mean", "rmsd.rmsf_A.mean_core", "rmsd.rmsf_A.mean_tail", "rmsd.rmsf_A.max",
+            "rmsd.rmsd_all_A.mean", "rmsd.rmsd_core_to_mean_A.mean", "rmsd.rmsf_A.mean_core", "rmsd.rmsf_A.mean_tail", "rmsd.rmsf_A.max",
             "rmsd.rmsf_A.argmax_resnum", f"rmsd.rmsf_A.at_sites.{SITES[0]}", f"rmsd.rmsf_A.at_sites.{SITES[1]}",
             "rmsd.helix_fraction_core", f"rmsd.helix_fraction_at_sites.{SITES[0]}",
             f"rmsd.helix_fraction_at_sites.{SITES[1]}")}
@@ -146,8 +146,13 @@ def main(summary=None, out=None):
         for s in present:
             if s == CONTROL or rm.get(s) is None:
                 continue
-            w = welch(blocks(rm[s]["rmsd_core_A"]), blocks(rm[CONTROL]["rmsd_core_A"]))
+            # per-block core RMSD about each block's own mean: a reference-free amplitude,
+            # unlike RMSD-to-frame-0, which compares drift from two different starting frames
+            if "rmsd_core_to_mean_A" not in rm[s] or "rmsd_core_to_mean_A" not in rm[CONTROL]:
+                continue
+            w = welch(blocks(rm[s]["rmsd_core_to_mean_A"]), blocks(rm[CONTROL]["rmsd_core_to_mean_A"]))
             if w:
+                w["quantity"] = "core RMSD about the run mean, block means"
                 f["rigidity_vs_control"][s] = w
 
     # ---- the solenoid ----

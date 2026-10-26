@@ -115,8 +115,8 @@ def main():
     rig_cmp = ""
     if chim in rvc:
         w = rvc[chim]
-        rig_cmp = (f"The chimera's core RMSD differs from the clicked control's by {w['delta']:+.2f} ± {w['sem_delta']:.2f} Å "
-                   f"(p = {p_txt(w['p'])} on block means).")
+        rig_cmp = (f"The chimera's core amplitude (RMSD about the run's own mean, per block) differs from the clicked "
+                   f"control's by {w['delta']:+.2f} ± {w['sem_delta']:.2f} Å (p = {p_txt(w['p'])} on block means).")
 
     # ---------- solenoid ----------
     def heat_row(s):
@@ -210,8 +210,11 @@ Where they can be compared: {'; '.join(agree) if agree else 'no window has a val
     loop = g(builds, "P3_ss50", "covalent_loop", "closed")
     ns_total = f.get("total_ns", 0)
 
-    still = f"{FIG}/pp2a_P3_ss50_overview_still.png" if (ROOT / "docs/figures/pp2a_P3_ss50_overview_still.png").exists() \
-        else f"{FIG}/pp2a_P0_apo_overview_still.png"
+    still_block = ""
+    for s_, cap in (("P3_ss50", "the chimera"), ("P0_apo", "the apo A\u03b1 monomer, while the chimera runs")):
+        if (ROOT / f"docs/figures/pp2a_{s_}_overview_still.png").exists():
+            still_block = f"![{cap}]({FIG}/pp2a_{s_}_overview_still.png)\n*{cap}.*"
+            break
     anim_block = ""
     for s, cap in (("P3_ss50", "the chimera: horseshoe, strand, tethers"),
                    ("P2_clicked", "the clicked control")):
@@ -245,7 +248,7 @@ protein — but only if the horseshoe opens.
 
 **{ns_total:,.0f} ns over {len(present)} systems**, one trajectory each.
 
-![the chimera]({still})
+{still_block}
 
 ## The headline
 

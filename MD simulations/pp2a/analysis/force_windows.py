@@ -19,7 +19,7 @@ import pandas as pd
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from common import SCRATCH  # noqa: E402
+from common import SCRATCH, dedup_mdtraj_load  # noqa: E402
 import force_extension as fx  # noqa: E402  (sfGFP)
 from spring_model import SsSpring, KT, XI_SS  # noqa: E402
 
@@ -45,9 +45,10 @@ def main():
         if ns < a.min_ns:
             print(f"  skip {tag}: only {ns} ns"); continue
         try:
-            r = fx.analyse(traj, sysdir / "system.prmtop", sysdir / "residue_map.json", prog,
-                           str(traj.parent / "analysis"), a.stride, a.skip_ns,
-                           clamp_atoms=sysdir / "clamp_atoms.txt")
+            with dedup_mdtraj_load(20.0):
+                r = fx.analyse(traj, sysdir / "system.prmtop", sysdir / "residue_map.json", prog,
+                               str(traj.parent / "analysis"), a.stride, a.skip_ns,
+                               clamp_atoms=sysdir / "clamp_atoms.txt")
         except Exception as e:                                    # noqa: BLE001
             print(f"  {tag} failed: {type(e).__name__}: {e}"); continue
         n_nt = sum(1 for row in json.loads((sysdir / "residue_map.json").read_text())

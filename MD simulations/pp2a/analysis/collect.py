@@ -27,7 +27,7 @@ import pandas as pd
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from common import SITES, SFGFP_ANALYSIS  # noqa: E402,F401
+from common import SITES, SFGFP_ANALYSIS, dedup_mdtraj_load  # noqa: E402,F401
 import heat, rmsd, ssdna, tet_sites       # noqa: E402
 import contacts, mechanics                 # noqa: E402  (sfGFP)
 
@@ -51,18 +51,18 @@ def flat(prefix, d, out):
     return out
 
 
-def run_all(row, traj, top, resmap, pre, stride, skip, sites):
+def run_all(row, traj, top, resmap, pre, stride, skip, sites, report_ps=20.0):
     def step(name, fn):
         try:
             flat(f"{name}.", fn(), row)
         except Exception as e:                                   # noqa: BLE001
             print(f"  {name} failed: {type(e).__name__}: {e}")
-    step("rmsd", lambda: rmsd.analyse(traj, top, resmap, pre, stride, skip, sites))
-    step("heat", lambda: heat.analyse(traj, top, resmap, pre, stride, skip))
-    step("site", lambda: tet_sites.analyse(traj, top, resmap, pre, stride, skip, sites))
+    step("rmsd", lambda: rmsd.analyse(traj, top, resmap, pre, stride, skip, sites, report_ps))
+    step("heat", lambda: heat.analyse(traj, top, resmap, pre, stride, skip, report_ps))
+    step("site", lambda: tet_sites.analyse(traj, top, resmap, pre, stride, skip, sites, report_ps))
     if resmap is not None:
         step("mech", lambda: mechanics.analyse(traj, top, resmap, list(sites), pre, stride, None, False, skip))
-        step("ssdna", lambda: ssdna.analyse(traj, top, resmap, pre, stride, skip))
+        step("ssdna", lambda: ssdna.analyse(traj, top, resmap, pre, stride, skip, report_ps))
 
         def ct():
             c = contacts.analyse(traj, top, resmap, pre, stride, skip)
@@ -134,7 +134,8 @@ def main():
         row = {"system": j["system"], "replicate": j["replicate"], "ns": j["ns"],
                "skip_ns": args.skip_ns, "stride": args.stride, "report_ps": j["report_ps"],
                "sites": "/".join(map(str, SITES)), "note": j.get("note", "")}
-        run_all(row, j["traj"], j["top"], j["resmap"], j["pre"], args.stride, skip, SITES)
+        with dedup_mdtraj_load(j["report_ps"]):      # the sfGFP modules load through md.load
+            run_all(row, j["traj"], j["top"], j["resmap"], j["pre"], args.stride, skip, SITES, j["report_ps"])
         rows.append(row)
     if not rows:
         sys.exit("nothing to collect yet")

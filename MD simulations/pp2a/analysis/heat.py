@@ -44,8 +44,8 @@ def centroids(t, ca, ranges):
     return out
 
 
-def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0):
-    t = load(traj, top_path, stride, skip)
+def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps=None):
+    t = load(traj, top_path, stride, skip, report_ps)
     top = t.topology
     resmap = load_resmap(top, resmap_path)
     ca = ca_by_resnum(top, resmap)

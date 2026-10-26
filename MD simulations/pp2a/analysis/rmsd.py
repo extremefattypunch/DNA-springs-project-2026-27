@@ -21,11 +21,11 @@ import mdtraj as md
 import numpy as np
 import pandas as pd
 
-from common import CORE, N_TAIL, SITES, ca_by_resnum, heat_of, load, load_resmap, summ
+from common import CORE, N_TAIL, SITES, ca_by_resnum, heat_of, load, load_resmap, protein_residues, summ
 
 
-def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SITES):
-    t = load(traj, top_path, stride, skip)
+def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SITES, report_ps=None):
+    t = load(traj, top_path, stride, skip, report_ps)
     top = t.topology
     resmap = load_resmap(top, resmap_path)
     ca = ca_by_resnum(top, resmap)
@@ -45,23 +45,36 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SIT
     d = t.xyz[:, all_idx] - t.xyz[0, all_idx]
     rows["rmsd_all_corefit_A"] = np.sqrt((d ** 2).sum(-1).mean(-1)) * 10.0
 
-    rmsf = md.rmsf(t, t, 0, atom_indices=all_idx) * 10.0
+    # t is already superposed on the core; reference=None makes mdtraj measure the
+    # fluctuation about the mean of THOSE coordinates instead of re-fitting on all CA.
+    rmsf = md.rmsf(t, None, atom_indices=all_idx) * 10.0
+    # a reference-free amplitude for comparing runs: core RMSD to the run's own mean,
+    # per block about the block's own mean, so neither frame 0 nor slow drift sets it
+    blk = []
+    for b in np.array_split(np.arange(t.n_frames), 10):
+        xyz = t.xyz[b][:, core]
+        blk.append(float(np.sqrt(((xyz - xyz.mean(0)) ** 2).sum(-1).mean()) * 10.0))
+    mean_core = t.xyz[:, core].mean(axis=0)
+    rows["rmsd_core_to_mean_A"] = np.sqrt(((t.xyz[:, core] - mean_core) ** 2).sum(-1).mean(-1)) * 10.0
     per_res = pd.DataFrame({"resnum": nums, "heat": [heat_of(n) for n in nums],
                             "resname": [top.atom(ca[n]).residue.name for n in nums],
                             "rmsf_A": np.round(rmsf, 4)})
 
-    # DSSP on the protein only (DNA/water confuse mdtraj's implementation)
-    prot = t.atom_slice(top.select("protein"))
+    # DSSP on the protein chain only, keeping the Tet sites (TET/TDP are not in mdtraj's
+    # protein residue list) and dropping the DNA linkers (DNL/DNP/DNH are, wrongly for
+    # this purpose).  Columns map back through the prmtop residue index, which survives
+    # atom_slice as resSeq.
+    prot = t.atom_slice(top.select("(protein and not resname DNL DNP DNH) or resname TET TDP"))
     codes = md.compute_dssp(prot, simplified=True)
-    ss = {}
-    for col, r in enumerate(prot.topology.residues):
-        c = codes[:, col]
-        ss[r.index] = (float((c == "H").mean()), float((c == "E").mean()), float((c == "C").mean()))
-    # map back: protein residues keep their order, so pair by sequence position
-    prot_res = [r for r in prot.topology.residues]
+    idx2num = {res.index: num for num, res in protein_residues(top, resmap)}
     dssp_by_num = {}
-    for num, (pr) in zip(sorted(n for n in nums), prot_res):
-        dssp_by_num[num] = ss[pr.index]
+    for col, r in enumerate(prot.topology.residues):
+        num = idx2num.get(r.resSeq)
+        if num is not None:
+            c = codes[:, col]
+            dssp_by_num[num] = (float((c == "H").mean()), float((c == "E").mean()), float((c == "C").mean()))
+    if len(dssp_by_num) != len(nums):
+        print(f"  WARNING: DSSP covered {len(dssp_by_num)} of {len(nums)} residues")
     per_res["helix_frac"] = [round(dssp_by_num.get(n, (np.nan,) * 3)[0], 3) for n in nums]
     per_res.to_csv(f"{out_prefix}_rmsf.csv", index=False)
 
@@ -73,6 +86,8 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SIT
         "rmsd_core_A": summ(rows["rmsd_core_A"]),
         "rmsd_tail_corefit_A": summ(rows["rmsd_tail_corefit_A"]),
         "rmsd_all_corefit_A": summ(rows["rmsd_all_corefit_A"]),
+        "rmsd_core_to_mean_A": summ(rows["rmsd_core_to_mean_A"]),
+        "core_amplitude_blocks_A": [round(v, 4) for v in blk],
         "rmsf_A": {"mean_all": round(float(rmsf.mean()), 3),
                    "mean_core": round(float(per_res.rmsf_A[core_mask].mean()), 3),
                    "mean_tail": round(float(per_res.rmsf_A[~core_mask].mean()), 3),

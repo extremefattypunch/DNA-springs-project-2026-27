@@ -106,12 +106,74 @@ def atom_by_resnum(top, resmap, resnum, name):
     return None
 
 
-def load(traj, top_path, stride=1, skip=0):
-    """Load, stride, and drop ``skip`` strided frames of settling (never below 10 frames)."""
-    t = md.load(str(traj), top=str(top_path), stride=stride)
+def frame_mask(traj, log=None):
+    """Which DCD frames are genuine: both engines APPEND to traj.dcd on a checkpoint
+    restart without truncating, so the frames simulated after the last checkpoint are
+    written twice (the apo run has ~17 such duplicates; a preempted gpu_requeue run has
+    up to ten per restart).  The StateDataReporter log is written in lockstep, so a frame
+    is kept only when its step exceeds every step before it.  Returns the kept frame
+    indices, or every frame (with a warning) if the log and the DCD disagree in length."""
+    traj = Path(traj)
+    n = len(md.formats.DCDTrajectoryFile(str(traj)))
+    if log is None:
+        for name in ("production.log", "04_production.log"):
+            if (traj.parent / name).exists():
+                log = traj.parent / name
+                break
+    if log is None or not Path(log).exists():
+        return np.arange(n)
+    steps = np.array([int(float(l.split("\t")[0])) for l in Path(log).read_text().splitlines()
+                      if l and not l.startswith("#")])
+    if len(steps) != n:
+        print(f"  WARNING: {len(steps)} log rows vs {n} DCD frames in {traj.parent.name}; keeping every frame")
+        return np.arange(n)
+    prev_max = np.maximum.accumulate(np.concatenate([[-1], steps[:-1]]))
+    keep = np.flatnonzero(steps > prev_max)
+    if len(keep) < n:
+        print(f"  dropped {n - len(keep)} duplicated restart frames of {n}")
+    return keep
+
+
+def load(traj, top_path, stride=1, skip=0, report_ps=None, log=None):
+    """Load the genuine frames (restart duplicates removed), stride, and drop ``skip``
+    strided frames of settling (never below 10 frames).  t.time is set to real
+    picoseconds when report_ps is given -- a DCD carries no clock and mdtraj's time
+    would otherwise be the raw frame index."""
+    keep = frame_mask(traj, log)[::stride]
+    chunks, offset, want = [], 0, set(keep.tolist())
+    for ch in md.iterload(str(traj), top=str(top_path), chunk=250):
+        idx = [i for i in range(ch.n_frames) if offset + i in want]
+        if idx:
+            chunks.append(ch[idx])
+        offset += ch.n_frames
+    t = chunks[0] if len(chunks) == 1 else md.join(chunks, check_topology=False)
+    t.time = keep.astype(float) * (float(report_ps) if report_ps else 1.0)
     if skip and t.n_frames - skip >= 10:
         t = t[skip:]
     return t
+
+
+class dedup_mdtraj_load:
+    """Context manager: route every mdtraj.load(traj, top=, stride=) made by the sfGFP
+    modules (mechanics, contacts, force_extension) through the loader above, so they too
+    skip the duplicated restart frames and carry real times."""
+
+    def __init__(self, report_ps=None, log=None):
+        self.report_ps, self.log = report_ps, log
+
+    def __enter__(self):
+        self.orig = md.load
+
+        def patched(filename_or_filenames, **kw):
+            if isinstance(filename_or_filenames, (str, Path)) and str(filename_or_filenames).endswith(".dcd") \
+                    and set(kw) <= {"top", "stride"}:
+                return load(filename_or_filenames, kw["top"], kw.get("stride", 1), 0, self.report_ps, self.log)
+            return self.orig(filename_or_filenames, **kw)
+        md.load = patched
+        return self
+
+    def __exit__(self, *exc):
+        md.load = self.orig
 
 
 def block_sem(x, n_blocks=10):

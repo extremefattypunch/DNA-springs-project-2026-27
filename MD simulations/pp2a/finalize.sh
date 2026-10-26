@@ -21,12 +21,16 @@ echo "##### figures"
 $P analysis/figures.py
 
 echo "##### animations"
-for sys in ${ANIMATE:-P3_ss50 P2_clicked}; do
-  traj="$PP2A_MD_SCRATCH/runs/$sys/rep1/03_production/traj.dcd"
+for sys in ${ANIMATE:-P0_apo P3_ss50 P2_clicked}; do
+  if [ "$sys" = P0_apo ]; then
+    traj="$PP2A_DATA/md/runs/Aa_rep1/traj.dcd"; top="$PP2A_DATA/md/systems/Aa/system.prmtop"; rm_args=(); views="overview strain"
+  else
+    traj="$PP2A_MD_SCRATCH/runs/$sys/rep1/03_production/traj.dcd"; top="build/systems/$sys/system.prmtop"
+    rm_args=(--resmap "build/systems/$sys/residue_map.json"); views="overview sites strain"
+    [ "$sys" = P2_clicked ] && views="overview sites"
+  fi
   [ -f "$traj" ] || { echo "  $sys: no trajectory"; continue; }
-  views="overview sites strain"; [ "$sys" = P2_clicked ] && views="overview"
-  $P analysis/animate.py --traj "$traj" --top "build/systems/$sys/system.prmtop" \
-     --resmap "build/systems/$sys/residue_map.json" --name "$sys" --frames "$FRAMES" --views $views
+  $P analysis/animate.py --traj "$traj" --top "$top" "${rm_args[@]}" --name "$sys" --frames "$FRAMES" --views $views
 done
 # small GIFs for the wiki page (the mp4s stay in figures/ for anyone who wants them)
 mkdir -p figures/web
@@ -38,13 +42,13 @@ for f in figures/*_overview.gif figures/*_sites.gif figures/*_strain.gif; do
      -loop 0 "figures/web/pp2a_$b.gif"
 done
 
-echo "##### wiki page"
-$P report/build_wiki_pp2a.py
-
 echo "##### publish figures to docs/"
 mkdir -p "$ROOT/docs/figures"
 cp figures/pp2a_*.png "$ROOT/docs/figures/" 2>/dev/null || true
 for f in figures/*_still.png; do [ -f "$f" ] && cp "$f" "$ROOT/docs/figures/pp2a_$(basename "$f")"; done
 cp figures/web/pp2a_*.gif "$ROOT/docs/figures/" 2>/dev/null || true
 touch "$ROOT/docs/.nojekyll"
+
+echo "##### wiki page  (after the figures are in docs/, which is where it looks for them)"
+$P report/build_wiki_pp2a.py
 echo "done -- commit docs/figures and docs/wiki, then push the wiki page to the wiki repository"

@@ -26,6 +26,7 @@ import pandas as pd
 from common import SITES, load, load_resmap, summ  # noqa: F401
 import sites as sf_sites                             # sfGFP analysis module
 from sites import RING_ATOMS, STACK_CUTOFF_A, backbone_dihedrals, circular_stats
+from ssdna import RING as BASE_RING          # nucleobase ring atoms: the strand can stack on the Tet ring too
 
 AROMATIC = {"PHE": ("CG", "CD1", "CD2", "CE1", "CE2", "CZ"),
             "TYR": ("CG", "CD1", "CD2", "CE1", "CE2", "CZ"),
@@ -48,17 +49,21 @@ def ring_neighbours(t, top, resmap, resnum):
     ring = [a.index for a in res.atoms if a.name in names]
     partners = {}
     for i, (num, nm, ch) in resmap.items():
-        if ch != "A" or i == ridx or nm not in AROMATIC:
+        if i == ridx:
+            continue
+        key = nm if ch == "A" else nm.rstrip("35")
+        table = AROMATIC if ch == "A" else BASE_RING
+        if key not in table:
             continue
         r = top.residue(i)
-        atoms = [a.index for a in r.atoms if a.name in AROMATIC[nm]]
+        atoms = [a.index for a in r.atoms if a.name in table[key]]
         if not atoms:
             continue
         c = t.xyz[:, atoms].mean(1)
         rc = t.xyz[:, ring].mean(1)
         d = np.linalg.norm(c - rc, axis=1) * 10.0
         if d.min() < 8.0:
-            partners[f"{nm}{num}"] = d
+            partners[f"{nm}{num}:{ch}"] = d
     counts = np.zeros(t.n_frames)
     detail = {}
     for k, d in partners.items():
@@ -69,8 +74,8 @@ def ring_neighbours(t, top, resmap, resnum):
     return counts, detail
 
 
-def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SITES):
-    t = load(traj, top_path, stride, skip)
+def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, sites=SITES, report_ps=None):
+    t = load(traj, top_path, stride, skip, report_ps)
     top = t.topology
     resmap = load_resmap(top, resmap_path)
     rows, summary = {}, {}
