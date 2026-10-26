@@ -32,7 +32,7 @@ protein — but only if the horseshoe opens.
 
 | system | Cβ7–Cβ553 (Å), mean ± sd | range | Δ vs P2_clicked (Å) | p |
 |---|---|---|---|---|
-| apo Aα (ff19SB/OPC) | 56.5 ± 7.2 | 40–79 | — | — |
+| apo Aα (ff19SB/OPC) | 56.4 ± 7.1 | 40–75 | — | — |
 
 The zero is the clicked protein without DNA, not the unmodified one: on sfGFP, installing
 and clicking the two residues moved the sites by 0.6 Å before any DNA was attached, which
@@ -49,13 +49,26 @@ while the rest stayed at 2–4 Å. Our attachment site Asp7 sits in that tail.
 
 | system | core Cα RMSD (Å) | N-tail RMSD after the core fit (Å) | core RMSF (Å) | RMSF at Asp7 / Asn553 (Å) | helix fraction, core |
 |---|---|---|---|---|---|
-| apo Aα (ff19SB/OPC) | 2.73 (max 6.1) | 11.6 | 2.11 | 6.9 / 3.9 | 0.780 |
+| apo Aα (ff19SB/OPC) | 2.72 (max 6.1) | 11.6 | 2.11 | 6.8 / 3.9 | 0.780 |
 
 
 
 ![RMSD, Day et al.'s split](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig1_rmsd.png)
 
 ![per-residue RMSF with the HEAT repeats](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig2_rmsf.png)
+
+**The horseshoe as a whole.** The solenoid's axis is the chain of HEAT-repeat Cα centroids; the
+bend at a repeat is the angle between the incoming and outgoing axis segments, the twist the
+dihedral across four consecutive centroids. The literature puts PR65's hinge at HEAT 10–11
+(crystal comparison), 11–12 (Day) or 12–13 (Yilmaz), with a diffuse expansion of repeats 4–12.
+
+| system | total axis bend (°) | HEAT1–15 (Å) | Asn30–Phe578 (Å) | region RMSD N / central / C (Å) | most variable repeat | Arg113–Glu191 salt bridge formed |
+|---|---|---|---|---|---|---|
+| apo Aα (ff19SB/OPC) | 150 ± 9 | 53.5 ± 6.7 | 42.0 ± 5.6 | 1.19 / 1.48 / 0.73 | H12 | 0.82 |
+
+
+
+![where the solenoid bends and twists](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig5_heat_bend.png)
 
 ## The distance between the attachment points
 
@@ -68,47 +81,88 @@ Cβ7–Cβ553 (ours, the spring's own coordinate), Cα Asn30–Phe578 (Yilmaz et
 
 ![distance between the attachment points](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig3_end_to_end.png)
 
-## What the spring delivers, by the model
+## How stiff the protein is along the spring's coordinate
+
+Zocchi's two-spring picture (book pp. 117–119) gives the protein a stiffness κ ≈ 100 k<sub>B</sub>T nm⁻²
+along the line between the attachment points, yielding at ~4 pN; sfGFP's force-clamp ladder measured
+230–350. No clamp ladder was run here, but equipartition on the Cβ7–Cβ553 fluctuation of each run,
+κ = k<sub>B</sub>T / var(x), gives the horseshoe's stiffness along the same coordinate (a lower bound —
+slow opening and closing of the horseshoe inflates the variance):
+
+| system | Cβ7–Cβ553 (Å) | κ (k<sub>B</sub>T nm⁻²) | κ (pN nm⁻¹) | displacement per pN of spring force (Å) |
+|---|---|---|---|---|
+| apo Aα (ff19SB/OPC) | 56.4 ± 7.0 | 2.0 | 8.4 | 1.2 |
+
+This is the number that decides whether a spring of a few piconewtons is visible at all. On sfGFP
+(κ ≈ 300) a 4 pN spring moved the sites 0.03 Å, below what 50 ns can resolve; a HEAT horseshoe is
+two orders of magnitude softer along this coordinate, so even the ~2 pN a single strand could
+deliver would move the tips by ångströms — if it were under tension.
+
+## What a spring would deliver, by Zocchi's model
+
+Zocchi's kinked-rod model (eqs 2.188–2.206 and 3.51–3.52 of the book; Tseng & Zocchi 2013, eq. 6;
+B = 200 pN nm², τ<sub>c</sub> = 27 pN nm nicked / 34 continuous, 0.33 nm per bp, k<sub>B</sub>T = 4.2 pN nm),
+evaluated with the repository's implementation at the build's anchor span of 90 Å (the chimera has not run yet). A duplex pushes its ends apart on the
+bent branch, f = 10B/L² − k<sub>B</sub>T/(L − x), until the span drops below x<sub>c</sub>, where it
+kinks and the force collapses to τ<sub>c</sub> / (2R √(1 − (x/2R)²)):
+
+| duplex | contour (nm) | regime at this span | f(x) (pN) | unkinked rod (pN) | Euler load 10B/L² (pN) | stored energy (k<sub>B</sub>T) | x<sub>c</sub> (Å) | γ = Lτ<sub>c</sub>/2B |
+|---|---|---|---|---|---|---|---|---|
+| 27 bp, nicked | 8.9 | *infeasible: contour shorter than the span* | — | — | 25.2 | — | 87 | 0.60 |
+| 27 bp, continuous | 8.9 | *infeasible: contour shorter than the span* | — | — | 25.2 | — | 86 | 0.76 |
+| 40 bp, nicked τc = 27 pN nm | 13.2 | kinked | **2.84** | 10.5 | 11.5 | 5.2 | 125 | 0.89 |
+| 40 bp, continuous τc = 34 pN nm | 13.2 | kinked | **3.62** | 10.5 | 11.5 | 6.5 | 121 | 1.12 * |
+| 50 bp, nicked τc = 27 pN nm | 16.5 | kinked | **1.99** | 6.8 | 7.3 | 6.3 | 151 | 1.11 * |
+| 50 bp, continuous τc = 34 pN nm | 16.5 | kinked | **2.54** | 6.8 | 7.3 | 7.9 | 143 | 1.40 * |
+
+\* γ ≥ 1: outside the model's stated validity range (L ≳ 45 bp).
+
+The chimera carries none of these. Its 50 nt **single strand** is Zocchi's "ss state", of which his
+2021 chapter says *"with the DNA spring in the ss state there is essentially no stress on the
+enzyme"*: a worm-like chain with ξ = 1.5 nm and a contour of 29.5 nm whose natural rms size is
+94 Å. At this span it is **matched**, pulling with
+0.00 pN as the model is used (1.60 pN if the Marko–Siggia
+interpolation is trusted below the rms size). Every number in this section is a **model**, not a measurement.
+
+![Zocchi's spring model at this span](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig9_zocchi_model.png)
 
 *Not yet simulated.*
 
-Marko–Siggia applied frame by frame to the strand's end-to-end distance gives
-**— pN** as the repository uses it (zero below the chain's rms size) and
-— pN if the interpolation formula is trusted all the way down;
-the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives — pN. All three are
-**models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
-spring at this span on its kinked branch at 1.7–3.3 pN of *push* — and outside the
-model's own validity range (γ > 1 for L > ~45 bp). The sign is the point: nothing here
-pushes.
 
-![modelled against measured force for the single strand](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig4_force_extension.png)
+
+
 
 ## What it delivers, measured
 
 *The restraint windows have not run yet.*
 
-## Does the horseshoe kink, and does the strand?
+![modelled against measured force for the single strand](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig4_force_extension.png)
 
-The solenoid's axis is the chain of HEAT-repeat Cα centroids; the bend at a repeat is the
-angle between the incoming and outgoing axis segments, the twist the dihedral across
-four consecutive centroids. A hinge is a repeat whose bend *moves* relative to the clicked
-control, not one with a large static bend — a solenoid is bent everywhere. The literature
-puts the hinge at HEAT 10–11 (crystal comparison), 11–12 (Day) or 12–13 (Yilmaz), with a
-diffuse expansion of repeats 4–12.
+## Does the DNA kink?
 
-| system | total axis bend (°) | HEAT1–15 (Å) | Asn30–Phe578 (Å) | region RMSD N / central / C (Å) | most variable repeat | Arg113–Glu191 salt bridge formed |
-|---|---|---|---|---|---|---|
-| apo Aα (ff19SB/OPC) | 150 ± 9 | 53.5 ± 6.8 | 42.0 ± 5.6 | 1.19 / 1.48 / 0.73 | H12 | 0.82 |
+**By the model.** A rod of bending modulus B yields at the critical torque τ<sub>c</sub>, i.e. at a
+curvature τ<sub>c</sub>/B = **2.55° per bp** (nicked) to
+**3.21° per bp** (continuous) — Zocchi's kink. Below the softening
+span x<sub>c</sub> the duplex sits in the kinked state with a hinge of radius R:
+
+| duplex | x<sub>c</sub> (Å) | R of the kinked state (Å) | uniform curvature at x<sub>c</sub> (°/bp) | uniform curvature at this span (°/bp) |
+|---|---|---|---|---|
+| 27 bp | 87 | 44 | 1.62 | stretched |
+| 40 bp | 125 | 65 | 1.63 | 4.17 |
+| 50 bp | 151 | 81 | 1.64 | 4.10 |
+
+The force field disagrees with the model on *where* a duplex kinks: on sfGFP's bare duplexes base pairs
+began to open at 5.5°/bp and opened in every run only above 8.7°/bp
+(the chimera there sat at 4.8-5.2°/bp and never kinked; the one directly comparable all-atom
+calculation nucleates a type II kink at 8.6-9.3°/bp). A single strand has no base pairs to
+open, so for it "kink" means a sharp turn of the backbone: a C4′-trace angle above 90°, a BI → BII
+switch of the ε/ζ torsions, or a step whose bases have come apart.
 
 
 
-![where the solenoid bends and twists](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig5_heat_bend.png)
+*The strand's kink figure is rendered once the P3_ss50 analysis exists.*
 
-The strand: *not yet simulated.*
-
-![the strand: size, modelled tension, where it bends, stacking](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig6_ssdna.png)
-
-## What the modification itself does
+## Ramachandran plots at the two Tet2-Et sites
 
 On sfGFP the one site that sat at **positive φ** (left-handed α, Asp133) was pushed 17.5°
 out of its basin by the modification; ordinary sites moved by a degree or less. In the
@@ -119,7 +173,7 @@ whether modified or not.
 
 | system | residue 7 | φ, ψ (± sd) | aromatic rings on the Tet ring / frame | residue 553 | φ, ψ (± sd) | rings / frame |
 |---|---|---|---|---|---|---|
-| apo Aα (ff19SB/OPC) | ASP | -89, +5 (± 43, 76) | — | ASN | -57, -37 (± 9, 9) | — |
+| apo Aα (ff19SB/OPC) | ASP | -89, +5 (± 43, 75) | — | ASN | -57, -37 (± 9, 9) | — |
 
 ![backbone conformation at the two sites](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_ramachandran.png)
 
