@@ -372,7 +372,10 @@ def fig_headline(df, out):
     ax.set_xticks(range(len(present(df))))
     ax.set_xticklabels([label(s) for s in present(df)], fontsize=8)
     ax.set_ylabel(r"Cβ7–Cβ553 ($\mathrm{\AA}$), mean ± block SEM (range as a thin line)")
-    ax.set_title(f"The attachment-point separation, against the clicked zero ({label(CONTROL)})")
+    if CONTROL in ext:
+        ax.set_title(f"The attachment-point separation, against the clicked zero ({label(CONTROL)})")
+    else:
+        ax.set_title("The attachment-point separation (Cβ7–Cβ553); clicked control pending")
     ax.grid(axis="y", alpha=0.5)
     fig.savefig(out / "pp2a_fig7_headline.png")
     pd.DataFrame(rows).to_csv(out / "pp2a_fig7_headline.csv", index=False)

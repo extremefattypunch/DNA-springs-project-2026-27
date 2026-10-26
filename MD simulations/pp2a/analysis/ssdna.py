@@ -142,12 +142,18 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     prot_idx = np.array([a.index for _, res in protein_residues(top, resmap)
                          for a in res.atoms if a.element.symbol != "H"], dtype=int)
     if prot_idx.size:
-        per_nt = np.zeros((t.n_frames, n))
+        owner = np.full(top.n_atoms, -1, dtype=int)
         for k, r in enumerate(nts):
-            heavy = [a.index for a in r.atoms if a.element.symbol != "H"]
-            pairs = np.array([(h, p) for h in heavy for p in prot_idx[::3]])  # every 3rd protein heavy atom: cheap, adequate at 4.5 A
-            d = md.compute_distances(t, pairs, periodic=False) * 10.0
-            per_nt[:, k] = (d.min(1) < CONTACT_A)
+            for a in r.atoms:
+                if a.element.symbol != "H":
+                    owner[a.index] = k
+        dna_heavy = np.where(owner >= 0)[0]
+        per_nt = np.zeros((t.n_frames, n))
+        for fi in range(t.n_frames):
+            hit = md.compute_neighbors(t[fi], CONTACT_A / 10.0, prot_idx, haystack_indices=dna_heavy,
+                                       periodic=False)[0]
+            if len(hit):
+                per_nt[fi, np.unique(owner[hit])] = 1.0
         rows["nt_in_contact"] = per_nt.sum(1)
         summary["protein_contact"] = {
             "criterion": f"any nucleotide heavy atom < {CONTACT_A} A from a protein heavy atom (Tet/TDP included, DNA linkers excluded)",

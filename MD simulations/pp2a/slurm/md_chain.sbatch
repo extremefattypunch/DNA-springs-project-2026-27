@@ -43,6 +43,7 @@ esac
 [[ "$REP" =~ ^[0-9]+$ ]] || { echo "== REP must be a number, got '$REP'" >&2; exit 2; }
 RUNDIR="$PP2A_MD_SCRATCH/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
+exec 9>"$RUNDIR/.lock"; flock -n 9 || { echo "== another job already owns $RUNDIR; exiting"; exit 0; }
 TMP=/scratch/${USER}_${SLURM_JOB_ID}; mkdir -p "$TMP"; export TMPDIR="$TMP"
 trap 'rm -rf "$TMP"' EXIT
 

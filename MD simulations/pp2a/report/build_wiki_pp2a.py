@@ -89,6 +89,12 @@ def main():
                     f"{num(ss.get('tension_pN_clipped'))} pN "
                     f"({num(ss.get('tension_pN_unclipped'))} pN if the Marko–Siggia interpolation is trusted below the "
                     f"chain's rms size).")
+    elif have(chim) and ss:
+        headline = (f"The chimera run is finished: the attachment sites sit at "
+                    f"**{num(g(ext, chim, 'mean_A'), '{:.1f}')} ± {num(g(ext, chim, 'sd_A'), '{:.1f}')} Å**, and the strand is "
+                    f"**{ss.get('state', '?')}** at {num(ss.get('tension_pN_clipped'))} pN by the model. "
+                    f"*The displacement against the clicked zero ({labels.get(ctrl, ctrl)}) is written here once "
+                    f"that control run has finished.*")
     else:
         headline = ("*The chimera run has not finished; this paragraph is written by "
                     "`report/build_wiki_pp2a.py` from `analysis/findings.json` once it has.*")
@@ -150,8 +156,21 @@ natural rms size of {num((ss.get('natural_rms_nm') or 0) * 10, '{:.0f}')} Å. It
 **{num(ss.get('nt_in_contact'), '{:.0f}')} of 50 nucleotides on the protein** at any moment
 ({100 * (ss.get('fraction_of_strand_on_protein') or 0):.0f} % of the strand, time-averaged). Protein residues it touches more than half the
 time: {ss.get('protein_residues_touched_over_half') or 'none'}."""
+        ms_txt = f"""Marko–Siggia applied frame by frame to the strand's end-to-end distance gives
+**{num(ss.get('tension_pN_clipped'))} pN** as the repository uses it (zero below the chain's rms size) and
+{num(ss.get('tension_pN_unclipped'))} pN if the interpolation formula is trusted all the way down;
+the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives {num(ss.get('ideal_chain_pN'))} pN. All three are
+**models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
+spring at this span on its kinked branch at 1.7–3.3 pN of *push* — and outside the
+model's own validity range (γ > 1 for L > ~45 bp). The sign is the point: nothing here
+pushes."""
     else:
         strand_txt = "*Not yet simulated.*"
+        ms_txt = ""
+    fig4_block = f"![modelled against measured force for the single strand]({FIG}/pp2a_fig4_force_extension.png)"
+    fig6_block = (f"![the strand: size, modelled tension, where it bends, stacking]({FIG}/pp2a_fig6_ssdna.png)"
+                  if (ROOT / "docs/figures/pp2a_fig6_ssdna.png").exists()
+                  else "*The strand figure is rendered once the P3_ss50 analysis exists.*")
 
     # ---------- windows ----------
     if win:
@@ -168,7 +187,8 @@ time: {ss.get('protein_residues_touched_over_half') or 'none'}."""
                          f"against {model:.2f} pN modelled")
         win_txt = f"""A bare 50 nt strand, no protein, held at a series of end-to-end separations by a soft harmonic restraint
 (k = 33 kJ mol⁻¹ nm⁻²) between the atoms the linkers would bond to. The mean restraint force ⟨k(r − x₀)⟩ *is* the force the strand
-exerts — no model in between. Positive here means the strand **pulls** its ends together.
+exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** its ends together
+(`force_extension.csv` stores the opposite, push-positive, sign).
 
 | target x₀ (Å) | settled ⟨r⟩ (Å) | measured pull (pN) | Marko–Siggia pull (unclipped) | model's verdict | box valid? |
 |---|---|---|---|---|---|
@@ -184,9 +204,9 @@ Where they can be compared: {'; '.join(agree) if agree else 'no window has a val
     def site_row(s):
         d = sites.get(s, {})
         a7, a553 = d.get("7", {}), d.get("553", {})
-        return (f"| {labels[s]} | {a7.get('residue', NA)} | {num(a7.get('phi'), '{:+.0f}')}, {num(a7.get('psi'), '{:+.0f}')} "
+        return (f"| {labels[s]} | {a7.get('residue') or NA} | {num(a7.get('phi'), '{:+.0f}')}, {num(a7.get('psi'), '{:+.0f}')} "
                 f"(± {num(a7.get('phi_sd'), '{:.0f}')}, {num(a7.get('psi_sd'), '{:.0f}')}) | {num(a7.get('ring_neighbours_per_frame'), '{:.2f}')} | "
-                f"{a553.get('residue', NA)} | {num(a553.get('phi'), '{:+.0f}')}, {num(a553.get('psi'), '{:+.0f}')} "
+                f"{a553.get('residue') or NA} | {num(a553.get('phi'), '{:+.0f}')}, {num(a553.get('psi'), '{:+.0f}')} "
                 f"(± {num(a553.get('phi_sd'), '{:.0f}')}, {num(a553.get('psi_sd'), '{:.0f}')}) | {num(a553.get('ring_neighbours_per_frame'), '{:.2f}')} |")
     site_rows = "\n".join(site_row(s) for s in present)
     af7 = f"{num(g(nat, '7', 'phi'), '{:+.0f}')}, {num(g(nat, '7', 'psi'), '{:+.0f}')}"
@@ -299,16 +319,9 @@ Cβ7–Cβ553 (ours, the spring's own coordinate), Cα Asn30–Phe578 (Yilmaz et
 
 {strand_txt}
 
-Marko–Siggia applied frame by frame to the strand's end-to-end distance gives
-**{num(ss.get('tension_pN_clipped'))} pN** as the repository uses it (zero below the chain's rms size) and
-{num(ss.get('tension_pN_unclipped'))} pN if the interpolation formula is trusted all the way down;
-the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives {num(ss.get('ideal_chain_pN'))} pN. All three are
-**models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
-spring at this span on its kinked branch at 1.7–3.3 pN of *push* — and outside the
-model's own validity range (γ > 1 for L > ~45 bp). The sign is the point: nothing here
-pushes.
+{ms_txt}
 
-![modelled against measured force for the single strand]({FIG}/pp2a_fig4_force_extension.png)
+{fig4_block}
 
 ## What it delivers, measured
 
@@ -331,9 +344,10 @@ diffuse expansion of repeats 4–12.
 
 ![where the solenoid bends and twists]({FIG}/pp2a_fig5_heat_bend.png)
 
-The strand: {strand_txt if ss else '*not yet simulated.*'}
+The strand's own size, modelled tension, sharp turns and stacking are summarised above
+("What the spring delivers, by the model"); the figure below follows them along the trajectory.
 
-![the strand: size, modelled tension, where it bends, stacking]({FIG}/pp2a_fig6_ssdna.png)
+{fig6_block}
 
 ## What the modification itself does
 

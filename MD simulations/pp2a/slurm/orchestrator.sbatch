@@ -42,11 +42,20 @@ is_done() { py "import sys;sys.exit(0 if float('$1')>=float('$2')-1e-6 else 1)";
 
 while true; do
   if [ $(( $(date +%s) - START )) -gt $LIMIT ]; then
-    echo "$(date -Is) resubmitting orchestrator"; sbatch "$PP2A_MD_REPO/slurm/orchestrator.sbatch"; exit 0
+    echo "$(date -Is) resubmitting orchestrator"
+    until jid=$(sbatch --parsable "$PP2A_MD_REPO/slurm/orchestrator.sbatch"); do
+      echo "$(date -Is) orchestrator resubmit FAILED; retrying in 60 s"; sleep 60
+    done
+    echo "   orchestrator job $jid"; exit 0
   fi
-  queued_test=$(squeue -u "$USER" -h -p gpu_test -o "%j" | grep -c "^pp2amd" || true)
-  queued_paid=$(squeue -u "$USER" -h -p gpu_requeue,gpu -o "%j" | grep -c "^pp2amd" || true)
-  pending=0; submitted=0; need_publish=0
+  # One squeue per pass, and the pass is skipped if it fails: a slurmctld timeout that
+  # returned nothing would otherwise read as "nothing queued" and resubmit every running job.
+  if ! jobs_now=$(squeue -u "$USER" -h -o "%j %P"); then
+    echo "$(date -Is) squeue failed; skipping this pass"; sleep 120; continue
+  fi
+  queued_test=$(awk '$1 ~ /^pp2amd/ && $2 ~ /(^|,)gpu_test(,|$)/' <<<"$jobs_now" | wc -l)
+  queued_paid=$(awk '$1 ~ /^pp2amd/ && $2 ~ /(^|,)gpu(_requeue)?(,|$)/' <<<"$jobs_now" | wc -l)
+  pending=0; submitted=0; need_publish=0; deferred=0
   PUBLISHED="$PP2A_MD_SCRATCH/published.txt"; touch "$PUBLISHED"
   while read -r line; do
     [[ -z "$line" || "$line" == \#* ]] && continue
@@ -62,7 +71,7 @@ while true; do
     fi
     pending=$((pending+1))
     name="pp2amd-$TAG"
-    squeue -u "$USER" -h -o "%j" | grep -qx "$name" && continue
+    awk '{print $1}' <<<"$jobs_now" | grep -qx "$name" && continue
     bench_log="$PP2A_MD_SCRATCH/runs/${SYS}_bench/rep1/03_production/production.log"
     bench_prog="$PP2A_MD_SCRATCH/runs/${SYS}_bench/rep1/03_production/progress.json"
     case $PART in
@@ -90,14 +99,14 @@ while true; do
     case $PART in gpu_test) queued_test=$((queued_test+1));; *) queued_paid=$((queued_paid+1));; esac
   done < "$JOBS"
   if [ "$need_publish" -eq 1 ]; then
-    if squeue -u "$USER" -h -o "%j" | grep -q "^pp2amd-finalize"; then
-      echo "$(date -Is) a finalize job is already queued; the new result will be picked up by the next one"
-      sed -i '$ d' "$PUBLISHED"      # re-trigger on the next pass
+    if awk '{print $1}' <<<"$jobs_now" | grep -q "^pp2amd-finalize"; then
+      echo "$(date -Is) a finalize job is already queued; deferring the publish to the next pass"
+      sed -i '$ d' "$PUBLISHED"; deferred=1
     else
       echo "$(date -Is) submit finalize + publish"
-      PUBLISH=1 sbatch "$PP2A_MD_REPO/slurm/finalize.sbatch"
+      PUBLISH=1 sbatch "$PP2A_MD_REPO/slurm/finalize.sbatch" || { sed -i '$ d' "$PUBLISHED"; deferred=1; }
     fi
   fi
-  if [ "$pending" -eq 0 ]; then echo "$(date -Is) all runs in $JOBS complete"; exit 0; fi
+  if [ "$pending" -eq 0 ] && [ "$deferred" -eq 0 ]; then echo "$(date -Is) all runs in $JOBS complete"; exit 0; fi
   [ "$submitted" -gt 0 ] && sleep 180 || sleep 120
 done

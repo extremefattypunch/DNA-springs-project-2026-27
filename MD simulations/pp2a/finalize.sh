@@ -60,16 +60,21 @@ if [ "${PUBLISH:-0}" = "1" ]; then
   echo "##### publish"
   stamp=$(date -Is)
   cd "$ROOT"
-  git add docs "MD simulations/pp2a/analysis/summary.csv" "MD simulations/pp2a/analysis/findings.json" \
-          "MD simulations/pp2a/figures" 2>/dev/null || true
+  git add docs/.nojekyll docs/wiki/PP2A-DNA-Spring-MD.md "MD simulations/pp2a/analysis/summary.csv" \
+          "MD simulations/pp2a/analysis/findings.json" "MD simulations/pp2a/figures"
+  git add docs/figures/pp2a_* 2>/dev/null || true
   git add "MD simulations/pp2a/analysis/force_extension.csv" 2>/dev/null || true
   if ! git diff --cached --quiet; then
     git commit -q -m "PP2A spring: automatic analysis update $stamp (orchestrator -> finalize)
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01XCjP2CrKzBLrLXfrEUTZMe"
-    git pull -q --rebase origin main || { git rebase --abort; echo "  main: rebase conflict, not pushed"; }
-    git push -q origin main && echo "  main pushed" || echo "  main: push failed"
+    if git pull -q --rebase --autostash origin main; then
+      git push -q origin main && echo "  main pushed" || echo "  main: push failed"
+    else
+      git rebase --abort 2>/dev/null || true
+      echo "  main: pull/rebase failed, not pushed (commit kept locally)"
+    fi
   else
     echo "  main: nothing to commit"
   fi

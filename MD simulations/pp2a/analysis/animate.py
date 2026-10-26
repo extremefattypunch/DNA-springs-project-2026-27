@@ -28,7 +28,7 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from common import SFGFP_ANALYSIS, SITES, CORE, load_resmap  # noqa: E402
+from common import SFGFP_ANALYSIS, SITES, CORE, load_resmap, load as load_dedup  # noqa: E402
 sys.path.insert(0, str(SFGFP_ANALYSIS))
 import animate as sf  # noqa: E402
 
@@ -36,7 +36,7 @@ SA, SB = SITES
 
 
 def prepare(traj_path, top_path, out: Path, n_frames: int, resmap=None, stride_first=1):
-    t = md.load(str(traj_path), top=str(top_path), stride=stride_first)
+    t = load_dedup(traj_path, top_path, stride=stride_first)
     top = t.topology
     if resmap and Path(resmap).exists():
         sf.renumber(top, resmap)

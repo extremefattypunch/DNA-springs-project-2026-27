@@ -125,8 +125,9 @@ def main():
     for j in jobs:
         if args.only and j["system"] not in args.only:
             continue
-        if j["ns"] < args.min_ns:
-            print(f"  skip {j['system']}: only {j['ns']} ns")
+        need_ns = max(args.min_ns, args.skip_ns + 10 * args.stride * j["report_ps"] / 1000.0)
+        if j["ns"] < need_ns:
+            print(f"  skip {j['system']}: only {j['ns']} ns (need {need_ns:.1f} to apply the {args.skip_ns} ns discard)")
             continue
         skip = int(round(args.skip_ns * 1000.0 / j["report_ps"] / args.stride))
         print(f"\n=== {j['system']} {j['replicate']}  ({j['ns']} ns, first {args.skip_ns} ns discarded, "

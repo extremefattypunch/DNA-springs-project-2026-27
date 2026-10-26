@@ -111,7 +111,8 @@ def frame_mask(traj, log=None):
     restart without truncating, so the frames simulated after the last checkpoint are
     written twice (the apo run has ~17 such duplicates; a preempted gpu_requeue run has
     up to ten per restart).  The StateDataReporter log is written in lockstep, so a frame
-    is kept only when its step exceeds every step before it.  Returns the kept frame
+    is kept only when its step is below every step after it -- the re-simulated branch
+    that the rest of the run continued from, not the abandoned one.  Returns the kept frame
     indices, or every frame (with a warning) if the log and the DCD disagree in length."""
     traj = Path(traj)
     n = len(md.formats.DCDTrajectoryFile(str(traj)))
@@ -127,8 +128,9 @@ def frame_mask(traj, log=None):
     if len(steps) != n:
         print(f"  WARNING: {len(steps)} log rows vs {n} DCD frames in {traj.parent.name}; keeping every frame")
         return np.arange(n)
-    prev_max = np.maximum.accumulate(np.concatenate([[-1], steps[:-1]]))
-    keep = np.flatnonzero(steps > prev_max)
+    # keep the LAST occurrence of each step: the branch the run actually continued from
+    suffix_min = np.minimum.accumulate(np.concatenate([[np.iinfo(np.int64).max], steps[::-1][:-1]]))[::-1]
+    keep = np.flatnonzero(steps < suffix_min)
     if len(keep) < n:
         print(f"  dropped {n - len(keep)} duplicated restart frames of {n}")
     return keep
@@ -139,7 +141,8 @@ def load(traj, top_path, stride=1, skip=0, report_ps=None, log=None):
     strided frames of settling (never below 10 frames).  t.time is set to real
     picoseconds when report_ps is given -- a DCD carries no clock and mdtraj's time
     would otherwise be the raw frame index."""
-    keep = frame_mask(traj, log)[::stride]
+    keep_all = frame_mask(traj, log)
+    keep = keep_all[::stride]
     chunks, offset, want = [], 0, set(keep.tolist())
     for ch in md.iterload(str(traj), top=str(top_path), chunk=250):
         idx = [i for i in range(ch.n_frames) if offset + i in want]
@@ -147,7 +150,8 @@ def load(traj, top_path, stride=1, skip=0, report_ps=None, log=None):
             chunks.append(ch[idx])
         offset += ch.n_frames
     t = chunks[0] if len(chunks) == 1 else md.join(chunks, check_topology=False)
-    t.time = keep.astype(float) * (float(report_ps) if report_ps else 1.0)
+    # genuine frames are consecutive in step, so time is the rank of the kept frame
+    t.time = np.arange(0, len(keep_all), stride, dtype=float)[:t.n_frames] * (float(report_ps) if report_ps else 1.0)
     if skip and t.n_frames - skip >= 10:
         t = t[skip:]
     return t
