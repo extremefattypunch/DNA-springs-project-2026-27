@@ -20,6 +20,7 @@ import pandas as pd
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from common import SCRATCH, dedup_mdtraj_load  # noqa: E402
+import ssdna  # noqa: E402
 import force_extension as fx  # noqa: E402  (sfGFP)
 from spring_model import SsSpring, KT, XI_SS  # noqa: E402
 
@@ -51,6 +52,19 @@ def main():
                                clamp_atoms=sysdir / "clamp_atoms.txt")
         except Exception as e:                                    # noqa: BLE001
             print(f"  {tag} failed: {type(e).__name__}: {e}"); continue
+        # the strand's own shape in this window: does stretching it straighten the kinks?
+        kink = {}
+        try:
+            k = ssdna.analyse(traj, sysdir / "system.prmtop", sysdir / "residue_map.json",
+                              str(traj.parent / "analysis"), a.stride,
+                              int(round(a.skip_ns * 1000.0 / 20.0 / a.stride)), 20.0).get("kink", {})
+            kink = {"kink.axis_curvature_deg_per_nt": k.get("axis_curvature_deg_per_nt", {}).get("mean"),
+                    "kink.sharp_turns_per_frame": k.get("sharp_turns_per_frame", {}).get("mean"),
+                    "kink.frames_with_any_sharp_turn": k.get("frames_with_any_sharp_turn"),
+                    "kink.hottest_nt": k.get("hottest_nt"), "kink.hottest_step": k.get("hottest_step"),
+                    "kink.bii_fraction": k.get("bii_fraction", {}).get("mean")}
+        except Exception as e:                                    # noqa: BLE001
+            print(f"  {tag}: strand analysis failed: {type(e).__name__}: {e}")
         n_nt = sum(1 for row in json.loads((sysdir / "residue_map.json").read_text())
                    if row["orig_resname"].rstrip("35") in ("DA", "DT", "DG", "DC"))
         sp = SsSpring(n_nt)
@@ -60,7 +74,7 @@ def main():
                 "ms_tension_pN": sp.tension(x),
                 "ms_tension_unclipped_pN": (KT / XI_SS) * (1.0 / (4.0 * (1.0 - s) ** 2) - 0.25 + s),
                 "ideal_chain_pN": 3.0 * KT * x / (2.0 * XI_SS * sp.L0),
-                "ms_state": sp.state(x)}
+                "ms_state": sp.state(x), **kink}
         for kk, vv in r.items():
             if isinstance(vv, dict):
                 for k2, v2 in vv.items():

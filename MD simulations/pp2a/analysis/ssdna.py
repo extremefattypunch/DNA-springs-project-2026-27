@@ -42,6 +42,51 @@ RING = {"DA": ("N9", "C8", "N7", "C5", "C6", "N1", "C2", "N3", "C4"),
 SHARP_TURN_DEG = 90.0
 STACK_A = 4.5
 CONTACT_A = 4.5
+AXIS_WINDOW = 3          # nucleotides averaged before differencing, the ssDNA analogue of the
+                         # duplex's one-turn smoothing (mechanics.py); a raw C4'-C4' angle on a
+                         # single strand is dominated by the sugar-phosphate zigzag
+# backbone torsions of nucleotide i (IUPAC): atom, residue offset
+TORSIONS = {
+    "alpha": (("O3'", -1), ("P", 0), ("O5'", 0), ("C5'", 0)),
+    "beta": (("P", 0), ("O5'", 0), ("C5'", 0), ("C4'", 0)),
+    "gamma": (("O5'", 0), ("C5'", 0), ("C4'", 0), ("C3'", 0)),
+    "delta": (("C5'", 0), ("C4'", 0), ("C3'", 0), ("O3'", 0)),
+    "epsilon": (("C4'", 0), ("C3'", 0), ("O3'", 0), ("P", 1)),
+    "zeta": (("C3'", 0), ("O3'", 0), ("P", 1), ("O5'", 1)),
+}
+CHI = {"DA": ("O4'", "C1'", "N9", "C4"), "DG": ("O4'", "C1'", "N9", "C4"),
+       "DT": ("O4'", "C1'", "N1", "C2"), "DC": ("O4'", "C1'", "N1", "C2")}
+
+
+def circ_mean_deg(a, axis=0):
+    r = np.radians(a)
+    return np.degrees(np.arctan2(np.sin(r).mean(axis), np.cos(r).mean(axis)))
+
+
+def torsions(t, nts):
+    """Per-frame backbone torsions alpha..zeta and chi, (n_frames, n_nt) each, NaN where an atom
+    is missing (alpha of a 5'-terminal nucleotide without a phosphate, epsilon/zeta of the 3' end)."""
+    atom = [{a.name: a.index for a in r.atoms} for r in nts]
+    out = {}
+    for name, spec in list(TORSIONS.items()) + [("chi", None)]:
+        quads, cols = [], []
+        for i, r in enumerate(nts):
+            if name == "chi":
+                names = CHI[r.name.rstrip("35")]
+                q = [atom[i].get(nm) for nm in names]
+            else:
+                q = []
+                for nm, off in spec:
+                    j = i + off
+                    q.append(atom[j].get(nm) if 0 <= j < len(nts) else None)
+            if all(v is not None for v in q):
+                quads.append(q)
+                cols.append(i)
+        vals = np.full((t.n_frames, len(nts)), np.nan)
+        if quads:
+            vals[:, cols] = np.degrees(md.compute_dihedrals(t, np.array(quads), periodic=False))
+        out[name] = vals
+    return out
 
 
 def strand(top, resmap):
@@ -103,25 +148,66 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
         "ideal_chain_pN": summ(rows["ideal_chain_pN"]),
         "fraction_of_frames_stretched": round(float((x / 10.0 > sp.rms_end_to_end).mean()), 4)}
 
-    # --- backbone trace and sharp turns ---
+    # --- does the DNA kink: bend along the strand, torsions, and where ---
+    # Two bend measures.  (i) the raw angle between successive C4'->C4' vectors, whose
+    # sharp (> 90 deg) turns are the single-strand analogue of a duplex kink; (ii) the
+    # curvature of a smoothed axis (C4' positions averaged over AXIS_WINDOW nucleotides
+    # before differencing), in degrees per nucleotide -- the same construction the duplex
+    # analysis uses over one helical turn, so the two projects quote a comparable number.
+    seq = [r.name.rstrip("35")[1] for r in nts]
     c4 = np.array([next(a.index for a in r.atoms if a.name == "C4'") for r in nts])
     xyz = t.xyz[:, c4] * 10.0
     v = xyz[:, 1:] - xyz[:, :-1]
     bend = angle_deg(v[:, :-1], v[:, 1:])            # frames x (n-2), at nt 2..n-1
+    w = AXIS_WINDOW
+    sm = np.stack([xyz[:, i:i + w].mean(1) for i in range(n - w + 1)], axis=1)
+    sv = sm[:, 1:] - sm[:, :-1]
+    curv = angle_deg(sv[:, :-1], sv[:, 1:])          # frames x (n-w-1), at nt 1+w//2+1 ...
+    curv_nt = np.arange(2 + w // 2, 2 + w // 2 + curv.shape[1])
+    tor = torsions(t, nts)
+    ez = (tor["epsilon"] - tor["zeta"] + 180.0) % 360.0 - 180.0     # BI ~ -90, BII ~ +90
+    bii = ez > 0
+    sharp = bend > SHARP_TURN_DEG
     rows["trace_bend_mean_deg"] = bend.mean(1)
     rows["trace_bend_max_deg"] = bend.max(1)
-    rows["sharp_turns"] = (bend > SHARP_TURN_DEG).sum(1)
+    rows["axis_curvature_mean_deg_per_nt"] = curv.mean(1)
+    rows["axis_curvature_max_deg_per_nt"] = curv.max(1)
+    rows["sharp_turns"] = sharp.sum(1)
+    rows["bii_fraction"] = np.nanmean(bii[:, ~np.isnan(ez).all(0)], axis=1)
     prof = bend.mean(0)
-    summary["trace_bend"] = {
-        "definition": f"angle between successive C4'->C4' vectors; sharp turn > {SHARP_TURN_DEG:.0f} deg",
-        "per_nt_mean_deg": summ(bend.mean(1)),
+    steps = [f"{seq[i - 1]}p{seq[i]}" for i in range(1, n)]          # dinucleotide step i-1 -> i
+    hot = int(np.argmax(sharp.mean(0)))                               # index into nt 2..n-1
+    summary["kink"] = {
+        "definition": (f"sharp turn = angle between successive C4'->C4' vectors > {SHARP_TURN_DEG:.0f} deg; "
+                       f"curvature = bend of a {w}-nt smoothed C4' axis per nucleotide step"),
+        "trace_bend_per_nt_mean_deg": summ(bend.mean(1)),
+        "axis_curvature_deg_per_nt": summ(curv.mean(1)),
+        "axis_curvature_max_deg_per_nt": summ(curv.max(1)),
         "sharp_turns_per_frame": summ(rows["sharp_turns"]),
-        "hottest_nt": int(np.argmax(prof) + 2),
+        "frames_with_any_sharp_turn": round(float((rows["sharp_turns"] > 0).mean()), 4),
+        "hottest_nt": int(hot + 2),
+        "hottest_nt_sharp_turn_fraction": round(float(sharp.mean(0)[hot]), 4),
+        "hottest_step": f"{steps[hot]}-{steps[hot + 1]}",
+        "sharp_turns_at_unstacked_steps": None,     # filled below once stacking is known
+        "bii_fraction": summ(rows["bii_fraction"]),
+        "torsion_means_deg": {k: {"mean": round(float(circ_mean_deg(v[:, ~np.isnan(v).all(0)].ravel())), 1)}
+                              for k, v in tor.items()},
         "profile_mean_deg": [round(float(p), 2) for p in prof]}
-    pd.DataFrame({"nt": np.arange(2, n), "bend_deg_mean": prof.round(3),
-                  "bend_deg_sd": bend.std(0).round(3),
-                  "sharp_turn_fraction": (bend > SHARP_TURN_DEG).mean(0).round(4)}
-                 ).to_csv(f"{out_prefix}_ssdna_profile.csv", index=False)
+    summary["trace_bend"] = {"hottest_nt": summary["kink"]["hottest_nt"],
+                             "sharp_turns_per_frame": summary["kink"]["sharp_turns_per_frame"]}
+    for k, v in tor.items():
+        rows[f"{k}_mean_deg"] = circ_mean_deg(np.nan_to_num(v, nan=0.0), axis=1)
+    prof_df = pd.DataFrame({"nt": np.arange(1, n + 1), "base": seq,
+                            "step_in": ["-"] + steps})
+    prof_df["bend_deg_mean"] = np.r_[np.nan, prof, np.nan]
+    prof_df["bend_deg_sd"] = np.r_[np.nan, bend.std(0), np.nan]
+    prof_df["sharp_turn_fraction"] = np.r_[np.nan, sharp.mean(0), np.nan]
+    cv = np.full(n, np.nan); cv[curv_nt - 1] = curv.mean(0)
+    prof_df["axis_curvature_deg_per_nt"] = cv
+    prof_df["bii_fraction"] = np.nanmean(bii, axis=0)
+    for k, v in tor.items():
+        prof_df[f"{k}_deg"] = [None if np.isnan(v[:, i]).all() else round(float(circ_mean_deg(v[:, i])), 1)
+                               for i in range(n)]
 
     # --- base stacking ---
     cents = []
@@ -133,6 +219,12 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
     dd = np.linalg.norm(cents[:, 1:] - cents[:, :-1], axis=2)
     stacked = dd < STACK_A
     rows["stacked_fraction"] = stacked.mean(1)
+    prof_df["unstacked_fraction_step_in"] = np.r_[np.nan, 1.0 - stacked.mean(0)]
+    # do the sharp turns happen where the bases have come apart?  sharp[:, i] is the turn at
+    # nucleotide i+2 (1-based); its incoming step is stacked[:, i] and its outgoing stacked[:, i+1]
+    both = sharp & (~stacked[:, :-1] | ~stacked[:, 1:])
+    summary["kink"]["sharp_turns_at_unstacked_steps"] = round(float(both.sum() / max(sharp.sum(), 1)), 4)
+    prof_df.round(4).to_csv(f"{out_prefix}_ssdna_profile.csv", index=False)
     summary["stacking"] = {"criterion": f"adjacent ring centroids < {STACK_A} A",
                            "fraction": summ(rows["stacked_fraction"]),
                            "per_step_fraction": [round(float(f), 3) for f in stacked.mean(0)]}
@@ -163,7 +255,8 @@ def analyse(traj, top_path, resmap_path, out_prefix, stride=1, skip=0, report_ps
 
     print(f"  ssDNA {n} nt: end-to-end {x.mean():.1f} +/- {x.std():.1f} A ({summary['marko_siggia']['state_at_mean_x']}; "
           f"MS tension {clipped.mean():.2f} pN clipped, {raw.mean():.2f} unclipped), Rg {rg.mean():.1f} A, "
-          f"sharp turns {rows['sharp_turns'].mean():.1f}/frame, stacked {rows['stacked_fraction'].mean():.2f}"
+          f"sharp turns {rows['sharp_turns'].mean():.1f}/frame (hottest nt {summary['kink']['hottest_nt']}, {summary['kink']['hottest_step']}), "
+          f"curvature {curv.mean():.1f} deg/nt, BII {rows['bii_fraction'].mean():.2f}, stacked {rows['stacked_fraction'].mean():.2f}"
           + (f", {rows['nt_in_contact'].mean():.1f} nt on the protein" if 'nt_in_contact' in rows else ""))
     pd.DataFrame(rows).to_csv(f"{out_prefix}_ssdna.csv", index=False)
     Path(f"{out_prefix}_ssdna.json").write_text(json.dumps(summary, indent=2))

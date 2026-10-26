@@ -108,10 +108,15 @@ def main(summary=None, out=None):
             "ideal_chain_pN": col(s, "ssdna.marko_siggia.ideal_chain_pN.mean"),
             "fraction_of_frames_stretched": col(s, "ssdna.marko_siggia.fraction_of_frames_stretched"),
             "rg_A": col(s, "ssdna.rg_A.mean"),
-            "sharp_turns_per_frame": col(s, "ssdna.trace_bend.sharp_turns_per_frame.mean"),
-            "hottest_nt": col(s, "ssdna.trace_bend.hottest_nt"),
+            "sharp_turns_per_frame": col(s, "ssdna.kink.sharp_turns_per_frame.mean"),
+            "hottest_nt": col(s, "ssdna.kink.hottest_nt"),
             "stacked_fraction": col(s, "ssdna.stacking.fraction.mean"),
             "nt_in_contact": col(s, "ssdna.protein_contact.nt_in_contact_per_frame.mean"),
+            "axis_curvature_deg_per_nt": col(s, "ssdna.kink.axis_curvature_deg_per_nt.mean"),
+            "sharp_turns_at_unstacked_steps": col(s, "ssdna.kink.sharp_turns_at_unstacked_steps"),
+            "hottest_step": col(s, "ssdna.kink.hottest_step"),
+            "bii_fraction": col(s, "ssdna.kink.bii_fraction.mean"),
+            "frames_with_any_sharp_turn": col(s, "ssdna.kink.frames_with_any_sharp_turn"),
             "fraction_of_strand_on_protein": col(s, "ssdna.protein_contact.fraction_of_strand"),
             "end_to_end_pbc": col(s, "ssdna.end_to_end.pbc.convention"),
         }
@@ -210,6 +215,10 @@ def main(summary=None, out=None):
                                         "phi": col(s, f"site.phi_{site}.mean"), "phi_sd": col(s, f"site.phi_{site}.sd"),
                                         "psi": col(s, f"site.psi_{site}.mean"), "psi_sd": col(s, f"site.psi_{site}.sd"),
                                         "ring_neighbours_per_frame": col(s, f"site.ring_neighbours_{site}.contacts_per_frame")}
+
+    zp = HERE / "zocchi.json"
+    if zp.exists():
+        f["zocchi"] = json.loads(zp.read_text())
 
     out = Path(out or HERE / "findings.json")
     out.write_text(json.dumps(f, indent=2, default=float))

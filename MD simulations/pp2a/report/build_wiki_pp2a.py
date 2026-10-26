@@ -168,9 +168,12 @@ pushes."""
         strand_txt = "*Not yet simulated.*"
         ms_txt = ""
     fig4_block = f"![modelled against measured force for the single strand]({FIG}/pp2a_fig4_force_extension.png)"
-    fig6_block = (f"![the strand: size, modelled tension, where it bends, stacking]({FIG}/pp2a_fig6_ssdna.png)"
-                  if (ROOT / "docs/figures/pp2a_fig6_ssdna.png").exists()
-                  else "*The strand figure is rendered once the P3_ss50 analysis exists.*")
+    fig6_block = (f"![does the DNA kink: bend, sharp turns, torsions, stacking along the strand]({FIG}/pp2a_fig6_dna_kink.png)"
+                  if (ROOT / "docs/figures/pp2a_fig6_dna_kink.png").exists()
+                  else "*The strand's kink figure is rendered once the P3_ss50 analysis exists.*")
+    fig8_block = (f"![the strand's size and modelled tension over time]({FIG}/pp2a_fig8_strand.png)"
+                  if (ROOT / "docs/figures/pp2a_fig8_strand.png").exists() else "")
+    fig9_block = f"![Zocchi's spring model at this span]({FIG}/pp2a_fig9_zocchi_model.png)"
 
     # ---------- windows ----------
     if win:
@@ -197,6 +200,44 @@ exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** 
 Where they can be compared: {'; '.join(agree) if agree else 'no window has a valid box yet'}."""
     else:
         win_txt = "*The restraint windows have not run yet.*"
+
+    # ---------- Zocchi's model at this span ----------
+    z = f.get("zocchi", {})
+    zspan = z.get("span", {})
+    zrows = ""
+    for r in z.get("duplex_springs_at_span", []):
+        if r.get("feasible"):
+            zrows += (f"| {r['n_bp']} bp, {r['kind']} τc = {r['tau_c_pN_nm']:.0f} pN nm | {r['contour_nm']:.1f} | "
+                      f"{r['regime']} | **{r['force_pN']:.2f}** | {r['unkinked_force_pN']:.1f} | {r['euler_pN']:.1f} | "
+                      f"{r['energy_kT']:.1f} | {r['x_c_nm'] * 10:.0f} | {r['gamma']:.2f}{'' if r['in_validity_range'] else ' *'} |\n")
+        else:
+            zrows += (f"| {r['n_bp']} bp, {r['kind']} | {r['contour_nm']:.1f} | *infeasible: contour shorter than the span* | — | — | "
+                      f"{r['euler_pN']:.1f} | — | {r['x_c_nm'] * 10:.0f} | {r['gamma']:.2f} |\n")
+    zss = z.get("ssDNA_at_span", {})
+    zk = z.get("kink", {})
+    crit = zk.get("critical_curvature_deg_per_bp", {})
+    soft = zk.get("softening_points", {})
+    soft_rows = "\n".join(f"| {n} | {v['x_c_A']:.0f} | {v['radius_kinked_A']:.0f} | {v['curvature_at_x_c_deg_per_bp']:.2f} | "
+                          f"{num(v.get('curvature_at_span_deg_per_bp'), '{:.2f}', 'stretched')} |" for n, v in soft.items())
+    emp = zk.get("sfGFP_empirical", {})
+    zprot = z.get("protein_spring", {})
+    prot_rows = "\n".join(f"| {labels.get(k, k)} | {v['mean_A']:.1f} ± {v['sd_A']:.1f} | {v['kappa_kT_nm2']:.1f} | "
+                          f"{v['kappa_pN_per_nm']:.1f} | {v['displacement_per_pN_A']:.1f} |"
+                          for k, v in zprot.items() if isinstance(v, dict))
+    span_src = zspan.get("source", "")
+    span_txt = (f"the DNA end-to-end distance the chimera settles at, {zspan.get('A', 0):.0f} ± {zspan.get('sd_A', 0):.0f} Å"
+                if "simulated" in span_src else f"the build's anchor span of {zspan.get('A', 90):.0f} Å (the chimera has not run yet)")
+    strand_kink = zk.get("strand_measured", {})
+    kink_meas = ""
+    if ss:
+        kink_meas = f"""**Measured on the strand.** The smoothed-axis curvature of the single strand is
+**{num(strand_kink.get('axis_curvature_deg_per_nt'), '{:.1f}')}° per nucleotide** — an order of magnitude beyond any duplex
+threshold, which is what a chain with a 1.5 nm persistence length looks like. The C4′ trace makes
+**{num(ss.get('sharp_turns_per_frame'), '{:.2f}')} sharp (> 90°) turns per frame**, hottest at nucleotide
+{num(ss.get('hottest_nt'), '{:.0f}')} ({ss.get('hottest_step', '?')} steps); a sharp turn coincides with an unstacked step
+{100 * (ss.get('sharp_turns_at_unstacked_steps') or 0):.0f} % of the time. {100 * (ss.get('bii_fraction') or 0):.0f} % of the backbone
+sits in the BII (ε − ζ > 0) substate, and {100 * (ss.get('stacked_fraction') or 0):.0f} % of adjacent bases stay stacked. Whether stretching the
+strand straightens it is read off the restraint windows (the squares in the last panel)."""
 
     # ---------- sites ----------
     nat = sites.get("native_AF", {})
@@ -304,6 +345,19 @@ while the rest stayed at 2–4 Å. Our attachment site Asp7 sits in that tail.
 
 ![per-residue RMSF with the HEAT repeats]({FIG}/pp2a_fig2_rmsf.png)
 
+**The horseshoe as a whole.** The solenoid's axis is the chain of HEAT-repeat Cα centroids; the
+bend at a repeat is the angle between the incoming and outgoing axis segments, the twist the
+dihedral across four consecutive centroids. The literature puts PR65's hinge at HEAT 10–11
+(crystal comparison), 11–12 (Day) or 12–13 (Yilmaz), with a diffuse expansion of repeats 4–12.
+
+| system | total axis bend (°) | HEAT1–15 (Å) | Asn30–Phe578 (Å) | region RMSD N / central / C (Å) | most variable repeat | Arg113–Glu191 salt bridge formed |
+|---|---|---|---|---|---|---|
+{heat_rows}
+
+{hinge_txt}
+
+![where the solenoid bends and twists]({FIG}/pp2a_fig5_heat_bend.png)
+
 ## The distance between the attachment points
 
 Three distances are reported because three groups measure three different things:
@@ -315,41 +369,80 @@ Cβ7–Cβ553 (ours, the spring's own coordinate), Cα Asn30–Phe578 (Yilmaz et
 
 ![distance between the attachment points]({FIG}/pp2a_fig3_end_to_end.png)
 
-## What the spring delivers, by the model
+## How stiff the protein is along the spring's coordinate
+
+Zocchi's two-spring picture (book pp. 117–119) gives the protein a stiffness κ ≈ 100 k<sub>B</sub>T nm⁻²
+along the line between the attachment points, yielding at ~4 pN; sfGFP's force-clamp ladder measured
+230–350. No clamp ladder was run here, but equipartition on the Cβ7–Cβ553 fluctuation of each run,
+κ = k<sub>B</sub>T / var(x), gives the horseshoe's stiffness along the same coordinate (a lower bound —
+slow opening and closing of the horseshoe inflates the variance):
+
+| system | Cβ7–Cβ553 (Å) | κ (k<sub>B</sub>T nm⁻²) | κ (pN nm⁻¹) | displacement per pN of spring force (Å) |
+|---|---|---|---|---|
+{prot_rows}
+
+This is the number that decides whether a spring of a few piconewtons is visible at all. On sfGFP
+(κ ≈ 300) a 4 pN spring moved the sites 0.03 Å, below what 50 ns can resolve; a HEAT horseshoe is
+two orders of magnitude softer along this coordinate, so even the ~2 pN a single strand could
+deliver would move the tips by ångströms — if it were under tension.
+
+## What a spring would deliver, by Zocchi's model
+
+Zocchi's kinked-rod model (eqs 2.188–2.206 and 3.51–3.52 of the book; Tseng & Zocchi 2013, eq. 6;
+B = 200 pN nm², τ<sub>c</sub> = 27 pN nm nicked / 34 continuous, 0.33 nm per bp, k<sub>B</sub>T = 4.2 pN nm),
+evaluated with the repository's implementation at {span_txt}. A duplex pushes its ends apart on the
+bent branch, f = 10B/L² − k<sub>B</sub>T/(L − x), until the span drops below x<sub>c</sub>, where it
+kinks and the force collapses to τ<sub>c</sub> / (2R √(1 − (x/2R)²)):
+
+| duplex | contour (nm) | regime at this span | f(x) (pN) | unkinked rod (pN) | Euler load 10B/L² (pN) | stored energy (k<sub>B</sub>T) | x<sub>c</sub> (Å) | γ = Lτ<sub>c</sub>/2B |
+|---|---|---|---|---|---|---|---|---|
+{zrows}
+\* γ ≥ 1: outside the model's stated validity range (L ≳ 45 bp).
+
+The chimera carries none of these. Its 50 nt **single strand** is Zocchi's "ss state", of which his
+2021 chapter says *"with the DNA spring in the ss state there is essentially no stress on the
+enzyme"*: a worm-like chain with ξ = 1.5 nm and a contour of {num(zss.get('contour_nm'), '{:.1f}')} nm whose natural rms size is
+{num((zss.get('natural_rms_nm') or 9.4) * 10, '{:.0f}')} Å. At this span it is **{zss.get('state', '?')}**, pulling with
+{num(zss.get('tension_pN_clipped'))} pN as the model is used ({num(zss.get('tension_pN_unclipped'))} pN if the Marko–Siggia
+interpolation is trusted below the rms size). Every number in this section is a **model**, not a measurement.
+
+{fig9_block}
 
 {strand_txt}
 
 {ms_txt}
 
-{fig4_block}
+{fig8_block}
 
 ## What it delivers, measured
 
 {win_txt}
 
-## Does the horseshoe kink, and does the strand?
+{fig4_block}
 
-The solenoid's axis is the chain of HEAT-repeat Cα centroids; the bend at a repeat is the
-angle between the incoming and outgoing axis segments, the twist the dihedral across
-four consecutive centroids. A hinge is a repeat whose bend *moves* relative to the clicked
-control, not one with a large static bend — a solenoid is bent everywhere. The literature
-puts the hinge at HEAT 10–11 (crystal comparison), 11–12 (Day) or 12–13 (Yilmaz), with a
-diffuse expansion of repeats 4–12.
+## Does the DNA kink?
 
-| system | total axis bend (°) | HEAT1–15 (Å) | Asn30–Phe578 (Å) | region RMSD N / central / C (Å) | most variable repeat | Arg113–Glu191 salt bridge formed |
-|---|---|---|---|---|---|---|
-{heat_rows}
+**By the model.** A rod of bending modulus B yields at the critical torque τ<sub>c</sub>, i.e. at a
+curvature τ<sub>c</sub>/B = **{num(crit.get('nicked_27'), '{:.2f}')}° per bp** (nicked) to
+**{num(crit.get('continuous_34'), '{:.2f}')}° per bp** (continuous) — Zocchi's kink. Below the softening
+span x<sub>c</sub> the duplex sits in the kinked state with a hinge of radius R:
 
-{hinge_txt}
+| duplex | x<sub>c</sub> (Å) | R of the kinked state (Å) | uniform curvature at x<sub>c</sub> (°/bp) | uniform curvature at this span (°/bp) |
+|---|---|---|---|---|
+{soft_rows}
 
-![where the solenoid bends and twists]({FIG}/pp2a_fig5_heat_bend.png)
+The force field disagrees with the model on *where* a duplex kinks: on sfGFP's bare duplexes base pairs
+began to open at {emp.get('onset_deg_per_bp', 5.5)}°/bp and opened in every run only above {emp.get('certain_deg_per_bp', 8.7)}°/bp
+(the chimera there sat at {emp.get('chimera_deg_per_bp', '4.8–5.2')}°/bp and never kinked; the one directly comparable all-atom
+calculation nucleates a type II kink at {emp.get('curuksu_typeII_deg_per_bp', '8.6–9.3')}°/bp). A single strand has no base pairs to
+open, so for it "kink" means a sharp turn of the backbone: a C4′-trace angle above 90°, a BI → BII
+switch of the ε/ζ torsions, or a step whose bases have come apart.
 
-The strand's own size, modelled tension, sharp turns and stacking are summarised above
-("What the spring delivers, by the model"); the figure below follows them along the trajectory.
+{kink_meas}
 
 {fig6_block}
 
-## What the modification itself does
+## Ramachandran plots at the two Tet2-Et sites
 
 On sfGFP the one site that sat at **positive φ** (left-handed α, Asp133) was pushed 17.5°
 out of its basin by the modification; ordinary sites moved by a degree or less. In the

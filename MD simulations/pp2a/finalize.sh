@@ -15,6 +15,8 @@ echo "##### collect"
 $P analysis/collect.py --stride "$STRIDE" ${ONLY:+--only $ONLY}
 echo "##### force windows"
 $P analysis/force_windows.py || echo "  (no finished windows yet)"
+echo "##### Zocchi model at the simulated span"
+$P analysis/zocchi.py
 echo "##### findings"
 $P analysis/findings.py
 echo "##### figures"
