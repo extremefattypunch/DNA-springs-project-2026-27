@@ -217,7 +217,8 @@ Where they can be compared: {'; '.join(agree) if agree else 'no window has a val
             break
     anim_block = ""
     for s, cap in (("P3_ss50", "the chimera: horseshoe, strand, tethers"),
-                   ("P2_clicked", "the clicked control")):
+                   ("P2_clicked", "the clicked control"),
+                   ("P0_apo", "the apo monomer (cryo-EM reproduction run)")):
         for v in ("overview", "sites", "strain"):
             gif = ROOT / f"docs/figures/pp2a_{s}_{v}.gif"
             if gif.exists():

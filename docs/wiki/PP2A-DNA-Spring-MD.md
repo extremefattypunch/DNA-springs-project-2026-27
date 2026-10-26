@@ -125,7 +125,12 @@ whether modified or not.
 
 ## Animations
 
-*Animations are rendered by `finalize.sh` once the chimera has run.*
+![apo Aα (ff19SB/OPC) — overview](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_P0_apo_overview.gif)
+*the apo monomer (cryo-EM reproduction run) — overview view, apo Aα (ff19SB/OPC).*
+
+![apo Aα (ff19SB/OPC) — strain](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_P0_apo_strain.gif)
+*the apo monomer (cryo-EM reproduction run) — strain view, apo Aα (ff19SB/OPC).*
+
 
 ## What this establishes, and what it does not
 

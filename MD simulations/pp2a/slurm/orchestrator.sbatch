@@ -46,7 +46,8 @@ while true; do
   fi
   queued_test=$(squeue -u "$USER" -h -p gpu_test -o "%j" | grep -c "^pp2amd" || true)
   queued_paid=$(squeue -u "$USER" -h -p gpu_requeue,gpu -o "%j" | grep -c "^pp2amd" || true)
-  pending=0; submitted=0
+  pending=0; submitted=0; need_publish=0
+  PUBLISHED="$PP2A_MD_SCRATCH/published.txt"; touch "$PUBLISHED"
   while read -r line; do
     [[ -z "$line" || "$line" == \#* ]] && continue
     SYS=; NS=; REP=1; PART=gpu_test; X0=; K=; RAMP_PS=; HOURS=; SUFFIX=
@@ -54,7 +55,11 @@ while true; do
     TAG="$SYS${X0:+_x${X0}A}${K:+_k${K}}${SUFFIX}"
     RUN="$PP2A_MD_SCRATCH/runs/$TAG/rep$REP"
     done_ns=$(ns_done "$RUN/03_production/progress.json")
-    is_done "$done_ns" "$NS" && continue
+    if is_done "$done_ns" "$NS"; then
+      # a run that just finished: analyse everything and push the page (not for benchmarks)
+      if [ -z "$SUFFIX" ] && ! grep -qx "$TAG" "$PUBLISHED"; then echo "$TAG" >> "$PUBLISHED"; need_publish=1; fi
+      continue
+    fi
     pending=$((pending+1))
     name="pp2amd-$TAG"
     squeue -u "$USER" -h -o "%j" | grep -qx "$name" && continue
@@ -84,6 +89,15 @@ while true; do
     submitted=$((submitted+1))
     case $PART in gpu_test) queued_test=$((queued_test+1));; *) queued_paid=$((queued_paid+1));; esac
   done < "$JOBS"
+  if [ "$need_publish" -eq 1 ]; then
+    if squeue -u "$USER" -h -o "%j" | grep -q "^pp2amd-finalize"; then
+      echo "$(date -Is) a finalize job is already queued; the new result will be picked up by the next one"
+      sed -i '$ d' "$PUBLISHED"      # re-trigger on the next pass
+    else
+      echo "$(date -Is) submit finalize + publish"
+      PUBLISH=1 sbatch "$PP2A_MD_REPO/slurm/finalize.sbatch"
+    fi
+  fi
   if [ "$pending" -eq 0 ]; then echo "$(date -Is) all runs in $JOBS complete"; exit 0; fi
   [ "$submitted" -gt 0 ] && sleep 180 || sleep 120
 done

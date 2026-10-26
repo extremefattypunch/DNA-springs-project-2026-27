@@ -51,4 +51,40 @@ touch "$ROOT/docs/.nojekyll"
 
 echo "##### wiki page  (after the figures are in docs/, which is where it looks for them)"
 $P report/build_wiki_pp2a.py
-echo "done -- commit docs/figures and docs/wiki, then push the wiki page to the wiki repository"
+
+if [ "${PUBLISH:-0}" = "1" ]; then
+  # Push the page and its figures so the wiki shows the state of the project without
+  # anyone at a keyboard: docs/ (GitHub Pages serves the figures) on main, and the page
+  # itself into the wiki repository.  The orchestrator sets PUBLISH=1 after every run
+  # that finishes.  A rebase conflict on main is reported and skipped, never forced.
+  echo "##### publish"
+  stamp=$(date -Is)
+  cd "$ROOT"
+  git add docs "MD simulations/pp2a/analysis/summary.csv" "MD simulations/pp2a/analysis/findings.json" \
+          "MD simulations/pp2a/figures" 2>/dev/null || true
+  git add "MD simulations/pp2a/analysis/force_extension.csv" 2>/dev/null || true
+  if ! git diff --cached --quiet; then
+    git commit -q -m "PP2A spring: automatic analysis update $stamp (orchestrator -> finalize)
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01XCjP2CrKzBLrLXfrEUTZMe"
+    git pull -q --rebase origin main || { git rebase --abort; echo "  main: rebase conflict, not pushed"; }
+    git push -q origin main && echo "  main pushed" || echo "  main: push failed"
+  else
+    echo "  main: nothing to commit"
+  fi
+  WIKI="$PP2A_MD_SCRATCH/wiki"
+  if [ ! -d "$WIKI/.git" ]; then
+    git clone -q git@github.com:extremefattypunch/DNA-springs-project-2026-27.wiki.git "$WIKI"
+  fi
+  cd "$WIKI" && git pull -q --ff-only origin master || echo "  wiki: pull failed"
+  cp "$ROOT/docs/wiki/PP2A-DNA-Spring-MD.md" "$WIKI/"
+  cp "$ROOT/docs/wiki/_Sidebar.md" "$WIKI/_Sidebar.md"
+  if ! git diff --quiet; then
+    git add -A && git commit -q -m "PP2A spring page: automatic update $stamp" && git push -q origin master \
+      && echo "  wiki pushed" || echo "  wiki: push failed"
+  else
+    echo "  wiki: unchanged"
+  fi
+fi
+echo "done"

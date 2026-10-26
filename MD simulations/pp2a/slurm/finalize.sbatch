@@ -18,4 +18,4 @@ set -euo pipefail
 cd "/n/home05/ianpoon/DNA-springs-project-2026-27/MD simulations/pp2a"
 TMP=/scratch/${USER}_${SLURM_JOB_ID}; mkdir -p "$TMP"; export TMPDIR="$TMP"; trap 'rm -rf "$TMP"' EXIT
 export OMP_NUM_THREADS=4
-bash finalize.sh
+PUBLISH="${PUBLISH:-0}" bash finalize.sh
