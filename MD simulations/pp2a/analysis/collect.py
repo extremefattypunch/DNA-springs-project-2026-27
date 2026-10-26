@@ -132,7 +132,8 @@ def main():
         print(f"\n=== {j['system']} {j['replicate']}  ({j['ns']} ns, first {args.skip_ns} ns discarded, "
               f"stride {args.stride} x {j['report_ps']} ps) ===")
         row = {"system": j["system"], "replicate": j["replicate"], "ns": j["ns"],
-               "skip_ns": args.skip_ns, "sites": "/".join(map(str, SITES)), "note": j.get("note", "")}
+               "skip_ns": args.skip_ns, "stride": args.stride, "report_ps": j["report_ps"],
+               "sites": "/".join(map(str, SITES)), "note": j.get("note", "")}
         run_all(row, j["traj"], j["top"], j["resmap"], j["pre"], args.stride, skip, SITES)
         rows.append(row)
     if not rows:

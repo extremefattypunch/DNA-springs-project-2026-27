@@ -42,9 +42,16 @@ def present(df):
     return [s for s in SYSTEMS if s in set(df.system)]
 
 
-def time_ns(d):
-    t = d["time_ps"].to_numpy(float)
-    return (t - t[0]) / 1000.0 + 5.0       # the first 5 ns were discarded before analysis
+_DF = {"df": None}
+
+
+def time_ns(d, s):
+    """Frame times from the collector's bookkeeping: DCD files carry no clock, so mdtraj's
+    time_ps is a frame index.  skip_ns + i x stride x report_ps."""
+    df = _DF["df"]
+    r = df[df.system == s].iloc[0]
+    skip, stride, rep = float(r.get("skip_ns", 5.0)), float(r.get("stride", 2)), float(r.get("report_ps", 20.0))
+    return skip + np.arange(len(d)) * stride * rep / 1000.0
 
 
 def heat_boxes(ax, y, lo=0):
@@ -61,7 +68,7 @@ def fig_rmsd(df, out):
         d = per_frame(s, "rmsd")
         if d is None:
             continue
-        t = time_ns(d)
+        t = time_ns(d, s)
         for ax, c in zip(axes, ("rmsd_core_A", "rmsd_tail_corefit_A", "rmsd_all_A")):
             ax.plot(t, d[c], color=color(s), lw=1.1, alpha=0.9)
         frames.append(pd.DataFrame({"time_ns": t, **{f"{s}.{c}": d[c] for c in
@@ -117,7 +124,7 @@ def fig_end_to_end(df, out):
         m = per_frame(s, "mechanics")
         if m is None or "anchor_CB_CB_A" not in m:
             continue
-        t = time_ns(m)
+        t = time_ns(m, s)
         axes[0].plot(t, m.anchor_CB_CB_A, color=color(s), lw=1.0, alpha=0.9)
         axes[1].hist(m.anchor_CB_CB_A, bins=40, orientation="horizontal", histtype="step",
                      color=color(s), lw=1.4, density=True)
@@ -216,7 +223,7 @@ def fig_heat_bend(df, out):
                          marker=SYSTEMS[s]["marker"], ms=4, capsize=2, label=label(s))
         axes[1].errorbar(d.heat, d.twist_deg_mean, yerr=d.twist_deg_sd, color=color(s), lw=1.3,
                          marker=SYSTEMS[s]["marker"], ms=4, capsize=2)
-        axes[2].plot(time_ns(h), h.aperture_H1_H15_A, color=color(s), lw=1.0, alpha=0.9)
+        axes[2].plot(time_ns(h, s), h.aperture_H1_H15_A, color=color(s), lw=1.0, alpha=0.9)
         frames.append(d.set_index("heat").add_prefix(f"{s}."))
     axes[0].set_xlabel("HEAT repeat"); axes[0].set_ylabel("bend at the repeat (°)")
     axes[0].set_title("Where the solenoid bends (mean ± sd)")
@@ -238,13 +245,14 @@ def fig_heat_bend(df, out):
 
 
 def fig_ssdna(df, out):
-    d = per_frame("P3_ss50", "ssdna")
-    prof = Path(str(analysis_prefix("P3_ss50")) + "_ssdna_profile.csv")
+    s = "P3_ss50"
+    d = per_frame(s, "ssdna")
+    prof = Path(str(analysis_prefix(s)) + "_ssdna_profile.csv")
     if d is None or not prof.exists():
         print("  ssdna: no P3_ss50 analysis yet"); return None
     pr = pd.read_csv(prof)
     fig, axes = plt.subplots(2, 2, figsize=(10, 6))
-    t = time_ns(d)
+    t = time_ns(d, s)
     c = color("P3_ss50")
     axes[0, 0].plot(t, d.end_to_end_A, color=c, lw=1.0, label="end-to-end")
     axes[0, 0].plot(t, d.rg_A, color=VS.INK_2, lw=1.0, label="radius of gyration")
@@ -378,6 +386,7 @@ def main():
     ap.add_argument("--out", default=str(HERE.parent / "figures"))
     a = ap.parse_args()
     df = pd.read_csv(a.summary)
+    _DF["df"] = df
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     made = []
