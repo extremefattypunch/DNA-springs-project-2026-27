@@ -1,5 +1,5 @@
 {
-  "total_ns": 357.4,
+  "total_ns": 369.6,
   "n_runs": 4,
   "systems_present": [
     "P0_apo",
@@ -92,19 +92,19 @@
       "label": "50 nt ssDNA, closed loop",
       "7": {
         "residue": "TDP",
-        "phi": 47.7,
-        "phi_sd": 13.42,
-        "psi": 36.48,
-        "psi_sd": 14.61,
-        "ring_neighbours_per_frame": 0.441
+        "phi": 47.5,
+        "phi_sd": 12.9,
+        "psi": 35.95,
+        "psi_sd": 14.35,
+        "ring_neighbours_per_frame": 0.434
       },
       "553": {
         "residue": "TDP",
-        "phi": -58.85,
-        "phi_sd": 8.98,
-        "psi": -35.41,
-        "psi_sd": 8.74,
-        "ring_neighbours_per_frame": 0.016
+        "phi": -58.71,
+        "phi_sd": 8.87,
+        "psi": -35.76,
+        "psi_sd": 8.59,
+        "ring_neighbours_per_frame": 0.086
       }
     }
   },
@@ -168,22 +168,22 @@
       ]
     },
     "P3_ss50": {
-      "mean_A": 77.95309548666667,
-      "sd_A": 9.46228702493202,
-      "sem_block_A": 2.8655833592609734,
+      "mean_A": 79.77098628280407,
+      "sd_A": 9.552505079184533,
+      "sem_block_A": 2.8097492356622227,
       "min_A": 53.66672,
       "max_A": 99.97406,
       "blocks_A": [
-        64.704,
-        62.714,
-        75.442,
-        78.401,
-        80.832,
-        81.513,
-        79.299,
-        76.475,
-        88.362,
-        91.789
+        63.969,
+        67.933,
+        76.524,
+        81.025,
+        82.454,
+        75.624,
+        83.271,
+        91.774,
+        89.272,
+        85.9
       ]
     }
   },
@@ -215,11 +215,11 @@
       "label": "2\u00d7 Tet2-Et, unclicked"
     },
     "P3_ss50": {
-      "delta": -2.9140000000000157,
-      "sem_delta": 3.6658704829518705,
-      "t": -0.7948998780921399,
-      "dof": 17.15430764200714,
-      "p": 0.4375321783877805,
+      "delta": -1.0925000000000011,
+      "sem_delta": 3.6224203132098785,
+      "t": -0.3015939359703737,
+      "dof": 17.28584824040319,
+      "p": 0.7665597771103964,
       "n_blocks": [
         10,
         10
@@ -246,29 +246,29 @@
     "natural_rms_nm": 9.407,
     "state": "matched",
     "x_A": {
-      "mean": 96.549,
-      "sd": 9.687,
+      "mean": 97.202,
+      "sd": 9.046,
       "min": 76.29,
       "max": 122.121
     },
-    "tension_pN_clipped": 1.076,
-    "tension_pN_unclipped": 1.775,
-    "ideal_chain_pN": 1.375,
-    "fraction_of_frames_stretched": 0.5497,
-    "rg_A": 40.285,
+    "tension_pN_clipped": 1.197,
+    "tension_pN_unclipped": 1.79,
+    "ideal_chain_pN": 1.384,
+    "fraction_of_frames_stretched": 0.6192,
+    "rg_A": 39.716,
     "sharp_turns_per_frame": 0.069,
     "hottest_nt": 49.0,
-    "stacked_fraction": 0.803,
-    "nt_in_contact": 2.107,
-    "axis_curvature_deg_per_nt": 31.129,
+    "stacked_fraction": 0.799,
+    "nt_in_contact": 2.384,
+    "axis_curvature_deg_per_nt": 31.619,
     "sharp_turns_at_unstacked_steps": 1.0,
     "hottest_step": "CpC-CpA",
-    "bii_fraction": 0.165,
-    "frames_with_any_sharp_turn": 0.0685,
-    "fraction_of_strand_on_protein": 0.0421,
+    "bii_fraction": 0.153,
+    "frames_with_any_sharp_turn": 0.0667,
+    "fraction_of_strand_on_protein": 0.0477,
     "end_to_end_pbc": "raw (one molecule, contiguous as written)",
-    "protein_residues_touched_over_half": "TDP553;ASP5;TDP7;ALA3;ALA2;ALA4;MET1",
-    "protein_residues_ever_touched": 12.0
+    "protein_residues_touched_over_half": "TDP553;TDP7;ASP5;MET1;ALA2;ALA3;ALA4;TYR11",
+    "protein_residues_ever_touched": 16.0
   },
   "windows": [
     {
@@ -392,37 +392,37 @@
       }
     },
     "P3_ss50": {
-      "rmsd.rmsd_core_A.mean": 4.625,
+      "rmsd.rmsd_core_A.mean": 5.031,
       "rmsd.rmsd_core_A.max": 8.496,
-      "rmsd.rmsd_tail_corefit_A.mean": 11.332,
-      "rmsd.rmsd_all_A.mean": 5.027,
-      "rmsd.rmsd_core_to_mean_A.mean": 2.176,
-      "rmsd.rmsf_A.mean_core": 2.175,
-      "rmsd.rmsf_A.mean_tail": 6.655,
-      "rmsd.rmsf_A.max": 10.493,
+      "rmsd.rmsd_tail_corefit_A.mean": 11.712,
+      "rmsd.rmsd_all_A.mean": 5.441,
+      "rmsd.rmsd_core_to_mean_A.mean": 2.281,
+      "rmsd.rmsf_A.mean_core": 2.281,
+      "rmsd.rmsf_A.mean_tail": 6.479,
+      "rmsd.rmsf_A.max": 9.84,
       "rmsd.rmsf_A.argmax_resnum": 1.0,
-      "rmsd.rmsf_A.at_sites.7": 5.851,
-      "rmsd.rmsf_A.at_sites.553": 5.035,
-      "rmsd.helix_fraction_core": 0.774,
+      "rmsd.rmsf_A.at_sites.7": 5.869,
+      "rmsd.rmsf_A.at_sites.553": 5.17,
+      "rmsd.helix_fraction_core": 0.7736,
       "rmsd.helix_fraction_at_sites.7": 0.0,
       "rmsd.helix_fraction_at_sites.553": 0.997,
       "rmsf_per_heat": {
-        "0": 7.689,
-        "1": 4.386,
-        "2": 3.046,
-        "3": 2.189,
-        "4": 1.702,
-        "5": 1.262,
-        "6": 1.237,
-        "7": 1.319,
-        "8": 1.361,
-        "9": 1.389,
-        "10": 1.45,
-        "11": 1.623,
-        "12": 1.915,
-        "13": 2.483,
-        "14": 3.451,
-        "15": 4.488
+        "0": 7.343,
+        "1": 4.414,
+        "2": 3.16,
+        "3": 2.308,
+        "4": 1.828,
+        "5": 1.367,
+        "6": 1.275,
+        "7": 1.336,
+        "8": 1.437,
+        "9": 1.508,
+        "10": 1.603,
+        "11": 1.672,
+        "12": 2.013,
+        "13": 2.589,
+        "14": 3.628,
+        "15": 4.766
       }
     }
   },
@@ -454,11 +454,11 @@
       "quantity": "core RMSD about the run mean, block means"
     },
     "P3_ss50": {
-      "delta": -0.2191171387972961,
-      "sem_delta": 0.2983224202960284,
-      "t": -0.7344977242403167,
-      "dof": 17.053558025605366,
-      "p": 0.47262503774342235,
+      "delta": -0.11473144527769463,
+      "sem_delta": 0.2874664375440436,
+      "t": -0.3991124886017912,
+      "dof": 17.45467642247731,
+      "p": 0.6946511041095825,
       "n_blocks": [
         10,
         10
@@ -670,70 +670,70 @@
       }
     },
     "P3_ss50": {
-      "heat.bend.total_deg.mean": 161.233,
-      "heat.bend.total_deg.sd": 7.239,
-      "heat.bend.sum_deg.mean": 325.076,
-      "heat.twist.sum_deg.mean": 483.886,
-      "heat.aperture_H1_H15_A.mean": 73.385,
-      "heat.aperture_H1_H15_A.sd": 7.549,
-      "heat.axis_straightness.mean": 0.479,
-      "heat.literature_pair.A.mean": 60.304,
-      "heat.literature_pair.A.sd": 7.041,
-      "heat.salt_bridge_backbone.A.mean": 12.74,
-      "heat.salt_bridge_sidechain.fraction_formed_below_5A": 0.991,
-      "heat.sites_CA_CA_A.mean": 78.384,
+      "heat.bend.total_deg.mean": 160.666,
+      "heat.bend.total_deg.sd": 7.176,
+      "heat.bend.sum_deg.mean": 322.778,
+      "heat.twist.sum_deg.mean": 475.119,
+      "heat.aperture_H1_H15_A.mean": 75.108,
+      "heat.aperture_H1_H15_A.sd": 7.829,
+      "heat.axis_straightness.mean": 0.49,
+      "heat.literature_pair.A.mean": 62.013,
+      "heat.literature_pair.A.sd": 7.414,
+      "heat.salt_bridge_backbone.A.mean": 12.737,
+      "heat.salt_bridge_sidechain.fraction_formed_below_5A": 0.992,
+      "heat.sites_CA_CA_A.mean": 80.248,
       "heat.bend.most_variable_repeat": 12.0,
       "region_rmsd_A": {
-        "N (HEAT 1-3)": 1.209,
-        "central (HEAT 4-12)": 2.1,
-        "C (HEAT 13-15)": 0.713
+        "N (HEAT 1-3)": 1.197,
+        "central (HEAT 4-12)": 2.271,
+        "C (HEAT 13-15)": 0.726
       },
       "bend_per_repeat_mean": {
-        "2": 14.14,
-        "3": 26.55,
-        "4": 56.52,
-        "5": 14.54,
-        "6": 22.53,
-        "7": 13.3,
-        "8": 16.43,
-        "9": 29.13,
-        "10": 38.21,
+        "2": 14.18,
+        "3": 26.63,
+        "4": 56.65,
+        "5": 14.55,
+        "6": 22.55,
+        "7": 13.17,
+        "8": 15.91,
+        "9": 28.7,
+        "10": 37.47,
         "11": 25.45,
-        "12": 21.91,
-        "13": 31.48,
-        "14": 14.88
+        "12": 21.77,
+        "13": 30.95,
+        "14": 14.81
       },
       "bend_per_repeat_sd": {
-        "2": 4.09,
-        "3": 2.37,
-        "4": 1.73,
-        "5": 2.26,
-        "6": 3.3,
-        "7": 2.98,
-        "8": 2.27,
-        "9": 2.06,
-        "10": 2.42,
-        "11": 2.75,
-        "12": 4.1,
-        "13": 2.8,
-        "14": 2.44
+        "2": 3.85,
+        "3": 2.31,
+        "4": 1.74,
+        "5": 2.25,
+        "6": 3.13,
+        "7": 2.86,
+        "8": 2.42,
+        "9": 2.27,
+        "10": 2.9,
+        "11": 2.73,
+        "12": 3.92,
+        "13": 2.99,
+        "14": 2.41
       },
       "repeat_centroid_rmsf": {
-        "1": 4.31,
-        "2": 2.92,
-        "3": 2.09,
-        "4": 1.58,
-        "5": 1.01,
-        "6": 0.9,
+        "1": 4.34,
+        "2": 3.04,
+        "3": 2.21,
+        "4": 1.71,
+        "5": 1.12,
+        "6": 0.93,
         "7": 1.04,
-        "8": 1.15,
-        "9": 1.16,
-        "10": 1.2,
-        "11": 1.2,
-        "12": 1.45,
-        "13": 1.98,
-        "14": 3.01,
-        "15": 4.08
+        "8": 1.23,
+        "9": 1.3,
+        "10": 1.37,
+        "11": 1.26,
+        "12": 1.56,
+        "13": 2.09,
+        "14": 3.18,
+        "15": 4.35
       }
     }
   },
@@ -913,69 +913,69 @@
     "P3_ss50": {
       "per_repeat": {
         "2": {
-          "delta_deg": 2.079094681640644,
-          "p": 0.10560068524180473,
-          "sd_ratio": 1.147864949972292
+          "delta_deg": 2.11783968750656,
+          "p": 0.06974725226539737,
+          "sd_ratio": 1.0791335699576143
         },
         "3": {
-          "delta_deg": -1.2225617724550872,
-          "p": 0.019705868935758975,
-          "sd_ratio": 0.9494065783300061
+          "delta_deg": -1.1473131729527708,
+          "p": 0.026684863120543845,
+          "sd_ratio": 0.9251937193906337
         },
         "4": {
-          "delta_deg": 0.4027094042361128,
-          "p": 0.31605365879064223,
-          "sd_ratio": 0.8282014318432839
+          "delta_deg": 0.5362648855066752,
+          "p": 0.1930446076788127,
+          "sd_ratio": 0.8335807207439101
         },
         "5": {
-          "delta_deg": -1.9953340867908942,
-          "p": 0.0003478908881093035,
-          "sd_ratio": 0.9400638149665025
+          "delta_deg": -1.9825267061300433,
+          "p": 0.00020180574641205738,
+          "sd_ratio": 0.9327611718955937
         },
         "6": {
-          "delta_deg": -0.1150805522546996,
-          "p": 0.8906547317426019,
-          "sd_ratio": 0.9991250889308068
+          "delta_deg": -0.1014247159043613,
+          "p": 0.8884550988861585,
+          "sd_ratio": 0.9499219870584598
         },
         "7": {
-          "delta_deg": 0.7221577696151673,
-          "p": 0.3666478283685094,
-          "sd_ratio": 1.0547015458823021
+          "delta_deg": 0.5880227662790531,
+          "p": 0.4387927230288316,
+          "sd_ratio": 1.0133749670162637
         },
         "8": {
-          "delta_deg": 1.476471649204889,
-          "p": 0.025616064648062386,
-          "sd_ratio": 0.894495779983729
+          "delta_deg": 0.9485773072807149,
+          "p": 0.1850488655417018,
+          "sd_ratio": 0.9526083405821537
         },
         "9": {
-          "delta_deg": 0.7398207348044714,
-          "p": 0.1481749711892097,
-          "sd_ratio": 0.7842370897438375
+          "delta_deg": 0.30921516418915473,
+          "p": 0.5734529049232209,
+          "sd_ratio": 0.8649687741921689
         },
         "10": {
-          "delta_deg": -0.4714320612279437,
-          "p": 0.5914568132898131,
-          "sd_ratio": 0.6798040403252775
+          "delta_deg": -1.2177809112356357,
+          "p": 0.2240054991621434,
+          "sd_ratio": 0.8152177347408208
         },
         "11": {
-          "delta_deg": -1.02470966204044,
-          "p": 0.2809957184348553,
-          "sd_ratio": 0.7834703379017824
+          "delta_deg": -1.031688617551353,
+          "p": 0.2362325376734423,
+          "sd_ratio": 0.7773749695964122
         },
         "12": {
-          "delta_deg": 0.49013303241985184,
-          "p": 0.6217857665203174,
-          "sd_ratio": 0.9570357975548154
+          "delta_deg": 0.3610079246931832,
+          "p": 0.7005222890216617,
+          "sd_ratio": 0.9171545903663008
         },
         "13": {
-          "delta_deg": -1.7141925664879132,
-          "p": 0.016575482552427308,
-          "sd_ratio": 0.815427999843338
+          "delta_deg": -2.2460383418116976,
+          "p": 0.004368301320076484,
+          "sd_ratio": 0.871594243418311
         },
         "14": {
-          "delta_deg": -0.49304105509303575,
-          "p": 0.3116568137616332,
-          "sd_ratio": 1.174869820300961
+          "delta_deg": -0.5639449518245954,
+          "p": 0.19685160596462345,
+          "sd_ratio": 1.1583583228284746
         }
       },
       "largest_shifts": [
@@ -984,11 +984,11 @@
         3
       ],
       "aperture": {
-        "delta": 0.3455721322432339,
-        "sem_delta": 2.8993291312600027,
-        "t": 0.11919037701423492,
-        "dof": 17.070829295704147,
-        "p": 0.9065159478886083,
+        "delta": 2.0837653607271704,
+        "sem_delta": 2.914333829531665,
+        "t": 0.7150057208998711,
+        "dof": 17.010553730690493,
+        "p": 0.4843039984039033,
         "n_blocks": [
           10,
           10
@@ -1007,10 +1007,10 @@
     },
     "span": {
       "source": "P3_ss50 DNA end-to-end (5'P to 3'O3'), simulated",
-      "A": 96.4930471562963,
-      "sd_A": 9.676882829861894,
-      "p5_A": 82.10415375,
-      "p95_A": 113.32550400000001
+      "A": 97.22514162073097,
+      "sd_A": 9.063417558056031,
+      "p5_A": 82.742254,
+      "p95_A": 112.64880799999999
     },
     "duplex_springs_at_span": [
       {
@@ -1046,9 +1046,9 @@
         "euler_pN": 11.48,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 3.06,
-        "unkinked_force_pN": 10.3,
-        "energy_kT": 4.77
+        "force_pN": 3.08,
+        "unkinked_force_pN": 10.27,
+        "energy_kT": 4.71
       },
       {
         "n_bp": 40,
@@ -1061,9 +1061,9 @@
         "euler_pN": 11.48,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 3.89,
-        "unkinked_force_pN": 10.3,
-        "energy_kT": 5.96
+        "force_pN": 3.93,
+        "unkinked_force_pN": 10.27,
+        "energy_kT": 5.89
       },
       {
         "n_bp": 50,
@@ -1076,9 +1076,9 @@
         "euler_pN": 7.35,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 2.06,
+        "force_pN": 2.07,
         "unkinked_force_pN": 6.73,
-        "energy_kT": 6.02
+        "energy_kT": 5.98
       },
       {
         "n_bp": 50,
@@ -1091,9 +1091,9 @@
         "euler_pN": 7.35,
         "feasible": true,
         "regime": "kinked",
-        "force_pN": 2.63,
+        "force_pN": 2.64,
         "unkinked_force_pN": 6.73,
-        "energy_kT": 7.53
+        "energy_kT": 7.48
       }
     ],
     "ssDNA_at_span": {
@@ -1101,8 +1101,8 @@
       "contour_nm": 29.5,
       "natural_rms_nm": 9.407,
       "state": "matched",
-      "tension_pN_clipped": 1.762,
-      "tension_pN_unclipped": 1.762,
+      "tension_pN_clipped": 1.78,
+      "tension_pN_unclipped": 1.78,
       "zocchi_2021": "Fig. 1C: with the DNA spring in the ss state there is essentially no stress on the enzyme"
     },
     "kink": {
@@ -1121,13 +1121,13 @@
           "x_c_A": 125.0,
           "radius_kinked_A": 65.4,
           "curvature_at_x_c_deg_per_bp": 1.63,
-          "curvature_at_span_deg_per_bp": 3.8
+          "curvature_at_span_deg_per_bp": 3.76
         },
         "50 bp": {
           "x_c_A": 151.4,
           "radius_kinked_A": 81.4,
           "curvature_at_x_c_deg_per_bp": 1.64,
-          "curvature_at_span_deg_per_bp": 3.89
+          "curvature_at_span_deg_per_bp": 3.86
         }
       },
       "sfGFP_empirical": {
@@ -1138,11 +1138,11 @@
         "source": "sfGFP page, bare-duplex restraint windows (docs/wiki/Home.md)"
       },
       "strand_measured": {
-        "axis_curvature_deg_per_nt": 31.129,
+        "axis_curvature_deg_per_nt": 31.619,
         "sharp_turns_per_frame": 0.069,
         "hottest_nt": 49,
         "hottest_step": "CpC-CpA",
-        "bii_fraction": 0.165
+        "bii_fraction": 0.153
       }
     },
     "protein_spring": {
@@ -1174,12 +1174,12 @@
         "displacement_at_2pN_A": 3.8
       },
       "P3_ss50": {
-        "mean_A": 77.95,
-        "sd_A": 9.46,
-        "kappa_kT_nm2": 1.12,
-        "kappa_pN_per_nm": 4.69,
-        "displacement_per_pN_A": 2.13,
-        "displacement_at_2pN_A": 4.26
+        "mean_A": 79.77,
+        "sd_A": 9.55,
+        "kappa_kT_nm2": 1.1,
+        "kappa_pN_per_nm": 4.6,
+        "displacement_per_pN_A": 2.17,
+        "displacement_at_2pN_A": 4.35
       }
     }
   }
