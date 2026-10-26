@@ -19,23 +19,23 @@ persistence 1.5 nm). The two Cβ atoms are 54.4 Å apart in the AlphaFold model 
 tethers reach a further 22 and 26 Å, so the strand *can* be stretched to ~102 Å by the
 protein — but only if the horseshoe opens.
 
-**321 ns over 4 systems**, one trajectory each.
+**357 ns over 4 systems**, one trajectory each.
 
 ![the chimera](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_P3_ss50_overview_still.png)
 *the chimera.*
 
 ## The headline
 
-With the 50 nt strand clicked on, the two attachment sites sit **6.1 ± 3.3 Å together** relative to the clicked protein without DNA (p = 0.08 on ten block means each, not resolved). The strand itself spends **41 %** of the run beyond its own natural size, so by the model it is **matched** and pulls with 0.77 pN (1.68 pN if the Marko–Siggia interpolation is trusted below the chain's rms size).
+With the 50 nt strand clicked on, the two attachment sites sit **2.9 ± 3.7 Å together** relative to the clicked protein without DNA (p = 0.44 on ten block means each, not resolved). The strand itself spends **55 %** of the run beyond its own natural size, so by the model it is **matched** and pulls with 1.08 pN (1.77 pN if the Marko–Siggia interpolation is trusted below the chain's rms size).
 
 ![the attachment-point separation against the clicked zero](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig7_headline.png)
 
 | system | Cβ7–Cβ553 (Å), mean ± sd | range | Δ vs clicked, no DNA (Å) | p |
 |---|---|---|---|---|
 | apo Aα (ff19SB/OPC) | 56.4 ± 7.1 | 40–75 | -24.40 ± 2.99 | < 0.001 |
-| 2× Tet2-Et, unclicked | 79.7 ± 7.6 | 56–94 | -1.14 ± 3.16 | 0.72 |
+| 2× Tet2-Et, unclicked | 78.6 ± 7.6 | 56–94 | -2.32 ± 3.11 | 0.47 |
 | clicked, no DNA | 80.9 ± 8.9 | 52–102 | zero | — |
-| 50 nt ssDNA, closed loop | 74.7 ± 8.0 | 54–93 | -6.14 ± 3.29 | 0.08 |
+| 50 nt ssDNA, closed loop | 78.0 ± 9.5 | 54–100 | -2.91 ± 3.67 | 0.44 |
 
 The zero is the clicked protein without DNA, not the unmodified one: on sfGFP, installing
 and clicking the two residues moved the sites by 0.6 Å before any DNA was attached, which
@@ -53,11 +53,11 @@ while the rest stayed at 2–4 Å. Our attachment site Asp7 sits in that tail.
 | system | core Cα RMSD (Å) | N-tail RMSD after the core fit (Å) | core RMSF (Å) | RMSF at Asp7 / Asn553 (Å) | helix fraction, core |
 |---|---|---|---|---|---|
 | apo Aα (ff19SB/OPC) | 2.72 (max 6.1) | 11.6 | 2.11 | 6.8 / 3.9 | 0.780 |
-| 2× Tet2-Et, unclicked | 5.38 (max 8.8) | 12.5 | 2.48 | 5.5 / 4.2 | 0.774 |
+| 2× Tet2-Et, unclicked | 4.88 (max 8.8) | 12.8 | 2.57 | 6.1 / 4.4 | 0.775 |
 | clicked, no DNA | 5.99 (max 11.0) | 17.2 | 2.41 | 7.5 / 4.2 | 0.772 |
-| 50 nt ssDNA, closed loop | 4.06 (max 8.1) | 10.4 | 1.98 | 5.3 / 4.4 | 0.774 |
+| 50 nt ssDNA, closed loop | 4.62 (max 8.5) | 11.3 | 2.17 | 5.9 / 5.0 | 0.774 |
 
-The chimera's core amplitude (RMSD about the run's own mean, per block) differs from the clicked control's by -0.41 ± 0.25 Å (p = 0.11 on block means).
+The chimera's core amplitude (RMSD about the run's own mean, per block) differs from the clicked control's by -0.22 ± 0.30 Å (p = 0.47 on block means).
 
 ![RMSD, Day et al.'s split](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig1_rmsd.png)
 
@@ -71,11 +71,11 @@ dihedral across four consecutive centroids. The literature puts PR65's hinge at 
 | system | total axis bend (°) | HEAT1–15 (Å) | Asn30–Phe578 (Å) | region RMSD N / central / C (Å) | most variable repeat | Arg113–Glu191 salt bridge formed |
 |---|---|---|---|---|---|---|
 | apo Aα (ff19SB/OPC) | 150 ± 9 | 53.5 ± 6.7 | 42.0 ± 5.6 | 1.19 / 1.48 / 0.73 | H12 | 0.82 |
-| 2× Tet2-Et, unclicked | 157 ± 7 | 75.5 ± 7.3 | 62.8 ± 7.3 | 1.28 / 2.13 / 0.80 | H12 | 0.99 |
+| 2× Tet2-Et, unclicked | 159 ± 7 | 73.5 ± 7.6 | 60.5 ± 7.7 | 1.44 / 2.08 / 0.81 | H12 | 0.94 |
 | clicked, no DNA | 165 ± 8 | 73.0 ± 7.5 | 59.2 ± 7.4 | 1.20 / 2.96 / 0.76 | H12 | 0.29 |
-| 50 nt ssDNA, closed loop | 162 ± 8 | 70.8 ± 6.3 | 57.9 ± 5.8 | 1.12 / 1.91 / 0.72 | H12 | 0.99 |
+| 50 nt ssDNA, closed loop | 161 ± 7 | 73.4 ± 7.5 | 60.3 ± 7.0 | 1.21 / 2.10 / 0.71 | H12 | 0.99 |
 
-Against the clicked control, the repeats whose bend angle moves most under the strand are HEAT 5 (-1.6°, p = < 0.001, spread ×0.90), HEAT 8 (+2.0°, p = 0.003, spread ×0.79), HEAT 3 (-1.5°, p = 0.009, spread ×0.95). The horseshoe aperture (HEAT1–HEAT15) changes by -2.2 ± 2.6 Å (p = 0.40).
+Against the clicked control, the repeats whose bend angle moves most under the strand are HEAT 5 (-2.0°, p = < 0.001, spread ×0.94), HEAT 13 (-1.7°, p = 0.02, spread ×0.82), HEAT 3 (-1.2°, p = 0.02, spread ×0.95). The horseshoe aperture (HEAT1–HEAT15) changes by +0.3 ± 2.9 Å (p = 0.91).
 
 ![where the solenoid bends and twists](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig5_heat_bend.png)
 
@@ -101,9 +101,9 @@ slow opening and closing of the horseshoe inflates the variance):
 | system | Cβ7–Cβ553 (Å) | κ (k<sub>B</sub>T nm⁻²) | κ (pN nm⁻¹) | displacement per pN of spring force (Å) |
 |---|---|---|---|---|
 | apo Aα (ff19SB/OPC) | 56.4 ± 7.0 | 2.0 | 8.4 | 1.2 |
-| 2× Tet2-Et, unclicked | 79.7 ± 7.6 | 1.7 | 7.3 | 1.4 |
+| 2× Tet2-Et, unclicked | 78.5 ± 7.6 | 1.8 | 7.3 | 1.4 |
 | clicked, no DNA | 80.9 ± 8.9 | 1.2 | 5.3 | 1.9 |
-| 50 nt ssDNA, closed loop | 74.7 ± 8.0 | 1.6 | 6.6 | 1.5 |
+| 50 nt ssDNA, closed loop | 78.0 ± 9.5 | 1.1 | 4.7 | 2.1 |
 
 This is the number that decides whether a spring of a few piconewtons is visible at all. On sfGFP
 (κ ≈ 300) a 4 pN spring moved the sites 0.03 Å, below what 50 ns can resolve; a HEAT horseshoe is
@@ -114,7 +114,7 @@ deliver would move the tips by ångströms — if it were under tension.
 
 Zocchi's kinked-rod model (eqs 2.188–2.206 and 3.51–3.52 of the book; Tseng & Zocchi 2013, eq. 6;
 B = 200 pN nm², τ<sub>c</sub> = 27 pN nm nicked / 34 continuous, 0.33 nm per bp, k<sub>B</sub>T = 4.2 pN nm),
-evaluated with the repository's implementation at the DNA end-to-end distance the chimera settles at, 93 ± 8 Å. A duplex pushes its ends apart on the
+evaluated with the repository's implementation at the DNA end-to-end distance the chimera settles at, 96 ± 10 Å. A duplex pushes its ends apart on the
 bent branch, f = 10B/L² − k<sub>B</sub>T/(L − x), until the span drops below x<sub>c</sub>, where it
 kinks and the force collapses to τ<sub>c</sub> / (2R √(1 − (x/2R)²)):
 
@@ -122,10 +122,10 @@ kinks and the force collapses to τ<sub>c</sub> / (2R √(1 − (x/2R)²)):
 |---|---|---|---|---|---|---|---|---|
 | 27 bp, nicked | 8.9 | *infeasible: contour shorter than the span* | — | — | 25.2 | — | 87 | 0.60 |
 | 27 bp, continuous | 8.9 | *infeasible: contour shorter than the span* | — | — | 25.2 | — | 86 | 0.76 |
-| 40 bp, nicked τc = 27 pN nm | 13.2 | kinked | **2.93** | 10.4 | 11.5 | 5.0 | 125 | 0.89 |
-| 40 bp, continuous τc = 34 pN nm | 13.2 | kinked | **3.73** | 10.4 | 11.5 | 6.3 | 121 | 1.12 * |
-| 50 bp, nicked τc = 27 pN nm | 16.5 | kinked | **2.02** | 6.8 | 7.3 | 6.2 | 151 | 1.11 * |
-| 50 bp, continuous τc = 34 pN nm | 16.5 | kinked | **2.58** | 6.8 | 7.3 | 7.8 | 143 | 1.40 * |
+| 40 bp, nicked τc = 27 pN nm | 13.2 | kinked | **3.06** | 10.3 | 11.5 | 4.8 | 125 | 0.89 |
+| 40 bp, continuous τc = 34 pN nm | 13.2 | kinked | **3.89** | 10.3 | 11.5 | 6.0 | 121 | 1.12 * |
+| 50 bp, nicked τc = 27 pN nm | 16.5 | kinked | **2.06** | 6.7 | 7.3 | 6.0 | 151 | 1.11 * |
+| 50 bp, continuous τc = 34 pN nm | 16.5 | kinked | **2.63** | 6.7 | 7.3 | 7.5 | 143 | 1.40 * |
 
 \* γ ≥ 1: outside the model's stated validity range (L ≳ 45 bp).
 
@@ -133,24 +133,24 @@ The chimera carries none of these. Its 50 nt **single strand** is Zocchi's "ss s
 2021 chapter says *"with the DNA spring in the ss state there is essentially no stress on the
 enzyme"*: a worm-like chain with ξ = 1.5 nm and a contour of 29.5 nm whose natural rms size is
 94 Å. At this span it is **matched**, pulling with
-0.00 pN as the model is used (1.68 pN if the Marko–Siggia
+1.76 pN as the model is used (1.76 pN if the Marko–Siggia
 interpolation is trusted below the rms size). Every number in this section is a **model**, not a measurement.
 
 ![Zocchi's spring model at this span](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig9_zocchi_model.png)
 
-The strand's end-to-end distance settles at **93 ± 8 Å**
-(range 76–110 Å), against a contour of 30 nm and a
+The strand's end-to-end distance settles at **97 ± 10 Å**
+(range 76–122 Å), against a contour of 30 nm and a
 natural rms size of 94 Å. Its radius of gyration is 40 Å. It makes
 0.1 sharp (> 90°) turns per frame along its C4′ trace, hottest at nucleotide
 49, keeps 80 % of adjacent bases stacked, and has
 **2 of 50 nucleotides on the protein** at any moment
 (4 % of the strand, time-averaged). Protein residues it touches more than half the
-time: ASP5;TDP553;TDP7;ALA4;ALA3;MET1;ALA2.
+time: TDP553;ASP5;TDP7;ALA3;ALA2;ALA4;MET1.
 
 Marko–Siggia applied frame by frame to the strand's end-to-end distance gives
-**0.77 pN** as the repository uses it (zero below the chain's rms size) and
-1.68 pN if the interpolation formula is trusted all the way down;
-the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives 1.32 pN. All three are
+**1.08 pN** as the repository uses it (zero below the chain's rms size) and
+1.77 pN if the interpolation formula is trusted all the way down;
+the ideal-chain entropic estimate 3k<sub>B</sub>T·x/(2ξL) gives 1.38 pN. All three are
 **models**, not measurements. For comparison, Zocchi's duplex model would put a 50 bp
 spring at this span on its kinked branch at 1.7–3.3 pN of *push* — and outside the
 model's own validity range (γ > 1 for L > ~45 bp). The sign is the point: nothing here
@@ -167,9 +167,9 @@ exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** 
 
 | target x₀ (Å) | settled ⟨r⟩ (Å) | measured pull (pN) | Marko–Siggia pull (unclipped) | model's verdict | box valid? |
 |---|---|---|---|---|---|
-| 60 | 60.2 ± 2.8 | **-1.12 ± 1.82** | 0.00 (0.98) | slack | yes |
+| 60 | 60.3 ± 2.8 | **-1.52 ± 1.51** | 0.00 (0.98) | slack | yes |
 
-Where they can be compared: at 60 Å the force field gives -1.12 ± 1.82 pN of pull against 0.00 pN modelled.
+Where they can be compared: at 60 Å the force field gives -1.52 ± 1.51 pN of pull against 0.00 pN modelled.
 
 ![modelled against measured force for the single strand](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig4_force_extension.png)
 
@@ -183,8 +183,8 @@ span x<sub>c</sub> the duplex sits in the kinked state with a hinge of radius R:
 | duplex | x<sub>c</sub> (Å) | R of the kinked state (Å) | uniform curvature at x<sub>c</sub> (°/bp) | uniform curvature at this span (°/bp) |
 |---|---|---|---|---|
 | 27 bp | 87 | 44 | 1.62 | stretched |
-| 40 bp | 125 | 65 | 1.63 | 4.01 |
-| 50 bp | 151 | 81 | 1.64 | 4.00 |
+| 40 bp | 125 | 65 | 1.63 | 3.80 |
+| 50 bp | 151 | 81 | 1.64 | 3.89 |
 
 The force field disagrees with the model on *where* a duplex kinks: on sfGFP's bare duplexes base pairs
 began to open at 5.5°/bp and opened in every run only above 8.7°/bp
@@ -194,11 +194,11 @@ open, so for it "kink" means a sharp turn of the backbone: a C4′-trace angle a
 switch of the ε/ζ torsions, or a step whose bases have come apart.
 
 **Measured on the strand.** The smoothed-axis curvature of the single strand is
-**31.0° per nucleotide** — an order of magnitude beyond any duplex
+**31.1° per nucleotide** — an order of magnitude beyond any duplex
 threshold, which is what a chain with a 1.5 nm persistence length looks like. The C4′ trace makes
-**0.06 sharp (> 90°) turns per frame**, hottest at nucleotide
+**0.07 sharp (> 90°) turns per frame**, hottest at nucleotide
 49 (CpC-CpA steps); a sharp turn coincides with an unstacked step
-100 % of the time. 17 % of the backbone
+100 % of the time. 16 % of the backbone
 sits in the BII (ε − ζ > 0) substate, and 80 % of adjacent bases stay stacked. Whether stretching the
 strand straightens it is read off the restraint windows (the squares in the last panel).
 
@@ -216,9 +216,9 @@ whether modified or not.
 | system | residue 7 | φ, ψ (± sd) | aromatic rings on the Tet ring / frame | residue 553 | φ, ψ (± sd) | rings / frame |
 |---|---|---|---|---|---|---|
 | apo Aα (ff19SB/OPC) | ASP | -89, +5 (± 43, 75) | — | ASN | -57, -37 (± 9, 9) | — |
-| 2× Tet2-Et, unclicked | TET | -52, -48 (± 12, 13) | 0.52 | TET | -52, -47 (± 9, 11) | 0.00 |
+| 2× Tet2-Et, unclicked | TET | -53, -46 (± 12, 14) | 0.43 | TET | -52, -46 (± 9, 10) | 0.00 |
 | clicked, no DNA | TDP | +35, +53 (± 77, 58) | 0.00 | TDP | -57, -36 (± 10, 10) | 0.00 |
-| 50 nt ssDNA, closed loop | TDP | +48, +36 (± 15, 16) | 0.43 | TDP | -59, -35 (± 9, 9) | 0.02 |
+| 50 nt ssDNA, closed loop | TDP | +48, +36 (± 13, 15) | 0.44 | TDP | -59, -35 (± 9, 9) | 0.02 |
 
 ![backbone conformation at the two sites](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_ramachandran.png)
 
