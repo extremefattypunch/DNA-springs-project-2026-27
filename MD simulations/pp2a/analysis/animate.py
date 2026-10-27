@@ -61,7 +61,8 @@ def prepare(traj_path, top_path, out: Path, n_frames: int, resmap=None, stride_f
     ca_all = np.array([a.index for a in top.atoms if a.name == "CA" and a.residue.resSeq < 300])
     rmsf = md.rmsf(t, t, 0, atom_indices=ca_all) * 10.0
     per_res = {top.atom(i).residue.index: float(v) for i, v in zip(ca_all, rmsf)}
-    bfac = np.array([per_res.get(a.residue.index, 0.0) for a in top.atoms])
+    # the PDB B-factor field is (-10, 100): a floppy strand or tail can exceed 100 A of RMSF
+    bfac = np.clip(np.array([per_res.get(a.residue.index, 0.0) for a in top.atoms]), 0.0, 99.9)
     t[0].save_pdb(str(out / "solute.pdb"), bfactors=bfac)
     t.save_dcd(str(out / "solute.dcd"))
     return t, rmsf
