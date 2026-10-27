@@ -1,0 +1,10 @@
+# Tested versions (conda-forge env: envs/manim). LaTeX via TinyTeX; ffmpeg 9.0.2 for concat/ffprobe.
+# Pillow must stay <12: Pillow 13 breaks ImageMobject rendering in Manim 0.22.
+manim==0.22.0
+numpy==2.5.4
+scipy==1.18.1
+pillow==11.3.0
+av==19.0.2
+manimpango==0.7.1
+pycairo==1.29.2
+pytest==9.1.1
