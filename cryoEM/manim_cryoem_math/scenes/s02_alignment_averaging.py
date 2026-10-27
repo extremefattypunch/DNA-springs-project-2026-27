@@ -194,7 +194,7 @@ class Scene02AlignmentAveraging(Scene):
         eq1 = st.M(r"I_i(\mathbf x)=S\big(R_{\phi_i}^{-1}(\mathbf x-\mathbf t_i)\big)"
                    r"+\epsilon_i(\mathbf x)", size=42)
         eq1.move_to([3.0, -1.65, 0])
-        eq1_note = st.T("rotate by φ_i (ψ in 3D), shift, add i.i.d. noise",
+        eq1_note = st.T("rotate by φ (ψ in 3D), shift, add i.i.d. noise",
                         st.SMALL_SIZE, st.MUTED).next_to(eq1, DOWN, buff=0.22)
         eq1_simp = st.simplified_note("toy 2D model: no CTF, one fixed view").next_to(
             eq1_note, DOWN, buff=0.12)

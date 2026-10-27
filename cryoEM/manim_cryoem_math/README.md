@@ -7,14 +7,14 @@ card. The spec is `manim-gpt-animation-plan.md` at the repo root.
 
 | # | File | Question | Target | Rendered |
 |---|---|---|---:|---:|
-| 01 | `output/01_forward_model.mp4` | How do projection, the CTF and noise alter an observation? | 30 s | 34.1 s |
-| 02 | `output/02_alignment_averaging.mp4` | Why align before averaging, and how fast does the noise fall? | 40 s | 44.5 s |
-| 03 | `output/03_orientation_fourier_slice.mp4` | How do unknown 3D orientations and Fourier slices define reconstruction? | 70 s | 76.6 s |
-| 04 | `output/04_iterative_refinement.mp4` | What does iterative reconstruction optimize? | 40 s | 45.3 s |
-| 05 | `output/05_classification_pca.mp4` | How do heterogeneity and classification interact? | 45 s | 49.7 s |
-| 06 | `output/06_fsc_resolution.mp4` | How are resolution and reconstruction reliability assessed? | 45 s | 46.5 s |
+| 01 | `output/01_forward_model.mp4` | How do projection, the CTF and noise alter an observation? | 30 s | 34.0 s |
+| 02 | `output/02_alignment_averaging.mp4` | Why align before averaging, and how fast does the noise fall? | 40 s | 44.2 s |
+| 03 | `output/03_orientation_fourier_slice.mp4` | How do unknown 3D orientations and Fourier slices define reconstruction? | 70 s | 76.1 s |
+| 04 | `output/04_iterative_refinement.mp4` | What does iterative reconstruction optimize? | 40 s | 44.9 s |
+| 05 | `output/05_classification_pca.mp4` | How do heterogeneity and classification interact? | 45 s | 49.5 s |
+| 06 | `output/06_fsc_resolution.mp4` | How are resolution and reconstruction reliability assessed? | 45 s | 46.1 s |
 
-The total is about 4:57. Each clip is within ±15 % of its target, because the spec
+The total is 4:55 (294.7 s). Each clip is within ±15 % of its target, because the spec
 puts clarity ahead of exact timing. `output/thumbnails/` holds the last frame of each
 clip (the takeaway card). `output/all_scenes.mp4` is the optional concatenated master,
 and `output/render_report.txt` is the ffprobe report (h264, yuv420p, no audio stream).

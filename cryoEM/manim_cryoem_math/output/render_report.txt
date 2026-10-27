@@ -1,0 +1,8 @@
+file                                  width     height      fps   codec   pix_fmt duration_s
+01_forward_model.mp4                   1920       1080     30/1    h264   yuv420p 33.964063
+02_alignment_averaging.mp4             1920       1080     30/1    h264   yuv420p 44.200000
+03_orientation_fourier_slice.mp4       1920       1080     30/1    h264   yuv420p 76.066667
+04_iterative_refinement.mp4            1920       1080     30/1    h264   yuv420p 44.866667
+05_classification_pca.mp4              1920       1080     30/1    h264   yuv420p 49.500000
+06_fsc_resolution.mp4                  1920       1080     30/1    h264   yuv420p 46.100000
+all_scenes.mp4                         1920       1080     30/1    h264   yuv420p 294.697396

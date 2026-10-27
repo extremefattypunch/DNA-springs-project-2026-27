@@ -23,7 +23,9 @@ python -m pytest -m "not render" -q      # math + scope tests (must stay green)
 Always run manim from the project root (so `manim.cfg` applies: 1920×1080, 30 fps,
 background `#0E1116`). Put sheets and frames in `$MANIM_CRYOEM_SCRATCH/review/<module>/`.
 Never write into the repo except your own scene file. Final 1080p renders run later
-on Slurm.
+on Slurm (`slurm/render_final.sbatch`). Note that `-qh` means 1080p**60** in Manim 0.22, so
+final renders pass `--fps 30`. Plain `python`, `ffmpeg` and `ffprobe` are only on PATH
+after `source env/activate_manim.sh`.
 
 ## Scene file skeleton
 

@@ -22,7 +22,8 @@ ffmpeg -loglevel error -y -f concat -safe 0 -i "$LIST" -c copy output/all_scenes
     ffprobe -v error -select_streams v:0 \
       -show_entries stream=width,height,r_frame_rate,codec_name,pix_fmt -show_entries format=duration \
       -of default=nw=1:nk=1 "$f" | paste -sd' ' | awk -v f="$(basename "$f")" '{printf "%-36s %6s %10s %8s %7s %9s %s\n", f, $2, $3, $5, $1, $4, $6}'
-    ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$f" | grep -q . \
-      && echo "  WARNING: $f has an audio stream"
+    if ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$f" | grep -q .; then
+      echo "  WARNING: $f has an audio stream"
+    fi
   done
 } | tee output/render_report.txt
