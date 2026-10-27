@@ -202,9 +202,9 @@ exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** 
 | spring | target x₀ (Å) | settled ⟨r⟩ (Å) | measured force (pN; + push, − pull) | model at ⟨r⟩ (pN) | kinking in the window | box valid? |
 |---|---|---|---|---|---|---|
 | ss50 | 60 | 60.3 ± 2.8 | **+1.52 ± 1.51** | −0.98 (Marko–Siggia, slack) | 0.02 turns/frame | yes |
-| ss50 | 80 | 80.1 ± 2.7 | **+0.50 ± 1.42** | −1.38 (Marko–Siggia, matched) | 0.01 turns/frame | yes |
+| ss50 | 80 | 80.0 ± 2.7 | **+0.15 ± 1.31** | −1.38 (Marko–Siggia, matched) | 0.02 turns/frame | yes |
 
-Where they can be compared: ss50 at 60 Å: force field +1.52 ± 1.51 pN against -0.98 pN by Marko–Siggia (within the error); ss50 at 80 Å: force field +0.50 ± 1.42 pN against -1.38 pN by Marko–Siggia (within the error).
+Where they can be compared: ss50 at 60 Å: force field +1.52 ± 1.51 pN against -0.98 pN by Marko–Siggia (within the error); ss50 at 80 Å: force field +0.15 ± 1.31 pN against -1.38 pN by Marko–Siggia (within the error).
 
 ![modelled against measured force for the single strand](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig4_force_extension.png)
 
