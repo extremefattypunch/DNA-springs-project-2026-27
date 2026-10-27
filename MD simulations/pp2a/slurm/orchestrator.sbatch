@@ -26,7 +26,7 @@ set -uo pipefail
 source "/n/home05/ianpoon/DNA-springs-project-2026-27/MD simulations/pp2a/env/activate.sh"
 cd "$PP2A_MD_REPO"
 START=$(date +%s); LIMIT=$((11*3600+45*60))
-MAX_PAID=${MAX_PAID:-3}; PAID_FACTOR=${PAID_FACTOR:-2.0}; JOBS=${JOBS:-slurm/jobs.txt}
+MAX_PAID=${MAX_PAID:-4}; PAID_FACTOR=${PAID_FACTOR:-2.0}; JOBS=${JOBS:-slurm/jobs.txt}
 
 py() { "$DNASPRING_PY" -c "$1"; }
 ns_done() { py "import json;print(json.load(open('$1')).get('ns_done',0))" 2>/dev/null || echo 0; }
@@ -78,7 +78,7 @@ while true; do
       gpu_test) [ "$queued_test" -ge 1 ] && continue; cons="--constraint=a100-mig"; cap=12 ;;
       gpu_requeue|gpu)
         [ "$queued_paid" -ge "$MAX_PAID" ] && continue
-        if [ -z "$X0" ] && ! is_done "$(ns_done "$bench_prog")" 1; then continue; fi   # production waits for its free benchmark; windows carry HOURS
+        if [ -z "$X0" ] && [ -z "$HOURS" ] && ! is_done "$(ns_done "$bench_prog")" 1; then continue; fi   # production waits for its free benchmark unless HOURS is given
         cons="--constraint=h200|h100|a100"; cap=72 ;;   # no MIG slices at full price
       *) echo "bad PART $PART"; continue ;;
     esac

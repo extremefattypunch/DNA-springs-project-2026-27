@@ -16,24 +16,21 @@ SYS=P2_clicked  NS=1   REP=1 PART=gpu_test  HOURS=1 SUFFIX=_bench
 SYS=P2_clicked  NS=100 REP=1 PART=gpu_requeue
 SYS=P1_tet      NS=1   REP=1 PART=gpu_test  HOURS=1 SUFFIX=_bench
 SYS=P1_tet      NS=100 REP=1 PART=gpu_requeue
-SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=60  K=33 RAMP_PS=3000
-SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=80  K=33 RAMP_PS=2000
-SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=100 K=33 RAMP_PS=2000
-# --- added 2026-10-26 evening: the duplex spring and the 80-mer pair (ss vs ds, 50 vs 80) ---
-SYS=P4_ds50     NS=1   REP=1 PART=gpu_test  HOURS=2 SUFFIX=_bench
-SYS=P4_ds50     NS=100 REP=1 PART=gpu_requeue
-SYS=P5_ss80     NS=1   REP=1 PART=gpu_test  HOURS=2 SUFFIX=_bench
-SYS=P5_ss80     NS=100 REP=1 PART=gpu_requeue
-SYS=P6_ds80     NS=1   REP=1 PART=gpu_test  HOURS=2 SUFFIX=_bench
-SYS=P6_ds80     NS=100 REP=1 PART=gpu_requeue
-# the duplex windows are the key measurement (Zocchi's push), so they go on gpu_requeue
-# like the production runs; the 80 nt strand windows stay on the free partition
+# --- the spring pair and the 80-mers, sized from measured speeds (P3_ss50: 184 ns/day on an A100 at 259k atoms;
+# the 80-mers are 1.75x larger) so they do not wait behind the free-partition windows ---
+SYS=P4_ds50     NS=100 REP=1 PART=gpu_requeue HOURS=16
+SYS=P5_ss80     NS=100 REP=1 PART=gpu_requeue HOURS=30
+SYS=P6_ds80     NS=100 REP=1 PART=gpu_requeue HOURS=30
 SYS=D_ds50      NS=20  REP=1 PART=gpu_requeue X0=60  K=33 RAMP_PS=3000 HOURS=6
 SYS=D_ds50      NS=20  REP=1 PART=gpu_requeue X0=80  K=33 RAMP_PS=2000 HOURS=6
 SYS=D_ds50      NS=20  REP=1 PART=gpu_requeue X0=100 K=33 RAMP_PS=2000 HOURS=6
-SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=60  K=33 RAMP_PS=3000 HOURS=7
-SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=80  K=33 RAMP_PS=2000 HOURS=7
-SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=100 K=33 RAMP_PS=2000 HOURS=7
+SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=60  K=33 RAMP_PS=3000 HOURS=8
+SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=80  K=33 RAMP_PS=2000 HOURS=8
+SYS=D_ds80      NS=20  REP=1 PART=gpu_requeue X0=100 K=33 RAMP_PS=2000 HOURS=8
+# free-partition windows, one at a time
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=60  K=33 RAMP_PS=3000
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=80  K=33 RAMP_PS=2000
+SYS=D_ss50      NS=20  REP=1 PART=gpu_test X0=100 K=33 RAMP_PS=2000
 SYS=D_ss80      NS=20  REP=1 PART=gpu_test X0=60  K=33 RAMP_PS=3000
 SYS=D_ss80      NS=20  REP=1 PART=gpu_test X0=80  K=33 RAMP_PS=2000
 SYS=D_ss80      NS=20  REP=1 PART=gpu_test X0=100 K=33 RAMP_PS=2000
