@@ -22,7 +22,7 @@ convention of that analysis, kept here only as a second column. The two Cβ atom
 tethers reach a further 22 and 26 Å, so the strand *can* be stretched to ~102 Å by the
 protein — but only if the horseshoe opens.
 
-**406 ns over 5 systems**, one trajectory each.
+**425 ns over 5 systems**, one trajectory each.
 
 ![the 50 bp duplex spring on the horseshoe](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_P4_ds50_overview_still.png)
 *the 50 bp duplex spring on the horseshoe.*
@@ -39,9 +39,9 @@ Both are run at 50 and 80 nt, so the two axes of the design can be read separate
 | chimera | DNA end-to-end (Å) | Cβ7–Cβ553 (Å) | Δ vs clicked zero (Å) | modelled force (pN; + push, − pull) | Zocchi f(x) a duplex of this length would give at this span | nucleotides on the protein | kinking |
 |---|---|---|---|---|---|---|---|
 | 50 nt ssDNA, closed loop | 95 ± 9 | 77.8 | -3.1 ± 3.5 (p = 0.39) | −1.74 (Marko–Siggia, matched) | 2.05 (kinked) | 3 of 50 | 0.18 turns/frame, 11.5°/nt |
-| 50 bp dsDNA, closed loop | 104 ± 6 | 69.7 | -11.1 ± 2.6 (p = < 0.001) | +2.77 (Zocchi, kinked) | 2.16 (kinked) | 0 of 50 | 4.0°/bp, 0.20 bp open (bp 50) |
+| 50 bp dsDNA, closed loop | 113 ± 12 | 88.9 | +8.0 ± 6.8 (p = 0.26) | +3.01 (Zocchi, kinked) | 2.31 (kinked) | 0 of 50 | 4.9°/bp, 6.30 bp open (bp 50) |
 
-Read along the two axes of the design — hybridisation and length — the site displacement goes 50-mer: ss -3.1 Å vs ds -11.1 Å.
+Read along the two axes of the design — hybridisation and length — the site displacement goes 50-mer: ss -3.1 Å vs ds +8.0 Å.
 
 ![the attachment-point separation against the clicked zero](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig7_headline.png)
 
@@ -51,7 +51,7 @@ Read along the two axes of the design — hybridisation and length — the site 
 | 2× Tet2-Et, unclicked | 78.6 ± 7.6 | 56–94 | -2.32 ± 3.11 | 0.47 |
 | clicked, no DNA | 80.9 ± 8.9 | 52–102 | zero | — |
 | 50 nt ssDNA, closed loop | 77.8 ± 9.1 | 54–100 | -3.08 ± 3.51 | 0.39 |
-| 50 bp dsDNA, closed loop | 69.7 ± 4.2 | 59–77 | -11.06 ± 2.60 | < 0.001 |
+| 50 bp dsDNA, closed loop | 88.9 ± 21.8 | 59–185 | +8.02 ± 6.77 | 0.26 |
 
 The zero is the clicked protein without DNA, not the unmodified one: on sfGFP, installing
 and clicking the two residues moved the sites by 0.6 Å before any DNA was attached, which
@@ -72,7 +72,7 @@ while the rest stayed at 2–4 Å. Our attachment site Asp7 sits in that tail.
 | 2× Tet2-Et, unclicked | 4.88 (max 8.8) | 12.8 | 2.57 | 6.1 / 4.4 | 0.775 |
 | clicked, no DNA | 5.99 (max 11.0) | 17.2 | 2.41 | 7.5 / 4.2 | 0.772 |
 | 50 nt ssDNA, closed loop | 4.81 (max 8.5) | 10.4 | 2.26 | 6.4 / 4.6 | 0.773 |
-| 50 bp dsDNA, closed loop | 2.05 (max 3.1) | 7.7 | 1.20 | 3.6 / 2.4 | 0.782 |
+| 50 bp dsDNA, closed loop | 12.68 (max 56.8) | 23.1 | 17.22 | 26.3 / 21.2 | 0.721 |
 
 The chimera's core amplitude (RMSD about the run's own mean, per block) differs from the clicked control's by -0.12 ± 0.26 Å (p = 0.65 on block means).
 
@@ -91,7 +91,7 @@ dihedral across four consecutive centroids. The literature puts PR65's hinge at 
 | 2× Tet2-Et, unclicked | 159 ± 7 | 73.5 ± 7.6 | 60.5 ± 7.7 | 1.44 / 2.08 / 0.81 | H12 | 0.94 |
 | clicked, no DNA | 165 ± 8 | 73.0 ± 7.5 | 59.2 ± 7.4 | 1.20 / 2.96 / 0.76 | H12 | 0.29 |
 | 50 nt ssDNA, closed loop | 159 ± 7 | 73.9 ± 7.5 | 61.0 ± 7.1 | 1.31 / 2.23 / 0.72 | H12 | 0.97 |
-| 50 bp dsDNA, closed loop | 161 ± 5 | 62.2 ± 2.9 | 48.4 ± 2.7 | 0.89 / 1.25 / 0.83 | H12 | 1.00 |
+| 50 bp dsDNA, closed loop | 140 ± 45 | 79.5 ± 18.4 | 68.6 ± 22.9 | 7.82 / 10.00 / 3.10 | H2 | 0.70 |
 
 Against the clicked control, the repeats whose bend angle moves most under the strand are HEAT 5 (-1.6°, p = < 0.001, spread ×0.94), HEAT 13 (-2.6°, p = 0.002, spread ×0.89), HEAT 2 (+3.7°, p = 0.009, spread ×1.23). The horseshoe aperture (HEAT1–HEAT15) changes by +0.8 ± 2.8 Å (p = 0.77).
 
@@ -126,7 +126,7 @@ of the horseshoe *is* the compliance, and 100 ns samples it only partly.
 | 2× Tet2-Et, unclicked | 78.5 ± 7.6 | 1.8 | 1.7 | 7.3 | 1.4 | 0.07 |
 | clicked, no DNA | 80.9 ± 8.9 | 1.2 | 1.8 | 5.3 | 1.9 | 0.09 |
 | 50 nt ssDNA, closed loop | 77.8 ± 9.1 | 1.2 | 1.8 | 5.0 | 2.0 | 0.10 |
-| 50 bp dsDNA, closed loop | 69.7 ± 4.2 | 5.7 | 11.6 | 23.8 | 0.4 | 0.02 |
+| 50 bp dsDNA, closed loop | 88.8 ± 21.8 | 0.2 | 0.3 | 0.9 | 11.3 | 0.54 |
 
 This is the number that decides whether a spring of a few piconewtons is visible at all. On sfGFP
 (κ ≈ 300) a 4 pN spring moved the sites 0.03 Å and stored 0.002 k<sub>B</sub>T, below what 50 ns can
@@ -206,11 +206,12 @@ exerts, read as ⟨k(x₀ − r)⟩ so that positive means the strand **pulls** 
 
 | spring | target x₀ (Å) | settled ⟨r⟩ (Å) | measured force (pN; + push, − pull) | model at ⟨r⟩ (pN) | kinking in the window | box valid? |
 |---|---|---|---|---|---|---|
+| ds50 | 60 | 62.0 ± 2.5 | **+11.23 ± 1.91** | +0.88 (Zocchi, kinked) | 8.9° max step, 0 bp open | yes |
 | ss50 | 60 | 60.3 ± 2.8 | **+1.52 ± 1.51** | −0.98 (Marko–Siggia, slack) | 0.02 turns/frame | yes |
 | ss50 | 80 | 80.0 ± 2.7 | **+0.15 ± 1.31** | −1.38 (Marko–Siggia, matched) | 0.02 turns/frame | yes |
 | ss50 | 100 | 99.8 ± 3.0 | **-1.23 ± 1.70** | −1.85 (Marko–Siggia, stretched (pulls)) | 0.58 turns/frame | yes |
 
-Where they can be compared: ss50 at 60 Å: force field +1.52 ± 1.51 pN against -0.98 pN by Marko–Siggia (within the error); ss50 at 80 Å: force field +0.15 ± 1.31 pN against -1.38 pN by Marko–Siggia (within the error); ss50 at 100 Å: force field -1.23 ± 1.70 pN against -1.85 pN by Marko–Siggia (within the error).
+Where they can be compared: ds50 at 62 Å: force field +11.23 ± 1.91 pN against +0.88 pN by Zocchi (outside the error); ss50 at 60 Å: force field +1.52 ± 1.51 pN against -0.98 pN by Marko–Siggia (within the error); ss50 at 80 Å: force field +0.15 ± 1.31 pN against -1.38 pN by Marko–Siggia (within the error); ss50 at 100 Å: force field -1.23 ± 1.70 pN against -1.85 pN by Marko–Siggia (within the error).
 
 ![modelled against measured force for the single strand](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_fig4_force_extension.png)
 
@@ -264,7 +265,7 @@ whether modified or not.
 | 2× Tet2-Et, unclicked | TET | -53, -46 (± 12, 14) | 0.43 | TET | -52, -46 (± 9, 10) | 0.00 |
 | clicked, no DNA | TDP | +35, +53 (± 77, 58) | 0.00 | TDP | -57, -36 (± 10, 10) | 0.00 |
 | 50 nt ssDNA, closed loop | TDP | +49, +33 (± 12, 15) | 0.39 | TDP | -59, -35 (± 9, 8) | 0.09 |
-| 50 bp dsDNA, closed loop | TDP | +66, +8 (± 11, 23) | 0.01 | TDP | -60, -32 (± 9, 9) | 0.00 |
+| 50 bp dsDNA, closed loop | TDP | +65, +14 (± 10, 23) | 0.01 | TDP | -60, -29 (± 13, 15) | 0.00 |
 
 ![backbone conformation at the two sites](https://extremefattypunch.github.io/DNA-springs-project-2026-27/figures/pp2a_ramachandran.png)
 
