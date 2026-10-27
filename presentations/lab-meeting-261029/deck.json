@@ -1,0 +1,283 @@
+{
+ "slides": [
+  {
+   "kind": "image",
+   "page": 1,
+   "src": "slides/p-01.jpg",
+   "title": "Lab Meeting 261029"
+  },
+  {
+   "kind": "image",
+   "page": 2,
+   "src": "slides/p-02.jpg",
+   "title": "For each protein studied - we seek “SAM”"
+  },
+  {
+   "kind": "image",
+   "page": 3,
+   "src": "slides/p-03.jpg",
+   "title": "sfGFP initial progress and open problems"
+  },
+  {
+   "kind": "image",
+   "page": 4,
+   "src": "slides/p-04.jpg",
+   "title": "How do we identify circular products?"
+  },
+  {
+   "kind": "gel",
+   "page": 5,
+   "title": "sfGFP",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p05-sfgfp"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 6,
+   "title": "Big batch high purity",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p06-bigbatch"
+    }
+   ]
+  },
+  {
+   "kind": "image",
+   "page": 7,
+   "src": "slides/p-07.jpg",
+   "title": "Flurometry"
+  },
+  {
+   "kind": "image",
+   "page": 8,
+   "src": "slides/p-08.jpg",
+   "title": "Effect of Tet quenching"
+  },
+  {
+   "kind": "image",
+   "page": 9,
+   "src": "slides/p-09.jpg",
+   "title": "Concentration ladder - inner filter effect"
+  },
+  {
+   "kind": "image",
+   "page": 10,
+   "src": "slides/p-10.jpg",
+   "title": "Effect of force application"
+  },
+  {
+   "kind": "image",
+   "page": 11,
+   "src": "slides/p-11.jpg",
+   "title": "What is MD analysis? How?"
+  },
+  {
+   "kind": "image",
+   "page": 12,
+   "src": "slides/p-12.jpg",
+   "title": "sfGFP MD analysis"
+  },
+  {
+   "kind": "image",
+   "page": 13,
+   "src": "slides/p-13.jpg",
+   "title": "Ian’s sfGFP progress summary"
+  },
+  {
+   "kind": "image",
+   "page": 14,
+   "src": "slides/p-14.jpg",
+   "title": "PP2A initial progress and open problems"
+  },
+  {
+   "kind": "gel",
+   "page": 15,
+   "title": "PP2A - wrong circular product + poor yield",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p15-pp2a-wrong"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 16,
+   "title": "Finding 1: 1 to 1 DNA to protein ratio provides best yield",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p16-ratio"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 17,
+   "title": "Lets cleave GST tag!",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p17-gst"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 18,
+   "title": "Finding 2: GST cleavage reveals a new band",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p18-protein",
+     "head": "Protein stain"
+    },
+    {
+     "gel": "p18-dna",
+     "head": "DNA stain"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 19,
+   "title": "Finding 3: longer BCN incubation time = higher yield circular product",
+   "section": "synthesis",
+   "top": 214,
+   "panels": [
+    {
+     "gel": "p19-2h",
+     "head": "2 h standard BCN incubation"
+    },
+    {
+     "gel": "p19-12h",
+     "head": "12 h BCN incubation"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 20,
+   "title": "So is this new band circular product? Lets use resin to find out! First, check if TCO resin works",
+   "section": "synthesis",
+   "top": 330,
+   "callouts": [
+    {
+     "x": 96,
+     "y": 196,
+     "w": 1728,
+     "html": "Packed resin (fixed 25 µL) : sample (vary) &nbsp; 1:1 → 1:2 → 1:3 → 1:4<br><b>Finding:</b> <i>the more sample to packed resin, the less unnecessary sample loss</i>"
+    }
+   ],
+   "panels": [
+    {
+     "gel": "p20-nonexposed",
+     "head": "Does resin trap products with non-exposed tet groups? No (check)"
+    },
+    {
+     "gel": "p20-exposed",
+     "head": "Does resin trap products with exposed tet groups? Yes (check)"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 21,
+   "title": "[PENDING] SEC optimization: bands too dilute to be visible",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p21-sec"
+    },
+    {
+     "gel": "p21-dilute"
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 22,
+   "title": "[PENDING] DTT optimization: currently inhibits click chemistry",
+   "section": "synthesis",
+   "panels": [
+    {
+     "gel": "p22-dtt-dye"
+    },
+    {
+     "gel": "p22-dtt-cdna"
+    }
+   ]
+  },
+  {
+   "kind": "image",
+   "page": 23,
+   "src": "slides/p-23.jpg",
+   "title": "[PENDING] PP2A assays"
+  },
+  {
+   "kind": "image",
+   "page": 24,
+   "src": "slides/p-24.jpg",
+   "title": "[Plans] Holoenzyme formation analysis"
+  },
+  {
+   "kind": "image",
+   "page": 25,
+   "src": "slides/p-25.jpg",
+   "title": "What is cryoEM downstream analysis?"
+  },
+  {
+   "kind": "image",
+   "page": 26,
+   "src": "slides/p-26.jpg",
+   "title": "Step 1: Quality Control"
+  },
+  {
+   "kind": "image",
+   "page": 27,
+   "src": "slides/p-27.jpg",
+   "title": "Step 2: Density Map → Fit Atomic Model"
+  },
+  {
+   "kind": "image",
+   "page": 28,
+   "src": "slides/p-28.jpg",
+   "title": "Step 3 analyze: Degree of A isoforms subunit deformation"
+  },
+  {
+   "kind": "image",
+   "page": 29,
+   "src": "slides/p-29.jpg",
+   "title": "[Plans] Substrate binding assay"
+  },
+  {
+   "kind": "image",
+   "page": 30,
+   "src": "slides/p-30.jpg",
+   "title": "[Plans] Phosphatase activity assay"
+  },
+  {
+   "kind": "image",
+   "page": 31,
+   "src": "slides/p-31.jpg",
+   "title": "MD analysis pp2a"
+  },
+  {
+   "kind": "image",
+   "page": 32,
+   "src": "slides/p-32.jpg",
+   "title": "Ian’s pp2a progress summary"
+  },
+  {
+   "kind": "image",
+   "page": 33,
+   "src": "slides/p-33.jpg",
+   "title": "Technical Tutorials - Brief Walkthrough"
+  }
+ ]
+}

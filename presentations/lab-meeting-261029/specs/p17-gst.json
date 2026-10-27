@@ -1,0 +1,57 @@
+{
+  "id": "p17-gst",
+  "image": "gels/p17-gst.jpg",
+  "size": [650, 730],
+  "style": "dark",
+  "alt": "SDS-PAGE of GST-tagged 2-tet pp2a digested with 0 to 0.50 U thrombin, under its experiment-conditions table",
+  "gel": { "poly": [[190, 396], [470, 396], [470, 730], [190, 730]], "wellY": 400, "tilt": 0 },
+  "species": {
+    "gstp":    { "name": "pp2a + GST", "note": "uncleaved · runs as a doublet", "cls": "other", "icon": { "k": "gstp", "tet": 2 } },
+    "cleaved": { "name": "cleaved pp2a", "note": "2-tet pp2a, GST tag removed", "cls": "protein", "icon": { "k": "protein", "tet": 2 } },
+    "gst":     { "name": "free GST", "note": "released tag · grows with thrombin", "cls": "other", "icon": { "k": "gst" } },
+    "imp":     { "cls": "impurity" }
+  },
+  "lanes": [
+    { "id": "L1", "x": 223, "w": 28, "label": "0", "chip": "ctrl", "hl": [192, 30, 66, 333], "bands": [
+      { "y": 510, "h": 12, "i": 0.83, "sp": "gstp" },
+      { "y": 523, "h": 9, "i": 0.5, "sp": "gstp" },
+      { "y": 411, "h": 10, "i": 0.12, "sp": "imp", "blur": 1, "smear": { "up": 12, "k": 0.45 } } ] },
+    { "id": "L2", "x": 259, "w": 30, "label": ".50", "hl": [262, 30, 66, 333], "bands": [
+      { "y": 547, "h": 12, "i": 0.63, "sp": "cleaved" },
+      { "y": 506, "h": 7, "i": 0.11, "sp": "gstp" },
+      { "y": 665, "h": 18, "i": 1.0, "sp": "gst", "x": 263, "w": 37 },
+      { "y": 567, "h": 5, "i": 0.04, "sp": "imp" } ] },
+    { "id": "L3", "x": 294, "w": 30, "label": ".25", "hl": [332, 30, 66, 333], "bands": [
+      { "y": 547, "h": 12, "i": 0.65, "sp": "cleaved" },
+      { "y": 505, "h": 7, "i": 0.1, "sp": "gstp" },
+      { "y": 665, "h": 16, "i": 0.81, "sp": "gst", "x": 302, "w": 35 },
+      { "y": 571, "h": 5, "i": 0.05, "sp": "imp" } ] },
+    { "id": "L4", "x": 330, "w": 32, "label": ".10", "hl": [402, 30, 66, 333], "bands": [
+      { "y": 549, "h": 13, "i": 0.67, "sp": "cleaved" },
+      { "y": 505, "h": 9, "i": 0.15, "sp": "gstp" },
+      { "y": 667, "h": 15, "i": 0.59, "sp": "gst", "x": 341, "w": 36 },
+      { "y": 571, "h": 5, "i": 0.05, "sp": "imp" } ] },
+    { "id": "L5", "x": 369, "w": 36, "label": ".05", "hl": [472, 30, 66, 333], "bands": [
+      { "y": 548, "h": 13, "i": 0.66, "sp": "cleaved" },
+      { "y": 502, "h": 9, "i": 0.11, "sp": "gstp" },
+      { "y": 669, "h": 15, "i": 0.42, "sp": "gst", "x": 381, "w": 36 },
+      { "y": 572, "h": 5, "i": 0.07, "sp": "imp" } ] },
+    { "id": "L6", "x": 413, "w": 38, "label": ".01", "hl": [542, 30, 63, 333], "bands": [
+      { "y": 544, "h": 12, "i": 0.6, "sp": "cleaved" },
+      { "y": 496, "h": 7, "i": 0.16, "sp": "gstp" },
+      { "y": 670, "h": 18, "i": 0.19, "sp": "gst", "x": 423, "w": 34, "blur": 1 },
+      { "y": 568, "h": 5, "i": 0.08, "sp": "imp" } ] }
+  ],
+  "arrows": [],
+  "pins": [[3, 0, 611, 368]],
+  "blank": "Blank gel: 2-tet pp2a + GST in every well, thrombin rising 0 to 0.50 U (table above)",
+  "steps": [
+    { "lanes": ["L1"], "say": "<b>0 U thrombin</b>: uncleaved pp2a + GST runs slow, the slide's \"?? double band\"" },
+    { "lanes": ["L6"], "say": "<b>0.01 U thrombin</b>: already most of the pp2a drops to the faster, cleaved position" },
+    { "lanes": ["L5"], "say": "<b>0.05 U</b>: cleaved pp2a sits below a faint uncleaved band; free GST grows" },
+    { "lanes": ["L4"], "say": "<b>0.10 U</b>: more released GST collects near the bottom of the gel" },
+    { "lanes": ["L3"], "say": "<b>0.25 U</b>: cleaved pp2a holds steady while the free GST band brightens" },
+    { "lanes": ["L2"], "say": "<b>0.50 U</b>: brightest free GST, yet a faint uncleaved band remains in every lane" },
+    { "real": true, "say": "Real gel, as imaged" }
+  ]
+}

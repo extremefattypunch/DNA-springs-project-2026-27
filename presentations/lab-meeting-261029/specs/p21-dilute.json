@@ -1,0 +1,112 @@
+{
+  "id": "p21-dilute",
+  "image": "gels/p21-dilute.jpg",
+  "size": [
+    385,
+    488
+  ],
+  "style": "mid",
+  "alt": "Pale grey-blue photo of an SDS-PAGE gel of SEC fractions: the sample lanes show no visible bands; one bright-banded lane (a ladder or a concentrated input, not drawn) and a dark prestained marker sit at the right edge",
+  "gel": {
+    "poly": [
+      [
+        0,
+        56
+      ],
+      [
+        352,
+        56
+      ],
+      [
+        352,
+        486
+      ],
+      [
+        0,
+        486
+      ]
+    ],
+    "wellY": 62,
+    "tilt": 0
+  },
+  "species": {
+    "imp": {
+      "cls": "impurity"
+    }
+  },
+  "lanes": [
+    {
+      "id": "F1",
+      "x": 25,
+      "w": 40,
+      "label": "F1",
+      "bands": []
+    },
+    {
+      "id": "F2",
+      "x": 75,
+      "w": 40,
+      "label": "F2",
+      "bands": []
+    },
+    {
+      "id": "F3",
+      "x": 125,
+      "w": 40,
+      "label": "F3",
+      "bands": []
+    },
+    {
+      "id": "F4",
+      "x": 175,
+      "w": 40,
+      "label": "F4",
+      "bands": []
+    },
+    {
+      "id": "F5",
+      "x": 225,
+      "w": 40,
+      "label": "F5",
+      "bands": []
+    },
+    {
+      "id": "F6",
+      "x": 275,
+      "w": 40,
+      "label": "F6",
+      "bands": []
+    }
+  ],
+  "groups": [
+    {
+      "label": "SEC fractions",
+      "lanes": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6"
+      ]
+    }
+  ],
+  "blank": "Blank gel: SEC fractions, loaded left to right",
+  "steps": [
+    {
+      "lanes": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6"
+      ],
+      "say": "<b>SEC fractions</b>: loaded and run, but no band rises above the background"
+    },
+    {
+      "real": true,
+      "say": "Real gel, as imaged: only the lane beside the marker shows bands (ladder or input, not drawn)"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "id": "p18-dna",
+  "image": "gels/p18-dna.jpg",
+  "size": [473, 308],
+  "style": "light",
+  "alt": "DNA-stained SDS-PAGE photo of the GST-cleavage reactions: three lanes boxed 2 tet, three boxed 1 tet and a no-thrombin control; arrows mark the pp2a + DNA band and a band just below it",
+  "gel": { "poly": [[142, 2], [350, 2], [350, 262], [142, 262]], "wellY": 8, "tilt": 0 },
+  "species": {
+    "p2d1_ss": { "name": "2 pp2a + ssDNA", "note": "one strand bridges two pp2a", "cls": "ss", "icon": { "k": "p2d1" } },
+    "gstp":    { "name": "pp2a + GST", "note": "uncleaved · labelled on slide", "cls": "other", "icon": { "k": "gstp", "tet": 1 } },
+    "p1d_ss":  { "name": "pp2a + ssDNA", "note": "linear 1 : 1 · slide's pp2a+dna", "cls": "ss", "icon": { "k": "p1d", "tet": 1 } },
+    "new":     { "name": "New band (circular?)", "note": "DNA-stained · just below linear", "cls": "circ", "icon": { "k": "circ" } },
+    "protein": { "name": "pp2a only", "note": "faint · slide's pp2a position", "cls": "protein", "icon": { "k": "protein", "tet": 0 } },
+    "dna":     { "name": "free ssDNA", "note": "assumed: excess strand", "cls": "ss", "icon": { "k": "dna" } },
+    "imp":     { "cls": "impurity" }
+  },
+  "lanes": [
+    { "id": "A", "x": 166, "w": 28, "label": "1", "bands": [
+      { "y": 70, "h": 6, "i": 0.4, "sp": "p2d1_ss" },
+      { "y": 110, "h": 6, "i": 0.36, "sp": "p1d_ss" },
+      { "y": 135, "h": 6, "i": 0.14, "sp": "protein" },
+      { "y": 82, "h": 7, "i": 0.15, "sp": "imp" } ] },
+    { "id": "B", "x": 198, "w": 18, "label": "2", "bands": [
+      { "y": 109, "h": 6, "i": 0.72, "sp": "p1d_ss" },
+      { "y": 241, "h": 16, "i": 1.0, "sp": "dna", "x": 199, "w": 20, "smear": { "up": 105, "k": 0.42 } },
+      { "y": 61, "h": 6, "i": 0.2, "sp": "imp" },
+      { "y": 142, "h": 22, "i": 0.2, "sp": "imp", "x": 200, "blur": 3, "smear": { "down": 30, "k": 0.6 } } ] },
+    { "id": "C", "x": 220, "w": 18, "label": "3", "bands": [
+      { "y": 134, "h": 6, "i": 0.18, "sp": "protein" } ] },
+    { "id": "D", "x": 249, "w": 25, "label": "1", "bands": [
+      { "y": 71, "h": 6, "i": 0.58, "sp": "p2d1_ss" },
+      { "y": 108, "h": 7, "i": 0.7, "sp": "p1d_ss" },
+      { "y": 132, "h": 6, "i": 0.16, "sp": "protein" },
+      { "y": 157, "h": 6, "i": 0.14, "sp": "imp" },
+      { "y": 171, "h": 5, "i": 0.15, "sp": "imp" } ] },
+    { "id": "E", "x": 278, "w": 24, "label": "2", "bands": [
+      { "y": 108, "h": 8, "i": 0.8, "sp": "p1d_ss" },
+      { "y": 117, "h": 8, "i": 0.92, "sp": "new" },
+      { "y": 71, "h": 8, "i": 0.4, "sp": "p2d1_ss" },
+      { "y": 131, "h": 5, "i": 0.22, "sp": "protein", "x": 280 },
+      { "y": 236, "h": 18, "i": 0.86, "sp": "dna", "x": 284, "w": 26, "smear": { "up": 90, "k": 0.35 } },
+      { "y": 63, "h": 8, "i": 0.2, "sp": "imp", "x": 276, "smear": { "up": 50, "k": 0.9, "down": 38, "kd": 0.55 } },
+      { "y": 91, "h": 6, "i": 0.2, "sp": "imp" },
+      { "y": 148, "h": 6, "i": 0.2, "sp": "imp", "x": 281 },
+      { "y": 158, "h": 6, "i": 0.2, "sp": "imp", "x": 282 } ] },
+    { "id": "F", "x": 305, "w": 22, "label": "3", "bands": [
+      { "y": 131, "h": 6, "i": 0.19, "sp": "protein" } ] },
+    { "id": "G", "x": 333, "w": 21, "label": "no thr", "chip": "ctrl", "bands": [
+      { "y": 102, "h": 7, "i": 0.5, "sp": "gstp" },
+      { "y": 111, "h": 6, "i": 0.27, "sp": "gstp" } ] }
+  ],
+  "groups": [
+    { "label": "2 tet", "lanes": ["A", "B", "C"] },
+    { "label": "1 tet", "lanes": ["D", "E", "F"] },
+    { "label": "control", "lanes": ["G"] }
+  ],
+  "arrows": [
+    { "from": ["A", 1], "to": ["B", 0] },
+    { "from": ["D", 1], "to": ["E", 0] },
+    { "from": ["D", 1], "to": ["E", 1] }
+  ],
+  "blank": "Blank gel: control first, then the 1-tet box, then the 2-tet box",
+  "steps": [
+    { "lanes": ["G"], "say": "<b>No thrombin</b>: uncleaved pp2a + GST, faint in the DNA stain, as labelled" },
+    { "lanes": ["D", "E", "F"], "say": "<b>1 tet box</b>: linear pp2a + ssDNA; lane 2 adds a darker band just below it" },
+    { "lanes": ["A", "B", "C"], "say": "<b>2 tet box</b>: linear pp2a + ssDNA in lanes 1-2, excess free ssDNA in lane 2" },
+    { "glow": [["E", 1]], "say": "<b>New band contains DNA</b>: a chimera just below linear pp2a + ssDNA" },
+    { "real": true, "say": "Real gel, as imaged" }
+  ]
+}

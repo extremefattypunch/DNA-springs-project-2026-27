@@ -1,0 +1,79 @@
+{
+  "id": "p18-protein",
+  "image": "gels/p18-protein.jpg",
+  "size": [212, 239],
+  "style": "dark",
+  "alt": "Protein-stained SDS-PAGE after thrombin cleavage of GST-pp2a: three 1-tet lanes, three 2-tet lanes and a no-thrombin control; an arrow in 2 tet marks a new band just below linear pp2a + DNA",
+  "gel": { "poly": [[29, 22], [176, 22], [176, 210], [29, 210]], "wellY": 27, "tilt": 0 },
+  "species": {
+    "p2d1_ss": { "name": "2 pp2a + ssDNA", "note": "one strand bridges two pp2a", "cls": "ss", "icon": { "k": "p2d1" } },
+    "p1d_ss":  { "name": "pp2a + ssDNA", "note": "linear 1 : 1 · one end attached", "cls": "ss", "icon": { "k": "p1d", "tet": 1 } },
+    "gstp":    { "name": "pp2a + GST", "note": "uncleaved · runs as a doublet", "cls": "other", "icon": { "k": "gstp", "tet": 1 } },
+    "new":     { "name": "New band (circular?)", "note": "candidate circular pp2a + ssDNA", "cls": "circ", "icon": { "k": "circ" } },
+    "protein": { "name": "pp2a only", "note": "cleaved, unreacted protein", "cls": "protein", "icon": { "k": "protein", "tet": 0 } },
+    "gst":     { "name": "free GST", "note": "tag cut off by thrombin", "cls": "other", "icon": { "k": "gst" } },
+    "imp":     { "cls": "impurity" }
+  },
+  "lanes": [
+    { "id": "L1", "x": 44, "w": 22, "label": "1", "bands": [
+      { "y": 71, "h": 7, "i": 0.46, "sp": "p2d1_ss" },
+      { "y": 97, "h": 6, "i": 0.24, "sp": "p1d_ss" },
+      { "y": 114, "h": 8, "i": 0.74, "sp": "protein" },
+      { "y": 174, "h": 13, "i": 1.0, "sp": "gst", "w": 25 },
+      { "y": 126, "h": 7, "i": 0.2, "sp": "imp" },
+      { "y": 80, "h": 5, "i": 0.12, "sp": "imp" },
+      { "y": 63, "h": 12, "i": 0.1, "sp": "imp", "blur": 1.5 } ] },
+    { "id": "L2", "x": 64, "w": 14, "label": "2", "bands": [
+      { "y": 98, "h": 6, "i": 0.26, "sp": "p1d_ss" },
+      { "y": 114, "h": 6, "i": 0.19, "sp": "protein" },
+      { "y": 174, "h": 13, "i": 1.0, "sp": "gst", "w": 17 },
+      { "y": 127, "h": 7, "i": 0.15, "sp": "imp" } ] },
+    { "id": "L3", "x": 79, "w": 14, "label": "3", "bands": [
+      { "y": 115, "h": 7, "i": 0.66, "sp": "protein" },
+      { "y": 174, "h": 13, "i": 1.0, "sp": "gst", "w": 17 },
+      { "y": 95, "h": 5, "i": 0.14, "sp": "imp" },
+      { "y": 145, "h": 5, "i": 0.08, "sp": "imp" } ] },
+    { "id": "L4", "x": 99, "w": 18, "label": "1", "bands": [
+      { "y": 75, "h": 6, "i": 0.41, "sp": "p2d1_ss" },
+      { "y": 99, "h": 7, "i": 0.54, "sp": "p1d_ss" },
+      { "y": 116, "h": 7, "i": 0.44, "sp": "protein" },
+      { "y": 175, "h": 13, "i": 1.0, "sp": "gst", "w": 22 },
+      { "y": 83, "h": 5, "i": 0.12, "sp": "imp" },
+      { "y": 129, "h": 6, "i": 0.12, "sp": "imp" } ] },
+    { "id": "L5", "x": 119, "w": 15, "label": "2", "bands": [
+      { "y": 71, "h": 6, "i": 0.31, "sp": "p2d1_ss" },
+      { "y": 101, "h": 6, "i": 0.2, "sp": "p1d_ss" },
+      { "y": 107.5, "h": 8, "i": 0.56, "sp": "new" },
+      { "y": 117, "h": 6, "i": 0.34, "sp": "protein" },
+      { "y": 174, "h": 13, "i": 1.0, "sp": "gst", "w": 18 },
+      { "y": 129, "h": 6, "i": 0.2, "sp": "imp" },
+      { "y": 81, "h": 6, "i": 0.14, "sp": "imp" } ] },
+    { "id": "L6", "x": 138, "w": 20, "label": "3", "bands": [
+      { "y": 118.5, "h": 8, "i": 0.88, "sp": "protein" },
+      { "y": 175.5, "h": 13, "i": 1.0, "sp": "gst", "w": 21 },
+      { "y": 58, "h": 5, "i": 0.15, "sp": "imp" },
+      { "y": 129, "h": 6, "i": 0.1, "sp": "imp" } ] },
+    { "id": "L7", "x": 155, "w": 16, "label": "no thr", "chip": "ctrl", "bands": [
+      { "y": 99, "h": 8, "i": 0.78, "sp": "gstp", "w": 18 },
+      { "y": 106, "h": 7, "i": 0.66, "sp": "gstp", "w": 15 },
+      { "y": 52, "h": 6, "i": 0.2, "sp": "imp" },
+      { "y": 38, "h": 10, "i": 0.2, "sp": "imp", "blur": 1.5 },
+      { "y": 142, "h": 6, "i": 0.14, "sp": "imp" } ] }
+  ],
+  "groups": [
+    { "label": "1 tet", "lanes": ["L1", "L2", "L3"] },
+    { "label": "2 tet", "lanes": ["L4", "L5", "L6"] },
+    { "label": "control", "lanes": ["L7"] }
+  ],
+  "arrows": [
+    { "from": ["L4", 1], "to": ["L5", 2] }
+  ],
+  "blank": "Blank gel: the no-thrombin control first, then the 1-tet and 2-tet lanes",
+  "steps": [
+    { "lanes": ["L7"], "say": "<b>No thrombin</b>: uncleaved pp2a + GST runs as a doublet, the reference row" },
+    { "lanes": ["L1", "L2", "L3"], "say": "<b>1 tet + thrombin</b>: GST cut off; linear pp2a + ssDNA and a bridged dimer" },
+    { "lanes": ["L4", "L5", "L6"], "say": "<b>2 tet + thrombin</b>: a new band in lane 2, just below linear pp2a + ssDNA" },
+    { "glow": [["L5", 2]], "say": "<b>Candidate circular chimera</b>: runs just below linear, as in preprint Fig 2" },
+    { "real": true, "say": "Real gel, as imaged" }
+  ]
+}

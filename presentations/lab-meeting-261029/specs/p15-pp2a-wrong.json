@@ -1,0 +1,74 @@
+{
+  "id": "p15-pp2a-wrong",
+  "image": "gels/p15-pp2a-wrong.jpg",
+  "size": [728, 380],
+  "style": "dark",
+  "alt": "pp2a SDS-PAGE, 1-tet and 2-tet: pp2a alone, + ssDNA, + complementary DNA; the 2-tet up-shift is a 2 pp2a + 2 DNA ring",
+  "gel": { "poly": [[152, 0], [562, 23], [541, 380], [131, 357]], "wellY": 14, "tilt": 3.2, "cy": 285 },
+  "species": {
+    "protein":  { "name": "1-tet pp2a only", "note": "unreacted protein · doublet", "cls": "protein", "icon": { "k": "protein", "tet": 1 } },
+    "protein2": { "name": "2-tet pp2a only", "note": "unreacted protein · doublet", "cls": "protein", "icon": { "k": "protein", "tet": 2 } },
+    "p1d_ss":   { "name": "pp2a + ssDNA", "note": "linear 1 : 1 chimera", "cls": "ss", "icon": { "k": "p1d", "tet": 1 } },
+    "p2d2_ss":  { "name": "2 pp2a + 2 ssDNA", "note": "chain · slide's 2xpp2a+2xDNA", "cls": "ss", "icon": { "k": "p2d2" } },
+    "p2d2c_ss": { "name": "2-tet 2 pp2a + 2 ssDNA", "note": "chain + ring, same mass", "cls": "ss", "icon": { "k": "p2d2circ" } },
+    "p1d_ds":   { "name": "pp2a + dsDNA", "note": "linear · runs faster", "cls": "ds", "icon": { "k": "p1d", "ds": true } },
+    "p2d2_ds":  { "name": "2 pp2a + 2 dsDNA", "note": "linear chain · runs faster", "cls": "ds", "side": "left", "icon": { "k": "p2d2", "ds": true } },
+    "ring_ds":  { "name": "Ring: 2 pp2a+2 dsDNA", "note": "wrong circular product: dimer ring", "cls": "circ", "icon": { "k": "p2d2circ", "ds": true } },
+    "imp":      { "cls": "impurity" }
+  },
+  "lanes": [
+    { "id": "L1", "x": 211, "w": 52, "label": "pp2a", "chip": "ctrl", "bands": [
+      { "y": 281, "h": 14, "i": 0.88, "sp": "protein" },
+      { "y": 301, "h": 10, "i": 0.46, "sp": "protein", "w": 48 } ] },
+    { "id": "L2", "x": 268, "w": 41, "label": "ssDNA", "chip": "ss", "bands": [
+      { "y": 160, "h": 17, "i": 0.51, "sp": "p2d2_ss" },
+      { "y": 237, "h": 10, "i": 0.53, "sp": "p1d_ss" },
+      { "y": 282, "h": 13, "i": 0.75, "sp": "protein" },
+      { "y": 303, "h": 10, "i": 0.36, "sp": "protein" },
+      { "y": 247, "h": 12, "i": 0.1, "sp": "imp", "blur": 1 } ] },
+    { "id": "L3", "x": 319, "w": 41, "label": "+cDNA", "chip": "ds", "bands": [
+      { "y": 187.5, "h": 15, "i": 0.4, "sp": "p2d2_ds" },
+      { "y": 248, "h": 10, "i": 0.64, "sp": "p1d_ds" },
+      { "y": 285, "h": 12, "i": 0.73, "sp": "protein" },
+      { "y": 306, "h": 10, "i": 0.3, "sp": "protein" },
+      { "y": 258, "h": 8, "i": 0.11, "sp": "imp" } ] },
+    { "id": "L4", "x": 375, "w": 47, "label": "pp2a", "chip": "ctrl", "bands": [
+      { "y": 293, "h": 18, "i": 1.0, "sp": "protein2" },
+      { "y": 312, "h": 10, "i": 0.62, "sp": "protein2" } ] },
+    { "id": "L5", "x": 427, "w": 39, "label": "ssDNA", "chip": "ss", "bands": [
+      { "y": 162, "h": 19, "i": 0.48, "sp": "p2d2c_ss", "smear": { "down": 12, "k": 0.5 } },
+      { "y": 244, "h": 9, "i": 0.22, "sp": "p1d_ss" },
+      { "y": 290, "h": 12, "i": 0.73, "sp": "protein2" },
+      { "y": 311, "h": 9, "i": 0.27, "sp": "protein2" },
+      { "y": 78, "h": 10, "i": 0.2, "sp": "imp" },
+      { "y": 124, "h": 15, "i": 0.2, "sp": "imp", "blur": 1 },
+      { "y": 60, "h": 10, "i": 0.15, "sp": "imp", "blur": 1 },
+      { "y": 99, "h": 10, "i": 0.11, "sp": "imp", "blur": 1 } ] },
+    { "id": "L6", "x": 480, "w": 40, "label": "+cDNA", "chip": "ds", "bands": [
+      { "y": 146.5, "h": 13, "i": 0.3, "sp": "ring_ds" },
+      { "y": 190, "h": 12, "i": 0.13, "sp": "p2d2_ds" },
+      { "y": 252, "h": 9, "i": 0.37, "sp": "p1d_ds" },
+      { "y": 290, "h": 12, "i": 0.52, "sp": "protein2" },
+      { "y": 312, "h": 9, "i": 0.14, "sp": "protein2" },
+      { "y": 79, "h": 13, "i": 0.19, "sp": "imp", "blur": 1 },
+      { "y": 64, "h": 10, "i": 0.15, "sp": "imp" },
+      { "y": 171, "h": 10, "i": 0.1, "sp": "imp" } ] }
+  ],
+  "groups": [
+    { "label": "1 tet", "lanes": ["L1", "L2", "L3"] },
+    { "label": "2 tet", "lanes": ["L4", "L5", "L6"] }
+  ],
+  "arrows": [
+    { "from": ["L2", 0], "to": ["L3", 0] },
+    { "from": ["L5", 0], "to": ["L6", 0] }
+  ],
+  "blank": "Blank gel: 1-tet and 2-tet pp2a reactions, loaded left to right as the story unfolds",
+  "steps": [
+    { "lanes": ["L1", "L4"], "say": "<b>pp2a alone</b> (1-tet, 2-tet): the unreacted protein runs as a doublet near the bottom" },
+    { "lanes": ["L2"], "say": "<b>1-tet pp2a + ssDNA</b>: a 2 pp2a + 2 DNA band and a linear 1 : 1 chimera, both weak" },
+    { "lanes": ["L5"], "say": "<b>2-tet pp2a + ssDNA</b>: the 2 pp2a + 2 DNA band again, larger species, little 1 : 1" },
+    { "lanes": ["L3", "L6"], "say": "<b>+ complementary strand</b>: linear dsDNA chimeras run faster; one 2-tet band runs slower" },
+    { "glow": [["L6", 0]], "say": "<b>Wrong circular product</b>: the up-shifted band is a 2 pp2a + 2 dsDNA ring, not a 1 : 1 circle" },
+    { "real": true, "say": "Real gel, as imaged" }
+  ]
+}

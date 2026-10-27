@@ -1,0 +1,38 @@
+{
+  "id": "p06-bigbatch",
+  "image": "gels/p06-bigbatch.jpg",
+  "size": [424, 353],
+  "style": "dark",
+  "alt": "sfGFP SDS-PAGE of a big purified batch: the sfGFP + ssDNA chimera alone and with complementary DNA, whose band shifts up; prestained marker and pasted ladder at right",
+  "gel": { "poly": [[166, 38], [330, 38], [330, 353], [166, 353]], "wellY": 43, "tilt": 0 },
+  "species": {
+    "circ_ss": { "name": "Circular sfGFP + ssDNA", "note": "2-tet · purified big batch", "cls": "ss", "icon": { "k": "circ" } },
+    "circ_ds": { "name": "Circular sfGFP + dsDNA", "note": "runs slower · product of interest", "cls": "circ", "icon": { "k": "circ", "ds": true } },
+    "imp":     { "cls": "impurity" }
+  },
+  "lanes": [
+    { "id": "L1", "x": 214, "w": 33, "label": "ssDNA", "chip": "ss", "bands": [
+      { "y": 178, "h": 11, "i": 1.0, "sp": "circ_ss", "x": 216, "w": 40, "smear": { "up": 120, "k": 0.06 } },
+      { "y": 60, "h": 9, "i": 0.05, "sp": "imp" },
+      { "y": 77, "h": 9, "i": 0.06, "sp": "imp" },
+      { "y": 90, "h": 7, "i": 0.06, "sp": "imp" },
+      { "y": 130, "h": 10, "i": 0.05, "sp": "imp" } ] },
+    { "id": "L2", "x": 257, "w": 31, "label": "+cDNA", "chip": "ds", "bands": [
+      { "y": 154, "h": 11, "i": 0.92, "sp": "circ_ds", "x": 263, "w": 36 },
+      { "y": 177, "h": 11, "i": 0.12, "sp": "circ_ss", "x": 262, "w": 34 },
+      { "y": 71, "h": 8, "i": 0.13, "sp": "imp" },
+      { "y": 81, "h": 8, "i": 0.11, "sp": "imp" },
+      { "y": 95, "h": 12, "i": 0.05, "sp": "imp", "blur": 1.5 },
+      { "y": 105, "h": 12, "i": 0.045, "sp": "imp", "blur": 1.5 } ] }
+  ],
+  "arrows": [
+    { "from": ["L1", 0], "to": ["L2", 0] }
+  ],
+  "blank": "Blank gel: the purified big batch, loaded without and with complementary DNA",
+  "steps": [
+    { "lanes": ["L1"], "say": "<b>Purified sfGFP + ssDNA</b>: one dominant chimera band, with only faint traces above" },
+    { "lanes": ["L2"], "say": "<b>+ complementary strand</b>: almost the whole band shifts up, the circular signature" },
+    { "glow": [["L2", 0]], "say": "<b>Circular sfGFP–dsDNA chimera</b>: high-purity product of interest, at big-batch scale" },
+    { "real": true, "say": "Real gel, as imaged" }
+  ]
+}

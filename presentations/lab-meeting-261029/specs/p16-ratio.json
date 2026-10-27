@@ -1,0 +1,1045 @@
+{
+ "id": "p16-ratio",
+ "image": "gels/p16-ratio.jpg",
+ "size": [
+  552,
+  329
+ ],
+ "style": "dark",
+ "alt": "Protein-stained SDS-PAGE of 2-tet pp2a (4 uM) with 2-TCO ssDNA, 50 nt (lanes 1-6) or 80 nt (lanes 7-12), at 1:4, 1:2 and 1:1 DNA:protein, each without and with complementary DNA; lane 13 pp2a only",
+ "gel": {
+  "poly": [
+   [
+    108,
+    46
+   ],
+   [
+    463,
+    46
+   ],
+   [
+    463,
+    293
+   ],
+   [
+    112,
+    298
+   ]
+  ],
+  "wellY": 49,
+  "tilt": 0
+ },
+ "species": {
+  "protein": {
+   "name": "pp2a only",
+   "note": "unreacted 2-tet pp2a · doublet",
+   "cls": "protein",
+   "icon": {
+    "k": "protein",
+    "tet": 2
+   }
+  },
+  "p1d_ss": {
+   "name": "pp2a + ssDNA",
+   "note": "linear 1 : 1 (slide: pp2a+DNA)",
+   "cls": "ss",
+   "icon": {
+    "k": "p1d",
+    "tet": 2
+   }
+  },
+  "p1d_ds": {
+   "name": "pp2a + dsDNA",
+   "note": "linear · runs slightly faster",
+   "cls": "ds",
+   "icon": {
+    "k": "p1d",
+    "tet": 2,
+    "ds": true
+   }
+  },
+  "chain_ss": {
+   "name": "2 pp2a + 2 ssDNA",
+   "note": "open chain · slowest arrowed row",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2"
+   }
+  },
+  "chain_ds": {
+   "name": "2 pp2a + 2 dsDNA",
+   "note": "open chain · runs faster",
+   "cls": "ds",
+   "side": "right",
+   "icon": {
+    "k": "p2d2",
+    "ds": true
+   }
+  },
+  "ring_ss": {
+   "name": "2 pp2a + 2 ssDNA ring",
+   "note": "closed dimer (slide: 2 pp2a)",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2circ"
+   }
+  },
+  "ring_ds": {
+   "name": "2 pp2a + 2 dsDNA ring",
+   "note": "dimer circle · runs slower",
+   "cls": "circ",
+   "icon": {
+    "k": "p2d2circ",
+    "ds": true
+   }
+  },
+  "imp": {
+   "cls": "impurity"
+  }
+ },
+ "lanes": [
+  {
+   "id": "L1",
+   "x": 149,
+   "w": 20,
+   "label": "1:4",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 72,
+     "h": 7,
+     "i": 0.13,
+     "sp": "chain_ss"
+    },
+    {
+     "y": 87,
+     "h": 8,
+     "i": 0.22,
+     "sp": "ring_ss"
+    },
+    {
+     "y": 116,
+     "h": 7,
+     "i": 0.1,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 131,
+     "h": 11,
+     "i": 0.95,
+     "sp": "protein",
+     "w": 23
+    },
+    {
+     "y": 141,
+     "h": 7,
+     "i": 0.36,
+     "sp": "protein"
+    },
+    {
+     "y": 92,
+     "h": 6,
+     "i": 0.13,
+     "sp": "imp"
+    },
+    {
+     "y": 97,
+     "h": 6,
+     "i": 0.08,
+     "sp": "imp"
+    },
+    {
+     "y": 272,
+     "h": 9,
+     "i": 0.32,
+     "sp": "imp",
+     "x": 143
+    }
+   ]
+  },
+  {
+   "id": "L2",
+   "x": 175,
+   "w": 20,
+   "label": "1:4",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 75,
+     "h": 7,
+     "i": 0.19,
+     "sp": "chain_ds"
+    },
+    {
+     "y": 83,
+     "h": 7,
+     "i": 0.24,
+     "sp": "ring_ds"
+    },
+    {
+     "y": 117,
+     "h": 6,
+     "i": 0.14,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 133,
+     "h": 10,
+     "i": 0.93,
+     "sp": "protein"
+    },
+    {
+     "y": 142,
+     "h": 7,
+     "i": 0.38,
+     "sp": "protein"
+    },
+    {
+     "y": 93,
+     "h": 7,
+     "i": 0.17,
+     "sp": "imp"
+    },
+    {
+     "y": 274,
+     "h": 9,
+     "i": 0.44,
+     "sp": "imp",
+     "x": 167.5,
+     "w": 22,
+     "smear": {
+      "up": 12,
+      "k": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "id": "L3",
+   "x": 200.5,
+   "w": 20,
+   "label": "1:2",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 72,
+     "h": 7,
+     "i": 0.3,
+     "sp": "chain_ss"
+    },
+    {
+     "y": 89,
+     "h": 8,
+     "i": 0.62,
+     "sp": "ring_ss"
+    },
+    {
+     "y": 118,
+     "h": 7,
+     "i": 0.15,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 134,
+     "h": 10,
+     "i": 0.93,
+     "sp": "protein"
+    },
+    {
+     "y": 143,
+     "h": 7,
+     "i": 0.44,
+     "sp": "protein"
+    },
+    {
+     "y": 64,
+     "h": 7,
+     "i": 0.13,
+     "sp": "imp"
+    },
+    {
+     "y": 97,
+     "h": 9,
+     "i": 0.14,
+     "sp": "imp",
+     "blur": 1
+    },
+    {
+     "y": 276,
+     "h": 9,
+     "i": 0.45,
+     "sp": "imp",
+     "x": 196
+    }
+   ]
+  },
+  {
+   "id": "L4",
+   "x": 226.5,
+   "w": 20,
+   "label": "1:2",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 76,
+     "h": 7,
+     "i": 0.24,
+     "sp": "chain_ds"
+    },
+    {
+     "y": 84,
+     "h": 7,
+     "i": 0.42,
+     "sp": "ring_ds"
+    },
+    {
+     "y": 119,
+     "h": 7,
+     "i": 0.24,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 134,
+     "h": 9,
+     "i": 0.9,
+     "sp": "protein"
+    },
+    {
+     "y": 143,
+     "h": 7,
+     "i": 0.33,
+     "sp": "protein"
+    },
+    {
+     "y": 95,
+     "h": 9,
+     "i": 0.26,
+     "sp": "imp"
+    },
+    {
+     "y": 65,
+     "h": 8,
+     "i": 0.09,
+     "sp": "imp"
+    },
+    {
+     "y": 275,
+     "h": 9,
+     "i": 0.36,
+     "sp": "imp",
+     "x": 223
+    }
+   ]
+  },
+  {
+   "id": "L5",
+   "x": 251.5,
+   "w": 20,
+   "label": "1:1",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 72,
+     "h": 7,
+     "i": 0.38,
+     "sp": "chain_ss"
+    },
+    {
+     "y": 89,
+     "h": 8,
+     "i": 0.72,
+     "sp": "ring_ss"
+    },
+    {
+     "y": 118,
+     "h": 7,
+     "i": 0.25,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 134,
+     "h": 10,
+     "i": 0.92,
+     "sp": "protein"
+    },
+    {
+     "y": 143,
+     "h": 7,
+     "i": 0.43,
+     "sp": "protein"
+    },
+    {
+     "y": 94,
+     "h": 7,
+     "i": 0.45,
+     "sp": "imp"
+    },
+    {
+     "y": 99,
+     "h": 7,
+     "i": 0.22,
+     "sp": "imp"
+    },
+    {
+     "y": 64,
+     "h": 9,
+     "i": 0.26,
+     "sp": "imp"
+    },
+    {
+     "y": 53,
+     "h": 8,
+     "i": 0.2,
+     "sp": "imp"
+    },
+    {
+     "y": 275,
+     "h": 9,
+     "i": 0.6,
+     "sp": "imp",
+     "x": 249
+    }
+   ]
+  },
+  {
+   "id": "L6",
+   "x": 276,
+   "w": 19,
+   "label": "1:1",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 76,
+     "h": 7,
+     "i": 0.29,
+     "sp": "chain_ds"
+    },
+    {
+     "y": 84,
+     "h": 8,
+     "i": 0.6,
+     "sp": "ring_ds"
+    },
+    {
+     "y": 119,
+     "h": 7,
+     "i": 0.33,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 133,
+     "h": 9,
+     "i": 0.86,
+     "sp": "protein"
+    },
+    {
+     "y": 143,
+     "h": 7,
+     "i": 0.3,
+     "sp": "protein"
+    },
+    {
+     "y": 100,
+     "h": 7,
+     "i": 0.3,
+     "sp": "imp"
+    },
+    {
+     "y": 93,
+     "h": 8,
+     "i": 0.15,
+     "sp": "imp"
+    },
+    {
+     "y": 66,
+     "h": 8,
+     "i": 0.11,
+     "sp": "imp"
+    },
+    {
+     "y": 51,
+     "h": 7,
+     "i": 0.23,
+     "sp": "imp"
+    },
+    {
+     "y": 275,
+     "h": 9,
+     "i": 0.5,
+     "sp": "imp",
+     "x": 274.5
+    }
+   ]
+  },
+  {
+   "id": "L7",
+   "x": 300.5,
+   "w": 18,
+   "label": "1:4",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 113,
+     "h": 6,
+     "i": 0.08,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 135,
+     "h": 10,
+     "i": 0.95,
+     "sp": "protein"
+    },
+    {
+     "y": 144,
+     "h": 7,
+     "i": 0.49,
+     "sp": "protein"
+    },
+    {
+     "y": 68,
+     "h": 7,
+     "i": 0.09,
+     "sp": "imp"
+    },
+    {
+     "y": 78,
+     "h": 7,
+     "i": 0.13,
+     "sp": "imp"
+    },
+    {
+     "y": 88,
+     "h": 7,
+     "i": 0.1,
+     "sp": "imp"
+    },
+    {
+     "y": 275,
+     "h": 9,
+     "i": 0.35,
+     "sp": "imp",
+     "x": 299.5
+    }
+   ]
+  },
+  {
+   "id": "L8",
+   "x": 324.5,
+   "w": 18,
+   "label": "1:4",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 116,
+     "h": 6,
+     "i": 0.1,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 134,
+     "h": 8,
+     "i": 0.87,
+     "sp": "protein"
+    },
+    {
+     "y": 144,
+     "h": 7,
+     "i": 0.23,
+     "sp": "protein"
+    },
+    {
+     "y": 73,
+     "h": 9,
+     "i": 0.08,
+     "sp": "imp"
+    },
+    {
+     "y": 99,
+     "h": 8,
+     "i": 0.05,
+     "sp": "imp"
+    },
+    {
+     "y": 274,
+     "h": 9,
+     "i": 0.2,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L9",
+   "x": 349,
+   "w": 18,
+   "label": "1:2",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 113,
+     "h": 6,
+     "i": 0.09,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 135,
+     "h": 11,
+     "i": 1.0,
+     "sp": "protein"
+    },
+    {
+     "y": 144,
+     "h": 7,
+     "i": 0.51,
+     "sp": "protein"
+    },
+    {
+     "y": 70,
+     "h": 7,
+     "i": 0.14,
+     "sp": "imp"
+    },
+    {
+     "y": 79,
+     "h": 7,
+     "i": 0.23,
+     "sp": "imp"
+    },
+    {
+     "y": 89,
+     "h": 7,
+     "i": 0.18,
+     "sp": "imp"
+    },
+    {
+     "y": 273,
+     "h": 9,
+     "i": 0.48,
+     "sp": "imp",
+     "x": 349.5
+    }
+   ]
+  },
+  {
+   "id": "L10",
+   "x": 374.5,
+   "w": 19,
+   "label": "1:2",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 116,
+     "h": 6,
+     "i": 0.14,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 134,
+     "h": 8,
+     "i": 0.85,
+     "sp": "protein"
+    },
+    {
+     "y": 144,
+     "h": 7,
+     "i": 0.22,
+     "sp": "protein"
+    },
+    {
+     "y": 74,
+     "h": 9,
+     "i": 0.16,
+     "sp": "imp"
+    },
+    {
+     "y": 99,
+     "h": 8,
+     "i": 0.08,
+     "sp": "imp"
+    },
+    {
+     "y": 89,
+     "h": 7,
+     "i": 0.07,
+     "sp": "imp"
+    },
+    {
+     "y": 273,
+     "h": 9,
+     "i": 0.26,
+     "sp": "imp",
+     "x": 375.5
+    }
+   ]
+  },
+  {
+   "id": "L11",
+   "x": 399.5,
+   "w": 17,
+   "label": "1:1",
+   "chip": "ss",
+   "sub": "ssDNA",
+   "bands": [
+    {
+     "y": 114,
+     "h": 6,
+     "i": 0.1,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 135,
+     "h": 8,
+     "i": 0.85,
+     "sp": "protein"
+    },
+    {
+     "y": 144,
+     "h": 7,
+     "i": 0.26,
+     "sp": "protein"
+    },
+    {
+     "y": 70,
+     "h": 7,
+     "i": 0.13,
+     "sp": "imp"
+    },
+    {
+     "y": 80,
+     "h": 7,
+     "i": 0.3,
+     "sp": "imp"
+    },
+    {
+     "y": 90,
+     "h": 7,
+     "i": 0.18,
+     "sp": "imp"
+    },
+    {
+     "y": 272,
+     "h": 9,
+     "i": 0.31,
+     "sp": "imp",
+     "x": 400
+    }
+   ]
+  },
+  {
+   "id": "L12",
+   "x": 422.5,
+   "w": 17,
+   "label": "1:1",
+   "chip": "ds",
+   "sub": "+cDNA",
+   "bands": [
+    {
+     "y": 117,
+     "h": 6,
+     "i": 0.32,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 135,
+     "h": 8,
+     "i": 0.8,
+     "sp": "protein"
+    },
+    {
+     "y": 145,
+     "h": 7,
+     "i": 0.22,
+     "sp": "protein"
+    },
+    {
+     "y": 77,
+     "h": 9,
+     "i": 0.38,
+     "sp": "imp"
+    },
+    {
+     "y": 101,
+     "h": 7,
+     "i": 0.17,
+     "sp": "imp"
+    },
+    {
+     "y": 91,
+     "h": 7,
+     "i": 0.12,
+     "sp": "imp"
+    },
+    {
+     "y": 53,
+     "h": 7,
+     "i": 0.12,
+     "sp": "imp"
+    },
+    {
+     "y": 273,
+     "h": 9,
+     "i": 0.29,
+     "sp": "imp",
+     "x": 425
+    }
+   ]
+  },
+  {
+   "id": "L13",
+   "x": 448,
+   "w": 19,
+   "label": "pp2a",
+   "chip": "ctrl",
+   "sub": "only",
+   "bands": [
+    {
+     "y": 136,
+     "h": 10,
+     "i": 0.9,
+     "sp": "protein"
+    },
+    {
+     "y": 145,
+     "h": 7,
+     "i": 0.3,
+     "sp": "protein"
+    },
+    {
+     "y": 273,
+     "h": 9,
+     "i": 0.17,
+     "sp": "imp",
+     "x": 451
+    }
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "label": "50 nt",
+   "lanes": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5",
+    "L6"
+   ]
+  },
+  {
+   "label": "80 nt",
+   "lanes": [
+    "L7",
+    "L8",
+    "L9",
+    "L10",
+    "L11",
+    "L12"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "from": [
+    "L1",
+    0
+   ],
+   "to": [
+    "L2",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L1",
+    1
+   ],
+   "to": [
+    "L2",
+    1
+   ]
+  },
+  {
+   "from": [
+    "L1",
+    2
+   ],
+   "to": [
+    "L2",
+    2
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    0
+   ],
+   "to": [
+    "L4",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    1
+   ],
+   "to": [
+    "L4",
+    1
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    2
+   ],
+   "to": [
+    "L4",
+    2
+   ]
+  },
+  {
+   "from": [
+    "L5",
+    0
+   ],
+   "to": [
+    "L6",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L5",
+    1
+   ],
+   "to": [
+    "L6",
+    1
+   ]
+  },
+  {
+   "from": [
+    "L5",
+    2
+   ],
+   "to": [
+    "L6",
+    2
+   ]
+  },
+  {
+   "from": [
+    "L7",
+    0
+   ],
+   "to": [
+    "L8",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L9",
+    0
+   ],
+   "to": [
+    "L10",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L11",
+    0
+   ],
+   "to": [
+    "L12",
+    0
+   ]
+  }
+ ],
+ "blank": "Blank gel: 2-tet pp2a at 4 µM in every well, ssDNA added at 1, 2 or 4 µM",
+ "steps": [
+  {
+   "lanes": [
+    "L13"
+   ],
+   "say": "<b>2-tet pp2a alone</b>: the unreacted protein doublet sets the reference rows"
+  },
+  {
+   "lanes": [
+    "L1",
+    "L7"
+   ],
+   "say": "<b>1:4 DNA:protein, ssDNA</b>: little DNA, so only faint chimera bands above pp2a"
+  },
+  {
+   "lanes": [
+    "L3",
+    "L9"
+   ],
+   "say": "<b>1:2 ssDNA</b>: more DNA, stronger pp2a + ssDNA and 2 pp2a bands"
+  },
+  {
+   "lanes": [
+    "L5",
+    "L11"
+   ],
+   "say": "<b>1:1 ssDNA</b>: the most chimera of the series, the best yield; 50 nt 2 pp2a rows brightest"
+  },
+  {
+   "lanes": [
+    "L2",
+    "L8"
+   ],
+   "say": "<b>1:4 + cDNA</b>: linear chimeras shift down, the 2 pp2a ring band shifts up"
+  },
+  {
+   "lanes": [
+    "L4",
+    "L10"
+   ],
+   "say": "<b>1:2 + cDNA</b>: the same shifts, with stronger hybridized bands"
+  },
+  {
+   "lanes": [
+    "L6",
+    "L12"
+   ],
+   "say": "<b>1:1 + cDNA</b>: the strongest hybridized bands in both DNA lengths"
+  },
+  {
+   "glow": [
+    [
+     "L2",
+     1
+    ],
+    [
+     "L4",
+     1
+    ],
+    [
+     "L6",
+     1
+    ]
+   ],
+   "say": "<b>2 pp2a + 2 dsDNA ring</b>: the up-shifted dimer circle (wrong product) is strongest at 1:1"
+  },
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ]
+}

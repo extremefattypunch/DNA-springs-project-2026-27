@@ -1,0 +1,369 @@
+{
+ "id": "p22-dtt-cdna",
+ "image": "gels/p22-dtt-cdna.jpg",
+ "size": [
+  657,
+  580
+ ],
+ "style": "dark",
+ "alt": "pp2a click reactions with cDNA added at 16, 8, 20 mM DTT and no DTT, a no-DTT reaction without cDNA, and pp2a alone",
+ "gel": {
+  "poly": [
+   [
+    141,
+    0
+   ],
+   [
+    657,
+    0
+   ],
+   [
+    657,
+    556
+   ],
+   [
+    158,
+    548
+   ]
+  ],
+  "wellY": 8,
+  "tilt": 0
+ },
+ "species": {
+  "protein": {
+   "name": "pp2a only",
+   "note": "unreacted protein",
+   "cls": "protein",
+   "icon": {
+    "k": "protein",
+    "tet": 0
+   }
+  },
+  "p1d_ss": {
+   "name": "pp2a + ssDNA",
+   "note": "slide: pp2a+DNA \u00b7 linear 1 : 1",
+   "cls": "ss",
+   "icon": {
+    "k": "p1d"
+   }
+  },
+  "p1d_ds": {
+   "name": "pp2a + dsDNA",
+   "note": "+cDNA lanes only \u00b7 runs faster",
+   "cls": "ds",
+   "icon": {
+    "k": "p1d",
+    "ds": true
+   }
+  },
+  "p2d2_ss": {
+   "name": "2 pp2a + 2 DNA",
+   "note": "slide label \u00b7 chain or ring",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2"
+   }
+  },
+  "p2d2_ds": {
+   "name": "2 pp2a + 2 dsDNA ring",
+   "note": "+cDNA only \u00b7 ring runs slower",
+   "cls": "circ",
+   "icon": {
+    "k": "p2d2circ",
+    "ds": true
+   }
+  },
+  "imp": {
+   "cls": "impurity"
+  }
+ },
+ "lanes": [
+  {
+   "id": "L1",
+   "x": 256,
+   "w": 54,
+   "label": "16",
+   "chip": "ds",
+   "sub": "mM",
+   "bands": [
+    {
+     "y": 193,
+     "h": 8,
+     "i": 0.19,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 238,
+     "h": 8,
+     "i": 0.17,
+     "sp": "protein"
+    },
+    {
+     "y": 447,
+     "h": 16,
+     "i": 0.14,
+     "sp": "imp",
+     "blur": 2
+    }
+   ]
+  },
+  {
+   "id": "L2",
+   "x": 321,
+   "w": 46,
+   "label": "8",
+   "chip": "ds",
+   "sub": "mM",
+   "bands": [
+    {
+     "y": 81,
+     "h": 13,
+     "i": 0.32,
+     "sp": "p2d2_ss"
+    },
+    {
+     "y": 192,
+     "h": 9,
+     "i": 0.29,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 213,
+     "h": 7,
+     "i": 0.08,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 237,
+     "h": 8,
+     "i": 0.11,
+     "sp": "protein"
+    },
+    {
+     "y": 160,
+     "h": 7,
+     "i": 0.06,
+     "sp": "imp"
+    },
+    {
+     "y": 448,
+     "h": 16,
+     "i": 0.28,
+     "sp": "imp",
+     "w": 54,
+     "blur": 2
+    }
+   ]
+  },
+  {
+   "id": "L3",
+   "x": 385,
+   "w": 50,
+   "label": "20",
+   "chip": "ds",
+   "sub": "mM",
+   "bands": [
+    {
+     "y": 193,
+     "h": 7,
+     "i": 0.11,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 242,
+     "h": 9,
+     "i": 0.21,
+     "sp": "protein"
+    }
+   ]
+  },
+  {
+   "id": "L4",
+   "x": 453,
+   "w": 56,
+   "label": "0",
+   "chip": "ds",
+   "sub": "mM",
+   "bands": [
+    {
+     "y": 73,
+     "h": 10,
+     "i": 0.2,
+     "sp": "p2d2_ds"
+    },
+    {
+     "y": 94,
+     "h": 10,
+     "i": 0.19,
+     "sp": "p2d2_ss"
+    },
+    {
+     "y": 187,
+     "h": 9,
+     "i": 0.12,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 214,
+     "h": 9,
+     "i": 0.15,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 248,
+     "h": 8,
+     "i": 0.05,
+     "sp": "protein"
+    },
+    {
+     "y": 277,
+     "h": 8,
+     "i": 0.1,
+     "sp": "imp"
+    },
+    {
+     "y": 299,
+     "h": 8,
+     "i": 0.07,
+     "sp": "imp"
+    },
+    {
+     "y": 454,
+     "h": 18,
+     "i": 0.12,
+     "sp": "imp",
+     "x": 476,
+     "w": 58,
+     "blur": 2
+    }
+   ]
+  },
+  {
+   "id": "L5",
+   "x": 518,
+   "w": 54,
+   "label": "0",
+   "chip": "ss",
+   "sub": "no cDNA",
+   "bands": [
+    {
+     "y": 95,
+     "h": 15,
+     "i": 0.46,
+     "sp": "p2d2_ss",
+     "smear": {
+      "up": 12,
+      "k": 0.4
+     }
+    },
+    {
+     "y": 181,
+     "h": 10,
+     "i": 0.23,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 249,
+     "h": 10,
+     "i": 0.23,
+     "sp": "protein"
+    },
+    {
+     "y": 297,
+     "h": 9,
+     "i": 0.1,
+     "sp": "imp"
+    },
+    {
+     "y": 459,
+     "h": 20,
+     "i": 0.1,
+     "sp": "imp",
+     "x": 548,
+     "w": 64,
+     "blur": 2
+    }
+   ]
+  },
+  {
+   "id": "L6",
+   "x": 591,
+   "w": 58,
+   "label": "pp2a",
+   "chip": "ctrl",
+   "sub": "alone",
+   "bands": [
+    {
+     "y": 241,
+     "h": 12,
+     "i": 1.0,
+     "sp": "protein"
+    }
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "label": "cDNA added \u00b7 DTT",
+   "lanes": [
+    "L1",
+    "L2",
+    "L3",
+    "L4"
+   ]
+  }
+ ],
+ "arrows": [],
+ "blank": "Blank gel: pp2a click reactions with and without DTT and cDNA",
+ "steps": [
+  {
+   "lanes": [
+    "L6"
+   ],
+   "say": "<b>pp2a alone</b>: the unreacted protein sets the reference row"
+  },
+  {
+   "lanes": [
+    "L5"
+   ],
+   "say": "<b>No DTT, no cDNA</b>: pp2a + ssDNA and a bright 2 pp2a + 2 DNA band"
+  },
+  {
+   "lanes": [
+    "L4"
+   ],
+   "say": "<b>No DTT + cDNA</b>: a 2:2 ring shifts up, pp2a + dsDNA shifts down"
+  },
+  {
+   "lanes": [
+    "L2"
+   ],
+   "say": "<b>8 mM DTT + cDNA</b>: chimera bands remain, but the dsDNA shift is faint"
+  },
+  {
+   "lanes": [
+    "L1"
+   ],
+   "say": "<b>16 mM DTT + cDNA</b>: no 2:2 band, only faint pp2a + DNA and pp2a"
+  },
+  {
+   "lanes": [
+    "L3"
+   ],
+   "say": "<b>20 mM DTT + cDNA</b>: weakest pp2a + DNA band, mostly unreacted pp2a"
+  },
+  {
+   "glow": [
+    [
+     "L4",
+     0
+    ]
+   ],
+   "say": "<b>2 pp2a + 2 dsDNA ring</b>: the circular product forms only without DTT; DTT blocks it"
+  },
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ]
+}

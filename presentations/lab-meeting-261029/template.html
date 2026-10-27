@@ -1,0 +1,916 @@
+<title>Lab Meeting 261029</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a fixed 1920x1080 stage scaled to the window; each gel slide is a
+   title row, one or two gel panels (imager-dark slab, label rails either
+   side) and a caption line; the footer carries section, step dots, page. */
+:root {
+  --paper: #f3f5f7;
+  --paper-2: #e7ebef;
+  --ink: #14202b;
+  --ink-2: #4a5866;
+  --ink-3: #7a8794;
+  --rule: #d3dae1;
+  --violet: #5b48d6;
+  --teal: #0c7c70;
+  --amber: #b86e00;
+  --sec-synthesis: #2e7d4f;
+  --sec-assay: #2f63c4;
+  --sec-md: #a8406f;
+  --sec-background: #5a646e;
+  --sec-status: #b8372c;
+  --dna-line: #15191d;
+  --protein-stroke: #1b2026;
+  --letterbox: #dfe4e9;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1b232c; --paper-2: #26303b; --ink: #e5ebf0; --ink-2: #a3b0bc; --ink-3: #6f7d8a;
+    --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
+    --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e;
+    --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1b232c; --paper-2: #26303b; --ink: #e5ebf0; --ink-2: #a3b0bc; --ink-3: #6f7d8a;
+  --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
+  --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e;
+  --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body { margin: 0; }
+body {
+  background: var(--letterbox); color: var(--ink);
+  font-family: var(--font-display); overflow: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0; box-sizing: border-box;
+}
+#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; touch-action: manipulation; }
+#stage {
+  position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px;
+  transform-origin: 0 0; background: var(--paper); overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,.18);
+}
+.slide { position: absolute; inset: 0; visibility: hidden; opacity: 0; transition: opacity .35s ease, visibility 0s linear .35s; }
+.slide.on { visibility: visible; opacity: 1; transition: opacity .35s ease; }
+.slide.static img.full { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+
+/* ---------- slide chrome ---------- */
+.s-title {
+  position: absolute; left: 96px; top: 58px; width: 1728px; margin: 0;
+  font-size: 56px; line-height: 1.08; font-weight: 640; font-stretch: 92%;
+  letter-spacing: -0.01em; text-wrap: balance; color: var(--ink);
+}
+.s-sub { position: absolute; left: 98px; width: 1700px; margin: 0; font-size: 28px; font-weight: 420; color: var(--ink-2); }
+.s-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; align-items: center; gap: 24px; padding: 0 40px 0 96px; border-top: 1px solid var(--rule); }
+.sec-tag { font-family: var(--font-mono); font-size: 18px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; display: flex; align-items: center; gap: 12px; color: var(--ink-2); }
+.sec-tag::before { content: ""; width: 26px; height: 8px; border-radius: 4px; background: var(--sec, var(--ink-3)); }
+.s-page { margin-left: auto; font-family: var(--font-mono); font-size: 18px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.dots { display: flex; gap: 8px; align-items: center; margin-left: 24px; }
+.dots i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--ink-3); box-sizing: border-box; transition: background .2s, border-color .2s, transform .2s; }
+.dots i.done { background: var(--ink-3); }
+.dots i.now { background: var(--sec, var(--ink)); border-color: var(--sec, var(--ink)); transform: scale(1.25); }
+.callout { position: absolute; background: var(--paper-2); border-radius: 10px; padding: 18px 24px; font-size: 23px; line-height: 1.35; color: var(--ink-2); box-sizing: border-box; }
+.callout b { color: var(--ink); }
+
+/* ---------- gel panel ---------- */
+.panel { position: absolute; }
+.panel-head { position: absolute; transform: translateY(-100%); font-size: 24px; line-height: 1.2; font-weight: 560; color: var(--ink-2); text-align: center; text-wrap: balance; }
+.caption {
+  position: absolute; font-size: 24px; line-height: 1.3; color: var(--ink-2); display: flex; gap: 14px; align-items: baseline;
+  transition: opacity .3s;
+}
+.caption .k { font-family: var(--font-mono); font-size: 18px; font-weight: 600; color: var(--ink-3); letter-spacing: .06em; white-space: nowrap; }
+.caption b { color: var(--ink); font-weight: 600; }
+
+.gel { position: absolute; inset: 0; }
+.slab { position: absolute; }
+.gel.dark .slab { background-color: #10151a; }
+.gel.light .slab { background-color: #d9d7d0; }
+.gel.mid .slab { background-color: #6f7a85; }
+.gel.mid .well { background: #3e4750; box-shadow: inset 0 -1px 0 rgba(255,255,255,.2); }
+.slab .tex { position: absolute; inset: 0; opacity: .55; background-size: 256px 256px; }
+.gel.light .slab .tex { opacity: .35; }
+.well { position: absolute; border-radius: 2px 2px 5px 5px; }
+.gel.dark .well { background: #04070a; box-shadow: inset 0 -1px 0 rgba(255,255,255,.18), 0 1px 0 rgba(255,255,255,.06); }
+.gel.light .well { background: #b7b4ac; box-shadow: inset 0 -1px 0 rgba(0,0,0,.25); }
+.well .dye { position: absolute; inset: 1px; border-radius: inherit; background: #3b5bff; opacity: 0; }
+
+.band { position: absolute; will-change: transform, opacity; }
+.band .rot { position: absolute; inset: 0; }
+.band .core {
+  position: absolute; inset: 0; border-radius: 40%;
+  background: linear-gradient(180deg, transparent 0%, var(--c) 30%, var(--c) 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
+  opacity: var(--o, 1); filter: blur(var(--bl, 0.6px));
+}
+.band .hot { position: absolute; left: 14%; right: 14%; top: 35%; bottom: 35%; border-radius: 40%; background: #fff; opacity: var(--hot, 0); filter: blur(1.5px); }
+.band .bloom { position: absolute; inset: -60% -8%; border-radius: 50%; background: radial-gradient(closest-side, var(--c), transparent); opacity: calc(var(--bloom, 0) * .55); }
+.band .smear {
+  position: absolute; left: 4%; right: 4%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  filter: blur(1.2px);
+}
+.band .smear.up { bottom: 50%; background: linear-gradient(0deg, var(--c), transparent); }
+.band .smear.down { top: 50%; background: linear-gradient(180deg, var(--c), transparent); }
+.gel.light .band { mix-blend-mode: multiply; }
+.band .halo { position: absolute; inset: -150% -16%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,184,71,.85), rgba(255,184,71,.25) 55%, transparent); opacity: 0; pointer-events: none; }
+.band.glow .halo { animation: halo 1.8s ease-in-out infinite; }
+.band.glow .core { filter: blur(var(--bl, 0.6px)) brightness(1.35) saturate(1.2); }
+@keyframes halo { 0%, 100% { opacity: .45; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.08); } }
+
+.c-protein  { --c: #dde4eb; }
+.c-ss       { --c: #57d9c9; }
+.c-ds       { --c: #ab9dff; }
+.c-circ     { --c: #ffb547; }
+.c-other    { --c: #ff92b4; }
+.c-impurity { --c: #a3acb6; }
+.gel.light .c-protein  { --c: #2a323b; }
+.gel.light .c-ss       { --c: #08665c; }
+.gel.light .c-ds       { --c: #4630c4; }
+.gel.light .c-circ     { --c: #a85d00; }
+.gel.light .c-other    { --c: #9c2d55; }
+.gel.light .c-impurity { --c: #59626b; }
+
+.overlay-svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.arrow path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.arrow .under { stroke: #071015; stroke-width: 7; opacity: .75; }
+.arrow .over { stroke: #eafff3; stroke-width: 3.2; }
+.gel.light .arrow .under { stroke: #ffffff; opacity: .9; }
+.gel.light .arrow .over { stroke: #10202c; }
+.arrow .head-under { fill: #071015; opacity: .75; }
+.arrow .head-over { fill: #eafff3; }
+.gel.light .arrow .head-under { fill: #fff; }
+.gel.light .arrow .head-over { fill: #10202c; }
+
+.lane-head {
+  position: absolute; transform: translate(-50%, -100%); text-align: center; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 17px; font-weight: 500; line-height: 1.15; color: var(--ink);
+}
+.lane-head .chip { display: inline-block; padding: 1px 6px; border-radius: 6px; font-size: 15px; font-weight: 600; }
+.lane-head .chip.ss { background: color-mix(in srgb, var(--teal) 16%, transparent); color: var(--teal); }
+.lane-head .chip.ds { background: color-mix(in srgb, var(--violet) 16%, transparent); color: var(--violet); }
+.lane-head .chip.ctrl { background: color-mix(in srgb, var(--ink-3) 18%, transparent); color: var(--ink-2); }
+.lane-head .sub { display: block; font-size: 14px; color: var(--ink-3); }
+.grp { position: absolute; height: 0; border-top: 2px solid var(--ink-2); }
+.grp::before, .grp::after { content: ""; position: absolute; top: -2px; width: 2px; height: 9px; background: var(--ink-2); }
+.grp::before { left: 0; } .grp::after { right: 0; }
+.grp span { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); white-space: nowrap; font-size: 21px; font-weight: 620; font-stretch: 90%; color: var(--ink); }
+
+.lbl {
+  position: absolute; display: flex; align-items: center; gap: 10px; box-sizing: border-box;
+  transition: top .45s cubic-bezier(.3,.7,.2,1), opacity .35s ease, transform .35s ease;
+}
+.lbl.r { flex-direction: row; }
+.lbl.l { flex-direction: row-reverse; text-align: right; }
+/* sketch boxes drawn like the preprint's: white square, dark outline, fixed ink */
+.lbl .ico { flex: none; width: 80px; height: 56px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1.6px solid var(--ink); border-radius: 3px; background: #fbfbfa; --dna-line: #15191d; --protein-stroke: #1b2026; }
+.lbl .ico svg { width: 74px; height: 50px; }
+.lbl .txt { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lbl .txt b { font-size: 20px; font-weight: 620; line-height: 1.1; color: var(--ink); font-stretch: 92%; }
+.lbl .txt span { font-size: 16px; line-height: 1.2; color: var(--ink-2); }
+.lbl .sw { display: inline-block; vertical-align: 1px; width: 22px; height: 11px; margin: 0 7px; border-radius: 3px; background: #10151a; position: relative; overflow: hidden; }
+.lbl .sw::after { content: ""; position: absolute; left: 3px; right: 3px; top: 3.5px; height: 5px; border-radius: 3px; background: var(--c); filter: blur(.5px); }
+.lbl.r .sw { margin-left: 0; }
+.lbl.l .sw { float: none; }
+.lbl.glow .txt b { color: var(--amber); }
+.lbl.glow .sw { box-shadow: 0 0 0 2px var(--amber), 0 0 12px rgba(255,181,71,.8); }
+.leader path { fill: none; stroke-width: 1.5; stroke: var(--ink-3); stroke-dasharray: 1 0; }
+.gel.dark .leader path { stroke: #8d9cab; }
+.leader circle { fill: var(--ink-2); }
+.gel.dark .leader circle { fill: #e6edf3; }
+
+.pin, .hl { position: absolute; }
+.pin { background-repeat: no-repeat; }
+.hl { box-sizing: border-box; border: 3px solid var(--amber); border-radius: 6px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--amber) 20%, transparent); opacity: 0; transition: opacity .3s; }
+.hl.on { opacity: 1; }
+
+.real { position: absolute; opacity: 0; z-index: 3; }
+.sim-layer { position: relative; z-index: 1; }
+.real img { width: 100%; height: 100%; display: block; }
+.scanline { position: absolute; z-index: 4; height: 3px; background: linear-gradient(90deg, transparent, #c9f7ff 12%, #ffffff 50%, #c9f7ff 88%, transparent); box-shadow: 0 0 18px 4px rgba(160,235,255,.65); opacity: 0; pointer-events: none; }
+.real-tag { position: absolute; z-index: 4; font-family: var(--font-mono); font-size: 16px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 8px; opacity: 0; transition: opacity .3s; }
+.sim-layer { transition: opacity .5s ease; }
+.fade { transition: opacity .35s ease; }
+.hidden { opacity: 0 !important; pointer-events: none; }
+
+/* render-tool mode: no transitions, so screenshots never catch a fade */
+.is-test *, .is-test *::before, .is-test *::after { transition: none !important; transition-delay: 0s !important; }
+.is-test .band.glow .halo { animation: none !important; opacity: .9; }
+/* overlay test mode */
+.mode-overlay .slab { display: none; }
+.mode-overlay .real { opacity: 1 !important; clip-path: none !important; z-index: 0; }
+.mode-overlay .band { opacity: .62; }
+
+/* ---------- HUD ---------- */
+#hud { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; z-index: 5; opacity: .2; transition: opacity .25s; }
+#hud:hover, #hud:focus-within { opacity: 1; }
+#hud button { font: 600 13px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 11px; cursor: pointer; }
+#hud button:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .band.glow .halo { animation: none; opacity: .8; } .lbl { transition: none; } }
+</style>
+
+<div id="viewport"><div id="stage"></div></div>
+<div id="hud" role="toolbar" aria-label="Slide controls">
+  <button id="b-prev" type="button" aria-label="Previous step">&larr;</button>
+  <button id="b-next" type="button" aria-label="Next step">&rarr;</button>
+  <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js" integrity="sha384-czaB7zH9slIhvFgUxhO8sSnYf4cnCeV2N3zOvDnNKFzRKu5AwqDKEZlCLsaQkoop" crossorigin="anonymous"></script>
+<script>
+window.DECK = /*__DECK__*/null;
+</script>
+<script>
+(function () {
+'use strict';
+const DECK = window.DECK;
+const Q = new URLSearchParams(location.search);
+const TEST = Q.get('test');           // render-tool mode: one gel, no animation
+const MODE = Q.get('mode') || 'sim';
+const SHOT = Q.get('shot');          // render-tool mode for the full deck: ?shot=SLIDE&step=K
+const STATIC = !!TEST || !!SHOT || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const M = window.Motion;
+const stage = document.getElementById('stage');
+const SECTIONS = {
+  synthesis: ['Synthesis', 'var(--sec-synthesis)'], assay: ['Assay', 'var(--sec-assay)'],
+  md: ['MD analysis', 'var(--sec-md)'], background: ['Background', 'var(--sec-background)'],
+  status: ['Project status', 'var(--sec-status)']
+};
+
+/* ---------------- helpers ---------------- */
+function h(tag, cls, attrs) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (attrs) for (const k in attrs) {
+    if (k === 'style') Object.assign(e.style, attrs[k]);
+    else if (k === 'html') e.innerHTML = attrs[k];
+    else if (k === 'text') e.textContent = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  return e;
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function s(tag, attrs) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; }
+const RUNNING = new Set();
+function anim(el, kf, opt) {
+  if (STATIC) return null;
+  let c;
+  if (M && M.animate) {
+    const o = Object.assign({}, opt);
+    if (o.easing) { o.ease = o.easing; delete o.easing; }
+    c = M.animate(el, kf, o);
+  } else {
+    const o = Object.assign({}, opt); o.duration = (o.duration || .4) * 1000; o.delay = (o.delay || 0) * 1000; o.fill = 'both';
+    if (Array.isArray(o.easing)) o.easing = 'cubic-bezier(' + o.easing.join(',') + ')';
+    c = el.animate(kf, o);
+  }
+  if (!c) return c;
+  RUNNING.add(c);
+  const done = () => RUNNING.delete(c);
+  if (c.finished && c.finished.then) c.finished.then(done, done); else if (c.then) c.then(done, done);
+  return c;
+}
+// finish-or-drop everything still moving (fast clicking, stepping back)
+function stopAll() { RUNNING.forEach(c => { try { c.cancel ? c.cancel() : c.stop(); } catch (e) {} }); RUNNING.clear(); }
+function stopAnims(el) { if (el.getAnimations) el.getAnimations({ subtree: true }).forEach(a => { if (a.animationName === undefined) a.cancel(); }); }
+
+/* ---------------- noise texture for the slab ---------------- */
+const NOISE = (function () {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const x = c.getContext('2d'); const d = x.createImageData(256, 256);
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < d.data.length; i += 4) {
+    const v = 128 + (rnd() - .5) * 70;
+    d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 40;
+  }
+  x.putImageData(d, 0, 0);
+  // faint vertical streaks, like lanes worn into a slab
+  x.globalAlpha = .05; x.fillStyle = '#fff';
+  for (let i = 0; i < 40; i++) x.fillRect(rnd() * 256, 0, 1 + rnd() * 2, 256);
+  return c.toDataURL();
+})();
+
+/* ---------------- chimera sketches (after Boral, Schnebly et al. 2026, Figs 2-4) ---------------- */
+// protein: grey ellipse; tet handle: green dot; linker/reactive end: brown triangle;
+// ssDNA: dark line; complementary strand: violet line alongside.
+let gradN = 0;
+function chimera(ic) {
+  ic = ic || {};
+  const k = ic.k || 'protein', ds = !!ic.ds, tet = ic.tet != null ? ic.tet : 1;
+  const g = 'pg' + (gradN++);
+  const parts = [];
+  const defs = `<defs><radialGradient id="${g}" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#c9cdd1"/><stop offset="1" stop-color="#7f858b"/></radialGradient></defs>`;
+  const prot = (cx, cy, rot, rx, ry) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx || 15}" ry="${ry || 9.5}" transform="rotate(${rot || 0} ${cx} ${cy})" fill="url(#${g})" stroke="var(--protein-stroke)" stroke-width="1.8"/>`;
+  const handle = (x, y) => `<circle cx="${x}" cy="${y}" r="3.3" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="1.1"/>`;
+  const tri = (x, y, ang) => {          // small brown triangle pointing along ang (deg)
+    const a = ang * Math.PI / 180, L = 6.5, W = 3.6;
+    const tx = x + Math.cos(a) * L / 2, ty = y + Math.sin(a) * L / 2;
+    const bx = x - Math.cos(a) * L / 2, by = y - Math.sin(a) * L / 2;
+    const px = -Math.sin(a) * W, py = Math.cos(a) * W;
+    return `<polygon points="${tx.toFixed(1)},${ty.toFixed(1)} ${(bx + px).toFixed(1)},${(by + py).toFixed(1)} ${(bx - px).toFixed(1)},${(by - py).toFixed(1)}" fill="#a07b66" stroke="#4a3426" stroke-width=".8"/>`;
+  };
+  const strand = (d, off) => {         // DNA path, optional complementary strand offset
+    let o = `<path d="${d}" fill="none" stroke="var(--dna-line)" stroke-width="2" stroke-linecap="round"/>`;
+    if (ds) o = `<path d="${d}" fill="none" stroke="#9b8cf7" stroke-width="3.2" stroke-linecap="round" transform="translate(${off ? off[0] : 2.6},${off ? off[1] : -1.4})" opacity=".95"/>` + o;
+    return o;
+  };
+  const line = (x1, y1, x2, y2, freeEnd) => {
+    const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    const nx = -(y2 - y1), ny = (x2 - x1), nl = Math.hypot(nx, ny) || 1;
+    let o = strand(`M${x1},${y1} L${x2},${y2}`, [nx / nl * 3, ny / nl * 3]);
+    o += tri(x1 + (x2 - x1) * .09, y1 + (y2 - y1) * .09, ang + 180);
+    if (freeEnd) o += tri(x2, y2, ang);
+    else o += tri(x2 - (x2 - x1) * .09, y2 - (y2 - y1) * .09, ang);
+    return o;
+  };
+  if (k === 'protein') {
+    parts.push(prot(46, 44, 0, 17, 11));
+    if (tet >= 2) parts.push(handle(33, 36), handle(59, 36)); else if (tet === 1) parts.push(handle(59, 36));
+  } else if (k === 'dna') {
+    parts.push(line(34, 56, 58, 8, true));
+  } else if (k === 'p1d') {          // linear: one end attached
+    parts.push(line(56, 38, 72, 6, true));
+    parts.push(prot(44, 46, 0, 16, 10.5));
+    if (tet >= 2) parts.push(handle(31, 39));
+    parts.push(handle(56, 38));
+  } else if (k === 'circ') {         // both ends on the same protein
+    const d = 'M34,40 C14,20 24,4 46,4 C68,4 78,20 58,40';
+    parts.push(ds ? `<path d="M30,42 C6,20 18,-2 46,-1 C74,-2 86,20 62,42" fill="none" stroke="#9b8cf7" stroke-width="3.2" stroke-linecap="round"/>` : '');
+    parts.push(`<path d="${d}" fill="none" stroke="var(--dna-line)" stroke-width="2" stroke-linecap="round"/>`);
+    parts.push(tri(36, 37, 55), tri(56, 37, 125));
+    parts.push(prot(46, 48, 0, 16, 10.5));
+    parts.push(handle(34, 41), handle(58, 41));
+  } else if (k === 'p2d1') {         // DNA bridging two proteins
+    parts.push(line(31, 44, 61, 18, false));
+    parts.push(prot(24, 50, -20, 14, 9));
+    parts.push(prot(70, 13, -28, 14, 9));
+    parts.push(handle(31, 44), handle(61, 18));
+    if (tet >= 2) parts.push(handle(13, 45), handle(77, 22));
+  } else if (k === 'p1d2') {         // one protein, two DNA arms
+    parts.push(line(34, 40, 24, 6, true), line(58, 40, 70, 6, true));
+    parts.push(prot(46, 48, 0, 16, 10.5));
+    parts.push(handle(34, 40), handle(58, 40));
+  } else if (k === 'p2d2') {         // chain: protein-DNA-protein-DNA
+    parts.push(line(22, 50, 44, 30, false), line(56, 28, 80, 4, true));
+    parts.push(prot(15, 55, -30, 12, 8));
+    parts.push(prot(50, 27, -30, 12, 8));
+    parts.push(handle(22, 50), handle(44, 30), handle(56, 28));
+  } else if (k === 'p2d2circ') {     // two proteins and two strands closed into one ring
+    if (ds) parts.push(`<path d="M24,52 C2,40 6,4 40,4 M68,6 C90,18 86,54 52,58" fill="none" stroke="#9b8cf7" stroke-width="3.2" stroke-linecap="round"/>`);
+    parts.push(`<path d="M26,48 C8,36 12,8 40,8" fill="none" stroke="var(--dna-line)" stroke-width="2" stroke-linecap="round"/>`);
+    parts.push(`<path d="M66,10 C84,22 80,50 54,54" fill="none" stroke="var(--dna-line)" stroke-width="2" stroke-linecap="round"/>`);
+    parts.push(prot(52, 10, 18, 13, 8.5), prot(40, 54, 18, 13, 8.5));
+    parts.push(tri(28, 46, 215), tri(38, 9, -10), tri(64, 11, 35), tri(56, 53, 170));
+    parts.push(handle(27, 48), handle(41, 8), handle(65, 11), handle(54, 54));
+  } else if (k === 'gstp') {         // pp2a still carrying its GST tag
+    parts.push(prot(36, 44, 0, 16, 10.5));
+    parts.push(`<rect x="54" y="30" width="24" height="20" rx="6" fill="#f2b8c9" stroke="var(--protein-stroke)" stroke-width="1.6"/><text x="66" y="44" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="8.5" font-weight="600" fill="#5a1730">GST</text>`);
+    parts.push(`<line x1="51" y1="42" x2="54" y2="41" stroke="var(--protein-stroke)" stroke-width="2"/>`);
+    if (tet >= 2) parts.push(handle(25, 37), handle(45, 36)); else parts.push(handle(45, 36));
+  } else if (k === 'gst') {
+    parts.push(`<rect x="32" y="26" width="30" height="24" rx="7" fill="#f2b8c9" stroke="var(--protein-stroke)" stroke-width="1.6"/><text x="47" y="42" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#5a1730">GST</text>`);
+  } else if (k === 'thrombin') {
+    parts.push(`<path d="M30,48 L62,20 M30,20 L62,48" stroke="var(--dna-line)" stroke-width="2.4" stroke-linecap="round"/><circle cx="28" cy="50" r="6" fill="none" stroke="var(--dna-line)" stroke-width="2"/><circle cx="28" cy="18" r="6" fill="none" stroke="var(--dna-line)" stroke-width="2"/>`);
+  } else if (k === 'pegp') {         // tet sites capped with PEG
+    const peg = (x, y, dir) => `<path d="M${x},${y} q${3 * dir},-5 0,-9 q${-3 * dir},-5 0,-9 q${3 * dir},-5 0,-9" fill="none" stroke="#8a6fd0" stroke-width="2" stroke-linecap="round"/>`;
+    parts.push(prot(46, 46, 0, 17, 11));
+    if (tet >= 2) parts.push(peg(33, 37, -1), peg(59, 37, 1), handle(33, 38), handle(59, 38));
+    else parts.push(peg(59, 37, 1), handle(59, 38));
+  }
+  return `<svg viewBox="-5 -7 102 76" width="92" height="62" aria-hidden="true">${defs}${parts.join('')}</svg>`;
+}
+
+/* ---------------- gel panel ---------------- */
+const RAIL = 340, RAILGAP = 22, HEAD = 92;
+const SHOW_ARROWS = false;
+
+function buildPanel(slideEl, spec, P) {
+  // P: {x,y,w,h, rails:['left','right'], head, caption:{x,y,w}}
+  const iw = spec.size[0], ih = spec.size[1];
+  const poly = spec.gel.poly;
+  const gx0 = Math.min(...poly.map(p => p[0])), gx1 = Math.max(...poly.map(p => p[0]));
+  const gy0 = Math.min(...poly.map(p => p[1])), gy1 = Math.max(...poly.map(p => p[1]));
+  const rails = P.rails || ['left', 'right'];
+  const headH = spec.noHead ? 24 : HEAD;
+  // largest scale at which [rail | gel | rail] and the whole real image both fit the panel
+  const RW = RAIL + RAILGAP;
+  const need = sc => ({
+    l: Math.max(rails.includes('left') ? RW : 0, gx0 * sc),
+    r: Math.max(rails.includes('right') ? RW : 0, (iw - gx1) * sc),
+    t: Math.max(headH, gy0 * sc),
+    b: Math.max(0, (ih - gy1) * sc)
+  });
+  // rails + gel must sit inside the panel; the real image may spill into the
+  // panel's margins (P.ib = allowed image box [x0, y0, x1, y1])
+  const IB = P.ib || [P.x - 20, P.y - 10, P.x + P.w + 20, P.y + P.h + 6];
+  const RWl = rails.includes('left') ? RW : 0, RWr = rails.includes('right') ? RW : 0;
+  const range = sc => {
+    const gw = (gx1 - gx0) * sc, gh = (gy1 - gy0) * sc;
+    const xa = Math.max(P.x + RWl, IB[0] + gx0 * sc), xb = Math.min(P.x + P.w - RWr - gw, IB[2] - (iw - gx0) * sc);
+    const ya = Math.max(P.y + headH, IB[1] + gy0 * sc), yb = Math.min(P.y + P.h - gh, IB[3] - (ih - gy0) * sc);
+    return { xa, xb, ya, yb, gw, gh };
+  };
+  const fits = sc => { const r = range(sc); return r.xa <= r.xb && r.ya <= r.yb; };
+  let lo = .2, hi = P.maxScale || 3.4;
+  if (fits(hi)) lo = hi; else for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+  const sc = lo, rg = range(sc);
+  const gw = rg.gw, gh = rg.gh;
+  const cx0 = P.x + RWl + (P.w - RWl - RWr - gw) / 2;
+  const gl = Math.min(Math.max(cx0, rg.xa), rg.xb);
+  const gt = Math.min(Math.max(P.y + headH + (P.h - headH - gh) * .2, rg.ya), rg.yb);
+  const ox = gl - gx0 * sc, oy = gt - gy0 * sc;
+  const X = x => ox + x * sc, Y = y => oy + y * sc;
+  const tilt = spec.gel.tilt || 0, tn = Math.tan(tilt * Math.PI / 180);
+  const cy = spec.gel.cy != null ? spec.gel.cy : ih / 2;
+  const laneX = (lane, y) => lane.x - (y - cy) * tn;          // image px
+  const wellY = spec.gel.wellY != null ? spec.gel.wellY : gy0 + 6;
+  const wellAt = x => wellY + (x - (gx0 + gx1) / 2) * tn;
+
+  const root = h('div', 'panel', { style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
+  const gel = h('div', 'gel ' + (spec.style || 'dark') + (TEST && MODE === 'overlay' ? ' mode-overlay' : ''));
+  root.appendChild(gel);
+  slideEl.appendChild(root);
+
+  if (P.head) {
+    root.appendChild(h('div', 'panel-head', { text: P.head, style: { left: (P.x + 8) + 'px', width: (P.w - 16) + 'px', top: (P.y - 6) + 'px' } }));
+  }
+
+  // real image (revealed at the end) and pinned non-gel crops (e.g. a conditions table)
+  const real = h('div', 'real', { style: { left: X(0) + 'px', top: Y(0) + 'px', width: iw * sc + 'px', height: ih * sc + 'px' } });
+  real.appendChild(h('img', null, { src: spec.image, alt: spec.alt || 'Gel image as shown on the original slide', draggable: 'false' }));
+  gel.appendChild(real);
+  const realTag = h('div', 'real-tag', { text: 'Real gel', style: { left: X(0) + 'px', top: Y(0) - 34 + 'px' } });
+  gel.appendChild(realTag);
+
+  const sim = h('div', 'sim-layer'); gel.appendChild(sim);
+  (spec.pins || []).forEach(r => {
+    sim.appendChild(h('div', 'pin', { style: {
+      left: X(r[0]) + 'px', top: Y(r[1]) + 'px', width: r[2] * sc + 'px', height: r[3] * sc + 'px',
+      backgroundImage: `url("${spec.image}")`, backgroundSize: `${iw * sc}px ${ih * sc}px`,
+      backgroundPosition: `${-r[0] * sc}px ${-r[1] * sc}px` } }));
+  });
+
+  // slab
+  const slab = h('div', 'slab', { style: { left: X(gx0) + 'px', top: Y(gy0) + 'px', width: gw + 'px', height: gh + 'px',
+    clipPath: 'polygon(' + poly.map(p => `${(p[0] - gx0) * sc}px ${(p[1] - gy0) * sc}px`).join(',') + ')' } });
+  slab.appendChild(h('div', 'tex', { style: { backgroundImage: `url(${NOISE})` } }));
+  sim.appendChild(slab);
+
+  // wells
+  const wells = {};
+  const wellXs = (spec.gel.wells || spec.lanes.map(l => ({ x: laneX(l, wellY), w: l.w, id: l.id })));
+  wellXs.forEach(wd => {
+    const wx = wd.x, wwid = (wd.w || 20) * .9;
+    const wy = wellAt(wx);
+    const el = h('div', 'well', { style: { left: X(wx - wwid / 2) + 'px', top: Y(wy) - 5 + 'px', width: wwid * sc + 'px', height: Math.max(8, 2.2 * sc) + 'px', transform: `rotate(${tilt}deg)` } });
+    const dye = h('div', 'dye'); el.appendChild(dye);
+    sim.appendChild(el);
+    if (wd.id) wells[wd.id] = { el, dye };
+  });
+  if (!spec.gel.wells) spec.lanes.forEach(l => { if (!wells[l.id]) wells[l.id] = null; });
+
+  // leader lines sit under the bands, like the row guides on the original slides
+  const leaders = s('svg', { class: 'overlay-svg leader', width: 1920, height: 1080, viewBox: '0 0 1920 1080' });
+  sim.appendChild(leaders);
+
+  // bands
+  const laneById = {};
+  const bandEls = [];       // {lane, idx, el, sp, xs, ys, w}
+  spec.lanes.forEach(lane => {
+    laneById[lane.id] = lane;
+    lane._bands = [];
+    (lane.bands || []).forEach((b, i) => {
+      const bx = b.x != null ? b.x : laneX(lane, b.y);
+      const bw = (b.w || lane.w || 20), bh = Math.max(b.h || 5, 2.4);
+      const sp = spec.species[b.sp] || { cls: 'impurity' };
+      const cls = sp.cls || 'impurity';
+      const it = Math.max(0, Math.min(1, b.i != null ? b.i : .6));
+      const el = h('div', 'band c-' + cls, { style: {
+        left: X(bx - bw / 2) + 'px', top: Y(b.y - bh / 2) + 'px', width: bw * sc + 'px', height: bh * sc + 'px' } });
+      const rot = h('div', 'rot', { style: { transform: `rotate(${tilt}deg)` } });
+      const dark = spec.style !== 'light';
+      rot.style.setProperty('--o', (0.12 + 0.88 * Math.pow(it, 0.8)).toFixed(3));
+      rot.style.setProperty('--hot', dark ? Math.max(0, (it - .62) / .38 * .85).toFixed(3) : '0');
+      rot.style.setProperty('--bloom', dark ? Math.max(0, (it - .55) / .45).toFixed(3) : '0');
+      rot.style.setProperty('--bl', ((b.blur || 0) + .6) + 'px');
+      rot.appendChild(h('div', 'halo'));
+      if (b.smear) {
+        const sm = b.smear;
+        if (sm.up) rot.appendChild(h('div', 'smear up', { style: { height: sm.up * sc + 'px', opacity: (sm.k != null ? sm.k : .5) * (0.12 + 0.88 * it) } }));
+        if (sm.down) rot.appendChild(h('div', 'smear down', { style: { height: sm.down * sc + 'px', opacity: (sm.kd != null ? sm.kd : (sm.k != null ? sm.k : .5)) * (0.12 + 0.88 * it) } }));
+      }
+      rot.appendChild(h('div', 'bloom'));
+      rot.appendChild(h('div', 'core'));
+      rot.appendChild(h('div', 'hot'));
+      el.appendChild(rot);
+      el.style.opacity = 0;
+      sim.appendChild(el);
+      const rec = { lane: lane.id, idx: i, el, sp: b.sp, cls, x: X(bx), y: Y(b.y), w: bw * sc, h: bh * sc,
+        wx: X(laneX(lane, wellAt(bx))), wy: Y(wellAt(bx)) };
+      lane._bands.push(rec); bandEls.push(rec);
+    });
+  });
+
+  // lane headers & group brackets
+  const heads = {};
+  spec.lanes.forEach(lane => {
+    if (!lane.label && !lane.chip && !lane.sub) return;
+    const wx = laneX(lane, wellY);
+    const el = h('div', 'lane-head fade', { style: { left: X(wx) + 'px', top: Y(wellAt(wx)) - 10 + 'px' } });
+    let html = '';
+    if (lane.label) html += `<span class="${lane.chip ? 'chip ' + lane.chip : ''}">${lane.label}</span>`;
+    if (lane.sub) html += `<span class="sub">${lane.sub}</span>`;
+    el.innerHTML = html;
+    el.classList.add('hidden');
+    sim.appendChild(el); heads[lane.id] = el;
+  });
+  const groups = (spec.groups || []).map(gp => {
+    const ls = gp.lanes.map(id => laneById[id]).filter(Boolean);
+    const xs = ls.map(l => laneX(l, wellY));
+    const x0 = Math.min(...xs.map((x, i) => x - (ls[i].w || 20) / 2)), x1 = Math.max(...xs.map((x, i) => x + (ls[i].w || 20) / 2));
+    const hasSub = ls.some(l => l.sub);
+    const top = Y(wellAt((x0 + x1) / 2)) - (hasSub ? 58 : 40);
+    const el = h('div', 'grp fade hidden', { style: { left: X(x0) + 'px', top: top + 'px', width: (x1 - x0) * sc + 'px' } });
+    el.appendChild(h('span', null, { text: gp.label }));
+    sim.appendChild(el);
+    return { el, lanes: gp.lanes };
+  });
+
+  // lane highlight rects (e.g. a column of the conditions table)
+  const hls = {};
+  spec.lanes.forEach(lane => {
+    if (!lane.hl) return;
+    const r = lane.hl;
+    const el = h('div', 'hl', { style: { left: X(r[0]) + 'px', top: Y(r[1]) + 'px', width: r[2] * sc + 'px', height: r[3] * sc + 'px' } });
+    sim.appendChild(el); hls[lane.id] = el;
+  });
+
+  // arrows
+  const svg = s('svg', { class: 'overlay-svg', width: 1920, height: 1080, viewBox: '0 0 1920 1080' });
+  sim.appendChild(svg);
+  // arrows are recorded in the spec (ss band -> its hybridized band) but only the real
+  // image shows them; the simulation does not draw them
+  const arrows = (SHOW_ARROWS ? (spec.arrows || []) : []).map(a => {
+    const A = laneById[a.from[0]]._bands[a.from[1]], B = laneById[a.to[0]]._bands[a.to[1]];
+    if (!A || !B) return null;
+    const dir = B.x >= A.x ? 1 : -1;
+    let x1 = A.x + dir * A.w * .18, y1 = A.y, x2 = B.x - dir * B.w * .34, y2 = B.y;
+    if (Math.abs(x2 - x1) < 26) { x1 = A.x; x2 = B.x - dir * B.w * .22; }
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    const ex = x2 - Math.cos(ang) * 9, ey = y2 - Math.sin(ang) * 9;
+    const mx = (x1 + ex) / 2, my = (y1 + ey) / 2 - Math.abs(ex - x1) * .08;
+    const d = `M${x1.toFixed(1)},${y1.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`;
+    const head = (sz) => {
+      const p = [[x2, y2], [x2 - Math.cos(ang - .5) * sz, y2 - Math.sin(ang - .5) * sz], [x2 - Math.cos(ang + .5) * sz, y2 - Math.sin(ang + .5) * sz]];
+      return p.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+    };
+    const g = s('g', { class: 'arrow' });
+    const u = s('path', { d, class: 'under' }), o = s('path', { d, class: 'over' });
+    g.appendChild(u); g.appendChild(s('polygon', { points: head(17), class: 'head-under' }));
+    g.appendChild(o); g.appendChild(s('polygon', { points: head(13), class: 'head-over' }));
+    g.style.opacity = 0;
+    svg.appendChild(g);
+    return { g, paths: [u, o], from: a.from[0], to: a.to[0] };
+  }).filter(Boolean);
+
+  // label rails
+  const labels = {};
+  // pick the rail whose leader would run across the fewest other bands
+  const crossCost = (key, side) => {
+    const own = bandEls.filter(b => b.sp === key);
+    if (!own.length) return 0;
+    const t = side === 'left' ? own.reduce((a, b) => (b.x < a.x ? b : a)) : own.reduce((a, b) => (b.x > a.x ? b : a));
+    const x0 = side === 'left' ? gl : t.x, x1 = side === 'left' ? t.x : gl + gw;
+    return bandEls.reduce((c, b) => {
+      if (b === t || b.x < x0 || b.x > x1 || Math.abs(b.y - t.y) > b.h / 2 + 3) return c;
+      return c + (b.sp === key ? 0 : b.cls === 'impurity' ? .3 : 1);
+    }, 0);
+  };
+  Object.keys(spec.species).forEach(key => {
+    const sp = spec.species[key];
+    if (!sp.name || sp.cls === 'impurity') return;
+    let side = sp.side;
+    if (!side) {
+      const pref = ['ds', 'circ'].includes(sp.cls) ? 'right' : 'left', alt = pref === 'left' ? 'right' : 'left';
+      side = rails.includes(alt) && crossCost(key, alt) < crossCost(key, pref) ? alt : pref;
+    }
+    if (!rails.includes(side)) side = rails[0];
+    const el = h('div', 'lbl fade hidden c-' + sp.cls + (side === 'left' ? ' l' : ' r'));
+    el.innerHTML = sp.note
+      ? `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b>${sp.name}</b><span><i class="sw"></i>${sp.note}</span></div>`
+      : `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b><i class="sw"></i>${sp.name}</b></div>`;
+    const railX0 = side === 'left' ? gl - RAILGAP - RAIL : gl + gw + RAILGAP;
+    Object.assign(el.style, { left: railX0 + 'px', width: RAIL + 'px', justifyContent: side === 'left' ? 'flex-start' : 'flex-start' });
+    sim.appendChild(el);
+    const path = s('path', { class: 'b' }), dot = s('circle', { r: 3.2 });
+    const lg = s('g', {}); lg.appendChild(path); lg.appendChild(dot); lg.style.opacity = 0;
+    leaders.appendChild(lg);
+    labels[key] = { el, side, lg, path, dot, railX0, railW: RAIL };
+  });
+
+  // caption
+  let cap = null;
+  if (P.caption) {
+    cap = h('div', 'caption', { style: { left: P.caption.x + 'px', top: P.caption.y + 'px', width: P.caption.w + 'px' } });
+    root.appendChild(cap);
+  }
+  const scan = h('div', 'scanline', { style: { left: X(0) + 'px', width: iw * sc + 'px', top: Y(0) + 'px' } });
+  gel.appendChild(scan);
+
+  return { spec, root, gel, sim, real, realTag, scan, bandEls, laneById, heads, groups, arrows, labels, hls, wells, cap,
+    geom: { X, Y, sc, gl, gt, gw, gh, ox, oy, iw, ih, P }, k: -1 };
+}
+
+function panelState(spec, k) {
+  // cumulative state after the first k steps (k=0: blank gel)
+  const st = { lanes: new Set(), glow: new Set(), real: false, last: null, newest: [] };
+  for (let i = 0; i < k; i++) {
+    const step = spec.steps[i];
+    (step.lanes || []).forEach(l => st.lanes.add(l));
+    (step.glow || []).forEach(g => st.glow.add(g[0] + ':' + g[1]));
+    if (step.real) st.real = true;
+    st.last = step; st.newest = step.lanes || [];
+  }
+  return st;
+}
+
+function layoutLabels(G, st) {
+  const groupsBySide = { left: [], right: [] };
+  for (const key in G.labels) {
+    const L = G.labels[key];
+    const bands = G.bandEls.filter(b => b.sp === key && st.lanes.has(b.lane));
+    L.bands = bands;
+    if (!bands.length) continue;
+    // aim at the band nearest this rail, so the leader runs along that band's row
+    L.tgt = L.side === 'left' ? bands.reduce((a, b) => (b.x - b.w / 2 < a.x - a.w / 2 ? b : a))
+                              : bands.reduce((a, b) => (b.x + b.w / 2 > a.x + a.w / 2 ? b : a));
+    L.ty = L.tgt.y;
+    groupsBySide[L.side].push(L);
+  }
+  const top = G.geom.P.y - 30, bottom = G.geom.P.y + G.geom.P.h + 20, LH = 62;
+  for (const side of ['left', 'right']) {
+    const arr = groupsBySide[side].sort((a, b) => a.ty - b.ty);
+    // merge overlapping labels into stacks centred on their bands' mean row
+    let blocks = arr.map(L => ({ items: [L], t: L.ty }));
+    const pos = b => Math.max(top, Math.min(bottom - b.items.length * LH, b.t - b.items.length * LH / 2));
+    for (let merged = true; merged;) {
+      merged = false;
+      for (let i = 0; i < blocks.length - 1; i++) {
+        const a = blocks[i], b = blocks[i + 1];
+        if (pos(a) + a.items.length * LH > pos(b) + .5) {
+          const items = a.items.concat(b.items);
+          blocks.splice(i, 2, { items, t: items.reduce((sum, L) => sum + L.ty, 0) / items.length });
+          merged = true; break;
+        }
+      }
+    }
+    blocks.forEach(b => { const y0 = pos(b); b.items.forEach((L, k) => { L.y = y0 + k * LH; }); });
+    arr.forEach(L => {
+      L.el.style.top = L.y + 'px';
+      L.el.style.height = LH + 'px';
+      const ay = L.y + LH / 2;
+      const ax = side === 'left' ? L.railX0 + L.railW + 6 : L.railX0 - 6;
+      const tgt = L.tgt;
+      const tx = side === 'left' ? tgt.x - tgt.w * .42 : tgt.x + tgt.w * .42, ty = tgt.y;
+      const edge = side === 'left' ? G.geom.gl : G.geom.gl + G.geom.gw;
+      const kx = side === 'left' ? edge - 10 : edge + 10;
+      const d = Math.abs(ay - ty) < 1 ? `M${ax},${ay} L${tx},${ty}`
+        : `M${ax.toFixed(1)},${ay.toFixed(1)} L${(kx + (side === 'left' ? -18 : 18)).toFixed(1)},${ay.toFixed(1)} L${kx.toFixed(1)},${ty.toFixed(1)} L${tx.toFixed(1)},${ty.toFixed(1)}`;
+      L.path.setAttribute('d', d);
+      L.dot.setAttribute('cx', tx.toFixed(1)); L.dot.setAttribute('cy', ty.toFixed(1));
+    });
+  }
+}
+
+function applyPanel(G, k, animate) {
+  const spec = G.spec, prev = G.k < 0 ? panelState(spec, 0) : panelState(spec, G.k), st = panelState(spec, k);
+  const fwd = animate && k === G.k + 1;
+  G.k = k;
+  const D = 1.5;   // run time of a lane, seconds
+  // bands
+  const laneOrder = {}; (st.newest || []).forEach((id, i) => laneOrder[id] = i);
+  G.bandEls.forEach(b => {
+    const vis = st.lanes.has(b.lane), was = prev.lanes.has(b.lane);
+    const glow = st.glow.has(b.lane + ':' + b.idx);
+    b.el.classList.toggle('glow', glow);
+    if (vis && !was && fwd) {
+      const delay = .35 + (laneOrder[b.lane] || 0) * .12;
+      const dx = b.wx - b.x, dy = b.wy - b.y;
+      b.el.style.opacity = 1;
+      anim(b.el, { transform: [`translate(${dx}px,${dy}px) scaleY(.6)`, 'translate(0px,0px) scaleY(1)'], opacity: [0, .9, 1] },
+        { duration: D, delay, easing: [.33, .62, .28, 1] });
+    } else {
+      b.el.getAnimations && b.el.getAnimations().forEach(a => a.cancel());
+      b.el.style.opacity = vis ? 1 : 0;
+      b.el.style.transform = '';
+    }
+  });
+  // wells flash blue (loading dye) when a lane is loaded
+  if (fwd) (st.newest || []).forEach((id, i) => {
+    if (prev.lanes.has(id)) return;
+    const w = G.wells[id]; if (!w) return;
+    anim(w.dye, { opacity: [0, .9, .9, 0] }, { duration: 1.1, delay: i * .12, easing: 'ease-out' });
+  });
+  // headers & groups
+  for (const id in G.heads) G.heads[id].classList.toggle('hidden', !st.lanes.has(id));
+  G.groups.forEach(gp => gp.el.classList.toggle('hidden', !gp.lanes.some(id => st.lanes.has(id))));
+  for (const id in G.hls) G.hls[id].classList.toggle('on', st.newest.includes(id) && !st.real);
+  // arrows: visible once both ends are loaded
+  G.arrows.forEach(a => {
+    const vis = st.lanes.has(a.from) && st.lanes.has(a.to);
+    const was = prev.lanes.has(a.from) && prev.lanes.has(a.to);
+    a.g.getAnimations && a.g.getAnimations().forEach(x => x.cancel());
+    a.g.style.opacity = vis ? 1 : 0;
+    if (vis && !was && fwd && !STATIC) {
+      a.g.style.opacity = 0;
+      anim(a.g, { opacity: [0, 1] }, { duration: .3, delay: D + .2 });
+      a.paths.forEach(p => {
+        const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+        anim(p, { strokeDashoffset: [L, 0] }, { duration: .55, delay: D + .2, easing: 'ease-out' });
+      });
+    } else a.paths.forEach(p => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+  });
+  // labels
+  layoutLabels(G, st);
+  for (const key in G.labels) {
+    const L = G.labels[key];
+    const vis = !!(L.bands && L.bands.length);
+    const wasVis = G.bandEls.some(b => b.sp === key && prev.lanes.has(b.lane));
+    const glow = L.bands && L.bands.some(b => st.glow.has(b.lane + ':' + b.idx));
+    L.el.classList.toggle('glow', !!glow);
+    if (vis && !wasVis && fwd && !STATIC) {
+      L.el.style.transitionDelay = (D * .8) + 's'; L.lg.style.transition = 'opacity .35s ease ' + (D * .8) + 's';
+    } else { L.el.style.transitionDelay = '0s'; L.lg.style.transition = 'none'; }
+    L.el.classList.toggle('hidden', !vis);
+    L.lg.style.opacity = vis ? 1 : 0;
+  }
+  // caption
+  if (G.cap) {
+    const n = spec.steps.length;
+    if (k === 0) G.cap.innerHTML = `<span class="k">0 / ${n}</span><span>${spec.blank || 'Blank gel'}</span>`;
+    else G.cap.innerHTML = `<span class="k">${k} / ${n}</span><span>${st.last.say || ''}</span>`;
+  }
+  // real image swap
+  const realOn = st.real, realWas = prev.real;
+  G.real.getAnimations && G.real.getAnimations().forEach(a => a.cancel());
+  G.sim.getAnimations && G.sim.getAnimations().forEach(a => a.cancel());
+  if (TEST && MODE === 'real') { G.real.style.opacity = 1; G.sim.style.opacity = 0; return; }
+  if (TEST && MODE === 'overlay') return;
+  if (realOn && !realWas && fwd && !STATIC) {
+    G.real.style.opacity = 1;
+    anim(G.real, { clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0% 0)'] }, { duration: 1.25, easing: [.45, .05, .25, 1] });
+    anim(G.scan, { top: [G.geom.Y(0) + 'px', G.geom.Y(G.geom.ih) + 'px'], opacity: [0, 1, 1, 0] }, { duration: 1.25, easing: [.45, .05, .25, 1] });
+    G.sim.style.transition = 'opacity .6s ease .65s';
+    G.sim.style.opacity = 0;
+  } else {
+    G.sim.style.transition = 'none';
+    G.real.style.opacity = realOn ? 1 : 0;
+    G.real.style.clipPath = '';
+    G.sim.style.opacity = realOn ? 0 : 1;
+  }
+  G.realTag.style.opacity = realOn ? 1 : 0;
+}
+
+/* ---------------- slides ---------------- */
+const slides = [];
+function buildSlide(cfg, idx) {
+  const el = h('section', 'slide', { 'aria-label': cfg.title || ('Slide ' + (idx + 1)) });
+  el.style.setProperty('--sec', (SECTIONS[cfg.section] || [])[1] || 'var(--ink-3)');
+  stage.appendChild(el);
+  const S = { cfg, el, steps: [{ panel: null }], panels: [] };
+  if (cfg.kind === 'image') {
+    el.classList.add('static');
+    el.appendChild(h('img', 'full', { src: cfg.src, alt: cfg.alt || cfg.title || 'Original slide', loading: idx < 2 ? 'eager' : 'lazy' }));
+  } else {
+    el.appendChild(h('h2', 's-title', { text: cfg.title }));
+    if (cfg.subtitle) el.appendChild(h('p', 's-sub', { text: cfg.subtitle, style: { top: (cfg.subY || 132) + 'px' } }));
+    (cfg.callouts || []).forEach(c => el.appendChild(h('div', 'callout', { html: c.html, style: { left: c.x + 'px', top: c.y + 'px', width: c.w + 'px' } })));
+    const foot = h('div', 's-foot');
+    foot.innerHTML = `<span class="sec-tag">${(SECTIONS[cfg.section] || [''])[0]}</span><span class="dots"></span><span class="s-page">${idx + 1} / ${DECK.slides.length}</span>`;
+    el.appendChild(foot);
+    S.dots = foot.querySelector('.dots');
+    (cfg.panels || []).forEach((pc, pi) => {
+      const spec = DECK.gels[pc.gel];
+      if (!spec) { console.warn('missing gel spec', pc.gel); return; }
+      const G = buildPanel(el, spec, pc);
+      S.panels.push(G);
+      spec.steps.forEach((st, k) => S.steps.push({ panel: pi, k: k + 1 }));
+    });
+    for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
+  }
+  slides.push(S);
+}
+
+let cur = { s: 0, k: 0 };
+function show(si, k, animate) {
+  si = Math.max(0, Math.min(slides.length - 1, si));
+  const S = slides[si];
+  k = Math.max(0, Math.min(S.steps.length - 1, k));
+  stopAll();
+  slides.forEach((x, i) => x.el.classList.toggle('on', i === si));
+  // per-panel step counts at slide step k
+  const counts = S.panels.map(() => 0);
+  for (let i = 1; i <= k; i++) counts[S.steps[i].panel]++;
+  S.panels.forEach((G, pi) => applyPanel(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
+  if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
+  cur = { s: si, k };
+  try { history.replaceState(null, '', '#s' + (si + 1)); } catch (e) {}
+}
+function next() { const S = slides[cur.s]; if (cur.k < S.steps.length - 1) show(cur.s, cur.k + 1, true); else if (cur.s < slides.length - 1) show(cur.s + 1, 0, false); }
+function prev() { if (cur.k > 0) show(cur.s, cur.k - 1, false); else if (cur.s > 0) show(cur.s - 1, slides[cur.s - 1].steps.length - 1, false); }
+
+function fit() {
+  const vp = document.getElementById('viewport').getBoundingClientRect();
+  const k = Math.min(vp.width / 1920, vp.height / 1080);
+  stage.style.transform = `translate(${-960 * k}px, ${-540 * k}px) scale(${k})`;
+}
+
+function boot() {
+  let list = DECK.slides;
+  if (TEST) {
+    document.body.style.padding = '0';
+    document.documentElement.classList.add('is-test');
+    document.getElementById('hud').style.display = 'none';
+    document.getElementById('stage').style.boxShadow = 'none';
+    const spec = DECK.gels[TEST];
+    // lay the slide out with all its panels, then build only the gel under test
+    const cfg = DECK.slides.find(sl => (sl.panels || []).some(p => p.gel === TEST)) || { kind: 'gel', title: TEST, panels: [{ gel: TEST }] };
+    autoPanels(cfg);
+    DECK.slides = [Object.assign({}, cfg, { panels: cfg.panels.filter(p => p.gel === TEST) })];
+  }
+  DECK.slides.forEach((cfg, i) => {
+    if (cfg.kind !== 'image' && !TEST) autoPanels(cfg);
+    buildSlide(cfg, i);
+  });
+  fit(); addEventListener('resize', fit);
+  let si = 0;
+  const m = /^#s(\d+)$/.exec(location.hash); if (m) si = (+m[1]) - 1;
+  if (TEST) {
+    const S = slides[0]; const want = Q.get('step');
+    show(0, want != null ? +want : (MODE === 'real' ? S.steps.length - 1 : S.steps.length - 2), false);
+    document.body.dataset.geom = JSON.stringify(S.panels.map(G => ({ scale: +G.geom.sc.toFixed(3), imageLeft: +G.geom.ox.toFixed(1), imageTop: +G.geom.oy.toFixed(1), gelLeft: +G.geom.gl.toFixed(1), gelTop: +G.geom.gt.toFixed(1), gelW: +G.geom.gw.toFixed(1), gelH: +G.geom.gh.toFixed(1) })));
+  } else if (SHOT) {
+    document.body.style.padding = '0'; document.documentElement.classList.add('is-test');
+    document.getElementById('hud').style.display = 'none';
+    show(+SHOT - 1, +(Q.get('step') || 0), false);
+  } else show(si, 0, false);
+}
+
+function autoPanels(cfg) {
+  // default panel rectangles for one or two gels
+  const top = cfg.top || (cfg.subtitle ? 212 : 160), bottom = 960;
+  const n = (cfg.panels || []).length;
+  (cfg.panels || []).forEach((p, i) => {
+    if (p.x != null) return;
+    if (n === 1) {
+      Object.assign(p, { x: 64, y: top + 20, w: 1792, h: bottom - top - 20 - 50 });
+      if (!p.ib) p.ib = [16, top - 16, 1904, bottom - 44];
+    } else {
+      const w = 900;
+      Object.assign(p, { x: i === 0 ? 40 : 980, y: top + (p.head ? 56 : 30), w, h: bottom - top - (p.head ? 56 : 30) - 50 });
+      if (!p.rails) p.rails = [i === 0 ? 'left' : 'right'];
+      if (!p.ib) p.ib = [p.x - 16, p.y - 10, p.x + p.w + 16, bottom - 44];
+    }
+    if (!p.caption) p.caption = { x: p.x + 24, y: bottom - 30, w: p.w - 48 };
+    if (p.head && p.headY == null) p.headY = p.y - 46;
+  });
+}
+
+addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter', 'n'].includes(e.key)) { e.preventDefault(); next(); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace', 'p'].includes(e.key)) { e.preventDefault(); prev(); }
+  else if (e.key === 'Home') show(0, 0, false);
+  else if (e.key === 'End') show(slides.length - 1, 0, false);
+  else if (e.key === 'f') toggleFull();
+});
+document.getElementById('viewport').addEventListener('click', e => { if (e.clientX < innerWidth * .2) prev(); else next(); });
+document.getElementById('b-prev').addEventListener('click', e => { e.stopPropagation(); prev(); });
+document.getElementById('b-next').addEventListener('click', e => { e.stopPropagation(); next(); });
+function toggleFull() {
+  try {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else document.documentElement.requestFullscreen().catch(() => {});
+  } catch (e) {}
+}
+document.getElementById('b-full').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
+let tx0 = null;
+addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+addEventListener('touchend', e => { if (tx0 == null) return; const dx = e.changedTouches[0].clientX - tx0; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } tx0 = null; });
+
+if (DECK && DECK.slides && DECK.slides.length) boot();
+window.__deck = { show, next, prev, slides, chimera };
+})();
+</script>

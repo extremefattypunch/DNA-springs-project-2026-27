@@ -1,0 +1,79 @@
+{
+  "id": "p19-2h",
+  "image": "gels/p19-2h.jpg",
+  "size": [476, 406],
+  "style": "dark",
+  "alt": "pp2a SDS-PAGE after the standard 2 h BCN incubation: 1-tet BCN and 2-tet BCN reactions in duplicate lanes, then 1-tet and 2-tet pp2a-only controls",
+  "gel": {"poly": [[130, 40], [392, 40], [392, 400], [130, 400]], "wellY": 46, "tilt": 0},
+  "species": {
+    "protein": {"name": "pp2a only", "note": "unreacted protein (1-tet / 2-tet)", "cls": "protein", "icon": {"k": "protein", "tet": 0}},
+    "p1d_ss": {"name": "pp2a + ssDNA", "note": "linear 1 : 1 · one end attached", "cls": "ss", "icon": {"k": "p1d", "tet": 1}},
+    "circ_ss": {"name": "Circular pp2a + ssDNA", "note": "new band · candidate, runs faster", "cls": "circ", "icon": {"k": "circ"}},
+    "p2d1_ss": {"name": "2 pp2a + ssDNA", "note": "one strand bridges two pp2a", "cls": "ss", "icon": {"k": "p2d1", "tet": 2}},
+    "p2d2_ss": {"name": "2 pp2a + 2 ssDNA", "note": "heavier multimer (tentative)", "cls": "ss", "icon": {"k": "p2d2"}},
+    "imp": {"cls": "impurity"},
+    "gst": {"name": "free GST", "note": "assumed: cut-off tag, every lane", "cls": "other", "icon": {"k": "gst"}}
+  },
+  "lanes": [
+    {"id": "L1", "x": 161, "w": 36, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+      {"y": 184, "h": 11, "i": 0.32, "sp": "p1d_ss"},
+      {"y": 215, "h": 12, "i": 0.45, "sp": "protein"},
+      {"y": 238, "h": 11, "i": 0.15, "sp": "imp"},
+      {"y": 283, "h": 11, "i": 0.12, "sp": "imp"},
+      {"y": 335, "h": 17, "i": 0.84, "sp": "gst"}
+    ] },
+    {"id": "L2", "x": 203, "w": 33, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+      {"y": 184, "h": 10, "i": 0.26, "sp": "p1d_ss"},
+      {"y": 213, "h": 11, "i": 0.4, "sp": "protein"},
+      {"y": 238, "h": 11, "i": 0.09, "sp": "imp"},
+      {"y": 280, "h": 12, "i": 0.14, "sp": "imp"},
+      {"y": 331, "h": 17, "i": 0.83, "sp": "gst"}
+    ] },
+    {"id": "L3", "x": 248, "w": 36, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+      {"y": 131, "h": 18, "i": 0.45, "sp": "p2d1_ss"},
+      {"y": 182, "h": 11, "i": 0.22, "sp": "p1d_ss"},
+      {"y": 212, "h": 11, "i": 0.28, "sp": "protein"},
+      {"y": 164, "h": 9, "i": 0.14, "sp": "imp"},
+      {"y": 243, "h": 10, "i": 0.15, "sp": "imp"},
+      {"y": 334, "h": 17, "i": 0.96, "sp": "gst"}
+    ] },
+    {"id": "L4", "x": 290, "w": 32, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+      {"y": 114, "h": 17, "i": 0.36, "sp": "p2d2_ss"},
+      {"y": 181, "h": 10, "i": 0.21, "sp": "p1d_ss"},
+      {"y": 194, "h": 8, "i": 0.13, "sp": "circ_ss"},
+      {"y": 211, "h": 10, "i": 0.31, "sp": "protein"},
+      {"y": 162, "h": 9, "i": 0.13, "sp": "imp"},
+      {"y": 187, "h": 7, "i": 0.12, "sp": "imp"},
+      {"y": 243, "h": 9, "i": 0.12, "sp": "imp"},
+      {"y": 330, "h": 17, "i": 1.0, "sp": "gst"}
+    ] },
+    {"id": "L5", "x": 329, "w": 31, "label": "pp2a", "chip": "ctrl", "sub": "1 tet", "bands": [
+      {"y": 215, "h": 14, "i": 0.88, "sp": "protein"},
+      {"y": 233, "h": 8, "i": 0.2, "sp": "imp"},
+      {"y": 239, "h": 7, "i": 0.14, "sp": "imp"},
+      {"y": 332, "h": 17, "i": 0.73, "sp": "gst"}
+    ] },
+    {"id": "L6", "x": 365, "w": 31, "label": "pp2a", "chip": "ctrl", "sub": "2 tet", "bands": [
+      {"y": 214, "h": 12, "i": 0.55, "sp": "protein"},
+      {"y": 235, "h": 8, "i": 0.18, "sp": "imp"},
+      {"y": 241, "h": 7, "i": 0.11, "sp": "imp"},
+      {"y": 335, "h": 17, "i": 0.56, "sp": "gst"}
+    ] }
+  ],
+  "groups": [
+    {"label": "1 tet BCN", "lanes": ["L1", "L2"]},
+    {"label": "2 tet BCN", "lanes": ["L3", "L4"]},
+    {"label": "controls", "lanes": ["L5", "L6"]}
+  ],
+  "arrows": [
+    {"from": ["L3", 1], "to": ["L4", 2]}
+  ],
+  "blank": "Blank gel: 2 h standard BCN incubation, wells loaded as the story unfolds",
+  "steps": [
+    {"lanes": ["L5", "L6"], "say": "<b>pp2a alone</b> (1-tet, 2-tet): the unreacted protein sets the reference row"},
+    {"lanes": ["L1", "L2"], "say": "<b>1-tet pp2a + BCN ssDNA</b>: one site, so the chimera is linear"},
+    {"lanes": ["L3", "L4"], "say": "<b>2-tet pp2a + BCN ssDNA</b>: mostly multimers; a faint new band below linear"},
+    {"glow": [["L4", 2]], "say": "<b>Candidate circular pp2a + ssDNA</b>: after 2 h it is only a faint band"},
+    {"real": true, "say": "Real gel, as imaged (2 h BCN incubation)"}
+  ]
+}

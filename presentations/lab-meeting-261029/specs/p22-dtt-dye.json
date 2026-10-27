@@ -1,0 +1,42 @@
+{
+  "id": "p22-dtt-dye",
+  "image": "gels/p22-dtt-dye.jpg",
+  "size": [566, 284],
+  "style": "mid",
+  "alt": "pp2a in BME 2x loading dye and in 6x loading dye with no DTT, 0.01, 0.1, 1 and 10 mM DTT: the band smears upward without reducing agent and tightens as DTT rises",
+  "gel": {"poly": [[0, 0], [512, 0], [512, 284], [0, 284]], "wellY": 6, "tilt": 0},
+  "species": {
+    "protein": {"name": "pp2a only", "note": "smears upward when unreduced", "cls": "protein", "icon": {"k": "protein", "tet": 0}},
+    "imp": {"cls": "impurity"}
+  },
+  "lanes": [
+    {"id": "L1", "x": 95, "w": 96, "label": "BME", "chip": "ctrl", "sub": "2x dye", "bands": [
+      {"y": 200, "h": 28, "i": 1.0, "sp": "protein", "blur": 0.6, "smear": {"up": 14, "k": 0.3}},
+      {"y": 252, "h": 20, "i": 0.08, "sp": "imp", "blur": 4, "w": 80} ] },
+    {"id": "L2", "x": 180, "w": 62, "label": "no DTT", "sub": "6x dye", "bands": [
+      {"y": 207, "h": 48, "i": 0.9, "sp": "protein", "blur": 4, "smear": {"up": 120, "k": 1.0, "down": 34, "kd": 0.45}} ] },
+    {"id": "L3", "x": 249, "w": 62, "label": "0.01", "sub": "mM DTT", "bands": [
+      {"y": 207, "h": 42, "i": 0.88, "sp": "protein", "blur": 3.5, "smear": {"up": 110, "k": 0.95, "down": 28, "kd": 0.4}} ] },
+    {"id": "L4", "x": 323, "w": 62, "label": "0.1", "sub": "mM DTT", "bands": [
+      {"y": 202, "h": 40, "i": 0.9, "sp": "protein", "blur": 3, "smear": {"up": 100, "k": 0.85, "down": 22, "kd": 0.35}} ] },
+    {"id": "L5", "x": 398, "w": 64, "label": "1", "sub": "mM DTT", "bands": [
+      {"y": 196, "h": 32, "i": 0.92, "sp": "protein", "blur": 1.5, "smear": {"up": 64, "k": 0.8}} ] },
+    {"id": "L6", "x": 476, "w": 68, "label": "10", "sub": "mM DTT", "bands": [
+      {"y": 194, "h": 30, "i": 0.95, "sp": "protein", "blur": 1, "smear": {"up": 50, "k": 0.65}} ] }
+  ],
+  "groups": [
+    {"label": "BME 2x dye", "lanes": ["L1"]},
+    {"label": "6x loading dye", "lanes": ["L2", "L3", "L4", "L5", "L6"]}
+  ],
+  "arrows": [],
+  "blank": "Blank gel: pp2a in two loading dyes, loaded left to right as DTT increases",
+  "steps": [
+    {"lanes": ["L1"], "say": "<b>BME 2x loading dye</b>: fully reduced reference, one tight pp2a band"},
+    {"lanes": ["L2"], "say": "<b>6x dye, no DTT</b>: unreduced pp2a smears far up the lane"},
+    {"lanes": ["L3"], "say": "<b>0.01 mM DTT</b>: still a long upward smear above the band"},
+    {"lanes": ["L4"], "say": "<b>0.1 mM DTT</b>: the smear persists while the band starts to rise and sharpen"},
+    {"lanes": ["L5"], "say": "<b>1 mM DTT</b>: the smear shrinks to a short haze just above the band"},
+    {"lanes": ["L6"], "say": "<b>10 mM DTT</b>: a tight band, close to the BME reference"},
+    {"real": true, "say": "Real gel, as imaged"}
+  ]
+}

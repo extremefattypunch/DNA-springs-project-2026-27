@@ -1,0 +1,142 @@
+{
+  "id": "p20-exposed",
+  "image": "gels/p20-exposed.jpg",
+  "size": [
+    270,
+    258
+  ],
+  "style": "mid",
+  "alt": "Protein gel: pp2a control lane on the right; four flow-through lanes after TCO resin are empty",
+  "gel": {
+    "poly": [
+      [
+        4,
+        0
+      ],
+      [
+        264,
+        0
+      ],
+      [
+        264,
+        256
+      ],
+      [
+        4,
+        256
+      ]
+    ],
+    "wellY": 9,
+    "tilt": -0.8,
+    "cy": 245
+  },
+  "species": {
+    "protein": {
+      "name": "pp2a, tet exposed",
+      "note": "free tet sites · control lane",
+      "cls": "protein",
+      "icon": {
+        "k": "protein",
+        "tet": 2
+      }
+    },
+    "imp": {
+      "cls": "impurity"
+    }
+  },
+  "lanes": [
+    {
+      "id": "L1",
+      "x": 35,
+      "w": 44,
+      "label": "1",
+      "bands": []
+    },
+    {
+      "id": "L2",
+      "x": 88.5,
+      "w": 44,
+      "label": "2",
+      "bands": []
+    },
+    {
+      "id": "L3",
+      "x": 146,
+      "w": 44,
+      "label": "3",
+      "bands": []
+    },
+    {
+      "id": "L4",
+      "x": 199.5,
+      "w": 44,
+      "label": "4",
+      "bands": []
+    },
+    {
+      "id": "L5",
+      "x": 246,
+      "w": 44,
+      "label": "pp2a",
+      "chip": "ctrl",
+      "bands": [
+        {
+          "y": 77,
+          "h": 13,
+          "i": 0.5,
+          "sp": "protein",
+          "x": 238.5,
+          "w": 47
+        },
+        {
+          "y": 106,
+          "h": 8,
+          "i": 0.15,
+          "sp": "imp",
+          "x": 241,
+          "w": 34
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "label": "resin flow-through",
+      "lanes": [
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ]
+    },
+    {
+      "label": "control",
+      "lanes": [
+        "L5"
+      ]
+    }
+  ],
+  "arrows": [],
+  "blank": "Blank gel: one control lane and four resin flow-through lanes",
+  "steps": [
+    {
+      "lanes": [
+        "L5"
+      ],
+      "say": "<b>pp2a with exposed tet</b>: the control lane shows where the protein runs"
+    },
+    {
+      "lanes": [
+        "L1",
+        "L2",
+        "L3",
+        "L4"
+      ],
+      "say": "<b>After TCO resin</b>: flow-through lanes are empty, so exposed tet is trapped"
+    },
+    {
+      "real": true,
+      "say": "Real gel, as imaged"
+    }
+  ]
+}
