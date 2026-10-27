@@ -40,17 +40,17 @@ Run from this directory, so that `manim.cfg` (background colour, 1080p30) is rea
 
 ```bash
 # one clip
-manim render -qh scenes/s03_orientation_fourier_slice.py Scene03OrientationFourierSlice
+manim render -qh --fps 30 scenes/s03_orientation_fourier_slice.py Scene03OrientationFourierSlice
 # preview quality
 manim render -ql scenes/s01_forward_model.py Scene01ForwardModel
 # all six, in order (python main.py --list prints module, class, output name)
 python main.py --list | while read -r MOD CLS OUT; do
-    manim render -qh "scenes/$MOD.py" "$CLS" < /dev/null
+    manim render -qh --fps 30 "scenes/$MOD.py" "$CLS" < /dev/null
 done
 ```
 
 On the cluster the final renders run as one CPU job on the free `test` partition.
-The six clips take about 25–40 minutes. Afterwards, `postprocess.sh` writes the
+The six clips take about 15–25 minutes. Afterwards, `postprocess.sh` writes the
 thumbnails, the master video and the report.
 
 ```bash
