@@ -43,7 +43,23 @@ esac
 [[ "$REP" =~ ^[0-9]+$ ]] || { echo "== REP must be a number, got '$REP'" >&2; exit 2; }
 RUNDIR="$PP2A_MD_SCRATCH/runs/$TAG/rep$REP"
 mkdir -p "$RUNDIR"
-exec 9>"$RUNDIR/.lock"; flock -n 9 || { echo "== another job already owns $RUNDIR; exiting"; exit 0; }
+# One job per run directory.  A paid job (gpu_requeue/gpu) that finds a FREE-partition job of
+# the same run holding the lock takes the run over: it cancels that gpu_test chunk and resumes
+# from its checkpoint (<= 200 ps lost) at roughly twice the speed.  Never the other way round.
+exec 9>"$RUNDIR/.lock"
+if ! flock -n 9; then
+    owner=$(cat "$RUNDIR/.lock_owner" 2>/dev/null || echo "? ?")
+    oid=${owner%% *}; opart=${owner#* }
+    if [[ "${SLURM_JOB_PARTITION:-}" =~ ^(gpu_requeue|gpu)$ && "$opart" == "gpu_test" && "$oid" =~ ^[0-9]+$ ]]; then
+        echo "== taking over $RUNDIR from gpu_test job $oid (this job is on ${SLURM_JOB_PARTITION})"
+        scancel "$oid" || true
+        for i in $(seq 1 60); do flock -n 9 && break; sleep 5; done
+        flock -n 9 || { echo "== could not obtain the lock after cancelling $oid; exiting"; exit 0; }
+    else
+        echo "== another job ($owner) already owns $RUNDIR; exiting"; exit 0
+    fi
+fi
+echo "${SLURM_JOB_ID:-0} ${SLURM_JOB_PARTITION:-none}" > "$RUNDIR/.lock_owner"
 TMP=/scratch/${USER}_${SLURM_JOB_ID}; mkdir -p "$TMP"; export TMPDIR="$TMP"
 trap 'rm -rf "$TMP"' EXIT
 
