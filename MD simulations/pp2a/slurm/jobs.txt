@@ -18,7 +18,7 @@ SYS=P1_tet      NS=1   REP=1 PART=gpu_test  HOURS=1 SUFFIX=_bench
 SYS=P1_tet      NS=100 REP=1 PART=gpu_requeue
 # --- the spring pair and the 80-mers, sized from measured speeds (P3_ss50: 184 ns/day on an A100 at 259k atoms;
 # the 80-mers are 1.75x larger) so they do not wait behind the free-partition windows ---
-SYS=P4_ds50     NS=100 REP=1 PART=gpu_requeue HOURS=16
+SYS=P4_ds50     NS=100 REP=1 PART=gpu_test
 #HOLD SYS=P5_ss80     NS=100 REP=1 PART=gpu_requeue HOURS=30
 #HOLD SYS=P6_ds80     NS=100 REP=1 PART=gpu_requeue HOURS=30
 SYS=D_ds50      NS=20  REP=1 PART=gpu_requeue X0=60  K=33 RAMP_PS=3000 HOURS=6

@@ -54,6 +54,9 @@ while true; do
     echo "$(date -Is) squeue failed; skipping this pass"; sleep 120; continue
   fi
   queued_test=$(awk '$1 ~ /^pp2amd/ && $2 ~ /(^|,)gpu_test(,|$)/' <<<"$jobs_now" | wc -l)
+  # gpu_test's QOS allows 2 jobs; use both slots unless the Open OnDemand desktop holds one
+  desktop_on_test=$(awk '$1 ~ /fasrcood/ && $2 ~ /(^|,)gpu_test(,|$)/' <<<"$jobs_now" | wc -l)
+  MAX_TEST=$(( 2 - desktop_on_test ))
   queued_paid=$(awk '$1 ~ /^pp2amd/ && $2 ~ /(^|,)gpu(_requeue)?(,|$)/' <<<"$jobs_now" | wc -l)
   pending=0; submitted=0; need_publish=0; deferred=0
   PUBLISHED="$PP2A_MD_SCRATCH/published.txt"; touch "$PUBLISHED"
@@ -75,7 +78,7 @@ while true; do
     bench_log="$PP2A_MD_SCRATCH/runs/${SYS}_bench/rep1/03_production/production.log"
     bench_prog="$PP2A_MD_SCRATCH/runs/${SYS}_bench/rep1/03_production/progress.json"
     case $PART in
-      gpu_test) [ "$queued_test" -ge 1 ] && continue; cons="--constraint=a100-mig"; cap=12 ;;
+      gpu_test) [ "$queued_test" -ge "$MAX_TEST" ] && continue; cons="--constraint=a100-mig"; cap=12 ;;
       gpu_requeue|gpu)
         [ "$queued_paid" -ge "$MAX_PAID" ] && continue
         if [ -z "$X0" ] && [ -z "$HOURS" ] && ! is_done "$(ns_done "$bench_prog")" 1; then continue; fi   # production waits for its free benchmark unless HOURS is given
