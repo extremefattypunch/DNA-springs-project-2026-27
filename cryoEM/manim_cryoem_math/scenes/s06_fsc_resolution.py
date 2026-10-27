@@ -264,7 +264,7 @@ class Scene06FSCResolution(Scene):
         reg1 = [int(j) for j in d["region1"]]
         reg2 = [int(j) for j in d["region2"]]
         box1 = self.region_outline(X[reg1, :2], cR, sc4, pad=0.18, dashed=False)
-        box2 = self.region_outline(X[reg2, :2], cR, sc4, pad=0.42, dashed=True)
+        box2 = self.region_outline(X[reg2, :2], cR, sc4, pad=0.56, dashed=True)
         r1_lab = st.T("Region 1", 28, st.TEXT).next_to(box1, UP, buff=0.1)
         r1_lab.align_to(box1, LEFT)
         r2_lab = st.T("Region 2", 28, st.TEXT).next_to(box2, RIGHT, buff=0.15)

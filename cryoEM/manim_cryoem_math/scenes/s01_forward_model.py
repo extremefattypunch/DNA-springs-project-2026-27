@@ -106,7 +106,7 @@ class Scene01ForwardModel(Scene):
                           for q in Q])
         pdots = VGroup(*[Dot(obl(p[0], p[1], Z_DET), radius=0.09, color=st.OBS) for p in P2])
 
-        eq = st.M(r"\mathbf p_j=(R\,\mathbf x_j)_{xy}", size=44)
+        eq = st.M(r"\mathbf p_j=(R\,\mathbf x_j)_{x,y}", size=44)
         eq_note = st.T("z is integrated out:\none view cannot fix depth", st.SMALL_SIZE + 2,
                        st.MUTED)
         leg = st.legend([(st.TRUTH, "rotated source dots (3D)"), (st.OBS, "projected dots (2D)")],
@@ -221,7 +221,7 @@ class Scene01ForwardModel(Scene):
         leak = [float(np.max(np.abs(d["bands_after"][i][xw]))
                       / np.max(np.abs(d["bands_before"][i][xw]))) for i in range(3)]
         verdict = ["reversed", "≈ removed", "kept"]
-        vcol = [neg_col, st.TEXT, st.TRUTH]
+        vcol = [neg_col, st.TEXT, st.TEXT]
         panels, before, after, plabs = VGroup(), VGroup(), VGroup(), VGroup()
         xs = (1.55, 3.6, 5.65)
         for i in range(3):

@@ -30,7 +30,7 @@ SMALL_SIZE = 26         # tag, footnotes and tick labels only
 MATH_SIZE = 44
 MARGIN = 0.45           # outer frame margin (scene units)
 FRAME_W, FRAME_H = 14.222, 8.0
-TITLE_MAX_W = 9.6       # keeps titles clear of the upper-right tag
+TITLE_MAX_W = 7.9       # title starts at x = -6.66; the tag's left edge is at x = 1.71
 
 
 def T(text: str, size: int = BODY_SIZE, color: str = TEXT, **kw) -> Text:

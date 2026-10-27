@@ -366,7 +366,7 @@ class Scene03OrientationFourierSlice(ThreeDScene):
         self.fix(thumbs, thumbs_lab, name="thumbs")
         self.play(FadeOut(cap), FadeIn(thumbs[0]), FadeIn(thumbs_lab), run_time=0.6)
         for i in (1, 2, 3):
-            rt = {1: 1.5, 2: 1.5, 3: 2.6}[i]      # R3 -> R4 is the largest turn: slower
+            rt = {1: 1.5, 2: 1.5, 3: 3.2}[i]      # R3 -> R4 is the largest turn: slower
             # ease_in_out_sine: peak slope pi/2 (smooth: 2.5), so no fast spin mid-move
             self.play(a.animate.set_value(views[i][0]), th.animate.set_value(views[i][1]),
                       ps.animate.set_value(views[i][2]), run_time=rt,
@@ -460,7 +460,7 @@ class Scene03OrientationFourierSlice(ThreeDScene):
         for i in b3_views[1:]:
             new = self.fix(pair(i))
             if i == 2:          # R4 -> R3: the 171 deg turn
-                rt, fades = 2.8, (0.5, 1.6, 0.6)
+                rt, fades = 3.3, (0.5, 2.1, 0.6)
             else:               # R3 -> R1 (alpha 120 -> 0, theta 50 -> 0)
                 rt, fades = 2.2, (0.5, 1.1, 0.6)
             self.play(a.animate.set_value(views[i][0]), th.animate.set_value(views[i][1]),

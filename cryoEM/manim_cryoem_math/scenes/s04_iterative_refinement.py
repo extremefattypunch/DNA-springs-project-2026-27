@@ -483,7 +483,7 @@ class Scene04IterativeRefinement(Scene):
                        legB, mB, lplot, lxlab, nf_line, nf_lab, leg_L, mk_legend, tC,
                        *L_segs, *D_segs, *L_mk, *D_mk, notes)
         self.play(FadeOut(beat3), run_time=0.7)
-        pen_box = SurroundingRectangle(eqL[4], color=st.LABEL, buff=0.08, stroke_width=3)
+        pen_box = SurroundingRectangle(eqL[4], color=st.TEXT, buff=0.08, stroke_width=3)
         self.play(Create(pen_box), run_time=0.6)
 
         xs_d, f_d = d["reg_x"], d["reg_f"]

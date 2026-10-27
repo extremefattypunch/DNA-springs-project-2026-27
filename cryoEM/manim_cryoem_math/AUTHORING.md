@@ -116,7 +116,7 @@ class SceneNN...(Scene):        # ThreeDScene only where 3D geometry is needed (
 - Labels over scatter clouds: `add_background_rectangle(color=st.BG, opacity=1, buff=0.05)`
   and `set_z_index(2)`.
 - Check text widths against the frame (`mob.get_right()[0] <= 7.11 - 0.45`), especially
-  next to the tag (its left edge is about x = 3.0).
+  next to the tag (its left edge is at x = 1.71; style.TITLE_MAX_W = 7.9 keeps titles clear).
 
 ## Helper API
 
