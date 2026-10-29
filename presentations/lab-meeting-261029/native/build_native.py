@@ -61,7 +61,10 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
   'points': [{'text': t, 'msg': {'step': st}} for t, st in [
     ('<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave', 4),
     ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 5),
-    ('<b>Three readouts</b>, as in Day et al.: activity (DiFMUP), B56 binding (BLI), structure (cryoEM). Activity alone is not enough: Day et al. found the same activity but up to 4.7× weaker binding', 6)]]}
+    ('<b>Why three assays, not just a phosphatase assay?</b><ul class="sub">'
+     '<li><b>DiFMUP activity</b>: an artificial substrate in vitro, which does not need the full holoenzyme the way real substrates do in vivo, so it can miss assembly defects</li>'
+     '<li><b>BLI binding</b>: therefore tests how well the AC core binds the B subunit (Day et al.: same activity, yet up to 4.7× weaker binding)</li>'
+     '<li><b>cryoEM</b>: shows how the structure deforms under the spring, and lets us see that the spring is attached</li></ul>', 6)]]}
 
 DTT = {'kind': 'media', 'page': '21b', 'section': 'synthesis', 'title': 'Why add DTT? Favouring the 1 : 1 circle', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Breaking disulfide bonds so each pp2a reacts on its own',
