@@ -267,8 +267,9 @@ body {
 /* ---------- HUD ---------- */
 .goto { position: fixed; left: 50%; top: calc(20px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 6; font: 600 18px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 16px; box-shadow: 0 6px 24px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: opacity .15s; }
 .goto.on { opacity: 1; }
-#hud { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; z-index: 5; opacity: .2; transition: opacity .25s; }
-#hud:hover, #hud:focus-within { opacity: 1; }
+#hud { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; z-index: 5; background: var(--paper); padding: 5px; border-radius: 12px; transition: opacity .25s; }
+#hud > * { opacity: .6; transition: opacity .25s; }
+#hud:hover > *, #hud:focus-within > * { opacity: 1; }
 #hud button { font: 600 13px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 11px; cursor: pointer; }
 #hud button:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .band.glow .halo { animation: none; opacity: .8; } .lbl { transition: none; } }
@@ -276,9 +277,9 @@ body {
 
 <div id="viewport"><div id="stage"></div></div>
 <div id="hud" role="toolbar" aria-label="Slide controls">
-  <button id="b-prev" type="button" aria-label="Previous step">&larr;</button>
-  <button id="b-next" type="button" aria-label="Next step">&rarr;</button>
-  <label for="goto-n" style="display:flex;align-items:center;gap:4px;font:600 13px var(--font-mono);color:var(--ink)">Slide <input id="goto-n" type="number" min="1" inputmode="numeric" style="width:52px;font:inherit;padding:5px 6px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)"></label>
+  <button id="b-prev" type="button" aria-label="Previous slide">&larr;</button>
+  <button id="b-next" type="button" aria-label="Next slide">&rarr;</button>
+  <label for="goto-n" style="display:flex;align-items:center;gap:4px;font:600 13px var(--font-mono);color:var(--ink)">Slide <input id="goto-n" type="text" inputmode="numeric" autocomplete="off" aria-label="Current slide; type a number and press Enter to jump" style="width:64px;text-align:center;font:inherit;padding:5px 6px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)"></label>
   <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
 </div>
 
@@ -1120,6 +1121,7 @@ function show(si, k, animate) {
   slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (v.dataset.managed != null) { if (i !== si) { v.pause(); v._seg = undefined; } return; } if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
   if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
   cur = { s: si, k };
+  const gi = document.getElementById('goto-n'); if (gi && document.activeElement !== gi) gi.value = `${si + 1}/${slides.length}`;
   try { history.replaceState(null, '', '#s' + (si + 1)); } catch (e) {}
 }
 function next() { const S = slides[cur.s]; if (cur.k < S.steps.length - 1) show(cur.s, cur.k + 1, true); else if (cur.s < slides.length - 1) show(cur.s + 1, 0, false); }
@@ -1218,8 +1220,8 @@ addEventListener('keydown', e => {
   else if (e.key === 'f') toggleFull();
 });
 document.getElementById('viewport').addEventListener('click', e => { if (e.clientX < innerWidth * .2) prev(); else next(); });
-document.getElementById('b-prev').addEventListener('click', e => { e.stopPropagation(); prev(); });
-document.getElementById('b-next').addEventListener('click', e => { e.stopPropagation(); next(); });
+document.getElementById('b-prev').addEventListener('click', e => { e.stopPropagation(); if (cur.s > 0) show(cur.s - 1, 0, false); });
+document.getElementById('b-next').addEventListener('click', e => { e.stopPropagation(); if (cur.s < slides.length - 1) show(cur.s + 1, 0, false); });
 function toggleFull() {
   try {
     if (document.fullscreenElement) document.exitFullscreen();
@@ -1227,7 +1229,9 @@ function toggleFull() {
   } catch (e) {}
 }
 const gotoIn = document.getElementById('goto-n');
-gotoIn.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { const n = parseInt(gotoIn.value, 10); if (n >= 1 && n <= slides.length) show(n - 1, 0, false); gotoIn.value = ''; gotoIn.blur(); } });
+gotoIn.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape') { const n = parseInt(gotoIn.value, 10); if (e.key === 'Enter' && n >= 1 && n <= slides.length) show(n - 1, 0, false); gotoIn.blur(); } });
+gotoIn.addEventListener('focus', () => gotoIn.select());
+gotoIn.addEventListener('blur', () => { gotoIn.value = `${cur.s + 1}/${slides.length}`; });
 gotoIn.addEventListener('click', e => e.stopPropagation());
 document.getElementById('b-full').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
 let tx0 = null;
