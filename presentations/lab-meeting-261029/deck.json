@@ -2325,14 +2325,14 @@
    "kind": "media",
    "page": "c3",
    "section": "cryoem",
-   "title": "Effect 1: the protein shifts the phase of the electron wave",
+   "title": "Effect 1: the protein shifts the phase AND absorbs amplitude (intensity)",
    "figW": 1180,
    "msgChannel": "cryo",
    "q": "What happens to the electron beam as it passes through protein?",
    "items": [
     {
      "iframe": "interactive/cryo/wave.html",
-     "title": "Effect 1: the protein shifts the phase of the electron wave",
+     "title": "Effect 1: the protein shifts the phase AND absorbs amplitude (intensity)",
      "cap": "Animation drawn for this deck from the content of the cryoEM slides (phase shift exaggerated)"
     }
    ],

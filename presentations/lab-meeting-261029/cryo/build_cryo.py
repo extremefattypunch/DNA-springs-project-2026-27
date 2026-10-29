@@ -54,7 +54,7 @@ SLIDES = [
               "<b>Stronger lens</b> (shorter f): the rays cross before the sensor and spread into a disc",
               "<b>Weaker lens</b> (longer f): the rays would meet beyond the sensor; again a disc. In the TEM this is <b>underfocus</b>",
               "The objective lens current sets f, so turning the focus knob moves the focus by Δf. cryoEM images are taken deliberately ≈ 0.5–3 µm out of focus"]),
-    frame("c3", "Effect 1: the protein shifts the phase of the electron wave", "wave.html",
+    frame("c3", "Effect 1: the protein shifts the phase AND absorbs amplitude (intensity)", "wave.html",
           "What happens to the electron beam as it passes through protein?", DRAWN + " (phase shift exaggerated)", [
               "An <b>amplitude object</b> absorbs electrons: the wave leaves weaker, and the image is darker there",
               "A <b>phase object</b> keeps the amplitude but delays the wave by φ (amplitude decrease is minor; the <b>phase shift</b> dominates)",
