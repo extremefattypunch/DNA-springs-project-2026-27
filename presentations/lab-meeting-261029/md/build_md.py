@@ -231,7 +231,7 @@ for pg, after in (('12f2', '12f'), ('12f1', '12d'), ('12e0', '12d')):
         i = next(i for i, x in enumerate(deck['slides']) if str(x.get('page')) == after)
         deck['slides'].insert(i + 1, {'kind': 'media', 'page': pg, 'section': 'md', 'figW': 1180, 'exH': 590, **slides[pg]})
 # fixed order for the Zocchi block: set-up, derivation, plots
-order = ['12f1', '12e0', '12e', '12f', '12f2']
+order = ['12e0', '12f1', '12e', '12f', '12f2']
 idx = [i for i, x in enumerate(deck['slides']) if str(x.get('page')) in order]
 block = sorted((deck['slides'][i] for i in idx), key=lambda x: order.index(str(x['page'])))
 for i, sl in zip(idx, block): deck['slides'][i] = sl

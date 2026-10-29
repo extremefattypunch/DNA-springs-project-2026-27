@@ -1044,6 +1044,55 @@
   },
   {
    "kind": "media",
+   "page": "12e0",
+   "section": "md",
+   "figW": 1180,
+   "exH": 590,
+   "title": "Kinked vs unkinked DNA: how the shape sets the force",
+   "msgChannel": "cryo",
+   "q": "Same duplex, same end-to-end distance; only how the bend is distributed differs",
+   "items": [
+    {
+     "iframe": "interactive/kink.html",
+     "title": "Kinked vs unkinked duplex",
+     "cap": "Schematic: 27 bp duplex at x = 68 Å; forces from Zocchi’s model (B = 200 pN nm², τ<sub>c</sub> = 34 pN nm)"
+    }
+   ],
+   "points": [
+    {
+     "text": "Both ends are held closer than the duplex’s length (x &lt; L), so the duplex <b>must bend</b>. The question is <b>where</b> the bending goes",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Unkinked</b> (Zocchi’s Euler-buckling picture): the bend is shared by <b>every base-pair step</b>, a few degrees each. Every step is strained, the whole rod stores bending energy, and it pushes back on the ends with ≈ π²B/L² (≈ 24 pN for 27 bp)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Kinked</b>: one step breaks sharply (base stacking lost, often a pair opened) while the two arms stay <b>straight and relaxed</b>. Almost all the bending sits in one spot",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Effect on force transduction</b>: a kink acts as a <b>release valve</b>. The relaxed arms store almost no energy, so the push is capped by the kink’s critical torque τ<sub>c</sub>: only ≈ 5–7 pN reaches the protein",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "Squeeze the ends closer: the smooth rod keeps pushing at ≈ its Euler load; the kinked rod stays weak. So whether the DNA kinks decides whether the spring delivers tens of pN or a few. <b>Next</b>: does our DNA kink in MD, and what does Zocchi’s model predict?",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": "12f1",
    "section": "md",
    "figW": 1180,
@@ -1106,55 +1155,6 @@
      "text": "Below <b>x<sub>c</sub></b> the model kinks: arms of length <b>R</b>, push of a few pN",
      "msg": {
       "step": 7
-     }
-    }
-   ]
-  },
-  {
-   "kind": "media",
-   "page": "12e0",
-   "section": "md",
-   "figW": 1180,
-   "exH": 590,
-   "title": "Kinked vs unkinked DNA: how the shape sets the force",
-   "msgChannel": "cryo",
-   "q": "Same duplex, same end-to-end distance; only how the bend is distributed differs",
-   "items": [
-    {
-     "iframe": "interactive/kink.html",
-     "title": "Kinked vs unkinked duplex",
-     "cap": "Schematic: 27 bp duplex at x = 68 Å; forces from Zocchi’s model (B = 200 pN nm², τ<sub>c</sub> = 34 pN nm)"
-    }
-   ],
-   "points": [
-    {
-     "text": "Both ends are held closer than the duplex’s length (x &lt; L), so the duplex <b>must bend</b>. The question is <b>where</b> the bending goes",
-     "msg": {
-      "step": 1
-     }
-    },
-    {
-     "text": "<b>Unkinked</b> (Zocchi’s Euler-buckling picture): the bend is shared by <b>every base-pair step</b>, a few degrees each. Every step is strained, the whole rod stores bending energy, and it pushes back on the ends with ≈ π²B/L² (≈ 24 pN for 27 bp)",
-     "msg": {
-      "step": 2
-     }
-    },
-    {
-     "text": "<b>Kinked</b>: one step breaks sharply (base stacking lost, often a pair opened) while the two arms stay <b>straight and relaxed</b>. Almost all the bending sits in one spot",
-     "msg": {
-      "step": 3
-     }
-    },
-    {
-     "text": "<b>Effect on force transduction</b>: a kink acts as a <b>release valve</b>. The relaxed arms store almost no energy, so the push is capped by the kink’s critical torque τ<sub>c</sub>: only ≈ 5–7 pN reaches the protein",
-     "msg": {
-      "step": 4
-     }
-    },
-    {
-     "text": "Squeeze the ends closer: the smooth rod keeps pushing at ≈ its Euler load; the kinked rod stays weak. So whether the DNA kinks decides whether the spring delivers tens of pN or a few. <b>Next</b>: does our DNA kink in MD, and what does Zocchi’s model predict?",
-     "msg": {
-      "step": 5
      }
     }
    ]
