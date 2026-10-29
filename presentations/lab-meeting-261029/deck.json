@@ -1222,6 +1222,67 @@
   },
   {
    "kind": "media",
+   "page": "12f1",
+   "section": "md",
+   "figW": 1180,
+   "exH": 590,
+   "title": "The set-up behind the force plots: a bare DNA duplex",
+   "msgChannel": "cryo",
+   "q": "What is simulated, what each variable means, and how the force is read off",
+   "items": [
+    {
+     "iframe": "interactive/setup.html",
+     "title": "Bare duplex restraint simulation",
+     "cap": "Animated schematic of the MD set-up; readout values are real 27 bp runs (stiff restraint)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>System</b>: DNA only, no protein, in a water box. A <dfn>duplex</dfn> is double-stranded DNA: two complementary strands base-paired into a helix, which is what our spring becomes after hybridisation (27 or 40 bp; “nicked” = one backbone break)",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "The duplex’s two <b>ends</b> are where it would attach to the protein. <b>L</b> = contour length, along the helix (0.33 nm per bp: 89 Å for 27 bp)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "A <b>restraint</b> (a virtual spring, stiffness <b>k</b>) ties the two ends together, centred at <b>x₀</b> &lt; L, so the duplex must bend and pushes back",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "The ends settle at <b>⟨x⟩</b>, ≈ 1 Å beyond x₀. The stretched restraint then pulls with exactly the duplex’s push: <b>f = k(⟨x⟩ − x₀)</b>",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "Repeat at many x₀: each run is one point (⟨x⟩, f). So the <b>end-to-end distance is held (nearly) fixed and the force is measured</b>",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "Zocchi’s model predicts f(x) instead from <b>B</b>, the bending stiffness (≈ 200 pN nm²), and <b>τ<sub>c</sub></b>, the critical torque at which one base-pair step gives way (≈ 34 pN nm; 27 if nicked)",
+     "msg": {
+      "step": 6
+     }
+    },
+    {
+     "text": "If x drops below <b>x<sub>c</sub></b> the model kinks the duplex into two straight arms of length <b>R</b>, and the push drops to a few pN. Next slide: model vs MD",
+     "msg": {
+      "step": 7
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": "12f2",
    "section": "md",
    "figW": 1180,
@@ -1321,12 +1382,7 @@
    "explain": [
     {
      "item": 0,
-     "text": "<b>What system is this?</b> <b>DNA only, no protein.</b> A <dfn>duplex</dfn> is double-stranded DNA (dsDNA): two complementary strands base-paired into a helix. In our chimeras the spring is a duplex (the ssDNA loop hybridised to its complementary strand), so this slide models <b>dsDNA</b> of 27 or 40 bp; “nicked” = one backbone break in one strand. <b>Physically</b>: the two ends of the duplex (where it would attach to the protein) are held a fixed distance <b>x</b> apart, shorter than the duplex’s length, so it is forced to bend. We then ask: <b>how hard does the bent duplex push its ends apart?</b> That push <b>f</b> is the force a spring would deliver to the protein. <b>First plot</b>: Zocchi’s formula for f at every x (a calculation). <b>Second plot</b>: f measured in MD for a bare duplex, compared with that formula.",
-     "marks": []
-    },
-    {
-     "item": 0,
-     "text": "<b>Reading the plot</b> (Zocchi’s model, no MD). x-axis: <dfn>x</dfn>, the end-to-end distance imposed on the duplex (Å). y-axis: <dfn>f</dfn>, the force it pushes its ends apart with (pN). Terms: <span class=\"tex\">L = 0.33\\,\\mathrm{nm}\\times N_{\\mathrm{bp}}</span> contour length (89 Å for 27 bp); <span class=\"tex\">B \\approx 200\\ \\mathrm{pN\\,nm^2}</span> bending stiffness of dsDNA; <span class=\"tex\">\\tau_c</span> the <dfn>critical torque</dfn>, the bending torque at which a base-pair step gives way and the duplex kinks (34 pN nm intact, 27 nicked); <span class=\"tex\">R = \\tfrac{L}{2}(1-\\gamma^2/90)</span> the effective arm length of the kinked rod, with <span class=\"tex\">\\gamma = L\\tau_c/2B</span>; <span class=\"tex\">x_c = L(1-\\gamma^2/15)</span> the distance below which the duplex kinks. <b>Solid</b>: unkinked branch where Zocchi applies it (x &gt; x<sub>c</sub>), <span class=\"tex\">f = 10B/L^2 - k_BT/(L-x)</span>. <b>Dotted</b>: kinked branch (x &lt; x<sub>c</sub>), <span class=\"tex\">f = \\tau_c / \\big(2R\\sqrt{1-(x/2R)^2}\\big)</span>. <b>Dashed</b>: the unkinked formula continued below x<sub>c</sub>, i.e. a duplex that never kinks. Grey band: the x our sfGFP chimeras impose (63–73 Å).",
+     "text": "<b>Zocchi’s model</b> (calculation): push f against imposed end-to-end distance x, for 27 and 40 bp. <b>Solid</b> unkinked, <b>dotted</b> kinked, <b>dashed</b> unkinked continued below x<sub>c</sub>; grey band = our chimeras (63–73 Å).",
      "marks": [
       {
        "a": "zr_xc27",
@@ -1356,7 +1412,7 @@
     },
     {
      "item": 1,
-     "text": "<b>The MD measurement</b> (bare dsDNA in water, no protein). The two duplex ends are tethered by a harmonic restraint <span class=\"tex\">U = \\tfrac12 k (r - x_0)^2</span> that holds them near a chosen separation x<sub>0</sub>; the duplex pushes against it and settles at an average ⟨x⟩. The restraint’s pull then equals the duplex’s push: <span class=\"tex\">f_{\\mathrm{FF}} = k\\,(\\langle x\\rangle - x_0)</span>. So: <b>end-to-end distance held (approximately fixed), force read off</b>. Bars, per duplex at its own ⟨x⟩ (49 Å for 27 bp, 62 Å for 40 bp, both below x<sub>c</sub>): <b>grey</b> Zocchi’s kinked prediction; <b>light blue</b> Zocchi recomputed on the unkinked branch; <b>dark blue</b> the MD force (mean ± sem; dots are single runs).",
+     "text": "<b>Model vs MD</b> at the ⟨x⟩ each bare duplex sat at: <b>grey</b> kinked prediction, <b>light blue</b> unkinked prediction, <b>dark blue</b> MD force k(⟨x⟩ − x₀) (mean ± sem; dots = runs).",
      "marks": [
       {
        "a": "zu_k0",
