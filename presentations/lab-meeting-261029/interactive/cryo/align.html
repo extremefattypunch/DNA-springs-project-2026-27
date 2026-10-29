@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reconstruction with unknown poses</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+<style>
+.cap { font: 600 17px "Archivo", sans-serif; color: #ECEDEF; text-align: center; }
+.cap span { display: block; font-weight: 400; font-size: 14px; color: #9AA3AE; }
+.tile { width: 88px; height: 88px; display: block; border-radius: 50%; outline: 1px solid #3A424D; transition: transform .7s cubic-bezier(.4, 0, .2, 1); }
+.box { font: 400 15px/1.35 "Archivo", sans-serif; color: #9AA3AE; border: 1.5px solid #3A424D; border-radius: 8px; padding: 9px 12px; height: 100%; box-sizing: border-box; transition: all .35s; }
+.box b { color: #ECEDEF; font-weight: 600; }
+.box.on { border-color: #F5A142; color: #ECEDEF; background: rgba(245, 161, 66, .1); }
+.box.on.mm { border-color: #5BD67A; background: rgba(91, 214, 122, .1); }
+</style>
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+/* 2D toy of iterative refinement: each "particle image" is the object rotated by an unknown
+   in-plane angle plus heavy noise. Pose step = best rotation of the current map for each image
+   (max cross-correlation); map step = average of the back-rotated images (the known-pose
+   least-squares solution when A(φ) is a rotation). Everything is precomputed at load. */
+const sv = document.getElementById('sv');
+const Q = new URLSearchParams(location.search);
+const N = 64, NIMG = +(Q.get('n') || 100), SHOW = 24, ITERS = 5, NANG = 72, SIG = +(Q.get('sig') || 0.8), LP = +(Q.get('lp') || 1.5);
+function rng(seed) { let s = seed >>> 0; return () => { s += 0x6D2B79F5; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const gauss = r => Math.sqrt(-2 * Math.log(r() + 1e-12)) * Math.cos(2 * Math.PI * r());
+const DOTS = [[-12, -8, 1], [-4, -13, 0.9], [10, -3, 1], [-8, 8, 0.8], [7, 12, 1.1], [1, 1, 0.7], [15, 6, 0.6]];
+const obj = new Float64Array(N * N);
+for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let v = 0; DOTS.forEach(([dx, dy, a]) => { v += a * Math.exp(-((x - 32 - dx) ** 2 + (y - 32 - dy) ** 2) / (2 * 2.2 * 2.2)); }); obj[y * N + x] = v; }
+function rotate(src, ang) {               // dst = R(ang) src about the centre, bilinear, zero outside
+  const dst = new Float64Array(N * N), c = Math.cos(ang), s = Math.sin(ang);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const dx = x - 32, dy = y - 32, u = c * dx + s * dy + 32, v = -s * dx + c * dy + 32;
+    const x0 = Math.floor(u), y0 = Math.floor(v), fx = u - x0, fy = v - y0;
+    if (x0 < 0 || y0 < 0 || x0 >= N - 1 || y0 >= N - 1) continue;
+    const j = y0 * N + x0;
+    dst[y * N + x] = (src[j] * (1 - fx) + src[j + 1] * fx) * (1 - fy) + (src[j + N] * (1 - fx) + src[j + N + 1] * fx) * fy;
+  }
+  return dst;
+}
+const dot = (a, b) => { let s = 0; for (let j = 0; j < a.length; j++) s += a[j] * b[j]; return s; };
+const wrap = a => { a = ((a + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI; return a; };
+// data: y_i = R(θ_i) v + noise (circular mask)
+const mask = new Float64Array(N * N); for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) mask[y * N + x] = Math.hypot(x - 32, y - 32) < 30 ? 1 : 0;
+const theta = [], Y = [];
+for (let i = 0; i < NIMG; i++) {
+  const r = rng(7000 + i); theta.push(2 * Math.PI * r());
+  const im = rotate(obj, theta[i]); for (let j = 0; j < N * N; j++) im[j] = (im[j] + SIG * gauss(r)) * mask[j]; Y.push(im);
+}
+function blur(src, s) {                   // separable Gaussian low-pass
+  const k = [], R = Math.ceil(3 * s); let z = 0; for (let t = -R; t <= R; t++) { k.push(Math.exp(-t * t / (2 * s * s))); z += k[k.length - 1]; }
+  const a = new Float64Array(N * N), b = new Float64Array(N * N);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let v = 0; for (let t = -R; t <= R; t++) { const xx = x + t; if (xx >= 0 && xx < N) v += k[t + R] * src[y * N + xx]; } a[y * N + x] = v / z; }
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { let v = 0; for (let t = -R; t <= R; t++) { const yy = y + t; if (yy >= 0 && yy < N) v += k[t + R] * a[yy * N + x]; } b[y * N + x] = v / z; }
+  return b;
+}
+// v^(0): one noisy image, heavily low-pass filtered (a featureless, roughly the right size blob)
+const MAPS = [blur(Y[0], 4).map((v, j) => v * mask[j])], POSES = [], LOSS = [];
+for (let k = 0; k < ITERS; k++) {
+  const v = blur(MAPS[k], LP), refs = []; for (let a = 0; a < NANG; a++) refs.push(rotate(v, 2 * Math.PI * a / NANG));
+  const ph = Y.map(y => { let best = -1e30, ba = 0; refs.forEach((r, a) => { const c = dot(y, r); if (c > best) { best = c; ba = a; } }); return 2 * Math.PI * ba / NANG; });
+  POSES.push(ph);
+  const nv = new Float64Array(N * N); Y.forEach((y, i) => { const b = rotate(y, -ph[i]); for (let j = 0; j < N * N; j++) nv[j] += b[j] / NIMG; });
+  MAPS.push(nv);
+  let L = 0; Y.forEach((y, i) => { const r = rotate(nv, ph[i]); for (let j = 0; j < N * N; j++) L += mask[j] * (y[j] - r[j]) ** 2; }); LOSS.push(L / 2);
+}
+// the map is fixed only up to an overall rotation γ: find it once, use it for display and the error plot
+let gamma = 0, gb = -1e30; for (let a = 0; a < 360; a++) { const g = 2 * Math.PI * a / 360, c = dot(rotate(obj, g), MAPS[ITERS]); if (c > gb) { gb = c; gamma = g; } }
+const ERR = POSES.map(ph => ph.reduce((s, p, i) => s + Math.abs(wrap(p + gamma - theta[i])), 0) / NIMG * 180 / Math.PI);
+const SHOWN = MAPS.map(m => rotate(m, -gamma));
+/* ---------- layout ---------- */
+function fo(x, y, w, h, html, cls) { const f = S('foreignObject', { x, y, width: w, height: h }, sv); const d = document.createElement('div'); if (cls) d.className = cls; d.innerHTML = html; f.appendChild(d); return d; }
+function canvasAt(x, y, size, cls) {
+  const f = S('foreignObject', { x, y, width: size, height: size }, sv), cv = document.createElement('canvas');
+  cv.width = N; cv.height = N; cv.className = 'px ' + (cls || ''); Object.assign(cv.style, { width: size + 'px', height: size + 'px', display: 'block' }); f.appendChild(cv); return cv;
+}
+function paint(cv, arr, lo, hi) {
+  const ctx = cv.getContext('2d'), im = ctx.createImageData(N, N);
+  for (let j = 0; j < N * N; j++) { const g = clamp(Math.round(255 * (arr[j] - lo) / (hi - lo)), 0, 255), o = 4 * j; im.data[o] = im.data[o + 1] = im.data[o + 2] = g; im.data[o + 3] = 255; }
+  ctx.putImageData(im, 0, 0);
+}
+fo(20, 8, 600, 60, `${SHOW} of the ${NIMG} noisy particle images y<sub>i</sub><span>each rotated by an unknown angle φ<sub>i</sub> (2D toy: in-plane rotation stands in for SO(3))</span>`, 'cap');
+const tiles = [];
+for (let i = 0; i < SHOW; i++) {
+  const cv = canvasAt(32 + (i % 6) * 96, 72 + Math.floor(i / 6) * 96, 88, 'tile');
+  paint(cv, Y[i], -1.6, 2.4); tiles.push(cv);
+}
+const tileCap = S('text', { x: 316, y: 478, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: '' }, sv);
+// maps
+const MS = 230, MX = 676, TXX = 926, MY = 72;
+const mapCv = canvasAt(MX, MY, MS); mapCv.style.borderRadius = '6px'; mapCv.style.outline = '1px solid #3A424D';
+const mapCap = fo(MX - 20, MY + MS + 6, MS + 40, 60, '', 'cap');
+const truCv = canvasAt(TXX, MY, MS); truCv.style.borderRadius = '6px'; truCv.style.outline = '1px solid #3A424D';
+paint(truCv, obj, -0.1, 1.15);
+const truCap = fo(TXX - 20, MY + MS + 6, MS + 40, 60, '<span style="display:inline;color:#5BD67A;font-size:17px">the true object</span><span>never seen by the algorithm</span>', 'cap');
+const truHide = S('rect', { x: TXX - 1, y: MY - 1, width: MS + 2, height: MS + 2, rx: 6, fill: C.panel, stroke: C.grid }, sv);
+const truQ = S('text', { x: TXX + MS / 2, y: MY + MS / 2 + 14, 'text-anchor': 'middle', 'font-size': 40, class: 'mut', text: 'hidden' }, sv);
+// the loop
+const BX = 656, BY = 392, BW = 500, BH = 74;
+const boxP = fo(BX, BY, BW, BH, '<b>Pose step</b> (hold the map): for each image, try every angle φ and keep the one whose rotated map R(φ)<b>v</b><sup>(k)</sup> best matches y<sub>i</sub>', 'box');
+boxP.parentNode.setAttribute('height', BH);
+const boxM = fo(BX, BY + BH + 34, BW, BH, '<b>Map step</b> (hold the poses): rotate every image back by its φ<sub>i</sub> and average → <b>v</b><sup>(k+1)</sup>. This is the known-pose solution of the normal equations', 'box mm');
+boxM.parentNode.setAttribute('height', BH);
+S('path', { d: `M ${BX + BW / 2} ${BY + BH + 4} v 24`, stroke: C.muted, 'stroke-width': 2, 'marker-end': 'url(#ah)' }, sv);
+S('path', { d: `M ${BX + BW + 8} ${BY + BH * 1.5 + 34} h 12 V ${BY + BH / 2} h -12`, stroke: C.muted, 'stroke-width': 2, fill: 'none', 'marker-end': 'url(#ah)' }, sv);
+S('text', { x: BX + BW + 22, y: BY + BH + 22, 'font-size': 14, class: 'mut', transform: `rotate(90 ${BX + BW + 22} ${BY + BH + 22})`, 'text-anchor': 'middle', text: 'repeat' }, sv);
+const defs = S('defs', {}, sv); const mk = S('marker', { id: 'ah', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto' }, defs);
+S('path', { d: 'M0 0 L10 5 L0 10 z', fill: C.muted }, mk);
+// error plot
+const PX = 90, PY = 520, PW = 500, PH = 170, EMAX = 30;
+S('text', { x: PX - 60, y: PY - 14, 'font-size': 16, 'font-weight': 600, text: 'mean pose error (°)' }, sv);
+S('text', { x: PX + PW, y: PY - 14, 'font-size': 13, class: 'mut', 'text-anchor': 'end', text: 'computable only because this is a toy' }, sv);
+S('line', { x1: PX, y1: PY + PH, x2: PX + PW, y2: PY + PH, stroke: C.grid }, sv);
+S('line', { x1: PX, y1: PY, x2: PX, y2: PY + PH, stroke: C.grid }, sv);
+[0, 15, 30].forEach(e => S('text', { x: PX - 8, y: PY + PH - PH * e / EMAX + 5, 'text-anchor': 'end', 'font-size': 13, class: 'mut', text: e }, sv));
+for (let k = 1; k <= ITERS; k++) S('text', { x: PX + PW * (k - 0.5) / ITERS, y: PY + PH + 20, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: k }, sv);
+S('text', { x: PX + PW / 2, y: PY + PH + 42, 'text-anchor': 'middle', 'font-size': 14, class: 'mut', text: 'iteration' }, sv);
+const plotG = S('g', {}, sv);
+/* ---------- steps ---------- */
+const T = [
+  { k: 0, v0: 0, a: 0, ph: 0, tr: 0 },
+  { k: 0, v0: 1, a: 0, ph: 0, tr: 0 },
+  { k: 0, v0: 1, a: 1, ph: 1, tr: 0 },
+  { k: 1, v0: 1, a: 1, ph: 2, tr: 0 },
+  { k: ITERS, v0: 1, a: 1, ph: 3, tr: 0 },
+  { k: ITERS, v0: 1, a: 1, ph: 3, tr: 1 }
+];
+let last = '';
+const deg = r => r * 180 / Math.PI;
+Cryo.init(T, P => {
+  const ki = Math.floor(P.k + 1e-6), kf = clamp(P.k - ki, 0, 1), aligned = P.a > 0.5, ph = Math.round(P.ph), tr = P.tr > 0.5, v0 = P.v0 > 0.5;
+  const key = [ki, aligned, ph, tr, v0, Math.round(kf * 8)].join();
+  if (key === last) return; last = key;
+  // map: crossfade v^(ki) → v^(ki+1) while iterations run
+  if (!v0) { paint(mapCv, new Float64Array(N * N), 0, 1); mapCap.innerHTML = '<span style="display:inline;color:#F5A142;font-size:17px">current map</span><span>nothing yet</span>'; }
+  else {
+    const a = SHOWN[ki], b = SHOWN[Math.min(ITERS, ki + 1)], m = a.map((x, j) => x + (ph === 3 ? kf : 0) * (b[j] - x));
+    paint(mapCv, m, -0.1, 1.15);
+    mapCap.innerHTML = `<span style="display:inline;color:#F5A142;font-size:17px">current map v<sup>(${ki})</sup></span><span>${ki === 0 ? 'initial volume: one image, heavily blurred' : ki === ITERS ? 'converged (shown up to an overall rotation)' : 'average of the aligned images'}</span>`;
+  }
+  // tiles: rotate each image back by its current pose estimate
+  const pi = ph >= 2 ? Math.max(0, Math.min(ki + (ph === 3 && kf > 0.5 ? 1 : 0), ITERS) - 1) : 0;
+  tiles.forEach((cv, i) => { cv.style.transform = aligned ? `rotate(${deg(wrap(-(POSES[pi][i] + gamma)))}deg)` : 'none'; });
+  tileCap.textContent = !aligned ? 'raw: the object is hard to see in any single image' : `rotated back by the pose estimates φᵢ from v${'⁽' + '⁰¹²³⁴⁵⁶⁷⁸⁹'[pi] + '⁾'}`;
+  boxP.classList.toggle('on', ph === 1 || ph === 3); boxM.classList.toggle('on', ph === 2 || ph === 3);
+  truHide.style.display = truQ.style.display = tr ? 'none' : '';
+  // error plot: one point per completed iteration
+  plotG.innerHTML = '';
+  const done = ph >= 2 ? Math.min(ITERS, ki + (ph === 3 && kf > 0.5 ? 1 : 0)) : 0;
+  const pts = ERR.slice(0, done).map((e, k) => [PX + PW * (k + 0.5) / ITERS, PY + PH - PH * Math.min(e, EMAX) / EMAX]);
+  if (pts.length > 1) S('polyline', { points: pts.map(p => p.join(',')).join(' '), stroke: C.est, 'stroke-width': 2.5 }, plotG);
+  pts.forEach(p => S('circle', { cx: p[0], cy: p[1], r: 5, fill: C.est }, plotG));
+}, { rates: { k: 0.8 } });
+window.REC = { ERR, LOSS, gamma: deg(gamma) };
+</script>
+</body></html>

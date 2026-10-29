@@ -211,7 +211,15 @@ SLIDES = [
          "So the 2D transform of a projection is the <b>plane through the origin</b> of the 3D transform, perpendicular to the beam. For any orientation R the plane simply rotates:"
          + tex(r"\mathcal F_2\{P_R V\}(\mathbf q) = \tilde V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)", True),
          "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"]]},
-] + RECON
+] + RECON + [
+    frame("c13", "Reconstruction, unknown poses: the loop in action", "align.html",
+          "Can the poses and the map be found together from noisy images alone?", DRAWN + "; 100 simulated images, alignment computed live", [
+              "<b>2D toy</b>: every image " + T(r"\mathbf y_i") + " is the same object rotated by an unknown angle " + T(r"\phi_i") + ", plus heavy noise. Start from a blurred blob " + T(r"\mathbf v^{(0)}"),
+              "<b>Pose step</b>: compare each image with " + T(r"\mathbf v^{(0)}") + " rotated through every angle (5° steps); the best match is its pose. The images turn to their estimated poses",
+              "<b>Map step</b>: rotate the images back and average them → " + T(r"\mathbf v^{(1)}") + ". Already far clearer than any single image",
+              "<b>Repeat</b>: a better map gives better poses, and better poses a better map. The mean pose error falls from 22° to ≈ 2° within two iterations",
+              "<b>Compare with the truth</b>: the same object, up to an overall rotation that the images alone can never fix. A poor " + T(r"\mathbf v^{(0)}") + " can trap the loop in a local optimum"]),
+]
 
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
     if _s["page"] == "c1":

@@ -1981,7 +1981,9 @@
       "step": 4
      }
     }
-   ]
+   ],
+   "intro": "Now that our gels give at least some evidence of a <b>circular product</b>, it makes sense to start thinking about the next step: designing <b>assays that test the physiological function of PP2A</b> under spring attachment.<br><br>Before that, we first need to understand the <b>key features of PP2A</b>.",
+   "introTtl": "Next step"
   },
   {
    "kind": "media",
@@ -2684,6 +2686,54 @@
     },
     {
      "text": "Stop when L no longer decreases. Neither step can raise L, so the loop converges, but to a <b>local</b> optimum that depends on <span class=\"tex\">\\mathbf v^{(0)}</span>. RELION and CryoSPARC soften the pose step: they weight every pose by its probability (expectation–maximization) instead of keeping only the best one"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c13",
+   "section": "cryoem",
+   "title": "Reconstruction, unknown poses: the loop in action",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Can the poses and the map be found together from noisy images alone?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/align.html",
+     "title": "Reconstruction, unknown poses: the loop in action",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides; 100 simulated images, alignment computed live"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>2D toy</b>: every image <span class=\"tex\">\\mathbf y_i</span> is the same object rotated by an unknown angle <span class=\"tex\">\\phi_i</span>, plus heavy noise. Start from a blurred blob <span class=\"tex\">\\mathbf v^{(0)}</span>",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Pose step</b>: compare each image with <span class=\"tex\">\\mathbf v^{(0)}</span> rotated through every angle (5° steps); the best match is its pose. The images turn to their estimated poses",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Map step</b>: rotate the images back and average them → <span class=\"tex\">\\mathbf v^{(1)}</span>. Already far clearer than any single image",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Repeat</b>: a better map gives better poses, and better poses a better map. The mean pose error falls from 22° to ≈ 2° within two iterations",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Compare with the truth</b>: the same object, up to an overall rotation that the images alone can never fix. A poor <span class=\"tex\">\\mathbf v^{(0)}</span> can trap the loop in a local optimum",
+     "msg": {
+      "step": 5
+     }
     }
    ]
   }

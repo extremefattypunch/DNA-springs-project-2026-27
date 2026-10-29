@@ -1160,7 +1160,7 @@ function buildMedia(el, cfg) {
 
 /* ---------------- intro banner: a question shown on the first click, cleared on the next ---------------- */
 function addIntro(el, S) {
-  const bn = h('div', 'm-banner intro', { html: '<span class="ttl">Question</span>' + S.cfg.intro });
+  const bn = h('div', 'm-banner intro', { html: '<span class="ttl">' + (S.cfg.introTtl || 'Question') + '</span>' + S.cfg.intro });
   el.appendChild(bn);
   S.introEl = bn;
   S.steps.push({ intro: true });
