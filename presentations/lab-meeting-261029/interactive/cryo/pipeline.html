@@ -58,6 +58,28 @@ const bluT = S('text', { x: 970, y: rowY(9) - 6, 'font-size': 18, 'font-weight':
 const bluT2 = S('text', { x: 970, y: rowY(9) + 16, 'font-size': 18, 'font-weight': 700, fill: '#5B8DEF', text: 'COOT' }, sv);
 const bluT3 = S('text', { x: 970, y: rowY(9) + 38, 'font-size': 15, fill: '#5B8DEF', text: 'map \u2192 atomic model' }, sv);
 
+// X-ray software, mirroring the cryoEM brackets (★ = developed in the Hekstra lab)
+const xRed = S('rect', { x: 222, y: rowY(0) - 9, width: 316, height: rowY(4) + BH - rowY(0) + 18, rx: 14, fill: 'none', stroke: C.red, 'stroke-width': 3 }, sv);
+const xBlu = S('rect', { x: 222, y: rowY(6) - 6, width: 316, height: rowY(9) + BH - rowY(6) + 14, rx: 14, fill: 'none', stroke: '#5B8DEF', 'stroke-width': 3 }, sv);
+const xTag = (rows, name, sub, col) => {
+  const y = (rowY(rows[0]) + rowY(rows[rows.length - 1]) + BH) / 2;
+  const g = S('g', {}, sv);
+  S('text', { x: 212, y: y - (sub ? 2 : -6), 'text-anchor': 'end', 'font-size': 17, 'font-weight': 700, fill: col, text: name }, g);
+  if (sub) S('text', { x: 212, y: y + 18, 'text-anchor': 'end', 'font-size': 14, fill: col, text: sub }, g);
+  return g;
+};
+const xTags = [
+  xTag([0, 1, 2], 'DIALS, Laue-DIALS ★', 'find, index, integrate spots', C.red),
+  xTag([3], 'careless ★', 'scale + merge', C.red),
+  xTag([4], 'Phenix (Phaser)', 'molecular replacement', C.red),
+  xTag([6], 'MatchMaps ★', 'difference maps', '#5B8DEF'),
+  xTag([7, 8], 'Coot, Phenix', 'build + refine', '#5B8DEF'),
+  xTag([9], 'MolProbity', 'geometry checks', '#5B8DEF')
+];
+const xRs = S('g', {}, sv);   // sits in the gap between Phasing and the map
+S('text', { x: 212, y: rowY(5) + 20, 'text-anchor': 'end', 'font-size': 15, 'font-weight': 700, fill: '#9AA3AE', text: 'reciprocalspaceship ★' }, xRs);
+S('text', { x: 212, y: rowY(5) + 38, 'text-anchor': 'end', 'font-size': 13, fill: '#9AA3AE', text: 'reflection data in Python' }, xRs);
+const xLeg = S('text', { x: 14, y: 726, 'font-size': 15, fill: '#FFD166', text: '★ developed in the Hekstra lab (Harvard)' }, sv);
 // roadmap tags
 const road = Object.entries(ROAD).map(([i, t]) => {
   const y = rowY(+i) + BH / 2;
@@ -83,6 +105,7 @@ Cryo.init(T, P => {
   ph.rect.setAttribute('stroke', P.ph > 0.5 ? C.est : C.grid); ph.rect.setAttribute('stroke-width', 1.5 + 2 * P.ph);
   ph.rect.setAttribute('filter', P.ph > 0.5 ? 'url(#gl)' : '');
   [redR, redT, redT2, bluR, bluT, bluT2, bluT3].forEach(e => vis(e, P.br));
+  [xRed, xBlu, xRs, xLeg, ...xTags].forEach(e => vis(e, P.br));
   road.forEach(g => vis(g, P.rd)); vis(roadHead, P.rd);
   be.forEach(b => { if (!b.rect) return; const on = P.rd > 0.5 && ROAD[b.i]; b.rect.setAttribute('stroke', on ? C.obs : C.grid); });
 }, { rates: { x: 9, e: 9 } });
