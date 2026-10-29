@@ -192,63 +192,172 @@
    "section": "assay",
    "title": "What the band ratio measures",
    "figW": 1180,
-   "q": "Interactive: 1-tet concentration series, 2026-08-25",
+   "exH": 640,
+   "q": "1-tet sfGFP concentration series, 2026-08-25",
    "items": [
     {
-     "iframe": "interactive/dilution.html",
-     "cap": "Lamp-corrected excitation spectra, normalised to peak = 1 (mean of n = 3 per concentration)"
+     "img": "charts/band_ratio_spectra.png",
+     "w": 2025,
+     "h": 1110,
+     "anns": {
+      "br_pk2": [
+       0.436,
+       0.854
+      ],
+      "br_400_2": [
+       0.071,
+       0.909
+      ],
+      "br_em2": [
+       0.53,
+       0.857
+      ],
+      "br_pk4": [
+       0.431,
+       0.8
+      ],
+      "br_400_4": [
+       0.071,
+       0.904
+      ],
+      "br_em4": [
+       0.534,
+       0.806
+      ],
+      "br_pk8": [
+       0.431,
+       0.642
+      ],
+      "br_400_8": [
+       0.071,
+       0.886
+      ],
+      "br_em8": [
+       0.534,
+       0.662
+      ],
+      "br_pk16": [
+       0.436,
+       0.429
+      ],
+      "br_400_16": [
+       0.071,
+       0.857
+      ],
+      "br_em16": [
+       0.539,
+       0.475
+      ],
+      "br_pk32": [
+       0.44,
+       0.238
+      ],
+      "br_400_32": [
+       0.071,
+       0.816
+      ],
+      "br_em32": [
+       0.547,
+       0.3
+      ]
+     },
+     "cap": "Mean of 3 scans per concentration · linear y, not normalised · excitation S1 ÷ R1 (lamp-corrected), emission S1"
+    }
+   ],
+   "explain": [
+    {
+     "item": 0,
+     "text": "<b>Two spectra per sample, on one wavelength axis.</b> <b>Left (solid, left y-axis): excitation spectra</b>, detecting at 510 nm while the excitation sweeps 400 → 500 nm; lamp-corrected as S1 ÷ R1. <b>Right (dashed, right y-axis): emission spectra</b>, exciting at 485 nm while the detected wavelength sweeps 500 → 600 nm. Colour = concentration, light (2 µM) to dark (32 µM), labelled on each curve. Signal grows with concentration because there is more protein in the cuvette.",
+     "marks": [
+      {
+       "a": "br_pk32",
+       "t": "excitation max ≈ 485 nm",
+       "dx": -30,
+       "dy": -60
+      },
+      {
+       "a": "br_em32",
+       "t": "emission max ≈ 510 nm",
+       "dx": 30,
+       "dy": -60
+      }
+     ]
     }
    ],
    "points": [
     {
-     "text": "<b>Purpose</b>: a <b>concentration-independent</b> readout. Both intensities scale with the amount of protein, so their ratio cancels it and tracks only the chromophore’s neutral/anionic balance"
+     "text": "<b>Band ratio = I(400) / I(peak)</b>, both read off the <b>excitation</b> spectrum",
+     "hl": 0
     },
     {
-     "text": "<b>Band ratio = I(400) / I(peak)</b>, read off each sample’s lamp-corrected excitation spectrum (S1 ÷ R1)"
+     "text": "<b>I(peak)</b> (circles): the excitation maximum, 484–486 nm: the anionic chromophore band",
+     "hl": 0,
+     "marks": [
+      {
+       "a": "br_pk32",
+       "t": "I(peak), 32 µM",
+       "dx": -30,
+       "dy": -60
+      },
+      {
+       "a": "br_pk2",
+       "t": "I(peak), 2 µM",
+       "dx": -30,
+       "dy": -60
+      }
+     ]
     },
     {
-     "text": "<b>I(peak)</b>: the spectrum’s maximum, ≈ 485–489 nm, the anionic chromophore band",
-     "msg": {
-      "ann": [
-       "peak"
-      ]
-     }
+     "text": "<b>I(400)</b> (squares): the excitation intensity at 400 nm: the neutral chromophore band",
+     "hl": 0,
+     "marks": [
+      {
+       "a": "br_400_32",
+       "t": "I(400), 32 µM",
+       "dx": 30,
+       "dy": -50
+      },
+      {
+       "a": "br_400_2",
+       "t": "I(400), 2 µM",
+       "dx": 30,
+       "dy": 10
+      }
+     ]
     },
     {
-     "text": "<b>I(400)</b>: the intensity at 400 nm, the neutral chromophore band",
-     "msg": {
-      "ann": [
-       "peak",
-       "400"
-      ]
-     }
+     "text": "<b>Purpose</b>: concentration independence. 2 µM → 32 µM raises I(peak) 11×, yet the ratio only moves 0.098 → 0.146, since both intensities scale with the amount of protein",
+     "hl": 0,
+     "marks": [
+      {
+       "a": "br_pk32",
+       "t": "",
+       "dx": 0,
+       "dy": 0
+      },
+      {
+       "a": "br_400_32",
+       "t": "",
+       "dx": 0,
+       "dy": 0
+      },
+      {
+       "a": "br_pk2",
+       "t": "",
+       "dx": 0,
+       "dy": 0
+      },
+      {
+       "a": "br_400_2",
+       "t": "",
+       "dx": 0,
+       "dy": 0
+      }
+     ]
     },
     {
-     "text": "With peak = 1, each curve’s height at 400 nm <b>is</b> its band ratio: 2–4 µM lowest (≈ 0.10), 32 µM highest (0.146)",
-     "msg": {
-      "ann": [
-       "peak",
-       "400"
-      ]
-     }
-    },
-    {
-     "text": "Dividing by I(peak) cancels concentration and lamp drift, but only at low absorbance: from <b>16 µM</b> the inner filter effect lifts the ratio; all our comparisons are at ≤ 10 µM",
-     "msg": {
-      "ann": [
-       "peak",
-       "400"
-      ]
-     }
-    },
-    {
-     "text": "<b>Try it</b>: click legend entries to hide traces, drag across the plot to zoom, double-click to reset",
-     "msg": {
-      "ann": [
-       "peak",
-       "400"
-      ]
-     }
+     "text": "The ratio is flat at 2–8 µM (0.097–0.105) and rises from <b>16 µM</b> (inner filter effect, next slide); all our comparisons are at ≤ 10 µM",
+     "hl": 0
     }
    ]
   },
