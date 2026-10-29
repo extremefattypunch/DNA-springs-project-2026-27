@@ -10,7 +10,7 @@ k = 1
 for p in sl.get('panels', []):
     f = root / 'specs' / (p['gel'] + '.json') if 'gel' in p else root / 'chartspecs' / (p['chart'] + '.json')
     k += len(json.loads(f.read_text())['steps'])
-k += len(sl.get('points', [])) + max(0, len(sl.get('explain', [])) - 1)
+k += len(sl.get('points', [])) + max(0, len(sl.get('explain', [])) - 1) + (1 if sl.get('intro') else 0)
 print(k)
 PY
 )

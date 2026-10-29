@@ -254,7 +254,9 @@ for s in deck['slides']:
     for parent, child in ((1, '1b'), (1, '1c'), (29, '29b'), (30, '30b')):
         if pg == parent and child in ('1b', '1c'):   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
+INTRO = {11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
 for x in out:
+    if x.get('page') in INTRO: x['intro'] = INTRO[x['page']]
     if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)
         x['final'] = True
 deck['slides'] = out

@@ -169,12 +169,6 @@
    ],
    "points": [
     {
-     "text": "<b>Question</b>: now that we have purified chimeras, does adding the <b>tet groups</b>, or the <b>mechanical tension</b> of the DNA spring, change sfGFP’s fluorescence?",
-     "msg": {
-      "step": 1
-     }
-    },
-    {
      "text": "<b>Instrument</b>: HORIBA Jobin Yvon Fluorolog-3. Xe lamp → excitation monochromator (picks the colour that hits the sample) → cuvette → emission monochromator at 90° (picks the colour counted) → detector S1; a reference photodiode R1 tracks the lamp",
      "msg": {
       "step": 2
@@ -198,7 +192,8 @@
       "step": 5
      }
     }
-   ]
+   ],
+   "intro": "Now that we have purified chimeras, does adding the <b>tet groups</b>, or the <b>mechanical tension</b> of the DNA spring, change sfGFP’s <b>fluorescence</b>?"
   },
   {
    "kind": "media",
@@ -437,7 +432,8 @@
      "hl": 1,
      "alt": true
     }
-   ]
+   ],
+   "intro": "So we want to measure fluorescence. <b>What metric do we use?</b><br><br>Presenting: the <b>band ratio</b>"
   },
   {
    "kind": "gel",
@@ -469,7 +465,8 @@
      "chart": "p09-ladder"
     }
    ],
-   "top": 316
+   "top": 316,
+   "intro": "So can we really trust our chosen metric, the band ratio, to be <b>concentration-independent</b>?"
   },
   {
    "kind": "gel",
@@ -546,7 +543,8 @@
    "aside": {
     "w": 560,
     "html": "<b>Recap: MD goals</b><ul><li>Force modelling (to make the system reproducible and configurable to different proteins)</li><li>Suitability of a candidate protein for study under a DNA spring</li></ul>"
-   }
+   },
+   "intro": "So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?"
   },
   {
    "kind": "media",

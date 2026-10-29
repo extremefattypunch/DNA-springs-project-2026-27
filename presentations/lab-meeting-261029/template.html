@@ -252,6 +252,7 @@ body {
   background: var(--paper); border: 3px solid var(--amber); border-radius: 22px; padding: 44px 56px; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--paper) 72%, transparent), 0 24px 60px rgba(0,0,0,.28);
   font-size: 36px; line-height: 1.4; color: var(--ink-2); transition: opacity .45s ease, transform .45s ease; }
 .m-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.m-banner.intro { top: 540px; }
 .m-banner b { color: var(--ink); }
 .m-banner .ttl { display: block; font-size: 24px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
 .m-pt .chip-swap { display: inline-block; margin-bottom: 8px; padding: 4px 12px; border-radius: 999px; background: var(--sec-assay); color: #fff; font-size: .85em; }
@@ -1105,6 +1106,13 @@ function buildMedia(el, cfg) {
   }, n: cfg.final ? 0 : FULL, videos: [...el.querySelectorAll('video')] };
 }
 
+/* ---------------- intro banner: a question shown on the first click, cleared on the next ---------------- */
+function addIntro(el, S) {
+  const bn = h('div', 'm-banner intro', { html: '<span class="ttl">Question</span>' + S.cfg.intro });
+  el.appendChild(bn);
+  S.introEl = bn;
+  S.steps.push({ intro: true });
+}
 /* ---------------- slides ---------------- */
 const slides = [];
 function buildSlide(cfg, idx) {
@@ -1124,6 +1132,7 @@ function buildSlide(cfg, idx) {
     foot.innerHTML = `<span class="sec-tag">${(SECTIONS[cfg.section] || [''])[0]}</span><span class="dots"></span><span class="s-page">${idx + 1} / ${DECK.slides.length}</span>`;
     el.appendChild(foot); S.dots = foot.querySelector('.dots');
     const Mo = buildMedia(el, cfg); S.panels.push(Mo);
+    if (cfg.intro) addIntro(el, S);
     for (let k = 1; k <= Mo.n; k++) S.steps.push({ panel: 0, k });
     for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
   } else if (cfg.kind === 'image') {
@@ -1137,6 +1146,7 @@ function buildSlide(cfg, idx) {
     foot.innerHTML = `<span class="sec-tag">${(SECTIONS[cfg.section] || [''])[0]}</span><span class="dots"></span><span class="s-page">${idx + 1} / ${DECK.slides.length}</span>`;
     el.appendChild(foot);
     S.dots = foot.querySelector('.dots');
+    if (cfg.intro) addIntro(el, S);
     (cfg.panels || []).forEach((pc, pi) => {
       if (pc.chart) {
         const cs = (DECK.charts || {})[pc.chart];
@@ -1186,7 +1196,8 @@ function show(si, k, animate) {
   slides.forEach((x, i) => x.el.classList.toggle('on', i === si));
   // per-panel step counts at slide step k
   const counts = S.panels.map(() => 0);
-  for (let i = 1; i <= k; i++) counts[S.steps[i].panel]++;
+  for (let i = 1; i <= k; i++) if (!S.steps[i].intro) counts[S.steps[i].panel]++;
+  if (S.introEl) S.introEl.classList.toggle('on', k === 1);
   S.panels.forEach((G, pi) => G.kind === 'media' ? G.apply(counts[pi]) : (G.kind === 'chart' ? applyChart : applyPanel)(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
   slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (v.dataset.managed != null) { if (i !== si) { v.pause(); v._seg = undefined; } return; } if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
   if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
