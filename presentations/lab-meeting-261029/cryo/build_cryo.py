@@ -224,6 +224,10 @@ SLIDES = [
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
     if _s["page"] == "c1":
         _s["points"][-1]["msg"] = {"step": 4}
+    if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
+        _s["introTtl"] = "Why Fourier space?"
+        _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"
+                       "This is because, as we saw, <b>CTF(q)</b> adds a different <b>relative phase shift</b> to the components at each <b>spatial frequency q</b>.")
 
 deck = json.loads((ROOT / "deck.json").read_text())
 keep = [s for s in deck["slides"] if s.get("page") not in DROP and not str(s.get("page", "")).startswith("c")]

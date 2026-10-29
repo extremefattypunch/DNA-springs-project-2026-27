@@ -2602,7 +2602,9 @@
     {
      "text": "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"
     }
-   ]
+   ],
+   "introTtl": "Why Fourier space?",
+   "intro": "Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>This is because, as we saw, <b>CTF(q)</b> adds a different <b>relative phase shift</b> to the components at each <b>spatial frequency q</b>."
   },
   {
    "kind": "media",
