@@ -254,6 +254,8 @@ body {
 .m-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .m-banner b { color: var(--ink); }
 .m-banner .ttl { display: block; font-size: 24px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+.m-pt .chip-swap { display: inline-block; margin-bottom: 8px; padding: 4px 12px; border-radius: 999px; background: var(--sec-assay); color: #fff; font-size: .85em; }
+.m-pt .chip-swap b { color: #fff; }
 .m-pt .headline { display: block; background: color-mix(in srgb, var(--amber) 14%, transparent); border-left: 6px solid var(--amber); border-radius: 8px; padding: 10px 16px; color: var(--ink); }
 .m-pt ul.sub { margin: 6px 0 2px; padding-left: 28px; list-style: circle; }
 .m-pt ul.sub li { font-size: .9em; margin: 4px 0; }
@@ -983,9 +985,11 @@ function buildMedia(el, cfg) {
     items.forEach((_, i) => boxes.push({ x: 64 + i * (w + gap), y: top, w, h }));
     var ptBox = { x: 64, y: top + h + 30, w: 1792, cols: true };
   } else {
-    const fw = cfg.figW || 1160, n = items.length, gap = 22;
+    // items with over: j share item j's box (an alternate figure shown by points with alt: true)
+    const fw = cfg.figW || 1160, n = items.filter(it => it.over == null).length, gap = 22;
     const hh = (bottom - top - (n - 1) * gap) / n;
-    items.forEach((_, i) => boxes.push({ x: 64, y: top + i * (hh + gap), w: fw, h: hh }));
+    let j = 0; items.forEach(it => boxes.push(it.over != null ? null : { x: 64, y: top + (j++) * (hh + gap), w: fw, h: hh }));
+    items.forEach((it, i) => { if (it.over != null) boxes[i] = boxes[it.over]; });
     var ptBox = { x: 64 + fw + 48, y: top + (cfg.q ? (cfg.qH || (cfg.q.length > 46 ? 86 : 52)) : 6), w: 1792 - fw - 48 };
   }
   const els = items.map((it, i) => {
@@ -1045,7 +1049,7 @@ function buildMedia(el, cfg) {
   const ul = h('ul', 'm-pts' + (ptBox.cols ? ' cols' : '') + (cfg.big ? ' big' : ''), { style: { left: ptBox.x + 'px', top: ptBox.y + 'px', width: ptBox.w + 'px' } });
   // a point with banner: true is shown as a large centred overlay instead of a bullet
   const lis = pts.map(pt => { const li = h(pt.banner ? 'div' : 'li', pt.banner ? 'm-banner' : 'm-pt', { html: pt.text }); (pt.banner ? el : ul).appendChild(li); return li; });
-  items.forEach((_, i) => place(i, boxes[i], false));
+  items.forEach((it, i) => place(i, boxes[i], it.over != null));
   el.appendChild(ul);
   const FULL = pts.length + Math.max(0, E - 1);
   return { kind: 'media', k: -1, apply(k) {
@@ -1062,7 +1066,8 @@ function buildMedia(el, cfg) {
         els.forEach(e => e.classList.remove('mhl'));
         return;
       }
-      items.forEach((_, i) => place(i, boxes[i], false));
+      const alt = !!(pts[k - E] && pts[k - E].alt);
+      items.forEach((it, i) => place(i, boxes[i], it.over != null ? !alt : items.some(o => o.over === i) && alt));
       exBox.classList.remove('on'); ul.style.opacity = 1; if (qEl) qEl.style.opacity = 1;
       k = k - E + 1;
       showMarks(pts[k - 1] && pts[k - 1].marks);

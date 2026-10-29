@@ -183,72 +183,141 @@
      "anns": {
       "br_pk2": [
        0.436,
-       0.663
+       0.854
       ],
       "br_400_2": [
-       0.076,
-       0.861
+       0.075,
+       0.909
       ],
       "br_em2": [
        0.53,
-       0.651
+       0.857
       ],
       "br_pk4": [
        0.432,
-       0.608
+       0.8
       ],
       "br_400_4": [
-       0.076,
-       0.808
+       0.075,
+       0.904
       ],
       "br_em4": [
        0.534,
-       0.599
+       0.806
       ],
       "br_pk8": [
        0.432,
-       0.535
+       0.642
       ],
       "br_400_8": [
-       0.076,
-       0.727
+       0.075,
+       0.886
       ],
       "br_em8": [
        0.534,
-       0.529
+       0.662
       ],
       "br_pk16": [
        0.436,
-       0.486
+       0.429
       ],
       "br_400_16": [
-       0.076,
-       0.668
+       0.075,
+       0.857
       ],
       "br_em16": [
        0.538,
-       0.483
+       0.475
       ],
       "br_pk32": [
+       0.44,
+       0.238
+      ],
+      "br_400_32": [
+       0.075,
+       0.816
+      ],
+      "br_em32": [
+       0.547,
+       0.3
+      ]
+     },
+     "cap": "Mean of 3 scans per concentration · raw counts, linear y · excitation S1 ÷ R1 (lamp-corrected), emission S1"
+    },
+    {
+     "img": "charts/band_ratio_spectra_log.png",
+     "w": 2025,
+     "h": 1110,
+     "anns": {
+      "lg_br_pk2": [
+       0.436,
+       0.663
+      ],
+      "lg_br_400_2": [
+       0.076,
+       0.861
+      ],
+      "lg_br_em2": [
+       0.53,
+       0.651
+      ],
+      "lg_br_pk4": [
+       0.432,
+       0.608
+      ],
+      "lg_br_400_4": [
+       0.076,
+       0.808
+      ],
+      "lg_br_em4": [
+       0.534,
+       0.599
+      ],
+      "lg_br_pk8": [
+       0.432,
+       0.535
+      ],
+      "lg_br_400_8": [
+       0.076,
+       0.727
+      ],
+      "lg_br_em8": [
+       0.534,
+       0.529
+      ],
+      "lg_br_pk16": [
+       0.436,
+       0.486
+      ],
+      "lg_br_400_16": [
+       0.076,
+       0.668
+      ],
+      "lg_br_em16": [
+       0.538,
+       0.483
+      ],
+      "lg_br_pk32": [
        0.441,
        0.457
       ],
-      "br_400_32": [
+      "lg_br_400_32": [
        0.076,
        0.621
       ],
-      "br_em32": [
+      "lg_br_em32": [
        0.547,
        0.455
       ]
      },
-     "cap": "Mean of 3 scans per concentration · log y-axis, not normalised · excitation S1 ÷ R1 (lamp-corrected), emission S1"
+     "over": 0,
+     "cap": "Same data on a <b>log y-axis</b> · inset: I(peak) vs concentration, log–log"
     }
    ],
    "explain": [
     {
      "item": 0,
-     "text": "<b>Two spectra per sample, on one wavelength axis.</b> <b>Left (solid, left y-axis): excitation spectra</b>, detecting at 510 nm while the excitation sweeps 400 → 500 nm; lamp-corrected as S1 ÷ R1. <b>Right (dashed, right y-axis): emission spectra</b>, exciting at 485 nm while the detected wavelength sweeps 500 → 600 nm. Colour = concentration, light (2 µM) to dark (32 µM), labelled on each curve. The y-axis is <b>logarithmic</b>, so equal concentration doublings would give equally spaced curves. <b>Inset</b>: I(peak) against concentration (log–log), with the straight line expected if fluorescence were proportional to concentration.",
+     "text": "<b>Two spectra per sample, on one wavelength axis</b> (raw counts, linear y). <b>Left (solid, left y-axis): excitation spectra</b>, detecting at 510 nm while the excitation sweeps 400 → 500 nm; lamp-corrected as S1 ÷ R1. <b>Right (dashed, right y-axis): emission spectra</b>, exciting at 485 nm while the detected wavelength sweeps 500 → 600 nm. Colour = concentration, light (2 µM) to dark (32 µM), labelled on each curve.",
      "marks": [
       {
        "a": "br_pk32",
@@ -307,17 +376,18 @@
      ]
     },
     {
-     "text": "<span class=\"headline\"><b>Headline</b>: fluorescence is <b>not linear</b> in concentration: 16× more protein (2 → 32 µM) gives only 11× more I(peak), and the curves bunch up at the top. Our samples were not all at the same concentration, so we cannot simply rescale raw intensities: we need a <b>concentration-independent metric</b></span>",
-     "hl": 0,
+     "text": "<span class=\"chip-swap\">▶ I now switch to a <b>log y-axis</b></span><span class=\"headline\"><b>Headline</b>: fluorescence is <b>not linear</b> in concentration: 16× more protein (2 → 32 µM) gives only 11× more I(peak). Our samples were not all at the same concentration, so we cannot simply rescale raw intensities: we need a <b>concentration-independent metric</b></span>",
+     "hl": 1,
+     "alt": true,
      "marks": [
       {
-       "a": "br_pk32",
+       "a": "lg_br_pk32",
        "t": "32 µM",
        "dx": -30,
        "dy": -60
       },
       {
-       "a": "br_pk16",
+       "a": "lg_br_pk16",
        "t": "16 µM",
        "dx": -30,
        "dy": 40
@@ -325,8 +395,14 @@
      ]
     },
     {
-     "text": "<b>The band ratio</b> is that metric: I(400) and I(peak) come from the same spectrum, so the concentration cancels. It stays at 0.097–0.105 from 2 to 8 µM, while I(peak) rises 4.5×",
-     "hl": 0
+     "text": "<b>How the log plot shows it</b> (box on the plot): each doubling should lift a curve by the same step; 2 → 4 → 8 µM do, 8 → 16 → 32 µM rise less and less (×1.8, ×1.4), and the inset’s measured I(peak) falls below the proportional line",
+     "hl": 1,
+     "alt": true
+    },
+    {
+     "text": "<b>The band ratio</b> is that metric: I(400) and I(peak) come from the same spectrum, so concentration cancels; it stays at 0.097–0.105 from 2 to 8 µM",
+     "hl": 1,
+     "alt": true
     }
    ]
   },
