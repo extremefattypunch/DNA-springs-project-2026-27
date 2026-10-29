@@ -120,17 +120,17 @@ SLIDES = [
               "One image = one central line (a plane in 3D). Backprojecting it gives only streaks",
               "More views fan out from the origin: low frequencies are measured by every image, high ones by few",
               "The <b>backprojection</b> (right-hand side) over-counts the centre, so it is blurred; dividing by the <b>count</b> (left-hand matrix) sharpens it",
-              "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularisation)",
+              "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularization)",
               "<b>Preferred orientation</b> leaves a missing wedge (a cone in 3D) that no amount of averaging fills"]),
     clip("c12", "Reconstruction scheme 2: you don’t know any poses", "04_iterative_refinement",
-         "What does iterative reconstruction optimise?", MANIM.format(n="04"), [
+         "What does iterative reconstruction optimize?", MANIM.format(n="04"), [
              ("Compare each image with the projection predicted from the current map; the residual measures the mismatch", [0, 9]),
              ("<b>Pose step</b>: hold the map and search each particle’s orientation and shift to shrink its residual", [9, 19]),
              ("<b>Map step</b>: hold the poses and update the map (scheme 1). Alternate until the loss stops falling; one particle here stays in a local minimum", [19, 31]),
              ("<b>Ab initio</b> (no starting map): CryoSPARC combines branch-and-bound pose search with stochastic gradient descent on random mini-batches ℬ:" +
               eq('<i>V</i><sup>(<i>t</i>+1)</sup> = <i>V</i><sup>(<i>t</i>)</sup> − η<sub><i>t</i></sub> (1/|ℬ|) Σ<sub><i>i</i>∈ℬ</sub> ∇<sub><i>V</i></sub> ℓ<sub><i>i</i></sub>(<i>V</i><sup>(<i>t</i>)</sup>)') +
               "Cheap, noisy steps; no guarantee of the global optimum", None),
-             ("<b>Regularisation</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise", [31, 39]),
+             ("<b>Regularization</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise", [31, 39]),
              ("<b>Risk</b>: aligning noisy images to a reference that already contains the same noise reinforces it. The standard defence is to refine two independent half-sets and compare them", [39, 44.9])]),
 ]
 

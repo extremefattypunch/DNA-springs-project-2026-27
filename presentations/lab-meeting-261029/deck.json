@@ -1869,7 +1869,7 @@
      "title": true
     },
     {
-     "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…<span style=\"display:block;font-size:30px;margin-top:20px;line-height:1.4\">So we head back to <b>optimising the yield</b> of our circular product. Before debugging the SEC, we can first look at <b>disulfide (cysteine) bond re-formation</b>, which links pp2a molecules together.</span>",
+     "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…<span style=\"display:block;font-size:30px;margin-top:20px;line-height:1.4\">So we head back to <b>optimizing the yield</b> of our circular product. Before debugging the SEC, we can first look at <b>disulfide (cysteine) bond re-formation</b>, which links pp2a molecules together.</span>",
      "big": true
     }
    ]
@@ -2625,7 +2625,7 @@
      }
     },
     {
-     "text": "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularisation)",
+     "text": "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularization)",
      "msg": {
       "step": 4
      }
@@ -2644,7 +2644,7 @@
    "section": "cryoem",
    "title": "Reconstruction scheme 2: you don’t know any poses",
    "figW": 1200,
-   "q": "What does iterative reconstruction optimise?",
+   "q": "What does iterative reconstruction optimize?",
    "items": [
     {
      "video": "cryo/04_iterative_refinement.mp4",
@@ -2679,7 +2679,7 @@
      "text": "<b>Ab initio</b> (no starting map): CryoSPARC combines branch-and-bound pose search with stochastic gradient descent on random mini-batches ℬ:<span class=\"eq blk\"><i>V</i><sup>(<i>t</i>+1)</sup> = <i>V</i><sup>(<i>t</i>)</sup> − η<sub><i>t</i></sub> (1/|ℬ|) Σ<sub><i>i</i>∈ℬ</sub> ∇<sub><i>V</i></sub> ℓ<sub><i>i</i></sub>(<i>V</i><sup>(<i>t</i>)</sup>)</span>Cheap, noisy steps; no guarantee of the global optimum"
     },
     {
-     "text": "<b>Regularisation</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise",
+     "text": "<b>Regularization</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise",
      "seek": [
       31,
       39
