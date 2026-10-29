@@ -51,6 +51,91 @@ def clip0(page, title, name, q, cap, pts):
 MANIM = "Ian’s Manim clip {n}: mathematical illustration in dimensionless units (each click plays the next beat)"
 DRAWN = "Animation drawn for this deck from the content of the cryoEM slides"
 
+def gl(rows):
+    return '<table class="gl">' + ''.join(f'<tr><td>{a}</td><td>{b}</td></tr>' for a, b in rows) + '</table>'
+
+
+def eqslide(page, title, q, pts, terms):
+    return {"kind": "media", "page": page, "section": "cryoem", "items": [], "final": True, "big": True, "title": title, "q": q,
+            "aside": {"w": 560, "html": "<b>Terms</b>" + gl(terms)},
+            "points": [{"text": t} for t in pts]}
+
+
+T = lambda s: tex(s)
+D = lambda s: tex(s, True)
+RECON = [
+    eqslide("c11", "Reconstruction, known poses (1/2): a linear Gaussian model",
+            "If every pose (Rᵢ, tᵢ) were known, how would we recover the map V?", [
+        "Start from the forward model, with each pose now <b>known</b>:"
+        + D(r"Y_i(\mathbf q) = C_i(\mathbf q)\,\tilde V\big(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T}\big)\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i} + N_i(\mathbf q)"),
+        "Two Fourier rules make every step <b>linear</b> in V: a shift becomes a phase factor, and the CTF blur (a convolution) becomes a product"
+        + D(r"\mathcal F[g(\mathbf x-\mathbf t)](\mathbf q) = e^{-2\pi i\,\mathbf q\cdot\mathbf t}\,\tilde g(\mathbf q), \qquad \mathcal F[h*g](\mathbf q) = \tilde h(\mathbf q)\,\tilde g(\mathbf q)"),
+        "Write it in <b>real space</b> (inverse 2D transform), with the voxels of V stacked into one vector <b>v</b>:"
+        + D(r"\underbrace{\mathbf y_i}_{\mathcal F_2^{-1}[Y_i]} \;=\; \underbrace{A_i\,\mathbf v}_{\mathcal F_2^{-1}\left[C_i\,\tilde V(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T})\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}\right]} \;+\; \underbrace{\boldsymbol\varepsilon_i}_{\mathcal F_2^{-1}[N_i]}")
+        + "With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>",
+        "The noise is Gaussian, " + T(r"\boldsymbol\varepsilon_i \sim \mathcal N(\mathbf 0, \Sigma_i)") + ", so each image is Gaussian about its prediction A<sub>i</sub><b>v</b> (the multi-pixel form of "
+        + T(r"p(y\mid\mu,\sigma^2) = e^{-(y-\mu)^2/2\sigma^2}/\sqrt{2\pi\sigma^2}") + "):"
+        + D(r"p(\mathbf y_i\mid\mathbf v) = \frac{1}{(2\pi)^{m/2}\,|\Sigma_i|^{1/2}}\exp\!\Big[-\tfrac12\,(\mathbf y_i-A_i\mathbf v)^{\mathsf T}\,\Sigma_i^{-1}\,(\mathbf y_i-A_i\mathbf v)\Big]"),
+    ], [
+        (T(r"Y_i(\mathbf q),\ \mathbf y_i"), "particle image i in Fourier space / real space (m pixels)"),
+        (T(r"\mathbf q = (q_x,q_y)"), "2D spatial frequency in the image"),
+        (T(r"V,\ \mathbf v"), "3D Coulomb potential (the map); <b>v</b> = its n voxels as one vector"),
+        (T(r"\tilde V"), "3D Fourier transform of V"),
+        (T(r"R_i,\ \mathbf t_i"), "pose of particle i: rotation in SO(3) and in-plane shift"),
+        (T(r"C_i(\mathbf q)"), "CTF of image i (from its fitted defocus)"),
+        (T(r"N_i,\ \boldsymbol\varepsilon_i"), "noise in Fourier / real space"),
+        (T(r"\mathcal F,\ \mathcal F_2^{-1}"), "Fourier transform; inverse 2D transform"),
+        (T(r"A_i"), "m × n matrix: rotate, project, shift and CTF-filter v"),
+        (T(r"\Sigma_i,\ |\Sigma_i|"), "noise covariance of image i; its determinant"),
+    ]),
+    eqslide("c11b", "Reconstruction, known poses (2/2): the normal equations",
+            "Maximum likelihood: which map v makes all N images most probable?", [
+        "The N images are independent given <b>v</b>, so the joint likelihood is a product:"
+        + D(r"p(\mathbf y_1,\dots,\mathbf y_N\mid\mathbf v) = \prod_{i=1}^{N} p(\mathbf y_i\mid\mathbf v)"),
+        "A product of thousands of tiny probabilities is numerically unstable; the log turns it into a sum, "
+        + T(r"\log\prod_i p_i = \sum_i \log\, p_i") + ". Keeping only the terms that depend on <b>v</b>:"
+        + D(r"-\log\, p(\mathbf y_1,\dots,\mathbf y_N\mid\mathbf v) = L(\mathbf v) + \text{const}, \qquad L(\mathbf v) = \frac12\sum_{i=1}^{N}(\mathbf y_i-A_i\mathbf v)^{\mathsf T}\,\Sigma_i^{-1}\,(\mathbf y_i-A_i\mathbf v)")
+        + "Maximizing the likelihood = minimizing L, a noise-weighted least-squares misfit",
+        "Take the gradient with respect to <b>v</b>:"
+        + D(r"\nabla_{\mathbf v} L = \sum_{i=1}^{N} A_i^{\mathsf T}\,\Sigma_i^{-1}\,(A_i\mathbf v-\mathbf y_i)"),
+        "Setting " + T(r"\nabla_{\mathbf v} L = \mathbf 0") + " gives the <b>normal equations</b>, which are solved for the estimate " + T(r"\hat{\mathbf v}") + ":"
+        + D(r"\boxed{\;\Big(\sum_{i=1}^{N} A_i^{\mathsf T}\,\Sigma_i^{-1}A_i\Big)\,\hat{\mathbf v} \;=\; \sum_{i=1}^{N} A_i^{\mathsf T}\,\Sigma_i^{-1}\,\mathbf y_i\;}")
+        + "Right: every image <b>back-projected</b> into 3D, weighted by its noise. Left: how often each part of <b>v</b> was measured. Solving divides one by the other",
+    ], [
+        (T(r"N"), "number of particle images"),
+        (T(r"p(\mathbf y_i\mid\mathbf v)"), "likelihood: probability of image i if the map were <b>v</b>"),
+        (T(r"L(\mathbf v)"), "negative log-likelihood (the misfit to minimize)"),
+        (T(r"\Sigma_i^{-1}"), "precision matrix: down-weights noisy pixels"),
+        (T(r"A_i^{\mathsf T}"), "back-projection: smears a 2D image back into 3D"),
+        (T(r"\nabla_{\mathbf v}"), "gradient with respect to the voxels of <b>v</b>"),
+        (T(r"\hat{\mathbf v}"), "maximum-likelihood estimate of the map"),
+        (T(r"\text{const}"), "terms independent of <b>v</b> (e.g. the normalizer of each Gaussian)"),
+    ]),
+    eqslide("c12", "Reconstruction, unknown poses: alternate poses and map",
+            "Neither the poses nor the map is known: alternate between them until both stop changing", [
+        "Now the map <b>v</b> and every pose " + T(r"\phi_i = (R_i,\mathbf t_i)") + " are unknown. The same misfit, with " + T(r"A_i = A(\phi_i)") + ", is minimized over <b>both</b>:"
+        + D(r"\min_{\mathbf v,\ \phi_1,\dots,\phi_N}\; L(\mathbf v,\phi_1,\dots,\phi_N) = \frac12\sum_{i=1}^{N}\big\|\mathbf y_i - A(\phi_i)\,\mathbf v\big\|^2_{\Sigma_i^{-1}}")
+        + "A(φ) is nonlinear in the pose, so there is no closed-form solution",
+        "Start from an <b>initial volume</b> " + T(r"\mathbf v^{(0)}") + " (ab initio, or a low-pass filtered reference), then repeat for k = 0, 1, 2, …",
+        "<b>Pose step</b>: hold the map, give each image its best pose"
+        + D(r"\phi_i^{(k)} = \arg\min_{\phi\,\in\,SO(3)\times\mathbb R^2}\ \big\|\mathbf y_i - A(\phi)\,\mathbf v^{(k)}\big\|^2_{\Sigma_i^{-1}}"),
+        "<b>Map step</b>: hold the poses and solve the known-pose problem (normal equations)"
+        + D(r"\Big(\sum_{i} A(\phi_i^{(k)})^{\mathsf T}\Sigma_i^{-1}A(\phi_i^{(k)})\Big)\,\mathbf v^{(k+1)} = \sum_{i} A(\phi_i^{(k)})^{\mathsf T}\Sigma_i^{-1}\,\mathbf y_i"),
+        "Stop when L no longer decreases. Neither step can raise L, so the loop converges, but to a <b>local</b> optimum that depends on " + T(r"\mathbf v^{(0)}")
+        + ". RELION and CryoSPARC soften the pose step: they weight every pose by its probability (expectation–maximization) instead of keeping only the best one",
+    ], [
+        (T(r"\phi_i = (R_i,\mathbf t_i)"), "pose of particle i, now an unknown"),
+        (T(r"A(\phi)"), "the projection matrix for pose φ (same as A<sub>i</sub>)"),
+        (T(r"SO(3)\times\mathbb R^2"), "all 3D rotations × all in-plane shifts"),
+        (T(r"\|\mathbf r\|^2_{\Sigma^{-1}}"), T(r"\mathbf r^{\mathsf T}\Sigma^{-1}\mathbf r") + ": noise-weighted squared misfit"),
+        (T(r"\mathbf v^{(0)}"), "initial volume"),
+        (T(r"k"), "iteration number"),
+        (T(r"\mathbf v^{(k)},\ \phi_i^{(k)}"), "map and poses after iteration k"),
+        (T(r"\arg\min"), "the value that minimizes the expression"),
+    ]),
+]
+
+
 SLIDES = [
     frame("c1", "cryoEM downstream analysis: how it differs from X-ray crystallography", "pipeline.html",
           "What is cryoEM downstream analysis?",
@@ -112,40 +197,21 @@ SLIDES = [
              ("<b>Takeaway</b>: projection loses depth, the CTF filters frequencies and noise swamps each image, so the 3D source must be recovered from many images", [37.8, 42]),
              ("<b class=\"kn\">Known</b>: the image <i>Y</i><sub>i</sub> and its CTF <i>C</i><sub>i</sub> (from the fitted Δf). "
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
-             ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),
              ("<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into", None)], overlay={'video': 'cryo/cryosparc_orientations.mp4', 'poster': 'cryo/cryosparc_orientations_poster.jpg', 'dark': True, 'cap': 'Animation from the CryoSPARC guide (guide.cryosparc.com): rays striking objects on their way to the detector'}),
     {"kind": "media", "page": "c10", "section": "cryoem", "items": [], "title": "Central slice theorem",
      "q": "Each 2D Fourier image samples a central plane through the 3D Fourier volume", "points": [{"text": t} for t in [
          "<b>Projection.</b> The image integrates the scattering potential V along the beam direction z. R is a rotation matrix, so changing R changes the direction the beam passes through the molecule"
          + tex(r"(P_R V)(x,y) = \int_{-\infty}^{\infty} V\big(R^{\mathsf T}(x,y,z)^{\mathsf T}\big)\,dz", True),
          "<b>The 3D Fourier transform</b> of the potential:"
-         + tex(r"\hat V(k_x,k_y,k_z) = \iiint V(x,y,z)\,e^{-2\pi i\,(k_x x + k_y y + k_z z)}\,dx\,dy\,dz", True),
+         + tex(r"\tilde V(k_x,k_y,k_z) = \iiint V(x,y,z)\,e^{-2\pi i\,(k_x x + k_y y + k_z z)}\,dx\,dy\,dz", True),
          "<b>The 2D Fourier transform of a projection</b> (R = I, beam along z):"
          + tex(r"\mathcal F_2\{PV\}(q_x,q_y) = \iint \Big[\int V(x,y,z)\,dz\Big]\, e^{-2\pi i\,(q_x x + q_y y)}\,dx\,dy", True),
          "The exponential does not depend on z, so it moves inside the z-integral: this is the 3D transform with k<sub>z</sub> = 0"
-         + tex(r"\mathcal F_2\{PV\}(q_x,q_y) = \iiint V(x,y,z)\,e^{-2\pi i\,(q_x x + q_y y + 0\cdot z)}\,dx\,dy\,dz = \hat V(q_x,q_y,0)", True),
+         + tex(r"\mathcal F_2\{PV\}(q_x,q_y) = \iiint V(x,y,z)\,e^{-2\pi i\,(q_x x + q_y y + 0\cdot z)}\,dx\,dy\,dz = \tilde V(q_x,q_y,0)", True),
          "So the 2D transform of a projection is the <b>plane through the origin</b> of the 3D transform, perpendicular to the beam. For any orientation R the plane simply rotates:"
-         + tex(r"\mathcal F_2\{P_R V\}(\mathbf q) = \hat V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)", True),
+         + tex(r"\mathcal F_2\{P_R V\}(\mathbf q) = \tilde V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)", True),
          "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"]]},
-    frame("c11", "Reconstruction scheme 1: you know the poses", "recon.html",
-          "Least squares: L(v) = ½ Σᵢ (yᵢ − Aᵢv)ᵀ Σᵢ⁻¹ (yᵢ − Aᵢv); ∇L = 0 gives the normal equations",
-          "Live 2D reconstruction (64 × 64, nearest-neighbour gridding, noisy images) computed in the browser", [
-              "One image = one central line (a plane in 3D). Backprojecting it gives only streaks",
-              "More views fan out from the origin: low frequencies are measured by every image, high ones by few",
-              "The <b>backprojection</b> (right-hand side) over-counts the centre, so it is blurred; dividing by the <b>count</b> (left-hand matrix) sharpens it",
-              "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularization)",
-              "<b>Preferred orientation</b> leaves a missing wedge (a cone in 3D) that no amount of averaging fills"]),
-    clip("c12", "Reconstruction scheme 2: you don’t know any poses", "04_iterative_refinement",
-         "What does iterative reconstruction optimize?", MANIM.format(n="04"), [
-             ("Compare each image with the projection predicted from the current map; the residual measures the mismatch", [0, 9]),
-             ("<b>Pose step</b>: hold the map and search each particle’s orientation and shift to shrink its residual", [9, 19]),
-             ("<b>Map step</b>: hold the poses and update the map (scheme 1). Alternate until the loss stops falling; one particle here stays in a local minimum", [19, 31]),
-             ("<b>Ab initio</b> (no starting map): CryoSPARC combines branch-and-bound pose search with stochastic gradient descent on random mini-batches ℬ:" +
-              eq('<i>V</i><sup>(<i>t</i>+1)</sup> = <i>V</i><sup>(<i>t</i>)</sup> − η<sub><i>t</i></sub> (1/|ℬ|) Σ<sub><i>i</i>∈ℬ</sub> ∇<sub><i>V</i></sub> ℓ<sub><i>i</i></sub>(<i>V</i><sup>(<i>t</i>)</sup>)') +
-              "Cheap, noisy steps; no guarantee of the global optimum", None),
-             ("<b>Regularization</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise", [31, 39]),
-             ("<b>Risk</b>: aligning noisy images to a reference that already contains the same noise reinforces it. The standard defence is to refine two independent half-sets and compare them", [39, 44.9])]),
-]
+] + RECON
 
 deck = json.loads((ROOT / "deck.json").read_text())
 keep = [s for s in deck["slides"] if s.get("page") not in DROP and not str(s.get("page", "")).startswith("c")]
