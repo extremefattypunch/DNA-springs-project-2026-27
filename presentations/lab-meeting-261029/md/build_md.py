@@ -104,15 +104,17 @@ slides = {
     '<b>Effect on force transduction</b>: a kink acts as a <b>release valve</b>. The relaxed arms store almost no energy, so the push is capped by the kink’s critical torque τ<sub>c</sub>: only ≈ 5–7 pN reaches the protein',
     'Squeeze the ends closer: the smooth rod keeps pushing at ≈ its Euler load; the kinked rod stays weak. So whether the DNA kinks decides whether the spring delivers tens of pN or a few. <b>Next</b>: does our DNA kink in MD, and what does Zocchi’s model predict?'])]},
 '12e': {'title': 'sfGFP: DNA dynamics', 'q': 'Is the DNA kinked or coiled? Does it interact with the protein beyond pushing?',
-  'items': [fig(S, 'fig4_dna_bend.png', 'Axis bend per base-pair step along each duplex')],
+  'items': [fig(S, 'fig4_dna_bend_kink.png', 'Axis bend per base-pair step: MD chimeras (solid) vs a kinked duplex (dashed)')],
   'explain': [
-    {'item': 0, 'text': 'x-axis: base pair along the duplex in the chimera; y-axis: <dfn>axis bend</dfn> at that base-pair step (°), the angle between the local helix axes either side of it. Line: mean across replicates; band: ± sd. A <dfn>kink</dfn> is a sharp local break of the duplex: it would show as one narrow spike. Smooth bending spreads the angle evenly.',
-     'marks': [M('db_27peak', 'highest step, 27 bp', 30, -60), M('db_40', '40 bp: even bending', 30, 14)]}],
+    {'item': 0, 'text': 'x-axis: base pair along the duplex; y-axis: <dfn>axis bend</dfn> at each base-pair step (°), the angle between the helix axes either side of it. '
+      '<b>Solid</b>: our MD chimeras (mean of 6 runs each). <b>Dashed</b>: what a <dfn>kinked</dfn> duplex would look like at the same end-to-end distance, Zocchi’s kinked rod: two straight arms (0°) and the whole bend at one step.',
+     'marks': [M('dk_kink27', 'kink: 81° at one step', 30, -60), M('dk_kink40', 'kink: 120°', 30, -50), M('dk_band', 'all MD steps: 3–8°', -30, -60)]}],
   'points': [
-    {'text': 'The duplex bends <b>smoothly</b> at 4.8–5.2°/bp, nucleosome-like, with no local spike', 'hl': 0, 'marks': [M('db_40', 'even', 30, 14)]},
-    {'text': 'The highest single step stays a broad bump, not a kink', 'hl': 0, 'marks': [M('db_27peak', 'broad', 30, -60)]},
+    {'text': 'A kink is a single spike of <b>80–120°</b> at one step', 'hl': 0, 'marks': [M('dk_kink27', '81°', 30, -60), M('dk_kink40', '120°', 30, -50)]},
+    {'text': 'The MD duplexes stay at <b>3–8° per step</b> all along: the bend is spread smoothly (4.8–5.2°/bp on average), nucleosome-like', 'hl': 0, 'marks': [M('dk_band', '3–8°', -30, -60)]},
+    {'text': 'Only 0.03–0.83 base pairs open at any instant: the duplex stays <b>intact</b>, no kink formed', 'hl': 0},
     {'text': 'The DNA touches the protein in 72–98 % of frames (ssDNA loop 93 %): <b>local contact</b>, not action at a distance'},
-    {'text': '<b>Answer</b>: no kink, no coiling of the duplex; but the DNA lies against the protein'}]},
+    {'text': '<b>Answer</b>: no kink and no coiling; the DNA bends smoothly and lies against the protein'}]},
 '12f': {'title': 'Why Zocchi’s model puts our springs in the kinked regime', 'items': [], 'exH': 590,
   'q': 'Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers',
   'points': [
