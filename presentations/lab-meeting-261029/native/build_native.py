@@ -29,13 +29,14 @@ AGO = {'text': 'Project status: 4 months ago', 'color': 'var(--sec-status)'}
 NOW = {'text': 'Project status: current', 'color': '#00838f'}
 
 
-def text(page, title, section, groups, q=None, badge=None, aside=None, items=None, figW=None):
+def text(page, title, section, groups, q=None, badge=None, aside=None, items=None, figW=None, figRight=False):
     s = {'kind': 'media', 'page': page, 'section': section, 'title': title, 'items': items or [], 'big': True,
          'points': [{'text': g} for g in groups]}
     if q: s['q'] = q
     if badge: s['badge'] = badge
     if aside: s['aside'] = aside
     if figW: s['figW'] = figW
+    if figRight: s['figRight'] = True
     return s
 
 
@@ -243,8 +244,10 @@ SLIDES = {
 33: text(33, 'Setting up cryoEM downstream analysis (new to Hekstra lab)', 'background', [
     grp('Ideally I would have explained the theory <b>alongside a live CryoSPARC demo on imaged sfGFP chimeras</b>, had we had real screening time. But the grid-screening session planned for 2 days ago was postponed: the cryoEM microscope broke down yet again 😢'),
     grp('So instead: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while setting up and learning CryoSPARC, new to the lab'),
-    grp('A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b>'),
-    grp('Next: from electron optics (defocus, contrast, CTF) to reconstruction and refinement')])
+    grp('A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b>. Or simply to learn more about cryoEM workflows in general'),
+    grp('<b>CryoSPARC is already live and running</b>: from Day et al.’s deposited maps it reproduced their refinement and sharpening (CryoSPARC + EMReady; right). Details will be released in a dedicated GitHub tutorial repo for CryoSPARC set-up soon'),
+    grp('Next: from electron optics (defocus, contrast, CTF) to reconstruction and refinement')],
+    figW=720, figRight=True, items=[{'img': 'native/repro_fig2a.png', 'w': 1560, 'h': 1200, 'cap': 'My reproduction of Day et al. Fig. 2A: EMReady-sharpened maps of the Aα (top) and Aβ (bottom) holoenzymes, coloured by subunit'}])
 }
 
 deck = json.loads((ROOT / 'deck.json').read_text())

@@ -1022,7 +1022,8 @@ function buildMedia(el, cfg) {
     const hh = (bottom - top - (n - 1) * gap) / n;
     let j = 0; items.forEach(it => boxes.push(it.over != null ? null : { x: 64, y: top + (j++) * (hh + gap), w: fw, h: hh }));
     items.forEach((it, i) => { if (it.over != null) boxes[i] = boxes[it.over]; });
-    var ptBox = { x: 64 + fw + 48, y: top + (cfg.q ? (cfg.qH || (cfg.q.length > 46 ? 86 : 52)) : 6), w: 1792 - fw - 48 };
+    if (cfg.figRight) boxes.forEach(b => { if (b) b.x = 1856 - fw; });
+    var ptBox = { x: cfg.figRight ? 64 : 64 + fw + 48, y: top + (cfg.q ? (cfg.qH || (cfg.q.length > 46 ? 86 : 52)) : 6), w: 1792 - fw - 48 };
   }
   const els = items.map((it, i) => {
     const b = boxes[i];

@@ -2204,7 +2204,14 @@
    "page": 33,
    "section": "background",
    "title": "Setting up cryoEM downstream analysis (new to Hekstra lab)",
-   "items": [],
+   "items": [
+    {
+     "img": "native/repro_fig2a.png",
+     "w": 1560,
+     "h": 1200,
+     "cap": "My reproduction of Day et al. Fig. 2A: EMReady-sharpened maps of the Aα (top) and Aβ (bottom) holoenzymes, coloured by subunit"
+    }
+   ],
    "big": true,
    "points": [
     {
@@ -2214,12 +2221,17 @@
      "text": "<span class=\"lead\">So instead: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while setting up and learning CryoSPARC, new to the lab</span>"
     },
     {
-     "text": "<span class=\"lead\">A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b></span>"
+     "text": "<span class=\"lead\">A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b>. Or simply to learn more about cryoEM workflows in general</span>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>CryoSPARC is already live and running</b>: from Day et al.’s deposited maps it reproduced their refinement and sharpening (CryoSPARC + EMReady; right). Details will be released in a dedicated GitHub tutorial repo for CryoSPARC set-up soon</span>"
     },
     {
      "text": "<span class=\"lead\">Next: from electron optics (defocus, contrast, CTF) to reconstruction and refinement</span>"
     }
-   ]
+   ],
+   "figW": 720,
+   "figRight": true
   },
   {
    "kind": "media",
