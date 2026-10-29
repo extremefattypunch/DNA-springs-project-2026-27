@@ -920,6 +920,160 @@
    ]
   },
   {
+   "kind": "media",
+   "page": "12f",
+   "section": "md",
+   "figW": 1180,
+   "exH": 560,
+   "title": "sfGFP: why the force field disagrees with Zocchi’s model",
+   "q": "Does the force field contradict Zocchi’s spring, or only his kink?",
+   "items": [
+    {
+     "img": "md/sfgfp/zocchi_vs_ff.png",
+     "w": 1950,
+     "h": 930,
+     "anns": {
+      "zf_meas27": [
+       0.257,
+       0.334
+      ],
+      "zf_kink27": [
+       0.318,
+       0.726
+      ],
+      "zf_bent27": [
+       0.354,
+       0.408
+      ],
+      "zf_xc27": [
+       0.568,
+       0.437
+      ],
+      "zf_meas40": [
+       0.366,
+       0.542
+      ],
+      "zf_kink40": [
+       0.519,
+       0.755
+      ],
+      "zf_bent40": [
+       0.603,
+       0.633
+      ],
+      "zf_xc40": [
+       0.868,
+       0.437
+      ],
+      "zf_chimera": [
+       0.415,
+       0.743
+      ]
+     },
+     "cap": "Zocchi’s two force branches (lines, τc = 34 pN nm, B = 200 pN nm²) and the force field’s bare-duplex measurements (points)"
+    }
+   ],
+   "explain": [
+    {
+     "item": 0,
+     "text": "<b>Zocchi’s DNA spring</b> (<i>Molecular Machines</i> §2.15). A duplex of contour <dfn>L</dfn> = 0.33 nm × N<sub>bp</sub> and bending modulus <dfn>B</dfn> = k<sub>B</sub>T·ℓ<sub>p</sub> ≈ 200 pN nm² (persistence length ℓ<sub>p</sub> ≈ 50 nm), held at end-to-end distance <dfn>x</dfn>, pushes its ends apart with:<br>&emsp;<b>bent branch</b> (x &gt; x<sub>c</sub>): f = 10B/L² − k<sub>B</sub>T/(L − x) (eq. 2.203)<br>&emsp;<b>kinked branch</b> (x &lt; x<sub>c</sub>): f = τ<sub>c</sub> / [2R√(1 − (x/2R)²)], the slope of E<sub>k</sub> = τ<sub>c</sub> arccos(x/2R) (eq. 2.196), R = (L/2)(1 − γ²/90)<br>The rod switches at <dfn>x<sub>c</sub></dfn> = L(1 − γ²/15), γ = Lτ<sub>c</sub>/2B (eqs 2.188, 2.194), where its bending torque reaches the <dfn>critical torque τ<sub>c</sub></dfn> ≈ 27 (nicked) to 34 pN nm (continuous).",
+     "marks": [
+      {
+       "a": "zf_bent27",
+       "t": "bent branch, 27 bp",
+       "dx": 30,
+       "dy": -60
+      },
+      {
+       "a": "zf_kink27",
+       "t": "kinked branch, 27 bp",
+       "dx": 30,
+       "dy": 14
+      },
+      {
+       "a": "zf_xc27",
+       "t": "x_c = 86 Å",
+       "dx": 30,
+       "dy": -60
+      }
+     ]
+    },
+    {
+     "item": 0,
+     "text": "<b>Why the model puts our springs on the kinked branch.</b> ℓ<sub>p</sub> ≈ 50 nm is far longer than the 6–7 nm the tethers allow, so the duplex must bend hard. For 27 bp, L = 8.9 nm and γ = 0.76, so x<sub>c</sub> = 86 Å; the chimeras span 63–73 Å, below x<sub>c</sub>, so Zocchi predicts a kinked rod pushing only <b>4–7 pN</b> (27 bp, 6.3 pN at 70 Å; 40 bp, x<sub>c</sub> = 121 Å, 3.0 pN). In curvature terms: a rod kinks once its curvature reaches τ<sub>c</sub>/B = <b>2.6–3.2° per bp</b>, and the chimeras are bent <b>4.8–5.2° per bp</b>.",
+     "marks": [
+      {
+       "a": "zf_chimera",
+       "t": "sfGFP chimeras 63–73 Å",
+       "dx": 30,
+       "dy": -60
+      },
+      {
+       "a": "zf_kink27",
+       "t": "6.3 pN predicted",
+       "dx": 30,
+       "dy": 14
+      },
+      {
+       "a": "zf_kink40",
+       "t": "3.0 pN predicted",
+       "dx": 30,
+       "dy": 14
+      }
+     ]
+    }
+   ],
+   "points": [
+    {
+     "text": "The MD duplexes <b>never kinked</b>: 0.03–0.83 bp open at 4.8–5.2°/bp. Bare duplexes open a pair only from 5.5°/bp, always above 8.7°/bp, i.e. an effective τ<sub>c</sub> ≈ <b>58–92 pN nm</b>, 2–3× Zocchi’s",
+     "hl": 0
+    },
+    {
+     "text": "So the force field was compared with the <b>Euler buckling load</b> F = π²B/L² (eq. 2.169): a rod bent smoothly, never kinked (27 bp 24.9 pN, 40 bp 11.3 pN)",
+     "hl": 0
+    },
+    {
+     "text": "<b>That is Zocchi’s bent branch.</b> Once k<sub>B</sub>T/(L − x) is small, f → 10B/L², and 10 vs π² = 9.87 differ by 1.3 % (the book calls 10B/L² “within 2 % of π²B/L²”)",
+     "hl": 0,
+     "marks": [
+      {
+       "a": "zf_bent27",
+       "t": "10B/L² ≈ π²B/L²",
+       "dx": 30,
+       "dy": -60
+      },
+      {
+       "a": "zf_bent40",
+       "t": "",
+       "dx": 30,
+       "dy": -60
+      }
+     ]
+    },
+    {
+     "text": "Measured: <b>27 bp 28.0 pN</b> (bent branch 23–25), <b>40 bp 15.8 pN</b> (10.6–11.3): on the bent branch within 1.0–1.4×, not the kinked 3–7 pN",
+     "hl": 0,
+     "marks": [
+      {
+       "a": "zf_meas27",
+       "t": "27 bp measured",
+       "dx": 30,
+       "dy": -60
+      },
+      {
+       "a": "zf_meas40",
+       "t": "40 bp measured",
+       "dx": 30,
+       "dy": 14
+      }
+     ]
+    },
+    {
+     "text": "<b>Answer</b>: same elasticity, same B, same force law. They differ only in the <b>critical torque</b>: OL15 on 50 ns holds the duplex unkinked well past Zocchi’s τ<sub>c</sub>, so it never reaches his softened branch"
+    }
+   ]
+  },
+  {
    "kind": "image",
    "page": 13,
    "src": "slides/p-13.jpg",
