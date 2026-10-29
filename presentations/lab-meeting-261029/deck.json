@@ -346,7 +346,13 @@
      "x": 96,
      "y": 178,
      "w": 1728,
-     "html": "<b>Why this metric?</b> <b>Concentration independence</b>: I(400) and I(peak) both scale with the amount of protein, so their ratio cancels it and reports only the chromophore’s neutral/anionic balance. That holds only below the <b>inner filter effect</b> (the sample absorbs the excitation light before it reaches the detected volume; literature: from ≈ 5 µM). Here the ratio is flat up to 8 µM and rises from <b>16 µM</b>; every reading we compare is ≤ <b>10 µM</b>."
+     "html": "<b>Inner filter effect</b>: at high concentration the sample itself absorbs much of the excitation light before it reaches the centre of the cuvette, where the detector looks. The more strongly a wavelength is absorbed, the more of it is lost: sfGFP absorbs strongly at its <b>485 nm peak</b> but only weakly at <b>400 nm</b>. Literature: noticeable from ≈ 5 µM; here the ratio is flat to 8 µM and rises from <b>16 µM</b>."
+    },
+    {
+     "x": 1548,
+     "y": 336,
+     "w": 330,
+     "html": "<b>What it does to the band ratio</b><span class=\"tex d\">\\frac{I(400)\\;{\\color{#2e7d4f}\\approx}}{I(\\text{peak})\\;{\\color{#b8372c}\\downarrow}} = \\text{ratio}\\;{\\color{#b86e00}\\Uparrow}</span><span style=\"display:block;font-size:19px;margin-top:6px\"><b style=\"color:#b8372c\">I(peak) ↓</b>: 485 nm light is absorbed most, so less of it excites the observed volume<br><b style=\"color:#2e7d4f\">I(400) ≈</b>: weakly absorbed, barely affected<br><b style=\"color:#b86e00\">⇒ ratio ↑</b>, as at 16 and 32 µM</span><span style=\"display:block;font-size:14px;color:var(--ink-3);margin-top:14px;line-height:1.3\">Lakowicz, <i>Principles of Fluorescence Spectroscopy</i>, 3rd ed., Springer (2006), ch. 2; Kubista et al., <i>Analyst</i> 119, 417 (1994)</span>"
     }
    ],
    "panels": [
