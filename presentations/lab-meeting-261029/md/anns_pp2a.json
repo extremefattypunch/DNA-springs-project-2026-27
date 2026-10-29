@@ -1,0 +1,7 @@
+{"pp2a_ramachandran.png": {"pr_af7": [0.367, 0.382], "pr_apo7": [0.183, 0.497], "pr_tet7": [0.228, 0.608], "pr_clk7": [0.332, 0.394], "pr_ss7": [0.349, 0.437], "pr_ds7": [0.219, 0.424], "pr_lha7": [0.365, 0.431], "pr_553": [0.691, 0.573]},
+ "pp2a_fig2_rmsf.png": {"prm_tail": [0.059, 0.329], "prm_core": [0.442, 0.822], "prm_h12": [0.643, 0.103], "prm_asp7": [0.065, 0.480], "prm_asn553": [0.768, 0.480]},
+ "pp2a_fig5_heat_bend.png": {"phb_bend": [0.182, 0.483], "phb_h12": [0.259, 0.750], "phb_ap_ds": [0.831, 0.100], "phb_holo": [0.840, 0.757]},
+ "pp2a_fig7_headline.png": {"ph_apo": [0.125, 0.772], "ph_tet": [0.295, 0.684], "ph_clk": [0.465, 0.675], "ph_ss": [0.634, 0.690], "ph_ds": [0.802, 0.532], "ph_ylabel": [0.024, 0.500]},
+ "pp2a_fig4_force_extension.png": {"pfe_ds50": [0.323, 0.404], "pfe_ss50": [0.316, 0.624], "pfe_ms50": [0.563, 0.696], "pfe_zocchi50": [0.386, 0.586], "pfe_zero": [0.740, 0.626], "pfe_shade": [0.434, 0.414], "pfe_shade_ss": [0.375, 0.414]},
+ "pp2a_fig6_dna_kink.png": {"pk_ss_bend": [0.173, 0.306], "pk_ss_hot": [0.054, 0.194], "pk_ss_stack": [0.534, 0.262], "pk_ss_curv": [0.850, 0.155], "pk_ds_bend": [0.173, 0.748], "pk_ds_open": [0.189, 0.646], "pk_ds_curv": [0.820, 0.768], "pk_ds_unstack": [0.548, 0.622]},
+ "pp2a_fig8_strand.png": {"ps_ss": [0.262, 0.557], "ps_rms": [0.080, 0.585], "ps_ds": [0.273, 0.118], "ps_ssforce": [0.763, 0.800], "ps_dsforce": [0.763, 0.826], "ps_dsspike": [0.642, 0.118]}}
