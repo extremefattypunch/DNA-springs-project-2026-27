@@ -4,7 +4,7 @@
   build.py                      -> deck/index.html (the artifact page)
   build.py --test GEL_ID        -> deck/_render/GEL_ID/test.html (one gel, for render.py)
 """
-import argparse, json, pathlib, sys
+import argparse, html, json, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ap = argparse.ArgumentParser()
@@ -67,6 +67,26 @@ if bad:
 charts = {}
 for p in sorted((ROOT / "chartspecs").glob("*.json")):
     c = json.loads(p.read_text()); charts[c["id"]] = c
+
+# LaTeX -> MathML at build time, so the page needs no maths library when it opens
+TEX = re.compile(r'<span class="tex( d)?">(.*?)</span>', re.S)
+def typeset(slides):
+    found = []
+    def walk(o, f):
+        if isinstance(o, str): return f(o)
+        if isinstance(o, list): return [walk(x, f) for x in o]
+        if isinstance(o, dict): return {k: walk(v, f) for k, v in o.items()}
+        return o
+    walk(slides, lambda t: found.extend(TEX.findall(t)) or t)
+    if not found:
+        return slides
+    r = subprocess.run(["node", str(ROOT / "tools" / "tex.cjs")], input=json.dumps([[html.unescape(src), bool(d)] for d, src in found]),
+                       capture_output=True, text=True)
+    if r.returncode:
+        sys.exit("LaTeX typesetting failed:\n" + r.stderr)
+    maths = iter(json.loads(r.stdout))
+    return walk(slides, lambda t: TEX.sub(lambda m: f'<span class="tex{m.group(1) or ""}">{next(maths)}</span>', t))
+deck["slides"] = typeset(deck["slides"])
 
 tpl = (ROOT / "template.html").read_text()
 if a.test:

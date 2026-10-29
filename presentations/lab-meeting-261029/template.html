@@ -283,7 +283,6 @@ body {
   <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js" integrity="sha384-czaB7zH9slIhvFgUxhO8sSnYf4cnCeV2N3zOvDnNKFzRKu5AwqDKEZlCLsaQkoop" crossorigin="anonymous"></script>
 <script>
 window.DECK = /*__DECK__*/null;
@@ -1149,10 +1148,6 @@ function boot() {
   DECK.slides.forEach((cfg, i) => {
     if (cfg.kind === 'gel' && !TEST) autoPanels(cfg);
     buildSlide(cfg, i);
-  });
-  // LaTeX in slide text: <span class="tex">…</span>, display mode with class "d"
-  if (window.katex) document.querySelectorAll('.tex').forEach(el => {
-    try { el.innerHTML = katex.renderToString(el.textContent, { displayMode: el.classList.contains('d'), output: 'mathml', throwOnError: false }); } catch (e) {}
   });
   fit(); addEventListener('resize', fit);
   let si = 0;

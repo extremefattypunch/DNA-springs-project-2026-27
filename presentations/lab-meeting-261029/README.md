@@ -16,6 +16,10 @@ with `seek: [a, b]` plays that beat of the clip once and holds. The optics and
 reconstruction slides are iframes in `interactive/cryo/` driven by `{deck: 'cryo', step}`;
 `tools/cryoshot.sh PAGE STEP` renders one frame.
 
+Equations: write LaTeX as `<span class="tex">…</span>` (`class="tex d"` for display)
+in slide text; `tools/build.py` typesets them to MathML with the vendored KaTeX
+(`tools/vendor/katex.min.js`, via `tools/tex.cjs`, needs node), so the page loads no maths library.
+
 Navigation: right arrow / space / page down / click = next step, left arrow /
 page up = back, f = full screen, `#sN` in the link opens slide N.
 
