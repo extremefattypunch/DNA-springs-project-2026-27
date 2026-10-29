@@ -95,7 +95,7 @@
   },
   "ring_ds": {
    "name": "2 pp2a + 2 dsDNA ring",
-   "note": "wrong circular product · runs slower",
+   "note": "only circular product · 2 : 2 (wrong) · runs slower",
    "cls": "ds",
    "icon": {
     "k": "p2d2circ",
@@ -105,13 +105,12 @@
   "imp": {
    "cls": "impurity"
   },
-  "circ_ds": {
-   "name": "Circular pp2a + dsDNA",
-   "note": "new band · runs faster · product",
-   "cls": "circ",
+  "cl_ss": {
+   "name": "2-tet pp2a + ssDNA",
+   "note": "circular or linear · same mass",
+   "cls": "ss",
    "icon": {
-    "k": "circ",
-    "ds": true
+    "k": "circlin"
    }
   }
  },
@@ -259,7 +258,7 @@
      "y": 244,
      "h": 9,
      "i": 0.22,
-     "sp": "p1d_ss"
+     "sp": "cl_ss"
     },
     {
      "y": 290,
@@ -325,7 +324,7 @@
      "y": 252,
      "h": 9,
      "i": 0.37,
-     "sp": "circ_ds"
+     "sp": "p1d_ds"
     },
     {
      "y": 290,
@@ -414,29 +413,29 @@
    "lanes": [
     "L2"
    ],
-   "say": "<b>1-tet pp2a + ssDNA</b>: a 2 pp2a + 2 DNA band and a linear 1 : 1 chimera, both weak"
+   "say": "<b>1-tet pp2a + ssDNA</b>: only one Tet site, so the pp2a + ssDNA band can <b>only be linear</b>"
   },
   {
    "lanes": [
     "L5"
    ],
-   "say": "<b>2-tet pp2a + ssDNA</b>: the 2 pp2a + 2 DNA band again, larger species, little 1 : 1"
+   "say": "<b>2-tet pp2a + ssDNA</b>: the same-mass band could be <b>circular or linear</b>"
   },
   {
    "lanes": [
     "L3",
     "L6"
    ],
-   "say": "<b>+ cDNA</b>: 1-tet linear shifts down; 2-tet gives a faster circle and a slower dimer ring"
+   "say": "<b>+ cDNA</b>: in <b>both</b> 1-tet and 2-tet the pp2a + DNA band shifts <b>down</b> (linear behaviour); 2-tet shows <b>no new band</b> that 1-tet lacks"
   },
   {
    "glow": [
     [
      "L6",
-     2
+     0
     ]
    ],
-   "say": "<b>Circular pp2a + dsDNA</b>: the 1 : 1 circle runs faster, but is weak beside the dimer ring"
+   "say": "<b>So no 1 : 1 circular product.</b> The only circular product is the up-shifted <b>2 pp2a + 2 dsDNA ring</b>: the wrong one"
   },
   {
    "real": true,
