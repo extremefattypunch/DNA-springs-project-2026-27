@@ -91,7 +91,7 @@
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\"><b>S</b>ynthesis goals</span><ul class=\"sub\"><li>First obtain evidence, by gel, that it can be synthesized</li><li>Then obtain a large purified batch for analysis</li></ul>"
+     "text": "<span class=\"lead\"><b>S</b>ynthesis goals</span><ul class=\"sub\"><li>First obtain evidence, by gel, that circular product with 1 DNA 1 protein (as seen in the previous slides) can be synthesized</li><li>Then obtain a large purified batch for analysis</li></ul>"
     },
     {
      "text": "<span class=\"lead\"><b>A</b>ssay goals</span><ul class=\"sub\"><li>Functional assays of the protein under mechanical tension from the attached DNA springs</li><li>Also structural imaging assays (cryoEM etc.)</li></ul>"

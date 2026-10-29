@@ -186,7 +186,7 @@ SLIDES = {
            '<b>Nicked dsDNA</b>: the cDNA has <b>one break in its backbone</b>. Same DNA on the protein, but the nick relieves bending stress, so it delivers <b>less force</b>',
            '<b>Why it matters</b>: the three carry similar amounts of DNA but different forces. Used as <b>controls</b> in the results that follow, a change seen only with the stronger spring is due to <b>force</b>, not to steric hindrance from simply having DNA there']]},
 2: text(2, 'For each protein studied, we seek “SAM”', 'background', [
-    grp('<b>S</b>ynthesis goals', 'First obtain evidence, by gel, that it can be synthesized', 'Then obtain a large purified batch for analysis'),
+    grp('<b>S</b>ynthesis goals', 'First obtain evidence, by gel, that circular product with 1 DNA 1 protein (as seen in the previous slides) can be synthesized', 'Then obtain a large purified batch for analysis'),
     grp('<b>A</b>ssay goals', 'Functional assays of the protein under mechanical tension from the attached DNA springs', 'Also structural imaging assays (cryoEM etc.)'),
     grp('<b>M</b>D analysis goals', 'A suitability test: can the addition of DNA springs meaningfully perturb our protein’s structure?',
         'A computational/theoretical complement to the experimental results (e.g. theoretical force modelling of DNA-spring dynamics)')]),
