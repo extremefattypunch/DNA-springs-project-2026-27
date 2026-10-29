@@ -129,16 +129,25 @@ slides = {
     {'text': '<b>So the model predicts the kinked-branch force</b> (eq. 2.196), only a few pN:'
       + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)
       + 'Yet the simulated duplexes <b>never kinked</b> (smooth bending, DNA dynamics slide): next slide'}]},
-'12f2': {'title': 'sfGFP: kinked vs unkinked regime, and the force field', 'q': 'What changes between the regimes, and which one does the force field follow?',
+'12f2': {'title': 'sfGFP: kinked vs unkinked regime, and the force field', 'q': 'Bare dsDNA duplex, ends held x apart: how hard does it push?',
   'items': [fig(S, 'zocchi_regimes.png', 'Zocchi’s force against end-to-end distance, both branches'),
             fig(S, 'zocchi_unkinked_vs_ff.png', 'Zocchi recomputed at the force field’s own distances')],
   'explain': [
-    {'item': 0, 'text': 'x-axis: end-to-end distance x of the duplex; y-axis: the force f it pushes its ends apart with. <b>Solid</b>: the unkinked branch where Zocchi applies it (x &gt; x<sub>c</sub>), '
-      + tex(r'f = 10B/L^2 - k_BT/(L-x)') + '. <b>Dotted</b>: the kinked branch (x &lt; x<sub>c</sub>), ' + tex(r'f = \tau_c / \big(2R\sqrt{1-(x/2R)^2}\big)')
-      + '. <b>Dashed</b>: the unkinked branch continued below x<sub>c</sub>, i.e. the push of a rod that never kinks. Grey band: where our chimeras hold the duplex.',
+    {'item': 0, 'text': '<b>What system is this?</b> <b>DNA only, no protein.</b> A <dfn>duplex</dfn> is double-stranded DNA (dsDNA): two complementary strands base-paired into a helix. '
+      'In our chimeras the spring is a duplex (the ssDNA loop hybridised to its complementary strand), so this slide models <b>dsDNA</b> of 27 or 40 bp; “nicked” = one backbone break in one strand. '
+      '<b>Physically</b>: the two ends of the duplex (where it would attach to the protein) are held a fixed distance <b>x</b> apart, shorter than the duplex’s length, so it is forced to bend. We then ask: <b>how hard does the bent duplex push its ends apart?</b> '
+      'That push <b>f</b> is the force a spring would deliver to the protein. <b>First plot</b>: Zocchi’s formula for f at every x (a calculation). <b>Second plot</b>: f measured in MD for a bare duplex, compared with that formula.',
+     'marks': []},
+    {'item': 0, 'text': '<b>Reading the plot</b> (Zocchi’s model, no MD). x-axis: <dfn>x</dfn>, the end-to-end distance imposed on the duplex (Å). y-axis: <dfn>f</dfn>, the force it pushes its ends apart with (pN). '
+      + 'Terms: ' + tex(r'L = 0.33\,\mathrm{nm}\times N_{\mathrm{bp}}') + ' contour length (89 Å for 27 bp); ' + tex(r'B \approx 200\ \mathrm{pN\,nm^2}') + ' bending stiffness of dsDNA; '
+      + tex(r'\tau_c') + ' the <dfn>critical torque</dfn>, the bending torque at which a base-pair step gives way and the duplex kinks (34 pN nm intact, 27 nicked); '
+      + tex(r'R = \tfrac{L}{2}(1-\gamma^2/90)') + ' the effective arm length of the kinked rod, with ' + tex(r'\gamma = L\tau_c/2B') + '; ' + tex(r'x_c = L(1-\gamma^2/15)') + ' the distance below which the duplex kinks. '
+      + '<b>Solid</b>: unkinked branch where Zocchi applies it (x &gt; x<sub>c</sub>), ' + tex(r'f = 10B/L^2 - k_BT/(L-x)') + '. <b>Dotted</b>: kinked branch (x &lt; x<sub>c</sub>), ' + tex(r'f = \tau_c / \big(2R\sqrt{1-(x/2R)^2}\big)')
+      + '. <b>Dashed</b>: the unkinked formula continued below x<sub>c</sub>, i.e. a duplex that never kinks. Grey band: the x our sfGFP chimeras impose (63–73 Å).',
      'marks': [M('zr_xc27', 'x_c, 27 bp', 30, -60), M('zr_kink27', 'kinked: 5–7 pN', -30, 20), M('zr_unk27', 'unkinked: ≈ 24 pN', -30, -60), M('zr_chim', 'our chimeras', 30, 14)]},
-    {'item': 1, 'text': 'Bare duplexes in the force field (no protein), held at ⟨x⟩ = 49 Å (27 bp) and 62 Å (40 bp), both below x<sub>c</sub>. For each duplex: <b>grey</b> = Zocchi’s kinked prediction at that ⟨x⟩; '
-      '<b>light blue</b> = Zocchi recomputed on the unkinked branch at the same ⟨x⟩; <b>dark blue</b> = what the force field measured, ' + tex(r'\langle k(r - x_0)\rangle') + ' (mean ± sem; dots are single runs).',
+    {'item': 1, 'text': '<b>The MD measurement</b> (bare dsDNA in water, no protein). The two duplex ends are tethered by a harmonic restraint ' + tex(r'U = \tfrac12 k (r - x_0)^2') + ' that holds them near a chosen separation x<sub>0</sub>; '
+      'the duplex pushes against it and settles at an average ⟨x⟩. The restraint’s pull then equals the duplex’s push: ' + tex(r'f_{\mathrm{FF}} = k\,(\langle x\rangle - x_0)') + '. So: <b>end-to-end distance held (approximately fixed), force read off</b>. '
+      'Bars, per duplex at its own ⟨x⟩ (49 Å for 27 bp, 62 Å for 40 bp, both below x<sub>c</sub>): <b>grey</b> Zocchi’s kinked prediction; <b>light blue</b> Zocchi recomputed on the unkinked branch; <b>dark blue</b> the MD force (mean ± sem; dots are single runs).',
      'marks': [M('zu_k0', 'kinked 4.6', -30, -60), M('zu_u0', 'unkinked 24.1', -30, -70), M('zu_f0', 'measured 28.0', 30, -60)]}],
   'points': [
     {'text': '<b>Kinked regime</b> (x &lt; x<sub>c</sub>): the kink takes up the bending, so the push collapses to a few pN', 'hl': 0, 'marks': [M('zr_kink27', '5–7 pN', 30, 14), M('zr_kink40', '≈ 3 pN', 30, 14)]},
