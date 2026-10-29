@@ -1857,7 +1857,7 @@
      "panel": 0
     },
     {
-     "banner": "<span class=\"ttl\">Great!</span>After the TCO resin, <b>only circular products stayed</b>: the 2 pp2a + 2 DNA ring and the <b>pp2a + DNA</b> (our new band of interest), as desired.<br><br>So we now have <b>proof of circular product synthesis of pp2a spring chimeras in the Hekstra lab</b>.<br><br>Now the question is: can we <b>purify</b> it for further assay experiments? Let’s head to the SEC to find out."
+     "banner": "<span class=\"ttl\">Great!</span>After the TCO resin, <b>only circular products stayed</b>: the 2 pp2a + 2 DNA ring and the <b>pp2a + DNA</b> (our new band of interest), as desired.<br><br>So for the <b>FIRST TIME</b>, we have <b>PROOF of circular product synthesis of pp2a spring chimeras in the Hekstra lab</b>.<br><br>Now the question is: can we <b>purify</b> it for further assay experiments? Let’s head to the SEC to find out."
     },
     {
      "banner": "<span class=\"emoji\">🥁</span>Drum rolls rolling…",
@@ -1868,7 +1868,7 @@
      "title": true
     },
     {
-     "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…",
+     "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…<span style=\"display:block;font-size:30px;margin-top:20px;line-height:1.4\">So we head back to <b>optimising the yield</b> of our circular product. Before debugging the SEC, we can first look at <b>disulfide (cysteine) bond re-formation</b>, which links pp2a molecules together.</span>",
      "big": true
     }
    ]
@@ -1970,7 +1970,7 @@
      }
     },
     {
-     "text": "<b>Is assembly needed?</b> Free C can dephosphorylate small artificial substrates (e.g. DiFMUP), but in cells it is kept scarce; physiological targeting needs the holoenzyme, with B docking the substrate (e.g. LxxIxE motifs on B56) next to C",
+     "text": "<b>Is assembly needed?</b> <b>Artificial substrates</b> (e.g. DiFMUP): the <b>AC core</b> is enough, and even C alone shows activity. <b>In cells</b>: the full <b>ABC holoenzyme</b> is needed, because B docks the real substrate (e.g. LxxIxE motifs on B56) next to C and directs PP2A to the right place",
      "msg": {
       "step": 4
      }
