@@ -1591,7 +1591,7 @@
    "kind": "media",
    "page": "12g",
    "section": "md",
-   "figW": 1100,
+   "figW": 1000,
    "exH": 600,
    "title": "sfGFP: why fluorometry saw no change across ss, ds and nicked",
    "q": "Excitation/emission wavelengths and band ratio barely moved. Does the MD explain it?",
@@ -1648,7 +1648,8 @@
      "text": "<span class=\"ttl\">Main result</span>The crucial hydrogen bonds around the chromophore (Arg96, Thr203, Gln94) stay at <b>≈ 92–100 % occupancy with or without a spring</b>.<br><br>Further proof that our springs <b>cannot meaningfully perturb the chromophore</b>, on top of the rigid sfGFP backbone shown earlier (slide 16)."
     }
    ],
-   "eqbox": "<b>How occupancy was computed</b> (<code>MD simulations/sfGFP/analysis/chromophore.py</code>, mdtraj):<pre class=\"code\">dh  = md.compute_distances(t, [[h, acc] for h in hs])\nang = md.compute_angles(t, [[don, h, acc] for h in hs])\nocc = ((d_HA &lt; 2.5) &amp; (ang &gt; 120)).mean()</pre>Donor hydrogens come from the topology; per frame the closest one is used. A bond counts as formed when H···acceptor &lt; 2.5 Å and the D–H···A angle &gt; 120°; occupancy = fraction of frames formed."
+   "eqbox": "<b>How occupancy was computed</b> (<code>MD simulations/sfGFP/analysis/chromophore.py</code>, mdtraj)<div class=\"hb\"><svg width=\"250\" height=\"150\" viewBox=\"0 0 250 150\" aria-label=\"Hydrogen bond geometry\"><text x=\"22\" y=\"112\" font-family=\"Archivo\" font-size=\"22\" font-weight=\"700\" fill=\"#2f63c4\">D</text><line x1=\"40\" y1=\"104\" x2=\"98\" y2=\"62\" stroke=\"#14202b\" stroke-width=\"3\"/><circle cx=\"104\" cy=\"58\" r=\"9\" fill=\"#fff\" stroke=\"#14202b\" stroke-width=\"2\"/><text x=\"99\" y=\"63\" font-family=\"Archivo\" font-size=\"14\" font-weight=\"700\" fill=\"#14202b\">H</text><line x1=\"114\" y1=\"60\" x2=\"200\" y2=\"96\" stroke=\"#b8372c\" stroke-width=\"3\" stroke-dasharray=\"6 5\"/><text x=\"206\" y=\"108\" font-family=\"Archivo\" font-size=\"22\" font-weight=\"700\" fill=\"#b8372c\">A</text><text x=\"150\" y=\"62\" font-family=\"STIX Two Text,serif\" font-style=\"italic\" font-size=\"18\" fill=\"#b8372c\">d<tspan font-size=\"12\" dy=\"4\">HA</tspan></text><path d=\"M86,71 A22,22 0 0 0 124,68\" fill=\"none\" stroke=\"#b86e00\" stroke-width=\"2.5\"/><text x=\"88\" y=\"98\" font-family=\"STIX Two Text,serif\" font-style=\"italic\" font-size=\"17\" fill=\"#b86e00\">ang</text><text x=\"8\" y=\"140\" font-family=\"Archivo\" font-size=\"12\" fill=\"#7a8794\">D = donor (N, O)   A = acceptor (O, N)</text><text x=\"30\" y=\"20\" font-family=\"Archivo\" font-size=\"12\" fill=\"#7a8794\">e.g. Arg96 N–H ··· O2 of the chromophore</text></svg><div><pre class=\"code\">dh  = md.compute_distances(t, [[h, acc] ...])\nang = md.compute_angles(t, [[don, h, acc] ...])\nocc = ((d_HA &lt; 2.5) &amp; (ang &gt; 120)).mean()</pre>Formed when <b>d<sub>HA</sub> &lt; 2.5 Å</b> and <b>ang &gt; 120°</b>; occupancy = fraction of frames formed.</div></div><b>Why these two numbers:</b> the H on an electronegative donor carries a partial + charge and is pulled by a lone pair (δ−) on the acceptor. That attraction is only strong when H sits close to A and the D–H points straight at it (≈ 180°), so a short d<sub>HA</sub> and a near-linear angle mean a real H-bond.",
+   "eqTop": 650
   },
   {
    "kind": "media",

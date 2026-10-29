@@ -259,6 +259,8 @@ body {
 .m-pts.big { gap: 22px; } .m-pts.big .m-pt { font-size: 29px; } .m-pts.big .m-pt::before { top: .5em; }
 .m-eqbox { position: absolute; left: 1290px; top: 690px; width: 566px; background: var(--paper-2); border-left: 6px solid var(--sec, var(--ink-3)); border-radius: 10px; padding: 12px 18px; font-size: 16px; line-height: 1.35; color: var(--ink-2); box-sizing: border-box; opacity: 0; transition: opacity .35s; }
 .m-eqbox.on { opacity: 1; }
+.m-eqbox .hb { display: flex; gap: 16px; align-items: flex-start; }
+.m-eqbox .hb svg { flex: none; }
 .m-eqbox pre.code { margin: 8px 0; padding: 8px 10px; background: #0E1116; color: #e5ebf0; border-radius: 6px; font: 13px/1.45 var(--font-mono); white-space: pre; overflow: hidden; }
 .m-eqbox code { font: 13px var(--font-mono); }
 .m-eqbox .tex.d { margin: 2px 0; }
@@ -1056,7 +1058,7 @@ function buildMedia(el, cfg) {
   });
   // equation box: shown under the points once a point with alt: true is reached
   const eqBox = cfg.eqbox ? h('div', 'm-eqbox', { html: cfg.eqbox }) : null;
-  if (eqBox) el.appendChild(eqBox);
+  if (eqBox) { Object.assign(eqBox.style, { left: ptBox.x + 'px', width: ptBox.w + 'px' }); if (cfg.eqTop) eqBox.style.top = cfg.eqTop + 'px'; el.appendChild(eqBox); }
   if (cfg.q) el.appendChild(h('div', 'm-q', { text: cfg.q, style: { left: ptBox.x + 'px', top: (top + 6) + 'px', width: ptBox.w + 'px' } }));
   const ex = cfg.explain || [], E = ex.length;
   const exBox = h('div', 'm-ex', { style: { left: '64px', top: (top + (cfg.exH || 600) + 24) + 'px', width: '1792px' } });
