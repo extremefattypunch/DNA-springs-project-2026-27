@@ -1556,18 +1556,18 @@
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\">Phosphatase activity assay</span>"
+     "text": "<span class=\"lead\"><b>Three planned assays</b>: phosphatase activity · substrate (B56) binding · holoenzyme formation (cryoEM)</span>"
     },
     {
-     "text": "<span class=\"lead\">Substrate binding assay</span>"
+     "text": "<span class=\"lead\"><b>Template: Day et al., 2025, <i>Structure</i> 33:1688.</b> They compared PP2A built on the two A-subunit isoforms, <b>Aα vs Aβ</b> (87 % identical; Aβ carries a 12-residue N-terminal extension), each assembled with C and B56γ</span><ul class=\"sub\"><li><b>DiFMUP phosphatase assay</b>: virtually the <b>same activity</b> for both holoenzymes</li><li><b>BLI binding assay</b>: Aβ binds the B56 subunits <b>more weakly</b> (≈ 4.7× for B56α, 1.5× for B56γ)</li><li><b>cryoEM</b> (3.4 Å Aα, 3.2 Å Aβ): Aβ is more concave; HEAT repeats 3–6 shift by 2–3 Å</li></ul>"
     },
     {
-     "text": "<span class=\"lead\">Holoenzyme formation analysis</span>"
+     "text": "<span class=\"lead\"><b>Our analogue</b>: instead of two isoforms, we compare <b>Aα vs Aα with a DNA spring attached</b>. The same three readouts ask whether the spring changes activity, B-subunit binding or holoenzyme structure</span>"
     }
    ],
    "aside": {
-    "w": 640,
-    "html": "<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li><li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li></ul>"
+    "w": 560,
+    "html": "<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li><li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li><li>Day et al. show it directly: identical DiFMUP activity, yet up to 4.7× different B56 binding</li></ul>"
    }
   },
   {
@@ -1579,33 +1579,36 @@
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\"><b>Structural deformation</b></span><ul class=\"sub\"><li>Align the relatively conserved C subunit, then measure centre-of-mass distances between HEAT repeats on the A subunit, WT vs spring attached</li></ul>"
+     "text": "<span class=\"lead\"><b>Structural deformation</b></span><ul class=\"sub\"><li>Align the A subunits on the conserved C-subunit-binding region (HEAT repeats 12–15), then measure centre-of-mass distances between HEAT repeats, WT vs spring attached</li><li><i>Day et al.</i>: Aβ vs Aα shifts up to ≈ 3 Å, largest at HEAT 3–6; HEAT 1-to-15 span 59.6 Å (Aβ) vs 62.7 Å (Aα)</li></ul>"
     },
     {
-     "text": "<span class=\"lead\"><b>Ascertain spring attachment</b></span><ul class=\"sub\"><li>Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model</li></ul>"
+     "text": "<span class=\"lead\"><b>Ascertain spring attachment</b></span><ul class=\"sub\"><li>Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model</li><li><i>Day et al.</i>: holoenzymes at 3.4 Å (Aα) and 3.2 Å (Aβ); maps sharpened with EMReady; 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail</li></ul>"
     }
    ],
-   "q": "cryoEM analysis"
+   "q": "cryoEM analysis, following Day et al., 2025, Structure 33:1688"
   },
   {
    "kind": "media",
    "page": 29,
    "section": "assay",
-   "title": "[Plans] Substrate binding assay",
+   "title": "[Plans] Substrate binding assay (BLI)",
    "items": [],
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\">Assemble the spring-attached A subunit with the catalytic subunit C. Attach the B regulatory subunit to the biosensor AR2G</span>"
+     "text": "<span class=\"lead\"><b>Method (Day et al.)</b>: B56α or B56γ immobilised on AR2G biosensors (amine coupling) on an Octet R8; the AαC or AβC core dimer flows past as the analyte (31–500 nM); sensorgrams fit with a 1:1 binding model</span><ul class=\"sub\"><li>What binds here is the <b>regulatory B56 subunit</b> to the AC core, not a phosphatase substrate</li></ul>"
     },
     {
      "text": "<span class=\"lead\">Binding and the dissociation constant:<span class=\"tex d\">AC + B \\;\\xrightleftharpoons[k_{\\mathrm{off}}]{\\;k_{\\mathrm{on}}\\;}\\; ABC, \\qquad K_D = \\frac{k_{\\mathrm{off}}}{k_{\\mathrm{on}}}</span></span>"
     },
     {
-     "text": "<span class=\"lead\"><table class=\"tb\"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table></span>"
+     "text": "<span class=\"lead\"><b>Results (Day et al., Fig. 5, n = 2)</b><table class=\"tb\"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table></span>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Ours</b>: spring-attached Aα with C, against WT Aα, binding the same immobilised B56</span>"
     }
    ],
-   "q": "BLI (biolayer interferometry) assay: measure the dissociation constant"
+   "q": "Method and results from Day et al., 2025, Structure 33:1688 (Aα vs Aβ); our version compares Aα vs Aα + DNA spring"
   },
   {
    "kind": "media",
@@ -1617,20 +1620,23 @@
      "img": "native/difmup_kinetics.png",
      "w": 537,
      "h": 427,
-     "cap": "Velocity vs [substrate], replicates"
+     "cap": "Day et al., Fig. S4D: velocity vs [DiFMUP], mean ± SD of 3 replicates"
     }
    ],
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\">Fitted with the standard Michaelis–Menten kinetics equation:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span></span>"
+     "text": "<span class=\"lead\"><b>Method (Day et al., Fig. S4D)</b>: 20 nM AC core with excess (200 nM) B56γ; fluorogenic substrate DiFMUP at 2–128 µM, in triplicate; initial velocities fit with Michaelis–Menten:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span></span>"
     },
     {
-     "text": "<span class=\"lead\"><table class=\"tb\"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table></span>"
+     "text": "<span class=\"lead\"><b>Results (Day et al., mean ± SD, n = 3)</b>: virtually the same activity<table class=\"tb\"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table></span>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Ours</b>: the same assay on Aα–B56γ–C with and without the DNA spring</span>"
     }
    ],
-   "q": "Fluorogenic phosphatase substrate DiFMUP",
-   "figW": 760
+   "q": "Method and results from Day et al., 2025, Structure 33:1688 (Aα vs Aβ); our version compares Aα vs Aα + DNA spring",
+   "figW": 700
   },
   {
    "kind": "media",

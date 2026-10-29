@@ -39,6 +39,42 @@ def text(page, title, section, groups, q=None, badge=None, aside=None, items=Non
     return s
 
 
+DAY = 'Day et al., 2025, <i>Structure</i> 33:1688'
+DAY_TXT = 'Day et al., 2025, Structure 33:1688'
+DAYQ = 'Method and results from ' + DAY_TXT + ' (Aα vs Aβ); our version compares Aα vs Aα + DNA spring'
+A23 = text(23, '[PENDING] PP2A assays', 'assay', [
+    grp('<b>Three planned assays</b>: phosphatase activity · substrate (B56) binding · holoenzyme formation (cryoEM)'),
+    grp('<b>Template: ' + DAY + '.</b> They compared PP2A built on the two A-subunit isoforms, <b>Aα vs Aβ</b> (87 % identical; Aβ carries a 12-residue N-terminal extension), each assembled with C and B56γ',
+        '<b>DiFMUP phosphatase assay</b>: virtually the <b>same activity</b> for both holoenzymes',
+        '<b>BLI binding assay</b>: Aβ binds the B56 subunits <b>more weakly</b> (≈ 4.7× for B56α, 1.5× for B56γ)',
+        '<b>cryoEM</b> (3.4 Å Aα, 3.2 Å Aβ): Aβ is more concave; HEAT repeats 3–6 shift by 2–3 Å'),
+    grp('<b>Our analogue</b>: instead of two isoforms, we compare <b>Aα vs Aα with a DNA spring attached</b>. The same three readouts ask whether the spring changes activity, B-subunit binding or holoenzyme structure')],
+    aside={'w': 560, 'html': '<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li>'
+                             '<li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li>'
+                             '<li>Day et al. show it directly: identical DiFMUP activity, yet up to 4.7× different B56 binding</li></ul>'})
+A24 = text(24, '[Plans] Holoenzyme formation analysis', 'assay', [
+    grp('<b>Structural deformation</b>', 'Align the A subunits on the conserved C-subunit-binding region (HEAT repeats 12–15), then measure centre-of-mass distances between HEAT repeats, WT vs spring attached',
+        '<i>Day et al.</i>: Aβ vs Aα shifts up to ≈ 3 Å, largest at HEAT 3–6; HEAT 1-to-15 span 59.6 Å (Aβ) vs 62.7 Å (Aα)'),
+    grp('<b>Ascertain spring attachment</b>', 'Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model',
+        '<i>Day et al.</i>: holoenzymes at 3.4 Å (Aα) and 3.2 Å (Aβ); maps sharpened with EMReady; 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail')],
+    q='cryoEM analysis, following ' + DAY_TXT)
+A29 = text(29, '[Plans] Substrate binding assay (BLI)', 'assay', [
+    grp('<b>Method (Day et al.)</b>: B56α or B56γ immobilised on AR2G biosensors (amine coupling) on an Octet R8; the AαC or AβC core dimer flows past as the analyte (31–500 nM); sensorgrams fit with a 1:1 binding model',
+        'What binds here is the <b>regulatory B56 subunit</b> to the AC core, not a phosphatase substrate'),
+    grp('Binding and the dissociation constant:' + tex(r'AC + B \;\xrightleftharpoons[k_{\mathrm{off}}]{\;k_{\mathrm{on}}\;}\; ABC, \qquad K_D = \frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}', True)),
+    grp('<b>Results (Day et al., Fig. 5, n = 2)</b><table class="tb"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr>'
+        '<tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table>'),
+    grp('<b>Ours</b>: spring-attached Aα with C, against WT Aα, binding the same immobilised B56')],
+    q=DAYQ)
+A30 = text(30, '[Plans] Phosphatase activity assay', 'assay', [
+    grp('<b>Method (Day et al., Fig. S4D)</b>: 20 nM AC core with excess (200 nM) B56γ; fluorogenic substrate DiFMUP at 2–128 µM, in triplicate; initial velocities fit with Michaelis–Menten:'
+        + tex(r'v = \frac{V_{\max}\,[S]}{K_M + [S]}', True)),
+    grp('<b>Results (Day et al., mean ± SD, n = 3)</b>: virtually the same activity<table class="tb"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr>'
+        '<tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table>'),
+    grp('<b>Ours</b>: the same assay on Aα–B56γ–C with and without the DNA spring')],
+    q=DAYQ, figW=700,
+    items=[{'img': 'native/difmup_kinetics.png', 'w': 537, 'h': 427, 'cap': 'Day et al., Fig. S4D: velocity vs [DiFMUP], mean ± SD of 3 replicates'}])
+
 SLIDES = {
 1: {'kind': 'cover', 'page': 1, 'title': 'Lab Meeting 261029', 'subtitle': 'Ian Poon',
     'meta': 'DNA-spring protein chimeras: sfGFP and PP2A Aα'},
@@ -90,26 +126,10 @@ SLIDES = {
     grp('<b>Assay</b>', 'Not attempted before in lab', todo('plan out pp2a assays')),
     grp('<b>MD analysis</b>', 'Not attempted before in lab, although there is literature on MD of pp2a A-subunit isoforms and mutants; no direct mechanical tension or spring systems',
         todo('set up MD system for tet-TCO/BCN protein chimeras'))], badge=AGO),
-23: text(23, '[PENDING] PP2A assays', 'assay', [
-    grp('Phosphatase activity assay'), grp('Substrate binding assay'), grp('Holoenzyme formation analysis')],
-    aside={'w': 640, 'html': '<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li>'
-                             '<li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li></ul>'}),
-24: text(24, '[Plans] Holoenzyme formation analysis', 'assay', [
-    grp('<b>Structural deformation</b>', 'Align the relatively conserved C subunit, then measure centre-of-mass distances between HEAT repeats on the A subunit, WT vs spring attached'),
-    grp('<b>Ascertain spring attachment</b>', 'Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model')],
-    q='cryoEM analysis'),
-29: text(29, '[Plans] Substrate binding assay', 'assay', [
-    grp('Assemble the spring-attached A subunit with the catalytic subunit C. Attach the B regulatory subunit to the biosensor AR2G'),
-    grp('Binding and the dissociation constant:' + tex(r'AC + B \;\xrightleftharpoons[k_{\mathrm{off}}]{\;k_{\mathrm{on}}\;}\; ABC, \qquad K_D = \frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}', True)),
-    grp('<table class="tb"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr>'
-        '<tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table>')],
-    q='BLI (biolayer interferometry) assay: measure the dissociation constant'),
-30: text(30, '[Plans] Phosphatase activity assay', 'assay', [
-    grp('Fitted with the standard Michaelis–Menten kinetics equation:' + tex(r'v = \frac{V_{\max}\,[S]}{K_M + [S]}', True)),
-    grp('<table class="tb"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr>'
-        '<tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table>')],
-    q='Fluorogenic phosphatase substrate DiFMUP', figW=760,
-    items=[{'img': 'native/difmup_kinetics.png', 'w': 537, 'h': 427, 'cap': 'Velocity vs [substrate], replicates'}]),
+23: A23,
+24: A24,
+29: A29,
+30: A30,
 32: text(32, 'Ian’s pp2a progress summary', 'status', [
     grp('<b>Synthesis</b>', done('synthesized the lab’s first pp2a chimera circular product (gel verified)'), pend('obtain a purified sample batch for further analysis')),
     grp('<b>Assay</b>', done('planned out 3 distinct assay routes for pp2a'), 'Ian: set up all necessary downstream analysis tools for cryoEM',
