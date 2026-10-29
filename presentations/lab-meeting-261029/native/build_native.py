@@ -238,7 +238,7 @@ for s in deck['slides']:
     if pg == 20:
         out.append(SLIDES['19b'])
     if pg == 23:
-        out += [SLIDES[x] for x in ('22a', '22b', '22c', '22d')]
+        out += [SLIDES[x] for x in ('22b',)]   # 22a, 22c, 22d dropped at Ian's request
     out.append(s)
     for parent, child in ((1, '1b'), (29, '29b'), (30, '30b')):
         if pg == parent:
