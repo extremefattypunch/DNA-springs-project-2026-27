@@ -2262,7 +2262,7 @@
      }
     },
     {
-     "text": "Both <b>reconstruct a 3D volume</b> from the 2D images collected:<table class=\"tb cmp\"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr><tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr><tr><td>Detector records</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr><tr><td>Must recover</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>",
+     "text": "Both <b>reconstruct a 3D volume</b> from the 2D images collected:<table class=\"tb cmp\"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr><tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr><tr><td>Reconstruction takes place in</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr><tr><td>Recovers during reconstruction</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>",
      "msg": {
       "step": 2
      }

@@ -143,8 +143,8 @@ SLIDES = [
               "Both <b>reconstruct a 3D volume</b> from the 2D images collected:"
               '<table class="tb cmp"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr>'
               '<tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr>'
-              '<tr><td>Detector records</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr>'
-              '<tr><td>Must recover</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>',
+              '<tr><td>Reconstruction takes place in</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr>'
+              '<tr><td>Recovers during reconstruction</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>',
               "Once the volume is reconstructed, both <b>fit an atomic model</b> into it to obtain the final structure"]), final=True),
     frame("c2", "What does it mean to defocus a lens?", "lens.html",
           "Thin lens: 1/f = 1/s + 1/s′, with the object and the sensor fixed", DRAWN, [
