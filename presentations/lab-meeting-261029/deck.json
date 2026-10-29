@@ -47,10 +47,52 @@
    ]
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 7,
-   "src": "slides/p-07.jpg",
-   "title": "Flurometry"
+   "section": "assay",
+   "title": "Fluorometry: do the tet groups or spring tension change fluorescence?",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "How a spectrofluorometer records excitation and emission spectra",
+   "items": [
+    {
+     "iframe": "interactive/fluor.html",
+     "title": "Fluorometer schematic",
+     "cap": "Animated schematic of the Fluorolog-3 light path; spectrum shapes are sketches of sfGFP’s known spectra"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Question</b>: now that we have purified chimeras, does adding the <b>tet groups</b>, or the <b>mechanical tension</b> of the DNA spring, change sfGFP’s fluorescence?",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Instrument</b>: HORIBA Jobin Yvon Fluorolog-3. Xe lamp → excitation monochromator (picks the colour that hits the sample) → cuvette → emission monochromator at 90° (picks the colour counted) → detector S1; a reference photodiode R1 tracks the lamp",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Excitation spectrum</b>: hold the detected wavelength at <b>510 nm</b> and sweep the excitation <b>400→500 nm</b>. It shows which colours the chromophore absorbs and turns into fluorescence",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Emission spectrum</b>: hold the excitation at <b>485 nm</b> and sweep the detected wavelength <b>500→600 nm</b>. It shows what colour, and how much, light comes out",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "485 nm and 510 nm are sfGFP’s known <b>excitation and emission maxima</b>. The small 400 nm band is the neutral chromophore: it is the basis of our band ratio",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
   },
   {
    "kind": "gel",
@@ -73,7 +115,7 @@
      "x": 96,
      "y": 820,
      "w": 1728,
-     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum (defined on the concentration-series slide). Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
+     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum: concentration-independent up to 8 µM (concentration-series slide), and every reading here is ≤ 10 µM. Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
     }
    ]
   },
@@ -93,7 +135,7 @@
      "x": 96,
      "y": 178,
      "w": 1728,
-     "html": "<b>Inner filter effect:</b> at high concentration the sample absorbs much of the excitation light before it reaches the detected volume (and re-absorbs emission), so signal stops scaling with concentration. The literature reports it from about 5 µM. Here the I(400)/I(peak) ratio stays roughly constant at 2–4 µM, then climbs from 8 µM up."
+     "html": "<b>Why this metric?</b> <b>Concentration independence</b>: I(400) and I(peak) both scale with the amount of protein, so their ratio cancels it and reports only the chromophore’s neutral/anionic balance. That holds only below the <b>inner filter effect</b> (the sample absorbs the excitation light before it reaches the detected volume; literature: from ≈ 5 µM). Here the ratio is flat up to 8 µM and rises from <b>16 µM</b>; every reading we compare is ≤ <b>10 µM</b>."
     }
    ],
    "panels": [
@@ -117,6 +159,9 @@
     }
    ],
    "points": [
+    {
+     "text": "<b>Purpose</b>: a <b>concentration-independent</b> readout. Both intensities scale with the amount of protein, so their ratio cancels it and tracks only the chromophore’s neutral/anionic balance"
+    },
     {
      "text": "<b>Band ratio = I(400) / I(peak)</b>, read off each sample’s lamp-corrected excitation spectrum (S1 ÷ R1)"
     },
@@ -147,7 +192,7 @@
      }
     },
     {
-     "text": "Dividing by I(peak) cancels concentration and lamp drift, but only at low absorbance: from 8 µM the inner filter effect lifts the ratio",
+     "text": "Dividing by I(peak) cancels concentration and lamp drift, but only at low absorbance: from <b>16 µM</b> the inner filter effect lifts the ratio; all our comparisons are at ≤ 10 µM",
      "msg": {
       "ann": [
        "peak",
@@ -184,7 +229,7 @@
      "x": 96,
      "y": 140,
      "w": 1728,
-     "html": "<b>Band ratio</b> = I(400) / I(peak). All three constructs (ssDNA, dsDNA, nicked dsDNA chimeras) at <b>10 µM</b> in both attempts."
+     "html": "<b>Band ratio</b> = I(400) / I(peak). All three constructs (ssDNA, dsDNA, nicked dsDNA chimeras) at <b>10 µM</b> in both attempts, inside the range where the ratio is concentration-independent."
     }
    ],
    "top": 220
@@ -199,10 +244,52 @@
    "kind": "media",
    "page": "12a",
    "section": "md",
-   "title": "sfGFP MD: the simulated systems",
+   "figW": 1180,
+   "exH": 560,
+   "title": "sfGFP MD: the protein and the simulated systems",
    "layout": "row",
-   "rowH": 470,
+   "rowH": 430,
    "items": [
+    {
+     "img": "md/sfgfp/structure_27bp.png",
+     "w": 830,
+     "h": 630,
+     "cap": "<b>Structure</b>: what each part is",
+     "anns": {
+      "st_strand": [
+       0.205,
+       0.595
+      ],
+      "st_loop": [
+       0.398,
+       0.94
+      ],
+      "st_helix": [
+       0.046,
+       0.651
+      ],
+      "st_cro": [
+       0.271,
+       0.659
+      ],
+      "st_site1": [
+       0.306,
+       0.468
+      ],
+      "st_site2": [
+       0.608,
+       0.743
+      ],
+      "st_tether": [
+       0.241,
+       0.386
+      ],
+      "st_dna": [
+       0.506,
+       0.34
+      ]
+     }
+    },
     {
      "video": "md/sfgfp/S3_spring27_overview.mp4",
      "poster": "md/sfgfp/S3_spring27_overview_still.png",
@@ -219,15 +306,83 @@
      "cap": "<b>Chromophore</b>: the three H-bonds that stop it twisting"
     }
    ],
+   "explain": [
+    {
+     "item": 0,
+     "text": "<b>sfGFP architecture</b> (238 residues). <dfn>β-strands</dfn>: extended segments hydrogen-bonded side by side; eleven of them form the <dfn>β-barrel</dfn> wall (≈ 42 Å tall, 24 Å across), the rigid part. A central <dfn>α-helix</dfn> threads the barrel axis and carries the <dfn>chromophore</dfn> (made from Thr65–Tyr66–Gly67), sealed off from solvent; short helices also sit on the caps. <dfn>Loops</dfn>: the short, irregular segments that join one strand to the next at the two ends (caps) of the barrel. Nothing holds them in the sheet, so they are the most mobile parts (e.g. residues 189–194 between strands 9 and 10).",
+     "marks": [
+      {
+       "a": "st_strand",
+       "t": "β-strand",
+       "dx": -40,
+       "dy": -90
+      },
+      {
+       "a": "st_loop",
+       "t": "loop",
+       "dx": 40,
+       "dy": 0
+      },
+      {
+       "a": "st_helix",
+       "t": "short α-helix (cap)",
+       "dx": -30,
+       "dy": 34
+      },
+      {
+       "a": "st_cro",
+       "t": "chromophore (inside)",
+       "dx": 40,
+       "dy": 36
+      }
+     ]
+    },
+    {
+     "item": 0,
+     "text": "<b>The spring.</b> Our tethers (orange, Tet2-Et clicked to sTCO) attach at <b>Asp133</b> and <b>Asn149</b> (red), 31.3 Å apart across the barrel, with His148, which bonds the chromophore, between them. The DNA spring (blue) spans the two tethers and pushes or pulls on the sites.",
+     "marks": [
+      {
+       "a": "st_site1",
+       "t": "Asp133",
+       "dx": -40,
+       "dy": -60
+      },
+      {
+       "a": "st_site2",
+       "t": "Asn149",
+       "dx": 40,
+       "dy": 30
+      },
+      {
+       "a": "st_tether",
+       "t": "tether",
+       "dx": -40,
+       "dy": -30
+      },
+      {
+       "a": "st_dna",
+       "t": "DNA spring",
+       "dx": 40,
+       "dy": -70
+      }
+     ]
+    }
+   ],
    "points": [
     {
-     "text": "<b>Sites</b>: Asp133 and Asn149 on adjacent β-strands, 31.3 Å apart, His148 between them bonded to the chromophore"
+     "text": "<b>Sites</b>: Asp133 and Asn149, 31.3 Å apart, with His148 between them bonded to the chromophore",
+     "hl": 0
     },
     {
-     "text": "<b>Systems compared</b>: WT sfGFP · 2× Tet2-Et unclicked · clicked, no DNA (the zero) · 50 nt ssDNA closed loop · 50 bp dsDNA closed loop"
+     "text": "<b>Systems compared</b>: WT sfGFP · tethers unclicked vs clicked (no DNA, the zero) · DNA springs of <b>various lengths</b> · dsDNA vs ssDNA · intact vs nicked duplex · a direct force clamp"
     },
     {
-     "text": "<b>Animations</b> show the 27 bp spring chimera (50 ns, water stripped, superposed on the barrel core)"
+     "text": "<b>Animations</b> show the 27 bp spring chimera (50 ns, water stripped, superposed on the barrel core)",
+     "hl": [
+      1,
+      2,
+      3
+     ]
     },
     {
      "text": "<b>Scale</b>: 4,050 ns of production, 81 replicates across 17 systems"
@@ -389,7 +544,7 @@
    "figW": 1180,
    "exH": 590,
    "title": "sfGFP: backbone rigidity (RMSF)",
-   "q": "Does the spring deform the scaffold? Does the fold stay intact?",
+   "q": "Is the backbone rigid, with and without force?",
    "items": [
     {
      "img": "md/sfgfp/fig2_rmsf.png",
@@ -420,30 +575,26 @@
      }
     },
     {
-     "img": "md/sfgfp/fig1_force_response.png",
-     "w": 1240,
-     "h": 800,
-     "cap": "Axial force clamp between the two Cβ atoms",
+     "img": "md/sfgfp/fig1_clamp_only.png",
+     "w": 1860,
+     "h": 990,
+     "cap": "Axial force clamp on the unclicked protein",
      "anns": {
-      "fr_clamp20": [
-       0.953,
-       0.563
+      "cl_0": [
+       0.114,
+       0.48
       ],
-      "fr_dip4": [
-       0.31,
-       0.743
+      "cl_20": [
+       0.946,
+       0.42
       ],
-      "fr_27": [
-       0.403,
-       0.298
+      "cl_4": [
+       0.28,
+       0.575
       ],
-      "fr_40nick": [
-       0.244,
-       0.511
-      ],
-      "fr_text": [
-       0.634,
-       0.796
+      "cl_band": [
+       0.53,
+       0.269
       ]
      }
     }
@@ -451,7 +602,7 @@
    "explain": [
     {
      "item": 0,
-     "text": "<dfn>RMSF</dfn> (root-mean-square fluctuation): how far each residue’s Cα atom wanders from its own average position over the trajectory, after every frame is aligned on the rigid core. Low = rigid, high = mobile. x-axis: residue number (2B3P numbering); y-axis: Cα RMSF (Å). Dashed lines mark the chromophore (CRO 66) and the attachment sites Asp133, His148, Asn149. One colour per system: WT, 2× Tet2-Et and the 27 / 40 / 40-nicked bp springs (n = replicates).",
+     "text": "<dfn>RMSF</dfn> (root-mean-square fluctuation): how far each residue’s Cα atom wanders from its own average position over the trajectory, after every frame is aligned on the rigid core. Low = rigid, high = mobile. x-axis: residue number (2B3P numbering); y-axis: Cα RMSF (Å). Dashed lines mark the chromophore (CRO 66) and the attachment sites Asp133, His148, Asn149. One colour per system. The low, flat stretches (≈ 0.4 Å) are the <dfn>β-strands</dfn> of the barrel wall. The peaks are <dfn>loops</dfn>, the short connectors between strands at the barrel caps: the tallest is residues <b>189–194</b> (between strands 9 and 10, ≈ 1.5 Å), then 155–158 and 211–212.",
      "marks": [
       {
        "a": "rmsf_barrel",
@@ -461,7 +612,7 @@
       },
       {
        "a": "rmsf_loop",
-       "t": "loop: mobile",
+       "t": "loop 189–194: mobile",
        "dx": 30,
        "dy": 10
       },
@@ -481,38 +632,32 @@
     },
     {
      "item": 1,
-     "text": "<dfn>Axial force clamp</dfn>: a constant force applied directly between the two Cβ atoms, a controlled stand-in for a spring. x-axis: applied force (pN); y-axis: Cβ–Cβ distance Asp133–Asn149 (Å). <b>Blue</b>: clamp on the unclicked protein; <b>green</b>: clamp on the clicked tether; <b>orange</b>: the DNA-spring chimeras at their modelled force. <dfn>Compliance</dfn> is the slope (Å per pN); the <dfn>stiffness κ</dfn> is its inverse.",
+     "text": "<dfn>Axial force clamp</dfn>: a constant force F applied directly between the Cβ atoms of Asp133 and Asn149 of the unclicked protein, pulling them apart, with no DNA: a controlled stand-in for a spring. x-axis: F (pN); y-axis: Cβ–Cβ distance (Å), mean ± sem of 3 replicates. Shaded: ±0.5 Å around the unloaded (0 pN) distance.",
      "marks": [
       {
-       "a": "fr_clamp20",
-       "t": "20 pN clamp",
+       "a": "cl_0",
+       "t": "0 pN: 31.61 Å",
+       "dx": 30,
+       "dy": -60
+      },
+      {
+       "a": "cl_20",
+       "t": "20 pN: 31.75 Å",
        "dx": -30,
        "dy": -60
       },
       {
-       "a": "fr_dip4",
-       "t": "4 pN: noise",
-       "dx": 30,
-       "dy": 10
-      },
-      {
-       "a": "fr_27",
-       "t": "27 bp spring",
+       "a": "cl_band",
+       "t": "±0.5 Å",
        "dx": 30,
        "dy": -50
-      },
-      {
-       "a": "fr_text",
-       "t": "compliance fit",
-       "dx": -30,
-       "dy": -60
       }
      ]
     }
    ],
    "points": [
     {
-     "text": "The β-barrel stays <b>uniformly rigid</b> (≈ 0.4 Å on the strands) in every system",
+     "text": "The β-barrel stays <b>uniformly rigid</b> (≈ 0.4 Å on the strands) in every system, including WT with no force at all",
      "hl": 0,
      "marks": [
       {
@@ -524,39 +669,49 @@
      ]
     },
     {
-     "text": "RMSF traces <b>overlie each other</b>; only loops and tethers move",
+     "text": "RMSF traces <b>overlie each other</b>; only the loops and the tethers move",
      "hl": 0,
      "marks": [
       {
        "a": "rmsf_loop",
-       "t": "loop",
+       "t": "loop 189–194",
        "dx": 30,
        "dy": 10
       }
      ]
     },
     {
-     "text": "Clamp: 0–20 pN moves the sites by hundredths of an Å; <b>κ > 107 kBT nm⁻²</b>",
+     "text": "With <b>no force</b>, the site distance is 31.61 ± 0.07 Å: the unloaded barrel barely fluctuates",
      "hl": 1,
      "marks": [
       {
-       "a": "fr_clamp20",
+       "a": "cl_0",
+       "t": "0 pN",
+       "dx": 30,
+       "dy": -60
+      }
+     ]
+    },
+    {
+     "text": "0 → 20 pN shifts it by only <b>0.14 Å</b>; the 4 pN dip is replicate noise. Compliance 0.0105 ± 0.0057 Å/pN (includes zero), so <b>κ > 107 k<sub>B</sub>T nm⁻²</b>",
+     "hl": 1,
+     "marks": [
+      {
+       "a": "cl_20",
        "t": "20 pN",
        "dx": -30,
        "dy": -60
       },
       {
-       "a": "fr_text",
-       "t": ""
+       "a": "cl_4",
+       "t": "noise",
+       "dx": 30,
+       "dy": 14
       }
      ]
     },
     {
-     "text": "On the clicked topology <b>κ ≈ 350 kBT nm⁻²</b>, so a 4 pN spring moves the sites only 0.03 Å",
-     "hl": 1
-    },
-    {
-     "text": "<b>Answer</b>: the scaffold is not deformed; structural integrity persists"
+     "text": "<b>Answer</b>: the backbone is already super rigid without any force, and force barely changes it"
     }
    ]
   },
@@ -567,13 +722,13 @@
    "figW": 1180,
    "exH": 590,
    "title": "sfGFP: forces applied, force field vs model",
-   "q": "How much force reaches the protein, and do the models agree with the force field?",
+   "q": "How hard does a bent duplex push in the force field?",
    "items": [
     {
      "img": "md/sfgfp/fig6_force_extension.png",
      "w": 1447,
      "h": 891,
-     "cap": "Force measured on the bare duplex, restraint windows",
+     "cap": "Force measured on the bare duplex, one point per run",
      "anns": {
       "fe_27": [
        0.633,
@@ -592,40 +747,16 @@
        0.727
       ]
      }
-    },
-    {
-     "img": "md/sfgfp/fig7_headline.png",
-     "w": 1543,
-     "h": 944,
-     "cap": "Site displacement against modelled force",
-     "anns": {
-      "hl_zero": [
-       0.377,
-       0.242
-      ],
-      "hl_27two": [
-       0.831,
-       0.224
-      ],
-      "hl_ringed": [
-       0.177,
-       0.459
-      ],
-      "hl_stats": [
-       0.887,
-       0.814
-      ],
-      "hl_40nickloop": [
-       0.434,
-       0.738
-      ]
-     }
     }
    ],
    "explain": [
     {
      "item": 0,
-     "text": "A bare duplex, no protein, held at a series of end-to-end separations by a harmonic restraint between its two linker nitrogens. x-axis: the separation the duplex actually adopted (Å); y-axis: the force the duplex exerts on the restraint, ⟨k(r − x₀)⟩ (pN). Points are runs, lines are means. Dashed: the <dfn>Euler buckling load</dfn> π²B/L², the force at which a straight elastic rod buckles. Grey band: what <dfn>Zocchi’s kinked-rod model</dfn> predicts for the same duplexes.",
+     "text": "<b>The experiment.</b> A bare <dfn>duplex</dfn> (the double-stranded DNA alone: 27 bp, 40 bp or 40 bp nicked; no protein) is held by a <dfn>harmonic restraint</dfn> on its <dfn>end-to-end separation</dfn> r, the distance between the two linker nitrogens that would attach to the protein:<span class=\"tex d\">U(r) = \\tfrac{1}{2}\\,k\\,(r - x_0)^2, \\qquad F = k\\,(\\langle r\\rangle - x_0)</span><span class=\"tex\">r</span>: the end-to-end separation in each frame; <span class=\"tex\">x_0</span>: the separation the restraint is centred on (one per run); <span class=\"tex\">k</span>: restraint stiffness, 200 (stiff) or 33 (soft) kJ mol⁻¹ nm⁻². The duplex wants to straighten, so it sits at <span class=\"tex\">\\langle r\\rangle &gt; x_0</span>; the restraint then holds it with exactly the force <span class=\"tex\">F</span> that the duplex pushes with."
+    },
+    {
+     "item": 0,
+     "text": "<b>Reading the plot.</b> x-axis: <span class=\"tex\">\\langle r\\rangle</span>, where the duplex actually sat (Å); y-axis: <span class=\"tex\">F</span> (pN). Every point is one run. <b>Colour</b> = duplex (blue 27 bp, red 40 bp, green 40 bp nicked); <b>shape</b> = restraint (circle stiff, square soft). Solid lines: mean force per duplex. Dashed: the <dfn>Euler buckling load</dfn> <span class=\"tex\">F_E = \\pi^2 B / L^2</span> (B = 200 pN nm², L = contour length), the push of a smoothly bent elastic rod. Grey band: what <dfn>Zocchi’s kinked branch</dfn> predicts for the same duplexes.",
      "marks": [
       {
        "a": "fe_27",
@@ -647,46 +778,16 @@
       },
       {
        "a": "fe_zocchi",
-       "t": "Zocchi model",
+       "t": "Zocchi kinked branch",
        "dx": 30,
        "dy": -55
-      }
-     ]
-    },
-    {
-     "item": 1,
-     "text": "x-axis: the force the spring model says each DNA delivers (pN). y-axis: the shift of the attachment sites against each construct’s own clicked control (Å); below zero = pulled together. <b>Blue</b> sfGFP, <b>orange</b> ubiquitin (preprint). Ringed points carry no spring at all (slack strand or arms that cannot close). A real force effect would climb towards the upper right.",
-     "marks": [
-      {
-       "a": "hl_zero",
-       "t": "no change",
-       "dx": 30,
-       "dy": 14
-      },
-      {
-       "a": "hl_ringed",
-       "t": "no spring at all",
-       "dx": 30,
-       "dy": -55
-      },
-      {
-       "a": "hl_27two",
-       "t": "27 bp two-arm",
-       "dx": -30,
-       "dy": 14
-      },
-      {
-       "a": "hl_stats",
-       "t": "r = +0.08",
-       "dx": -30,
-       "dy": -60
       }
      ]
     }
    ],
    "points": [
     {
-     "text": "Measured directly: <b>27 bp 28.0 pN</b>, 40 bp 15.8 pN, 40 bp nicked 13.2 pN",
+     "text": "Measured: <b>27 bp 28.0 ± 1.2 pN</b> (25 runs), 40 bp 15.8 ± 1.6 pN (10 runs), 40 bp nicked 13.2 pN",
      "hl": 0,
      "marks": [
       {
@@ -704,7 +805,11 @@
      ]
     },
     {
-     "text": "That is ≈ the <b>Euler buckling load</b> (27 bp: 26.8 pN); up to 35 pN in the largest box",
+     "text": "Roughly <b>flat</b> across ⟨r⟩: the duplex pushes with about the same force however far its ends are pushed together, as a buckled rod does",
+     "hl": 0
+    },
+    {
+     "text": "Close to the <b>Euler load</b> (dashed: 26.8 pN for 27 bp, 11.9 pN for 40 bp)",
      "hl": 0,
      "marks": [
       {
@@ -716,47 +821,19 @@
      ]
     },
     {
-     "text": "Zocchi’s kinked branch predicts only <b>2.4–6.6 pN</b>: the force field gives ≈ 6× more",
+     "text": "Zocchi’s <b>kinked</b> branch (grey) predicts only 2.4–6.6 pN: 5–6× less",
      "hl": 0,
      "marks": [
       {
        "a": "fe_zocchi",
-       "t": "model",
+       "t": "kinked",
        "dx": 30,
        "dy": -55
       }
      ]
     },
     {
-     "text": "Every construct pulls its sites slightly <b>together</b>; displacement vs force r = +0.08, p = 0.81",
-     "hl": 1,
-     "marks": [
-      {
-       "a": "hl_stats",
-       "t": "r = +0.08",
-       "dx": -30,
-       "dy": -60
-      },
-      {
-       "a": "hl_zero",
-       "t": ""
-      }
-     ]
-    },
-    {
-     "text": "The force-free ssDNA loop compresses the sites by 0.32 Å, as much as any duplex",
-     "hl": 1,
-     "marks": [
-      {
-       "a": "hl_ringed",
-       "t": "no spring",
-       "dx": 30,
-       "dy": -55
-      }
-     ]
-    },
-    {
-     "text": "<b>Answer</b>: tens of pN on paper, but the stiff barrel does not move; the model underestimates the force field ≈ 6×"
+     "text": "<b>What we learn</b>: the force-field duplex behaves as a smoothly bent, unkinked rod pushing tens of pN. The next two slides show why Zocchi’s model expects less"
     }
    ]
   },
@@ -788,36 +865,12 @@
        0.478
       ]
      }
-    },
-    {
-     "img": "md/sfgfp/fig5_kink_threshold.png",
-     "w": 1502,
-     "h": 884,
-     "cap": "Base-pair opening against imposed curvature",
-     "anns": {
-      "kt_chimera": [
-       0.225,
-       0.482
-      ],
-      "kt_curuksu": [
-       0.782,
-       0.482
-      ],
-      "kt_first": [
-       0.296,
-       0.736
-      ],
-      "kt_last": [
-       0.86,
-       0.182
-      ]
-     }
     }
    ],
    "explain": [
     {
      "item": 0,
-     "text": "x-axis: base pair along the duplex in the chimera; y-axis: <dfn>axis bend</dfn> at that base-pair step (°), the angle between the local helix axes either side of it. Line: mean across replicates; band: ± sd. A <dfn>kink</dfn> is a sharp local break of the duplex, usually with a base pair opened: it would show as one narrow spike. Smooth bending spreads the angle evenly.",
+     "text": "x-axis: base pair along the duplex in the chimera; y-axis: <dfn>axis bend</dfn> at that base-pair step (°), the angle between the local helix axes either side of it. Line: mean across replicates; band: ± sd. A <dfn>kink</dfn> is a sharp local break of the duplex: it would show as one narrow spike. Smooth bending spreads the angle evenly.",
      "marks": [
       {
        "a": "db_27peak",
@@ -829,36 +882,6 @@
        "a": "db_40",
        "t": "40 bp: even bending",
        "dx": 30,
-       "dy": 14
-      }
-     ]
-    },
-    {
-     "item": 1,
-     "text": "Bare 27 and 40 bp duplexes held at set curvatures. x-axis: curvature (° per base-pair step); y-axis: fraction of runs in which an <b>interior</b> base pair opens. Ticks are single runs (top = opened, bottom = stayed paired). <b>Blue band</b>: where our chimera sits; <b>grey band</b>: the type II kink range Curuksu et al. found by umbrella sampling.",
-     "marks": [
-      {
-       "a": "kt_chimera",
-       "t": "our chimera 4.8–5.2°/bp",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "kt_curuksu",
-       "t": "Curuksu 8.6–9.3°/bp",
-       "dx": -30,
-       "dy": -60
-      },
-      {
-       "a": "kt_first",
-       "t": "first opening 5.5°/bp",
-       "dx": 30,
-       "dy": 14
-      },
-      {
-       "a": "kt_last",
-       "t": "always opens",
-       "dx": -30,
        "dy": 14
       }
      ]
@@ -878,41 +901,19 @@
      ]
     },
     {
-     "text": "Only 0.03–0.83 base pairs open at any instant: the duplex stays <b>intact</b>",
-     "hl": 0
-    },
-    {
-     "text": "Pairs start opening at 5.5°/bp and always open above <b>8.7°/bp</b>",
-     "hl": 1,
+     "text": "The highest single step stays a broad bump, not a kink",
+     "hl": 0,
      "marks": [
       {
-       "a": "kt_first",
-       "t": "5.5",
-       "dx": 30,
-       "dy": 14
-      },
-      {
-       "a": "kt_last",
-       "t": "8.7+",
-       "dx": -30,
-       "dy": 14
-      }
-     ]
-    },
-    {
-     "text": "So the chimera is <b>not bent enough to kink</b> on this force field",
-     "hl": 1,
-     "marks": [
-      {
-       "a": "kt_chimera",
-       "t": "chimera",
+       "a": "db_27peak",
+       "t": "broad",
        "dx": 30,
        "dy": -60
       }
      ]
     },
     {
-     "text": "The DNA touches the protein in 72–98 % of frames (50 nt ssDNA loop 93 %): <b>local contact</b>, not action at a distance"
+     "text": "The DNA touches the protein in 72–98 % of frames (ssDNA loop 93 %): <b>local contact</b>, not action at a distance"
     },
     {
      "text": "<b>Answer</b>: no kink, no coiling of the duplex; but the DNA lies against the protein"
@@ -924,152 +925,58 @@
    "page": "12f",
    "section": "md",
    "figW": 1180,
-   "exH": 560,
-   "title": "sfGFP: why the force field disagrees with Zocchi’s model",
-   "q": "Does the force field contradict Zocchi’s spring, or only his kink?",
-   "items": [
-    {
-     "img": "md/sfgfp/zocchi_vs_ff.png",
-     "w": 1950,
-     "h": 930,
-     "anns": {
-      "zf_meas27": [
-       0.257,
-       0.334
-      ],
-      "zf_kink27": [
-       0.318,
-       0.726
-      ],
-      "zf_bent27": [
-       0.354,
-       0.408
-      ],
-      "zf_xc27": [
-       0.568,
-       0.437
-      ],
-      "zf_meas40": [
-       0.366,
-       0.542
-      ],
-      "zf_kink40": [
-       0.519,
-       0.755
-      ],
-      "zf_bent40": [
-       0.603,
-       0.633
-      ],
-      "zf_xc40": [
-       0.868,
-       0.437
-      ],
-      "zf_chimera": [
-       0.415,
-       0.743
-      ]
-     },
-     "cap": "Zocchi’s two force branches (lines, τc = 34 pN nm, B = 200 pN nm²) and the force field’s bare-duplex measurements (points)"
-    }
-   ],
-   "explain": [
-    {
-     "item": 0,
-     "text": "<b>Zocchi’s DNA spring</b> (<i>Molecular Machines</i> §2.15). A duplex of contour <dfn>L</dfn> = 0.33 nm × N<sub>bp</sub> and bending modulus <dfn>B</dfn> = k<sub>B</sub>T·ℓ<sub>p</sub> ≈ 200 pN nm² (persistence length ℓ<sub>p</sub> ≈ 50 nm), held at end-to-end distance <dfn>x</dfn>, pushes its ends apart with:<br>&emsp;<b>bent branch</b> (x &gt; x<sub>c</sub>): f = 10B/L² − k<sub>B</sub>T/(L − x) (eq. 2.203)<br>&emsp;<b>kinked branch</b> (x &lt; x<sub>c</sub>): f = τ<sub>c</sub> / [2R√(1 − (x/2R)²)], the slope of E<sub>k</sub> = τ<sub>c</sub> arccos(x/2R) (eq. 2.196), R = (L/2)(1 − γ²/90)<br>The rod switches at <dfn>x<sub>c</sub></dfn> = L(1 − γ²/15), γ = Lτ<sub>c</sub>/2B (eqs 2.188, 2.194), where its bending torque reaches the <dfn>critical torque τ<sub>c</sub></dfn> ≈ 27 (nicked) to 34 pN nm (continuous).",
-     "marks": [
-      {
-       "a": "zf_bent27",
-       "t": "bent branch, 27 bp",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "zf_kink27",
-       "t": "kinked branch, 27 bp",
-       "dx": 30,
-       "dy": 14
-      },
-      {
-       "a": "zf_xc27",
-       "t": "x_c = 86 Å",
-       "dx": 30,
-       "dy": -60
-      }
-     ]
-    },
-    {
-     "item": 0,
-     "text": "<b>Why the model puts our springs on the kinked branch.</b> ℓ<sub>p</sub> ≈ 50 nm is far longer than the 6–7 nm the tethers allow, so the duplex must bend hard. For 27 bp, L = 8.9 nm and γ = 0.76, so x<sub>c</sub> = 86 Å; the chimeras span 63–73 Å, below x<sub>c</sub>, so Zocchi predicts a kinked rod pushing only <b>4–7 pN</b> (27 bp, 6.3 pN at 70 Å; 40 bp, x<sub>c</sub> = 121 Å, 3.0 pN). In curvature terms: a rod kinks once its curvature reaches τ<sub>c</sub>/B = <b>2.6–3.2° per bp</b>, and the chimeras are bent <b>4.8–5.2° per bp</b>.",
-     "marks": [
-      {
-       "a": "zf_chimera",
-       "t": "sfGFP chimeras 63–73 Å",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "zf_kink27",
-       "t": "6.3 pN predicted",
-       "dx": 30,
-       "dy": 14
-      },
-      {
-       "a": "zf_kink40",
-       "t": "3.0 pN predicted",
-       "dx": 30,
-       "dy": 14
-      }
-     ]
-    }
-   ],
+   "exH": 590,
+   "title": "sfGFP: Zocchi’s DNA-spring model, kinked and unkinked",
+   "items": [],
+   "q": "What does Zocchi’s model (Molecular Machines §2.15) predict for our springs?",
    "points": [
     {
-     "text": "The MD duplexes <b>never kinked</b>: 0.03–0.83 bp open at 4.8–5.2°/bp. Bare duplexes open a pair only from 5.5°/bp, always above 8.7°/bp, i.e. an effective τ<sub>c</sub> ≈ <b>58–92 pN nm</b>, 2–3× Zocchi’s",
-     "hl": 0
+     "text": "<b>Setup.</b> A duplex of N base pairs is an elastic rod with contour length <span class=\"tex\">L = 0.33\\,\\mathrm{nm}\\times N</span> and bending modulus <span class=\"tex\">B = k_BT\\,\\ell_p \\approx 200\\ \\mathrm{pN\\,nm^2}</span> (persistence length ℓ<sub>p</sub> ≈ 50 nm, k<sub>B</sub>T = 4.1 pN nm). Its ends are held at end-to-end distance x &lt; L, so it must bend, and it pushes them apart with a force f(x)."
     },
     {
-     "text": "So the force field was compared with the <b>Euler buckling load</b> F = π²B/L² (eq. 2.169): a rod bent smoothly, never kinked (27 bp 24.9 pN, 40 bp 11.3 pN)",
-     "hl": 0
+     "text": "<b>Unkinked branch</b> (smoothly bent rod), eq. 2.203: the first term is the elastic push of the bent rod, the second a correction for its thermal fluctuations<span class=\"tex d\">f_{\\mathrm{unkinked}}(x) = \\frac{10\\,B}{L^2} - \\frac{k_BT}{L - x}</span>"
     },
     {
-     "text": "<b>That is Zocchi’s bent branch.</b> Once k<sub>B</sub>T/(L − x) is small, f → 10B/L², and 10 vs π² = 9.87 differ by 1.3 % (the book calls 10B/L² “within 2 % of π²B/L²”)",
-     "hl": 0,
-     "marks": [
-      {
-       "a": "zf_bent27",
-       "t": "10B/L² ≈ π²B/L²",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "zf_bent40",
-       "t": "",
-       "dx": 30,
-       "dy": -60
-      }
-     ]
+     "text": "<b>Kinked branch</b>: the rod breaks at one point, with kink energy <span class=\"tex\">E_k = \\tau_c \\arccos(x/2R)</span> (eq. 2.196); the force is <span class=\"tex\">f = -\\,dE_k/dx</span>:<span class=\"tex d\">f_{\\mathrm{kinked}}(x) = \\frac{\\tau_c}{2R\\sqrt{1-(x/2R)^2}}, \\qquad R = \\frac{L}{2}\\Big(1-\\frac{\\gamma^2}{90}\\Big)</span>"
     },
     {
-     "text": "Measured: <b>27 bp 28.0 pN</b> (bent branch 23–25), <b>40 bp 15.8 pN</b> (10.6–11.3): on the bent branch within 1.0–1.4×, not the kinked 3–7 pN",
-     "hl": 0,
-     "marks": [
-      {
-       "a": "zf_meas27",
-       "t": "27 bp measured",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "zf_meas40",
-       "t": "40 bp measured",
-       "dx": 30,
-       "dy": 14
-      }
-     ]
+     "text": "<b>Which branch?</b> The rod kinks once its bending torque reaches the <dfn>critical torque</dfn> τ<sub>c</sub> ≈ 27 (nicked) to 34 (intact) pN nm, i.e. when x drops below (eqs 2.188, 2.194)<span class=\"tex d\">x_c = L\\Big(1-\\frac{\\gamma^2}{15}\\Big), \\qquad \\gamma = \\frac{L\\,\\tau_c}{2B}</span>"
     },
     {
-     "text": "<b>Answer</b>: same elasticity, same B, same force law. They differ only in the <b>critical torque</b>: OL15 on 50 ns holds the duplex unkinked well past Zocchi’s τ<sub>c</sub>, so it never reaches his softened branch"
+     "text": "<b>Our springs.</b> 27 bp: L = 8.9 nm, γ = 0.76, x<sub>c</sub> = 86 Å. The sfGFP chimeras span 63–73 Å &lt; x<sub>c</sub>, so the model puts them on the <b>kinked</b> branch: f ≈ 5.5–6.8 pN (40 bp: x<sub>c</sub> = 121 Å, f ≈ 3.0 pN). In curvature terms, kinking starts at τ<sub>c</sub>/B = 2.6–3.2°/bp, and our chimeras are bent 4.8–5.2°/bp"
+    },
+    {
+     "text": "<b>But the simulated duplexes never kinked</b> (smooth bending, previous slide). So the force field should be compared with the <b>unkinked</b> branch: next slide"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12f2",
+   "section": "md",
+   "figW": 1180,
+   "exH": 590,
+   "title": "sfGFP: the unkinked branch is the Euler load, and matches the force field",
+   "items": [],
+   "q": "Showing that the force-field measurement sits on Zocchi’s unkinked branch",
+   "points": [
+    {
+     "text": "<b>1 · Euler buckling.</b> A rod of length L under end load F bends with shape y(s):<span class=\"tex d\">B\\,y''(s) + F\\,y(s) = 0,\\quad y(0)=y(L)=0 \\;\\Rightarrow\\; y = A\\sin\\frac{\\pi s}{L},\\quad F_E = \\frac{\\pi^2 B}{L^2}</span>Once buckled, it pushes back with ≈ F<sub>E</sub> almost regardless of how far its ends are pushed together"
+    },
+    {
+     "text": "<b>2 · The unkinked branch is the Euler load.</b> Split Zocchi’s formula:<span class=\"tex d\">f_{\\mathrm{unkinked}}(x) = \\underbrace{\\frac{\\pi^2 B}{L^2}}_{F_E} + \\underbrace{\\frac{(10-\\pi^2)\\,B}{L^2}}_{+1.3\\%\\ \\text{of}\\ F_E} - \\underbrace{\\frac{k_BT}{L-x}}_{\\text{thermal}}</span>27 bp at the measured ⟨x⟩ = 4.9 nm: F<sub>E</sub> = 24.9, +0.3, −1.0 pN, so f<sub>unkinked</sub> = 24.2 pN, within 3 % of F<sub>E</sub> (40 bp: 10.9 vs 11.3 pN)"
+    },
+    {
+     "text": "<b>3 · The force field</b> (previous slides):<span class=\"tex d\">\\langle F\\rangle_{\\mathrm{FF}} = k\\,(\\langle r\\rangle - x_0) = 28.0 \\pm 1.2\\ \\mathrm{pN}\\ (27\\ \\mathrm{bp}),\\quad 15.8 \\pm 1.6\\ \\mathrm{pN}\\ (40\\ \\mathrm{bp})</span>flat across ⟨r⟩, the buckled-rod signature of step 1"
+    },
+    {
+     "text": "<b>4 · Set them equal.</b> If the force-field duplex is an unkinked rod, <span class=\"tex\">\\langle F\\rangle_{\\mathrm{FF}} = \\pi^2 B_{\\mathrm{FF}}/L^2</span>, so<span class=\"tex d\">B_{\\mathrm{FF}} = \\frac{\\langle F\\rangle_{\\mathrm{FF}}\\,L^2}{\\pi^2}, \\qquad \\ell_p^{\\mathrm{FF}} = \\frac{B_{\\mathrm{FF}}}{k_BT}</span>27 bp: B<sub>FF</sub> = 209–225 pN nm², ℓ<sub>p</sub> = <b>51–55 nm</b>; 40 bp: 265–279 pN nm², 64–68 nm (range: L counted over N or N − 1 base-pair steps). Real DNA: ℓ<sub>p</sub> ≈ 50 nm. The measurement is the unkinked branch with ordinary DNA stiffness"
+    },
+    {
+     "text": "<b>5 · The kinked branch cannot fit.</b> At the same ⟨x⟩ it gives 4.6 pN (27 bp) and 3.0 pN (40 bp), 6× and 5× below the measurement"
+    },
+    {
+     "text": "<b>Conclusion</b>: the force field and Zocchi agree on the <b>unkinked</b> spring (F ≈ π²B/L²). They differ only on <b>whether the duplex kinks</b> at 4.8–5.2°/bp: Zocchi’s τ<sub>c</sub> = 27–34 pN nm says it should, the force-field duplex does not"
     }
    ]
   },
@@ -1118,7 +1025,7 @@
      "hl": 0
     },
     {
-     "text": "The barrel is stiff: RMSF ≈ 0.4 Å on the strands, κ ≈ 350 k<sub>B</sub>T nm⁻², so even ~30 pN moves the sites by &lt; 0.1 Å (slides 15–16)"
+     "text": "The barrel is stiff: RMSF ≈ 0.4 Å on the strands, κ &gt; 107 k<sub>B</sub>T nm⁻² (0 → 20 pN moves the sites 0.14 Å, slide 15)"
     },
     {
      "text": "<b>Answer</b>: the springs never deform the chromophore’s environment, so no wavelength shift or band-ratio change is expected; seeing one would need a softer site or far stronger force"

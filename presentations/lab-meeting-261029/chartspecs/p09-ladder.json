@@ -85,11 +85,11 @@
   },
   {
    "bar": 2,
-   "say": "<b>8 µM</b>: 0.1047, the ratio starts to rise"
+   "say": "<b>8 µM</b>: 0.1047, still within ≈ 7 % of the low-concentration value"
   },
   {
    "bar": 3,
-   "say": "<b>16 µM</b>: 0.1184"
+   "say": "<b>16 µM</b>: 0.1184, the ratio starts to rise (+21 %)"
   },
   {
    "bar": 4,
@@ -97,7 +97,7 @@
   },
   {
    "glow": true,
-   "say": "<b>Inner filter effect from 8 µM</b>: the ratio no longer stays constant as concentration rises"
+   "say": "<b>Inner filter effect from 16 µM</b>: the ratio no longer stays constant. All our readings are ≤ 10 µM, inside the flat range"
   },
   {
    "real": true,
@@ -105,7 +105,6 @@
   }
  ],
  "glowBars": [
-  2,
   3,
   4
  ]

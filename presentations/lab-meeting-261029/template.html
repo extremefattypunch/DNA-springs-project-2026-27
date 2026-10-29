@@ -235,6 +235,9 @@ body {
 .eq { font-family: "STIX Two Text", "Cambria Math", Georgia, serif; font-size: 1.12em; color: var(--ink); white-space: nowrap; }
 .eq i { font-style: italic; } .eq .kn { color: var(--sec-synthesis); } .eq .un { color: var(--sec-status); } .eq .nz { color: var(--ink-3); }
 .m-pt b.kn { color: var(--sec-synthesis); } .m-pt b.un { color: var(--sec-status); }
+.tex math { font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", math; font-size: 1.08em; }
+.tex.d { display: block; margin: 8px 0 6px; }
+.tex.d math { font-size: 1.22em; }
 .m-pt .eq.blk { display: block; margin: 6px 0 4px; font-size: 1.12em; white-space: normal; line-height: 1.5; }
 .m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* explain phase: one plot full-slide with axis notes, then the split answer view */
@@ -279,6 +282,7 @@ body {
   <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js" integrity="sha384-czaB7zH9slIhvFgUxhO8sSnYf4cnCeV2N3zOvDnNKFzRKu5AwqDKEZlCLsaQkoop" crossorigin="anonymous"></script>
 <script>
 window.DECK = /*__DECK__*/null;
@@ -938,7 +942,9 @@ function buildMedia(el, cfg) {
   const items = cfg.items || [], pts = cfg.points || [];
   const boxes = [], frames = [];
   let curMsg = null;
-  if (cfg.layout === 'row') {
+  if (!items.length) {                 // equation/text slide: points span the full width
+    var ptBox = { x: 64, y: top + (cfg.q ? 52 : 6), w: 1792 };
+  } else if (cfg.layout === 'row') {
     const n = items.length, gap = 24, w = (1792 - (n - 1) * gap) / n;
     const h = Math.min(w / (cfg.aspect || 1.29) + 60, cfg.rowH || 520);
     items.forEach((_, i) => boxes.push({ x: 64 + i * (w + gap), y: top, w, h }));
@@ -1141,6 +1147,10 @@ function boot() {
   DECK.slides.forEach((cfg, i) => {
     if (cfg.kind === 'gel' && !TEST) autoPanels(cfg);
     buildSlide(cfg, i);
+  });
+  // LaTeX in slide text: <span class="tex">…</span>, display mode with class "d"
+  if (window.katex) document.querySelectorAll('.tex').forEach(el => {
+    try { el.innerHTML = katex.renderToString(el.textContent, { displayMode: el.classList.contains('d'), output: 'mathml', throwOnError: false }); } catch (e) {}
   });
   fit(); addEventListener('resize', fit);
   let si = 0;

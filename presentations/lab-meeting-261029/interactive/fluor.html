@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Excitation and emission scans</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+/* wavelength (nm) -> display colour */
+function wl(l) {
+  let r = 0, g = 0, b = 0;
+  if (l < 440) { r = -(l - 440) / 60; b = 1; } else if (l < 490) { g = (l - 440) / 50; b = 1; }
+  else if (l < 510) { g = 1; b = -(l - 510) / 20; } else if (l < 580) { r = (l - 510) / 70; g = 1; }
+  else if (l < 645) { r = 1; g = -(l - 645) / 65; } else r = 1;
+  const f = l < 420 ? 0.45 + 0.55 * (l - 380) / 40 : 1;
+  return `rgb(${Math.round(255 * r * f)},${Math.round(255 * g * f)},${Math.round(255 * b * f)})`;
+}
+const G = (x, m, s) => Math.exp(-((x - m) ** 2) / (2 * s * s));
+const EX = l => (l < 485 ? G(l, 485, 14) : G(l, 485, 9)) + 0.11 * G(l, 398, 16);           // sfGFP-like shapes
+const EM = l => (l < 510 ? G(l, 510, 8) : G(l, 510, 15)) + 0.28 * G(l, 545, 18);
+/* ---------- instrument schematic (top) ---------- */
+const box = (x, y, w, h, t, sub) => { const g = S('g', {}, sv);
+  S('rect', { x, y, width: w, height: h, rx: 10, fill: C.panel, stroke: C.grid, 'stroke-width': 1.5 }, g);
+  S('text', { x: x + w / 2, y: y + h / 2 - (sub ? 4 : -6), 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 700, text: t }, g);
+  if (sub) S('text', { x: x + w / 2, y: y + h / 2 + 18, 'text-anchor': 'middle', 'font-size': 14, class: 'mut', text: sub }, g);
+  return g; };
+const beam1 = S('line', { x1: 150, y1: 120, x2: 250, y2: 120, stroke: '#fff8d0', 'stroke-width': 8, 'stroke-linecap': 'round' }, sv);
+const beam2 = S('line', { x1: 410, y1: 120, x2: 590, y2: 120, 'stroke-width': 8, 'stroke-linecap': 'round' }, sv);
+const beamR = S('line', { x1: 500, y1: 120, x2: 500, y2: 60, 'stroke-width': 3, 'stroke-dasharray': '4 4' }, sv);
+const beam3 = S('line', { x1: 640, y1: 170, x2: 640, y2: 250, 'stroke-width': 8, 'stroke-linecap': 'round' }, sv);
+const beam4 = S('line', { x1: 720, y1: 290, x2: 830, y2: 290, 'stroke-width': 8, 'stroke-linecap': 'round' }, sv);
+box(30, 82, 120, 76, 'Xe lamp', 'white light');
+box(250, 72, 160, 96, 'excitation', 'monochromator');
+const exT = S('text', { x: 330, y: 196, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700 }, sv);
+S('rect', { x: 452, y: 30, width: 100, height: 30, rx: 6, fill: C.panel, stroke: C.grid }, sv);
+S('text', { x: 502, y: 51, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: 'reference R1' }, sv);
+const cuv = S('rect', { x: 600, y: 80, width: 80, height: 90, rx: 6, stroke: C.text, 'stroke-width': 2 }, sv);
+S('text', { x: 592, y: 200, 'text-anchor': 'end', 'font-size': 14, class: 'mut', text: 'cuvette (sample)' }, sv);
+box(560, 250, 160, 80, 'emission', 'monochromator, 90°');
+const emT = S('text', { x: 640, y: 356, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700 }, sv);
+box(830, 254, 150, 72, 'detector', 'photon counter S1');
+const note = S('text', { x: 760, y: 120, 'font-size': 15, class: 'mut' }, sv);
+const note2 = S('text', { x: 760, y: 142, 'font-size': 15, class: 'mut' }, sv);
+/* ---------- spectrum plot (bottom) ---------- */
+const PX0 = 90, PX1 = 1120, PY = 690, PH = 260, L0 = 380, L1 = 620;
+const lx = l => PX0 + (PX1 - PX0) * (l - L0) / (L1 - L0);
+S('line', { x1: PX0, y1: PY, x2: PX1, y2: PY, stroke: C.grid }, sv);
+for (let l = 400; l <= 600; l += 25) { S('line', { x1: lx(l), y1: PY, x2: lx(l), y2: PY + 6, stroke: C.grid }, sv);
+  S('text', { x: lx(l), y: PY + 24, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: l }, sv); }
+S('text', { x: PX1, y: PY + 46, 'text-anchor': 'end', 'font-size': 15, class: 'mut', text: 'wavelength being scanned (nm)' }, sv);
+S('text', { x: PX0 - 10, y: PY - PH - 14, 'font-size': 15, class: 'mut', text: 'fluorescence counted at the detector (normalised)' }, sv);
+const band = S('g', {}, sv);
+for (let l = L0; l < L1; l += 2) S('rect', { x: lx(l), y: PY + 30, width: lx(l + 2) - lx(l) + 0.5, height: 6, fill: wl(l) }, band);
+const exP = S('path', { class: 'w', stroke: '#6fa8ff', 'stroke-width': 3.5 }, sv);
+const emP = S('path', { class: 'w', stroke: C.truth, 'stroke-width': 3.5 }, sv);
+const cur = S('line', { y1: PY, y2: PY - PH - 4, stroke: C.label, 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }, sv);
+const exL = S('text', { 'font-size': 16, fill: '#6fa8ff', 'font-weight': 600 }, sv);
+const emL = S('text', { 'font-size': 16, fill: C.truth, 'font-weight': 600 }, sv);
+const m400 = S('text', { 'font-size': 14, class: 'mut', text: '400 nm: neutral chromophore' }, sv);
+const fixedM = S('g', {}, sv);
+const cap = S('text', { x: PX0, y: PY + 46, 'font-size': 13, class: 'mut', text: 'curve shapes sketched from sfGFP’s known spectra; our data are on the next slides' }, sv);
+function trace(f, a, b) { let d = ''; for (let l = a; l <= b; l += 1) d += (d ? 'L' : 'M') + lx(l).toFixed(1) + ',' + (PY - PH * f(l)).toFixed(1); return d; }
+const T = [
+  { on: 0, mode: 0, k: 0 }, { on: 0, mode: 0, k: 0 }, { on: 1, mode: 0, k: 1 },
+  { on: 1, mode: 1, k: 2 }, { on: 1, mode: 2, k: 3 }, { on: 1, mode: 3, k: 4 }
+];
+let ph = 0;
+Cryo.init(T, (P, t, dt) => {
+  const mode = Math.round(P.mode), k = Math.round(P.k);
+  ph = (ph + (dt || 0) / 5) % 1;                         // one sweep every 5 s
+  let lex = 485, lem = 510, scanEx = false, scanEm = false;
+  if (mode === 1) { lex = 400 + 100 * ph; scanEx = true; }
+  if (mode === 2) { lem = 500 + 100 * ph; scanEm = true; }
+  const show = P.on;
+  beam1.setAttribute('opacity', show); [beam2, beamR, beam3, beam4].forEach(b => b.setAttribute('opacity', show));
+  beam2.setAttribute('stroke', wl(lex)); beamR.setAttribute('stroke', wl(lex));
+  const emitted = mode === 1 ? EX(lex) : 1;            // how much the sample glows
+  cuv.setAttribute('fill', `rgba(91,214,122,${(0.12 + 0.6 * emitted * show).toFixed(2)})`);
+  beam3.setAttribute('stroke', wl(lem)); beam3.setAttribute('opacity', show * (0.25 + 0.75 * emitted));
+  const passed = mode === 2 ? EM(lem) : EX(lex) * EM(lem) / EM(510);
+  beam4.setAttribute('stroke', wl(lem)); beam4.setAttribute('opacity', show * (0.15 + 0.85 * passed));
+  exT.textContent = show ? `λex = ${lex.toFixed(0)} nm${scanEx ? '  (scanning)' : '  (fixed)'}` : '';
+  exT.setAttribute('fill', scanEx ? C.label : C.text);
+  emT.textContent = show ? `λem = ${lem.toFixed(0)} nm${scanEm ? '  (scanning)' : '  (fixed)'}` : '';
+  emT.setAttribute('fill', scanEm ? C.label : C.text);
+  const NT = [['', ''], ['The excitation monochromator picks one colour for the sample;', 'the emission monochromator picks which colour is counted.'],
+    ['Excitation spectrum: count at 510 nm, sweep the', 'excitation 400→500 nm. Which colours excite it?'],
+    ['Emission spectrum: excite at 485 nm, sweep the', 'counted colour 500→600 nm. What colour does it emit?'],
+    ['Excitation max 485 nm, emission max 510 nm;', 'R1 divides out the lamp’s own colour profile (S1 ÷ R1).']];
+  note.textContent = NT[k][0]; note2.textContent = NT[k][1];
+  // spectra
+  const exEnd = mode === 1 ? lex : (mode >= 2 ? 500 : 0), emEnd = mode === 2 ? lem : (mode === 3 ? 600 : 0);
+  exP.setAttribute('d', exEnd > 400 ? trace(EX, 400, exEnd) : 'M0,0'); emP.setAttribute('d', emEnd > 500 ? trace(EM, 500, emEnd) : 'M0,0');
+  exP.setAttribute('opacity', mode === 2 ? 0.35 : 1);
+  exL.textContent = exEnd > 470 ? 'excitation spectrum (count at 510 nm)' : ''; exL.setAttribute('x', lx(392)); exL.setAttribute('y', PY - 120);
+  emL.textContent = emEnd > 530 ? 'emission spectrum (excite at 485 nm)' : ''; emL.setAttribute('x', lx(533)); emL.setAttribute('y', PY - PH * 0.62);
+  m400.setAttribute('x', lx(372)); m400.setAttribute('y', PY - PH * 0.11 - 14); m400.setAttribute('opacity', exEnd >= 430 ? 1 : 0);
+  const x = scanEx ? lx(lex) : scanEm ? lx(lem) : -50; cur.setAttribute('x1', x); cur.setAttribute('x2', x);
+  fixedM.innerHTML = '';
+  if (mode >= 1) [[485, 'ex max 485'], [510, 'em max 510']].forEach(([l, s], i) => {
+    if (mode === 1 && i === 0 || mode === 2 && i === 1) return;
+    S('line', { x1: lx(l), x2: lx(l), y1: PY, y2: PY - PH - 26, stroke: wl(l), 'stroke-width': 1.2, opacity: 0.7 }, fixedM);
+    S('text', { x: lx(l) + (i ? 6 : -6), y: PY - PH - 12, 'text-anchor': i ? 'start' : 'end', 'font-size': 14, fill: wl(l), text: s }, fixedM); });
+  band.setAttribute('opacity', 0.9);
+});
+</script>
+</body></html>
