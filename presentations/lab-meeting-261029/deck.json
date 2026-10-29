@@ -67,6 +67,14 @@
     {
      "chart": "p08-att3"
     }
+   ],
+   "callouts": [
+    {
+     "x": 96,
+     "y": 820,
+     "w": 1728,
+     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum (defined on the concentration-series slide). Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
+    }
    ]
   },
   {
@@ -107,7 +115,16 @@
     {
      "chart": "p10-bb2"
     }
-   ]
+   ],
+   "callouts": [
+    {
+     "x": 96,
+     "y": 140,
+     "w": 1728,
+     "html": "<b>Band ratio</b> = I(400) / I(peak). All three constructs (ssDNA, dsDNA, nicked dsDNA chimeras) at <b>10 µM</b> in both attempts."
+    }
+   ],
+   "top": 220
   },
   {
    "kind": "image",

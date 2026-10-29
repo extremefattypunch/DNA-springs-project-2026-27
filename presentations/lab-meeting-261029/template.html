@@ -832,14 +832,14 @@ function buildChartPanel(slideEl, spec, P) {
   const xL = bars[0].x - .75 * pitch, xR = bars[bars.length - 1].x + .75 * pitch;
   const add = (tag, a, txt) => { const e = s(tag, a); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
   add('rect', { x: 0, y: 0, width: iw, height: ih, fill: '#fbfbf9' });
-  add('text', { x: iw * .06, y: ih * .085, 'font-size': ih * .042, 'font-weight': 700, fill: '#1b1f24' }, spec.title);
-  add('text', { x: iw * .06, y: ih * .135, 'font-size': ih * .026, fill: '#8a9096' }, spec.sub);
+  add('text', { x: iw * .06, y: ih * .085, 'font-size': ih * .056, 'font-weight': 700, fill: '#1b1f24' }, spec.title);
+  add('text', { x: iw * .06, y: ih * .135, 'font-size': ih * .03, fill: '#7a8086' }, spec.sub);
   spec.ticks.forEach(v => {
     add('line', { x1: xL, x2: xR, y1: Y(v), y2: Y(v), stroke: v === 0 ? '#9aa0a6' : '#e3e5e8', 'stroke-width': v === 0 ? 1.6 : 1.2 });
-    add('text', { x: xL - 10, y: Y(v) + 5, 'text-anchor': 'end', 'font-size': ih * .027, fill: '#6b7177', class: 'tick' }, v.toFixed(spec.fmt));
+    add('text', { x: xL - 10, y: Y(v) + 5, 'text-anchor': 'end', 'font-size': ih * .04, fill: '#4f555b', class: 'tick' }, v.toFixed(spec.fmt));
   });
-  const yl = add('text', { x: 0, y: 0, 'text-anchor': 'middle', 'font-size': ih * .028, fill: '#6b7177',
-    transform: `translate(${xL - iw * .085},${(Y(0) + Y(spec.ticks[spec.ticks.length - 1])) / 2}) rotate(-90)` }, spec.ylabel);
+  const yl = add('text', { x: 0, y: 0, 'text-anchor': 'middle', 'font-size': ih * .042, 'font-weight': 600, fill: '#2b3036',
+    transform: `translate(${Math.max(xL - iw * .135, ih * .03)},${(Y(0) + Y(spec.ticks[spec.ticks.length - 1])) / 2}) rotate(-90)` }, spec.ylabel);
   const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
   const sd = a => { const m = mean(a); return a.length > 1 ? Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / (a.length - 1)) : 0; };
   let top = -1, topV = -1;
@@ -864,11 +864,11 @@ function buildChartPanel(slideEl, spec, P) {
       dots.appendChild(s('circle', { cx: b.x + dx, cy: Y(v), r: 4.2, fill: '#ffffff', stroke: b.color, 'stroke-width': 2 }));
     });
     g.appendChild(dots);
-    const lab = s('text', { x: b.x, y: Y(Math.max(m + e, ...b.reps)) - 13, 'text-anchor': 'middle', 'font-size': ih * .03, 'font-weight': 700, fill: '#1b1f24' });
+    const lab = s('text', { x: b.x, y: Y(Math.max(m + e, ...b.reps)) - 13, 'text-anchor': 'middle', 'font-size': ih * .045, 'font-weight': 700, fill: '#1b1f24' });
     lab.textContent = m.toFixed(4); g.appendChild(lab);
-    const xl = s('text', { x: b.x, y: Y(0) + ih * .045, 'text-anchor': 'middle', 'font-size': ih * .032, fill: '#4a5057' });
+    const xl = s('text', { x: b.x, y: Y(0) + ih * .045, 'text-anchor': 'middle', 'font-size': ih * .048, 'font-weight': 600, fill: '#2b3036' });
     xl.textContent = b.label; svg.appendChild(xl);
-    if (b.sub) { const xs = s('text', { x: b.x, y: Y(0) + ih * .085, 'text-anchor': 'middle', 'font-size': ih * .028, fill: '#4a5057' }); xs.textContent = b.sub; svg.appendChild(xs); }
+    if (b.sub) { const xs = s('text', { x: b.x, y: Y(0) + ih * .1, 'text-anchor': 'middle', 'font-size': ih * .04, fill: '#4a5057' }); xs.textContent = b.sub; svg.appendChild(xs); }
     return { bar, err, dots, lab, halo };
   });
   let cap = null;

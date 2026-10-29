@@ -20,7 +20,7 @@
   0.175
  ],
  "fmt": 3,
- "ylabel": "I(400) / I(peak)",
+ "ylabel": "band ratio  I(400) / I(peak)",
  "bars": [
   {
    "label": "2 µM",
