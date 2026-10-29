@@ -1799,7 +1799,7 @@
      }
     },
     {
-     "text": "<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide)",
+     "text": "<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide). PEG is a cheap stand-in for DNA: it lets us troubleshoot the resin <b>without using expensive DNA</b>",
      "msg": {
       "step": 3
      }

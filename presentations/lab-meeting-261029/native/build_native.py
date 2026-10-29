@@ -80,7 +80,7 @@ RESIN = {'kind': 'media', 'page': '19b', 'section': 'synthesis', 'title': 'How t
     '<b>TCO resin</b>: beads coated with TCO groups, which click onto Tet, the same chemistry that attaches our DNA',
     'A protein with an <b>exposed Tet</b> clicks onto the beads and is <b>trapped</b>: nothing comes out in the flow-through',
     '<b>Excess TCO-PEG</b> caps every Tet on 2-tet pp2a, leaving none exposed',
-    '<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide)',
+    '<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide). PEG is a cheap stand-in for DNA: it lets us troubleshoot the resin <b>without using expensive DNA</b>',
     '<b>The point</b>: a 1:1 circular product uses both Tet groups for its DNA, so it passes through; linear products keep a free Tet and are trapped'])]}
 
 PP_FN = anim('22a', 'PP2A: what it does in the cell', 'pp2afn.html', 'Protein phosphatase 2A: a serine/threonine phosphatase, the cell’s main “off switch”',
