@@ -1621,23 +1621,34 @@
    "points": [
     {
      "text": "Load-bearing bonds hold in <b>every</b> system: Arg96 100 %, Thr203 96–97 %, Gln94 92–97 %",
-     "hl": 1
+     "hl": 1,
+     "alt": true
     },
     {
      "text": "His148 → phenolate: 72 % (WT) vs 72–82 % with springs, inside its own 39–92 % replicate scatter",
-     "hl": 1
+     "hl": 1,
+     "alt": true
     },
     {
      "text": "Chromophore planarity unchanged: bridge twists τ 5.1–5.6°, φ 6.0–6.5° in all systems; cavity water 9–11 molecules",
-     "hl": 0
+     "hl": 0,
+     "alt": true
     },
     {
-     "text": "The barrel is stiff: RMSF ≈ 0.4 Å on the strands, κ &gt; 107 k<sub>B</sub>T nm⁻² (0 → 20 pN moves the sites 0.14 Å, slide 15)"
+     "text": "The barrel is stiff: RMSF ≈ 0.4 Å on the strands, κ &gt; 107 k<sub>B</sub>T nm⁻² (0 → 20 pN moves the sites 0.14 Å, RMSF slide)",
+     "alt": true
     },
     {
-     "text": "<b>Answer</b>: the springs never deform the chromophore’s environment, so no wavelength shift or band-ratio change is expected; seeing one would need a softer site or far stronger force"
+     "text": "<b>Answer</b>: the springs never deform the chromophore’s environment, so no wavelength shift or band-ratio change is expected; seeing one would need a softer site or far stronger force",
+     "alt": true
+    },
+    {
+     "banner": true,
+     "alt": true,
+     "text": "<span class=\"ttl\">Main result</span>The crucial hydrogen bonds around the chromophore (Arg96, Thr203, Gln94) stay at <b>≈ 92–100 % occupancy with or without a spring</b>.<br><br>Further proof that our springs <b>cannot meaningfully perturb the chromophore</b>, on top of the rigid sfGFP backbone shown earlier (slide 16)."
     }
-   ]
+   ],
+   "eqbox": "<b>How occupancy was computed</b> (<code>MD simulations/sfGFP/analysis/chromophore.py</code>, mdtraj):<pre class=\"code\">dh  = md.compute_distances(t, [[h, acc] for h in hs])\nang = md.compute_angles(t, [[don, h, acc] for h in hs])\nocc = ((d_HA &lt; 2.5) &amp; (ang &gt; 120)).mean()</pre>Donor hydrogens come from the topology; per frame the closest one is used. A bond counts as formed when H···acceptor &lt; 2.5 Å and the D–H···A angle &gt; 120°; occupancy = fraction of frames formed."
   },
   {
    "kind": "media",
