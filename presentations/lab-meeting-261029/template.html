@@ -248,6 +248,12 @@ body {
 .m-aside b { color: var(--ink); }
 .m-aside ul { margin: 8px 0 0; padding-left: 22px; }
 .m-pts.big { gap: 22px; } .m-pts.big .m-pt { font-size: 29px; } .m-pts.big .m-pt::before { top: .5em; }
+.m-banner { position: absolute; left: 50%; top: 52%; width: 1380px; transform: translate(-50%, -46%) scale(.96); opacity: 0; pointer-events: none; z-index: 4;
+  background: var(--paper); border: 3px solid var(--amber); border-radius: 22px; padding: 44px 56px; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--paper) 72%, transparent), 0 24px 60px rgba(0,0,0,.28);
+  font-size: 36px; line-height: 1.4; color: var(--ink-2); transition: opacity .45s ease, transform .45s ease; }
+.m-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.m-banner b { color: var(--ink); }
+.m-banner .ttl { display: block; font-size: 24px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
 .m-pt .headline { display: block; background: color-mix(in srgb, var(--amber) 14%, transparent); border-left: 6px solid var(--amber); border-radius: 8px; padding: 10px 16px; color: var(--ink); }
 .m-pt ul.sub { margin: 6px 0 2px; padding-left: 28px; list-style: circle; }
 .m-pt ul.sub li { font-size: .9em; margin: 4px 0; }
@@ -1032,7 +1038,8 @@ function buildMedia(el, cfg) {
     }));
   };
   const ul = h('ul', 'm-pts' + (ptBox.cols ? ' cols' : '') + (cfg.big ? ' big' : ''), { style: { left: ptBox.x + 'px', top: ptBox.y + 'px', width: ptBox.w + 'px' } });
-  const lis = pts.map(pt => { const li = h('li', 'm-pt', { html: pt.text }); ul.appendChild(li); return li; });
+  // a point with banner: true is shown as a large centred overlay instead of a bullet
+  const lis = pts.map(pt => { const li = h(pt.banner ? 'div' : 'li', pt.banner ? 'm-banner' : 'm-pt', { html: pt.text }); (pt.banner ? el : ul).appendChild(li); return li; });
   items.forEach((_, i) => place(i, boxes[i], false));
   el.appendChild(ul);
   return { kind: 'media', k: -1, apply(k) {

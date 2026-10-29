@@ -138,10 +138,11 @@ SLIDES = {
         pend('phosphatase activity assay once purified sample batch obtained')),
     grp('<b>MD analysis</b>', pend('set up MD system for tet-TCO/BCN pp2a protein chimeras'),
         '<span class="t-pend">Previous MD of pp2a in the literature shows a much more flexible structure, so it will likely respond to spring force application</span>')], badge=NOW),
-33: text(33, 'Technical tutorials: brief walkthrough', 'background', [
-    grp('New experimental techniques to the lab that I troubleshot independently over the last 4 months. Possibly useful for the lab:',
-        'Setting up the MD system for DNA-spring chimeras', 'Fluorometry data collection', 'Performing downstream cryoEM analysis with CryoSPARC'),
-    grp('Additional resources (to be documented via GitHub):', 'Claude skills for optimal FAIRSHARE usage and CryoSPARC usage', 'Set-up instructions for CryoSPARC')]),
+33: text(33, 'Why a cryoEM theory section instead of a CryoSPARC demo', 'background', [
+    grp('Ideally I would have shown a <b>real CryoSPARC analysis on imaged sfGFP chimeras</b>. But the grid-screening session planned for 2 days ago was postponed: the cryoEM microscope broke down yet again 😢'),
+    grp('Still worth introducing: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while learning CryoSPARC, new to the lab'),
+    grp('A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b>'),
+    grp('Next: from electron optics (defocus, contrast, CTF) to reconstruction and refinement')])
 }
 
 deck = json.loads((ROOT / 'deck.json').read_text())

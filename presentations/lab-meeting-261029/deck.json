@@ -1314,7 +1314,8 @@
      "text": "<span class=\"headline\"><b>Headline</b>: our chimeras hold the duplex at 63–73 Å, below x<sub>c</sub> = 86 Å (27 bp) and 121 Å (40 bp). Zocchi’s model therefore puts them in the <b>kinked</b> regime and predicts only <b>≈ 3–7 pN</b></span>"
     },
     {
-     "text": "<b>Main idea</b>: Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b> above which DNA must kink. The MD force field has <b>no such threshold</b>: a kink could only emerge from base pairs breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b>"
+     "banner": true,
+     "text": "<span class=\"ttl\">Main idea</span>Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b>: once bending exceeds it, DNA must kink, and the push collapses to a few pN.<br><br>The MD force field has <b>no such threshold</b>. A kink could only emerge from base pairs actually breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b> and keeps pushing at tens of pN."
     }
    ]
   },
@@ -1925,15 +1926,21 @@
    "kind": "media",
    "page": 33,
    "section": "background",
-   "title": "Technical tutorials: brief walkthrough",
+   "title": "Why a cryoEM theory section instead of a CryoSPARC demo",
    "items": [],
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\">New experimental techniques to the lab that I troubleshot independently over the last 4 months. Possibly useful for the lab:</span><ul class=\"sub\"><li>Setting up the MD system for DNA-spring chimeras</li><li>Fluorometry data collection</li><li>Performing downstream cryoEM analysis with CryoSPARC</li></ul>"
+     "text": "<span class=\"lead\">Ideally I would have shown a <b>real CryoSPARC analysis on imaged sfGFP chimeras</b>. But the grid-screening session planned for 2 days ago was postponed: the cryoEM microscope broke down yet again 😢</span>"
     },
     {
-     "text": "<span class=\"lead\">Additional resources (to be documented via GitHub):</span><ul class=\"sub\"><li>Claude skills for optimal FAIRSHARE usage and CryoSPARC usage</li><li>Set-up instructions for CryoSPARC</li></ul>"
+     "text": "<span class=\"lead\">Still worth introducing: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while learning CryoSPARC, new to the lab</span>"
+    },
+    {
+     "text": "<span class=\"lead\">A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b></span>"
+    },
+    {
+     "text": "<span class=\"lead\">Next: from electron optics (defocus, contrast, CTF) to reconstruction and refinement</span>"
     }
    ]
   },

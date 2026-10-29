@@ -129,7 +129,7 @@ slides = {
     {'text': '<b>So the model predicts the kinked-branch force</b> (eq. 2.196):'
       + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)},
     {'text': '<span class="headline"><b>Headline</b>: our chimeras hold the duplex at 63–73 Å, below x<sub>c</sub> = 86 Å (27 bp) and 121 Å (40 bp). Zocchi’s model therefore puts them in the <b>kinked</b> regime and predicts only <b>≈ 3–7 pN</b></span>'},
-    {'text': '<b>Main idea</b>: Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b> above which DNA must kink. The MD force field has <b>no such threshold</b>: a kink could only emerge from base pairs breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b>'}]},
+    {'banner': True, 'text': '<span class="ttl">Main idea</span>Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b>: once bending exceeds it, DNA must kink, and the push collapses to a few pN.<br><br>The MD force field has <b>no such threshold</b>. A kink could only emerge from base pairs actually breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b> and keeps pushing at tens of pN.'}]},
 '12f1': {'title': 'The set-up behind the force plots: a bare DNA duplex', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'What is simulated, what each variable means, and how the force is read off',
   'items': [{'iframe': 'interactive/setup.html', 'title': 'Bare duplex restraint simulation',
