@@ -1,112 +1,174 @@
 {
-  "id": "p21-dilute",
-  "image": "gels/p21-dilute.jpg",
-  "size": [
-    385,
-    488
+ "id": "p21-dilute",
+ "image": "gels/p21-dilute.jpg",
+ "size": [
+  385,
+  488
+ ],
+ "style": "mid",
+ "alt": "SEC fractions of the resin-treated pp2a-DNA products (no visible bands) beside the pre-SEC sample",
+ "gel": {
+  "poly": [
+   [
+    0,
+    56
+   ],
+   [
+    362,
+    56
+   ],
+   [
+    362,
+    486
+   ],
+   [
+    0,
+    486
+   ]
   ],
-  "style": "mid",
-  "alt": "Pale grey-blue photo of an SDS-PAGE gel of SEC fractions: the sample lanes show no visible bands; one bright-banded lane (a ladder or a concentrated input, not drawn) and a dark prestained marker sit at the right edge",
-  "gel": {
-    "poly": [
-      [
-        0,
-        56
-      ],
-      [
-        352,
-        56
-      ],
-      [
-        352,
-        486
-      ],
-      [
-        0,
-        486
-      ]
-    ],
-    "wellY": 62,
-    "tilt": 0
+  "wellY": 62,
+  "tilt": 0
+ },
+ "species": {
+  "ring_ss": {
+   "name": "2 pp2a + 2 ssDNA ring",
+   "note": "copy of left gel lane 3",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2circ"
+   }
   },
-  "species": {
-    "imp": {
-      "cls": "impurity"
-    }
+  "circ_ss": {
+   "name": "Circular pp2a + ssDNA",
+   "note": "new band · faint before SEC",
+   "cls": "ss",
+   "icon": {
+    "k": "circ"
+   }
   },
-  "lanes": [
+  "imp": {
+   "cls": "impurity"
+  }
+ },
+ "lanes": [
+  {
+   "id": "F1",
+   "x": 25,
+   "w": 40,
+   "label": "F1",
+   "bands": []
+  },
+  {
+   "id": "F2",
+   "x": 75,
+   "w": 40,
+   "label": "F2",
+   "bands": []
+  },
+  {
+   "id": "F3",
+   "x": 125,
+   "w": 40,
+   "label": "F3",
+   "bands": []
+  },
+  {
+   "id": "F4",
+   "x": 175,
+   "w": 40,
+   "label": "F4",
+   "bands": []
+  },
+  {
+   "id": "F5",
+   "x": 225,
+   "w": 40,
+   "label": "F5",
+   "bands": []
+  },
+  {
+   "id": "F6",
+   "x": 275,
+   "w": 40,
+   "label": "F6",
+   "bands": []
+  },
+  {
+   "id": "PRE",
+   "x": 330,
+   "w": 44,
+   "label": "pre",
+   "chip": "ctrl",
+   "sub": "SEC",
+   "bands": [
     {
-      "id": "F1",
-      "x": 25,
-      "w": 40,
-      "label": "F1",
-      "bands": []
+     "y": 120.0,
+     "h": 9,
+     "i": 0.39,
+     "sp": "ring_ss"
     },
     {
-      "id": "F2",
-      "x": 75,
-      "w": 40,
-      "label": "F2",
-      "bands": []
+     "y": 157.2,
+     "h": 9,
+     "i": 0.09,
+     "sp": "circ_ss"
     },
     {
-      "id": "F3",
-      "x": 125,
-      "w": 40,
-      "label": "F3",
-      "bands": []
+     "y": 267.0,
+     "h": 11,
+     "i": 0.64,
+     "sp": "imp"
     },
     {
-      "id": "F4",
-      "x": 175,
-      "w": 40,
-      "label": "F4",
-      "bands": []
+     "y": 311.1,
+     "h": 12,
+     "i": 1,
+     "sp": "imp"
     },
     {
-      "id": "F5",
-      "x": 225,
-      "w": 40,
-      "label": "F5",
-      "bands": []
-    },
-    {
-      "id": "F6",
-      "x": 275,
-      "w": 40,
-      "label": "F6",
-      "bands": []
+     "y": 208.2,
+     "h": 9,
+     "i": 0.08,
+     "sp": "imp"
     }
-  ],
-  "groups": [
-    {
-      "label": "SEC fractions",
-      "lanes": [
-        "F1",
-        "F2",
-        "F3",
-        "F4",
-        "F5",
-        "F6"
-      ]
-    }
-  ],
-  "blank": "Blank gel: SEC fractions, loaded left to right",
-  "steps": [
-    {
-      "lanes": [
-        "F1",
-        "F2",
-        "F3",
-        "F4",
-        "F5",
-        "F6"
-      ],
-      "say": "<b>SEC fractions</b>: loaded and run, but no band rises above the background"
-    },
-    {
-      "real": true,
-      "say": "Real gel, as imaged: only the lane beside the marker shows bands (ladder or input, not drawn)"
-    }
-  ]
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "label": "SEC fractions",
+   "lanes": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+   ]
+  }
+ ],
+ "blank": "Blank gel: the pre-SEC sample, then the SEC fractions",
+ "steps": [
+  {
+   "lanes": [
+    "PRE"
+   ],
+   "say": "<b>Pre-SEC</b>: the resin-treated products, drawn as a copy of lane 3 on the left"
+  },
+  {
+   "lanes": [
+    "F1",
+    "F2",
+    "F3",
+    "F4",
+    "F5",
+    "F6"
+   ],
+   "say": "<b>SEC fractions</b>: the same products spread over the fractions, too dilute to see"
+  },
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ]
 }

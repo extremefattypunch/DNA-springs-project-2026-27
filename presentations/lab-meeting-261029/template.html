@@ -205,6 +205,30 @@ body {
 .fade { transition: opacity .35s ease; }
 .hidden { opacity: 0 !important; pointer-events: none; }
 
+/* ---------- bar charts (fluorometry) ---------- */
+.chart-sim { position: absolute; }
+.chart-sim svg { position: absolute; inset: 0; overflow: visible; }
+.chart-sim text { font-family: var(--font-display); }
+.chart-sim .tick { font-family: var(--font-mono); }
+.chart-halo { opacity: 0; }
+.chart-halo.on { animation: chalo 1.8s ease-in-out infinite; }
+@keyframes chalo { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.is-test .chart-halo.on { animation: none; opacity: .9; }
+/* ---------- media slides (MD figures, videos, findings) ---------- */
+.m-item { position: absolute; display: flex; flex-direction: column; gap: 8px; }
+.m-frame { position: relative; flex: 1; min-height: 0; background: #fbfbf9; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; transition: box-shadow .3s, border-color .3s; }
+.m-frame img, .m-frame video { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; }
+.m-item.mhl .m-frame { border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent), 0 0 24px color-mix(in srgb, var(--amber) 35%, transparent); }
+.m-cap { font-size: 19px; line-height: 1.25; color: var(--ink-2); }
+.m-cap b { color: var(--ink); font-weight: 620; }
+.m-pts { position: absolute; display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.m-pts.cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; row-gap: 12px; }
+.m-pt { font-size: 23px; line-height: 1.32; color: var(--ink-2); padding-left: 22px; position: relative; opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease; }
+.m-pt::before { content: ""; position: absolute; left: 0; top: .55em; width: 9px; height: 9px; border-radius: 2px; background: var(--sec, var(--ink-3)); }
+.m-pt.on { opacity: 1; transform: none; }
+.m-pt.now { color: var(--ink); }
+.m-pt b { color: var(--ink); font-weight: 640; }
+.m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* render-tool mode: no transitions, so screenshots never catch a fade */
 .is-test *, .is-test *::before, .is-test *::after { transition: none !important; transition-delay: 0s !important; }
 .is-test .band.glow .halo { animation: none !important; opacity: .9; }
@@ -214,6 +238,8 @@ body {
 .mode-overlay .band { opacity: .62; }
 
 /* ---------- HUD ---------- */
+.goto { position: fixed; left: 50%; top: calc(20px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 6; font: 600 18px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 16px; box-shadow: 0 6px 24px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.goto.on { opacity: 1; }
 #hud { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 6px; z-index: 5; opacity: .2; transition: opacity .25s; }
 #hud:hover, #hud:focus-within { opacity: 1; }
 #hud button { font: 600 13px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 11px; cursor: pointer; }
@@ -225,6 +251,7 @@ body {
 <div id="hud" role="toolbar" aria-label="Slide controls">
   <button id="b-prev" type="button" aria-label="Previous step">&larr;</button>
   <button id="b-next" type="button" aria-label="Next step">&rarr;</button>
+  <label for="goto-n" style="display:flex;align-items:center;gap:4px;font:600 13px var(--font-mono);color:var(--ink)">Slide <input id="goto-n" type="number" min="1" inputmode="numeric" style="width:52px;font:inherit;padding:5px 6px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)"></label>
   <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
 </div>
 
@@ -783,6 +810,143 @@ function applyPanel(G, k, animate) {
   G.realTag.style.opacity = realOn ? 1 : 0;
 }
 
+/* ---------------- bar charts ---------------- */
+function buildChartPanel(slideEl, spec, P) {
+  const iw = spec.size[0], ih = spec.size[1];
+  const sc = Math.min(P.w / iw, P.h / ih);
+  const ox = P.x + (P.w - iw * sc) / 2, oy = P.y + Math.max(0, P.h - ih * sc) * .3;
+  const root = h('div', 'panel'); slideEl.appendChild(root);
+  const box = { left: ox + 'px', top: oy + 'px', width: iw * sc + 'px', height: ih * sc + 'px' };
+  const real = h('div', 'real', { style: box });
+  real.appendChild(h('img', null, { src: spec.image, alt: spec.title + ' bar chart as on the original slide', draggable: 'false' }));
+  const sim = h('div', 'chart-sim sim-layer', { style: box });
+  root.appendChild(sim); root.appendChild(real);
+  const realTag = h('div', 'real-tag', { text: 'Original chart', style: { left: ox + 'px', top: oy - 34 + 'px' } });
+  root.appendChild(realTag);
+  const scan = h('div', 'scanline', { style: { left: ox + 'px', width: iw * sc + 'px', top: oy + 'px' } });
+  root.appendChild(scan);
+  const svg = s('svg', { viewBox: `0 0 ${iw} ${ih}`, width: iw * sc, height: ih * sc });
+  sim.appendChild(svg);
+  const Y = v => spec.zero - v * spec.ppu;
+  const bars = spec.bars, pitch = bars.length > 1 ? bars[1].x - bars[0].x : 120;
+  const xL = bars[0].x - .75 * pitch, xR = bars[bars.length - 1].x + .75 * pitch;
+  const add = (tag, a, txt) => { const e = s(tag, a); if (txt != null) e.textContent = txt; svg.appendChild(e); return e; };
+  add('rect', { x: 0, y: 0, width: iw, height: ih, fill: '#fbfbf9' });
+  add('text', { x: iw * .06, y: ih * .085, 'font-size': ih * .042, 'font-weight': 700, fill: '#1b1f24' }, spec.title);
+  add('text', { x: iw * .06, y: ih * .135, 'font-size': ih * .026, fill: '#8a9096' }, spec.sub);
+  spec.ticks.forEach(v => {
+    add('line', { x1: xL, x2: xR, y1: Y(v), y2: Y(v), stroke: v === 0 ? '#9aa0a6' : '#e3e5e8', 'stroke-width': v === 0 ? 1.6 : 1.2 });
+    add('text', { x: xL - 10, y: Y(v) + 5, 'text-anchor': 'end', 'font-size': ih * .027, fill: '#6b7177', class: 'tick' }, v.toFixed(spec.fmt));
+  });
+  const yl = add('text', { x: 0, y: 0, 'text-anchor': 'middle', 'font-size': ih * .028, fill: '#6b7177',
+    transform: `translate(${xL - iw * .085},${(Y(0) + Y(spec.ticks[spec.ticks.length - 1])) / 2}) rotate(-90)` }, spec.ylabel);
+  const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+  const sd = a => { const m = mean(a); return a.length > 1 ? Math.sqrt(a.reduce((x, y) => x + (y - m) ** 2, 0) / (a.length - 1)) : 0; };
+  let top = -1, topV = -1;
+  const W = spec.barW || 27;
+  const groups = bars.map((b, i) => {
+    const m = b.mean != null ? b.mean : mean(b.reps), e = sd(b.reps);
+    if (m > topV) { topV = m; top = i; }
+    const g = s('g', {}); svg.appendChild(g);
+    const halo = s('rect', { x: b.x - W / 2 - 9, y: Y(m) - 9, width: W + 18, height: Y(0) - Y(m) + 9, rx: 8, fill: 'none',
+      stroke: '#ffb547', 'stroke-width': 7, class: 'chart-halo', style: 'filter: drop-shadow(0 0 10px #ffb547)' });
+    g.appendChild(halo);
+    const bar = s('rect', { x: b.x - W / 2, y: Y(m), width: W, height: Y(0) - Y(m), fill: b.color });
+    bar.style.transformBox = 'fill-box'; bar.style.transformOrigin = '50% 100%';
+    g.appendChild(bar);
+    const err = s('g', { stroke: '#2b2f33', 'stroke-width': 1.6 });
+    [[b.x, Y(m - e), b.x, Y(m + e)], [b.x - 6, Y(m + e), b.x + 6, Y(m + e)], [b.x - 6, Y(m - e), b.x + 6, Y(m - e)]]
+      .forEach(([x1, y1, x2, y2]) => err.appendChild(s('line', { x1, y1, x2, y2 })));
+    g.appendChild(err);
+    const dots = s('g', {});
+    b.reps.forEach((v, j) => {
+      const dx = b.reps.length === 1 ? 0 : (j / (b.reps.length - 1) - .5) * W * .8;
+      dots.appendChild(s('circle', { cx: b.x + dx, cy: Y(v), r: 4.2, fill: '#ffffff', stroke: b.color, 'stroke-width': 2 }));
+    });
+    g.appendChild(dots);
+    const lab = s('text', { x: b.x, y: Y(Math.max(m + e, ...b.reps)) - 13, 'text-anchor': 'middle', 'font-size': ih * .03, 'font-weight': 700, fill: '#1b1f24' });
+    lab.textContent = m.toFixed(4); g.appendChild(lab);
+    const xl = s('text', { x: b.x, y: Y(0) + ih * .045, 'text-anchor': 'middle', 'font-size': ih * .032, fill: '#4a5057' });
+    xl.textContent = b.label; svg.appendChild(xl);
+    if (b.sub) { const xs = s('text', { x: b.x, y: Y(0) + ih * .085, 'text-anchor': 'middle', 'font-size': ih * .028, fill: '#4a5057' }); xs.textContent = b.sub; svg.appendChild(xs); }
+    return { bar, err, dots, lab, halo };
+  });
+  let cap = null;
+  if (P.caption) { cap = h('div', 'caption', { style: { left: P.caption.x + 'px', top: P.caption.y + 'px', width: P.caption.w + 'px' } }); root.appendChild(cap); }
+  return { kind: 'chart', spec, root, real, sim, realTag, scan, groups, top, cap, k: -1, geom: { oy, ih, sc } };
+}
+
+function applyChart(C, k, animate) {
+  const spec = C.spec, fwd = animate && k === C.k + 1, prevK = C.k < 0 ? 0 : C.k;
+  C.k = k;
+  const shown = new Set(); let glow = false, real = false, last = null;
+  spec.steps.slice(0, k).forEach(st => { if (st.bar != null) shown.add(st.bar); if (st.glow) glow = true; if (st.real) real = true; last = st; });
+  const wasShown = new Set(); let wasReal = false;
+  spec.steps.slice(0, prevK).forEach(st => { if (st.bar != null) wasShown.add(st.bar); if (st.real) wasReal = true; });
+  C.groups.forEach((g, i) => {
+    const vis = shown.has(i), parts = [g.bar, g.err, g.dots, g.lab];
+    parts.forEach(e => { e.style.opacity = vis ? 1 : 0; e.style.transform = ''; });
+    g.halo.classList.toggle('on', glow && (spec.glowBars ? spec.glowBars.includes(i) : i === C.top));
+    if (vis && !wasShown.has(i) && fwd) {
+      anim(g.bar, { transform: ['scaleY(0)', 'scaleY(1)'] }, { duration: .9, easing: [.3, .7, .2, 1] });
+      anim(g.dots, { opacity: [0, 1], transform: ['translateY(-14px)', 'translateY(0px)'] }, { duration: .45, delay: .75 });
+      anim(g.err, { opacity: [0, 1] }, { duration: .35, delay: .95 });
+      anim(g.lab, { opacity: [0, 1] }, { duration: .35, delay: 1.05 });
+    }
+  });
+  if (C.cap) {
+    const n = spec.steps.length;
+    C.cap.innerHTML = k === 0 ? `<span class="k">0 / ${n}</span><span>Empty axes: bars appear left to right</span>`
+                              : `<span class="k">${k} / ${n}</span><span>${last.say || ''}</span>`;
+  }
+  if (real && !wasReal && fwd && !STATIC) {
+    C.real.style.opacity = 1;
+    anim(C.real, { clipPath: ['inset(0 0 100% 0)', 'inset(0 0 0% 0)'] }, { duration: 1.1, easing: [.45, .05, .25, 1] });
+    anim(C.scan, { top: [C.geom.oy + 'px', C.geom.oy + C.geom.ih * C.geom.sc + 'px'], opacity: [0, 1, 1, 0] }, { duration: 1.1, easing: [.45, .05, .25, 1] });
+  } else { C.real.style.opacity = real ? 1 : 0; C.real.style.clipPath = ''; }
+  C.realTag.style.opacity = real ? 1 : 0;
+}
+
+/* ---------------- media slides ---------------- */
+function buildMedia(el, cfg) {
+  const top = cfg.top || 160, bottom = 950;
+  const items = cfg.items || [], pts = cfg.points || [];
+  const boxes = [];
+  if (cfg.layout === 'row') {
+    const n = items.length, gap = 24, w = (1792 - (n - 1) * gap) / n;
+    const h = Math.min(w / (cfg.aspect || 1.29) + 60, cfg.rowH || 520);
+    items.forEach((_, i) => boxes.push({ x: 64 + i * (w + gap), y: top, w, h }));
+    var ptBox = { x: 64, y: top + h + 30, w: 1792, cols: true };
+  } else {
+    const fw = cfg.figW || 1160, n = items.length, gap = 22;
+    const hh = (bottom - top - (n - 1) * gap) / n;
+    items.forEach((_, i) => boxes.push({ x: 64, y: top + i * (hh + gap), w: fw, h: hh }));
+    var ptBox = { x: 64 + fw + 48, y: top + (cfg.q ? 52 : 6), w: 1792 - fw - 48 };
+  }
+  const els = items.map((it, i) => {
+    const b = boxes[i];
+    const box = h('div', 'm-item', { style: { left: b.x + 'px', top: b.y + 'px', width: b.w + 'px', height: b.h + 'px' } });
+    const fr = h('div', 'm-frame');
+    if (it.video) {
+      const v = h('video', null, { src: it.video, muted: '', loop: '', playsinline: '', preload: 'auto', poster: it.poster || '', 'aria-label': it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD animation' });
+      v.muted = true; fr.appendChild(v);
+    } else fr.appendChild(h('img', null, { src: it.img, alt: it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD figure', draggable: 'false' }));
+    box.appendChild(fr);
+    if (it.cap) box.appendChild(h('div', 'm-cap', { html: it.cap }));
+    el.appendChild(box); return box;
+  });
+  if (cfg.q) el.appendChild(h('div', 'm-q', { text: cfg.q, style: { left: ptBox.x + 'px', top: (top + 6) + 'px', width: ptBox.w + 'px' } }));
+  const ul = h('ul', 'm-pts' + (ptBox.cols ? ' cols' : ''), { style: { left: ptBox.x + 'px', top: ptBox.y + 'px', width: ptBox.w + 'px' } });
+  const lis = pts.map(pt => { const li = h('li', 'm-pt', { html: pt.text }); ul.appendChild(li); return li; });
+  el.appendChild(ul);
+  return { kind: 'media', k: -1, apply(k) {
+    this.k = k;
+    lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', i === k - 1); });
+    const hl = k > 0 ? pts[k - 1].hl : null;
+    els.forEach((e, i) => e.classList.toggle('mhl', Array.isArray(hl) ? hl.includes(i) : hl === i));
+  }, n: pts.length, videos: [...el.querySelectorAll('video')] };
+}
+
 /* ---------------- slides ---------------- */
 const slides = [];
 function buildSlide(cfg, idx) {
@@ -790,7 +954,15 @@ function buildSlide(cfg, idx) {
   el.style.setProperty('--sec', (SECTIONS[cfg.section] || [])[1] || 'var(--ink-3)');
   stage.appendChild(el);
   const S = { cfg, el, steps: [{ panel: null }], panels: [] };
-  if (cfg.kind === 'image') {
+  if (cfg.kind === 'media') {
+    el.appendChild(h('h2', 's-title', { text: cfg.title }));
+    const foot = h('div', 's-foot');
+    foot.innerHTML = `<span class="sec-tag">${(SECTIONS[cfg.section] || [''])[0]}</span><span class="dots"></span><span class="s-page">${idx + 1} / ${DECK.slides.length}</span>`;
+    el.appendChild(foot); S.dots = foot.querySelector('.dots');
+    const Mo = buildMedia(el, cfg); S.panels.push(Mo);
+    for (let k = 1; k <= Mo.n; k++) S.steps.push({ panel: 0, k });
+    for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
+  } else if (cfg.kind === 'image') {
     el.classList.add('static');
     el.appendChild(h('img', 'full', { src: cfg.src, alt: cfg.alt || cfg.title || 'Original slide', loading: idx < 2 ? 'eager' : 'lazy' }));
   } else {
@@ -802,6 +974,14 @@ function buildSlide(cfg, idx) {
     el.appendChild(foot);
     S.dots = foot.querySelector('.dots');
     (cfg.panels || []).forEach((pc, pi) => {
+      if (pc.chart) {
+        const cs = (DECK.charts || {})[pc.chart];
+        if (!cs) { console.warn('missing chart spec', pc.chart); return; }
+        const C = buildChartPanel(el, cs, pc);
+        S.panels.push(C);
+        cs.steps.forEach((st, k) => S.steps.push({ panel: pi, k: k + 1 }));
+        return;
+      }
       const spec = DECK.gels[pc.gel];
       if (!spec) { console.warn('missing gel spec', pc.gel); return; }
       const G = buildPanel(el, spec, pc);
@@ -823,7 +1003,8 @@ function show(si, k, animate) {
   // per-panel step counts at slide step k
   const counts = S.panels.map(() => 0);
   for (let i = 1; i <= k; i++) counts[S.steps[i].panel]++;
-  S.panels.forEach((G, pi) => applyPanel(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
+  S.panels.forEach((G, pi) => G.kind === 'media' ? G.apply(counts[pi]) : (G.kind === 'chart' ? applyChart : applyPanel)(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
+  slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
   if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
   cur = { s: si, k };
   try { history.replaceState(null, '', '#s' + (si + 1)); } catch (e) {}
@@ -851,7 +1032,7 @@ function boot() {
     DECK.slides = [Object.assign({}, cfg, { panels: cfg.panels.filter(p => p.gel === TEST) })];
   }
   DECK.slides.forEach((cfg, i) => {
-    if (cfg.kind !== 'image' && !TEST) autoPanels(cfg);
+    if (cfg.kind === 'gel' && !TEST) autoPanels(cfg);
     buildSlide(cfg, i);
   });
   fit(); addEventListener('resize', fit);
@@ -877,6 +1058,9 @@ function autoPanels(cfg) {
     if (n === 1) {
       Object.assign(p, { x: 64, y: top + 20, w: 1792, h: bottom - top - 20 - 50 });
       if (!p.ib) p.ib = [16, top - 16, 1904, bottom - 44];
+    } else if (n >= 3) {
+      const w = Math.floor((1872 - (n - 1) * 20) / n);
+      Object.assign(p, { x: 24 + i * (w + 20), y: top + 30, w, h: bottom - top - 30 - 70 });
     } else {
       const w = 900;
       Object.assign(p, { x: i === 0 ? 40 : 980, y: top + (p.head ? 56 : 30), w, h: bottom - top - (p.head ? 56 : 30) - 50 });
@@ -888,8 +1072,23 @@ function autoPanels(cfg) {
   });
 }
 
+// type a slide number then Enter to jump there (Esc cancels)
+let typed = '', typedTimer = null;
+const goto = h('div', 'goto', { 'aria-live': 'polite' }); document.body.appendChild(goto);
+function setTyped(v) {
+  typed = v; clearTimeout(typedTimer);
+  goto.textContent = typed ? `Go to slide ${typed} of ${slides.length} — Enter` : '';
+  goto.classList.toggle('on', !!typed);
+  if (typed) typedTimer = setTimeout(() => setTyped(''), 4000);
+}
 addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('button') && (e.key === ' ' || e.key === 'Enter')) return;
+  if (/^[0-9]$/.test(e.key)) { e.preventDefault(); setTyped((typed + e.key).slice(0, 3)); return; }
+  if (typed) {
+    if (e.key === 'Enter') { e.preventDefault(); const n = parseInt(typed, 10); setTyped(''); if (n >= 1 && n <= slides.length) show(n - 1, 0, false); return; }
+    if (e.key === 'Backspace') { e.preventDefault(); setTyped(typed.slice(0, -1)); return; }
+    if (e.key === 'Escape') { setTyped(''); return; }
+  }
   if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter', 'n'].includes(e.key)) { e.preventDefault(); next(); }
   else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace', 'p'].includes(e.key)) { e.preventDefault(); prev(); }
   else if (e.key === 'Home') show(0, 0, false);
@@ -905,6 +1104,9 @@ function toggleFull() {
     else document.documentElement.requestFullscreen().catch(() => {});
   } catch (e) {}
 }
+const gotoIn = document.getElementById('goto-n');
+gotoIn.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { const n = parseInt(gotoIn.value, 10); if (n >= 1 && n <= slides.length) show(n - 1, 0, false); gotoIn.value = ''; gotoIn.blur(); } });
+gotoIn.addEventListener('click', e => e.stopPropagation());
 document.getElementById('b-full').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
 let tx0 = null;
 addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });

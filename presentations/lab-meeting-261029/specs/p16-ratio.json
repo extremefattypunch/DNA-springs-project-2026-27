@@ -41,7 +41,7 @@
   },
   "p1d_ss": {
    "name": "pp2a + ssDNA",
-   "note": "linear 1 : 1 (slide: pp2a+DNA)",
+   "note": "1 : 1 chimera (slide: pp2a+DNA)",
    "cls": "ss",
    "icon": {
     "k": "p1d",
@@ -49,12 +49,11 @@
    }
   },
   "p1d_ds": {
-   "name": "pp2a + dsDNA",
-   "note": "linear · runs slightly faster",
-   "cls": "ds",
+   "name": "Circular pp2a + dsDNA",
+   "note": "new band · runs faster · product",
+   "cls": "circ",
    "icon": {
-    "k": "p1d",
-    "tet": 2,
+    "k": "circ",
     "ds": true
    }
   },
@@ -86,8 +85,8 @@
   },
   "ring_ds": {
    "name": "2 pp2a + 2 dsDNA ring",
-   "note": "dimer circle · runs slower",
-   "cls": "circ",
+   "note": "dimer ring · runs slower (wrong product)",
+   "cls": "ds",
    "icon": {
     "k": "p2d2circ",
     "ds": true
@@ -1004,38 +1003,50 @@
     "L2",
     "L8"
    ],
-   "say": "<b>1:4 + cDNA</b>: linear chimeras shift down, the 2 pp2a ring band shifts up"
+   "say": "<b>1:4 + cDNA</b>: pp2a + DNA shifts down to the circle; the 2 pp2a ring shifts up"
   },
   {
    "lanes": [
     "L4",
     "L10"
    ],
-   "say": "<b>1:2 + cDNA</b>: the same shifts, with stronger hybridized bands"
+   "say": "<b>1:2 + cDNA</b>: the same shifts, with a stronger circular band"
   },
   {
    "lanes": [
     "L6",
     "L12"
    ],
-   "say": "<b>1:1 + cDNA</b>: the strongest hybridized bands in both DNA lengths"
+   "say": "<b>1:1 + cDNA</b>: the strongest circular pp2a + dsDNA band in both DNA lengths"
   },
   {
    "glow": [
     [
      "L2",
-     1
+     2
     ],
     [
      "L4",
-     1
+     2
     ],
     [
      "L6",
-     1
+     2
+    ],
+    [
+     "L8",
+     0
+    ],
+    [
+     "L10",
+     0
+    ],
+    [
+     "L12",
+     0
     ]
    ],
-   "say": "<b>2 pp2a + 2 dsDNA ring</b>: the up-shifted dimer circle (wrong product) is strongest at 1:1"
+   "say": "<b>Circular pp2a + dsDNA</b>: the faster 1 : 1 circle, strongest at 1:1 DNA:protein"
   },
   {
    "real": true,

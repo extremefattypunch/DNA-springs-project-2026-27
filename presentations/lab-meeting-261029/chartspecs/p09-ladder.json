@@ -1,0 +1,112 @@
+{
+ "id": "p09-ladder",
+ "image": "charts/p09-ladder.jpg",
+ "size": [
+  859,
+  432
+ ],
+ "title": "1-tet concentration ladder · 2026-08-25",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates · n=3 unless noted",
+ "zero": 401,
+ "ppu": 1764,
+ "ticks": [
+  0,
+  0.025,
+  0.05,
+  0.075,
+  0.1,
+  0.125,
+  0.15,
+  0.175
+ ],
+ "fmt": 3,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "2 µM",
+   "color": "#89b9ec",
+   "reps": [
+    0.0967,
+    0.0998,
+    0.0973
+   ],
+   "x": 183
+  },
+  {
+   "label": "4 µM",
+   "color": "#5f9ee6",
+   "reps": [
+    0.0917,
+    0.0983,
+    0.0988
+   ],
+   "x": 325
+  },
+  {
+   "label": "8 µM",
+   "color": "#3479d4",
+   "reps": [
+    0.1032,
+    0.103,
+    0.1079
+   ],
+   "x": 469
+  },
+  {
+   "label": "16 µM",
+   "color": "#1d54a2",
+   "reps": [
+    0.1179,
+    0.1182,
+    0.1191
+   ],
+   "x": 611
+  },
+  {
+   "label": "32 µM",
+   "color": "#0e3466",
+   "reps": [
+    0.1449,
+    0.1474,
+    0.1444
+   ],
+   "x": 754
+  }
+ ],
+ "barW": 27,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>2 µM</b>: ratio 0.0979"
+  },
+  {
+   "bar": 1,
+   "say": "<b>4 µM</b>: 0.0963, the ratio holds steady at low concentration"
+  },
+  {
+   "bar": 2,
+   "say": "<b>8 µM</b>: 0.1047, the ratio starts to rise"
+  },
+  {
+   "bar": 3,
+   "say": "<b>16 µM</b>: 0.1184"
+  },
+  {
+   "bar": 4,
+   "say": "<b>32 µM</b>: 0.1456, a steep climb"
+  },
+  {
+   "glow": true,
+   "say": "<b>Inner filter effect from 8 µM</b>: the ratio no longer stays constant as concentration rises"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ],
+ "glowBars": [
+  2,
+  3,
+  4
+ ]
+}

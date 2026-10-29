@@ -1,0 +1,80 @@
+{
+ "id": "p10-bb1",
+ "image": "charts/p10-bb1.jpg",
+ "size": [
+  687,
+  523
+ ],
+ "title": "Backbone att 1 · 2026-08-28",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
+ "zero": 487,
+ "ppu": 2494,
+ "ticks": [
+  0,
+  0.02,
+  0.04,
+  0.06,
+  0.08,
+  0.1,
+  0.12,
+  0.14,
+  0.16
+ ],
+ "fmt": 2,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "ss",
+   "color": "#2c79d8",
+   "reps": [
+    0.1294,
+    0.1271,
+    0.1269
+   ],
+   "x": 193
+  },
+  {
+   "label": "ds",
+   "color": "#ec6934",
+   "reps": [
+    0.1153,
+    0.1161,
+    0.1162
+   ],
+   "x": 332
+  },
+  {
+   "label": "nicked",
+   "color": "#1cab76",
+   "reps": [
+    0.1199,
+    0.1193,
+    0.1194
+   ],
+   "x": 471
+  }
+ ],
+ "barW": 27,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>ssDNA chimera</b>: no spring tension, ratio 0.1278"
+  },
+  {
+   "bar": 1,
+   "say": "<b>dsDNA chimera</b>: under spring force, 0.1159"
+  },
+  {
+   "bar": 2,
+   "say": "<b>nicked dsDNA</b>: relaxed control, 0.1195"
+  },
+  {
+   "glow": true,
+   "say": "<b>Highest ratio: ssDNA</b>. The force-bearing dsDNA is lowest, a weak effect"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ]
+}

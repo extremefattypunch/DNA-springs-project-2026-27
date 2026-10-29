@@ -1,0 +1,78 @@
+{
+ "id": "p08-att3",
+ "image": "charts/p08-att3.jpg",
+ "size": [
+  703,
+  512
+ ],
+ "title": "Attempt 3 · 2026-08-21",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
+ "zero": 473,
+ "ppu": 1552,
+ "ticks": [
+  0,
+  0.05,
+  0.1,
+  0.15,
+  0.2,
+  0.25
+ ],
+ "fmt": 2,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "0-tet",
+   "color": "#2c79d8",
+   "reps": [
+    0.1916,
+    0.1856,
+    0.1884
+   ],
+   "x": 236
+  },
+  {
+   "label": "1-tet",
+   "color": "#ec6934",
+   "reps": [
+    0.1526,
+    0.1937,
+    0.1727
+   ],
+   "x": 408
+  },
+  {
+   "label": "2-tet",
+   "color": "#1cab76",
+   "reps": [
+    0.1184,
+    0.1292,
+    0.1373
+   ],
+   "sub": "",
+   "x": 579
+  }
+ ],
+ "barW": 34,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>0-tet sfGFP</b>: ratio 0.1885"
+  },
+  {
+   "bar": 1,
+   "say": "<b>1-tet</b>: 0.1730, with a wide spread between replicates"
+  },
+  {
+   "bar": 2,
+   "say": "<b>2-tet</b>: lowest, 0.1283"
+  },
+  {
+   "glow": true,
+   "say": "<b>Highest ratio: 0-tet</b>. The quenching trend holds in all three attempts"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ]
+}

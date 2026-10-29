@@ -1,466 +1,494 @@
 {
-  "id": "p21-sec",
-  "image": "gels/p21-sec.jpg",
-  "size": [
-    443,
-    353
+ "id": "p21-sec",
+ "image": "gels/p21-sec.jpg",
+ "size": [
+  443,
+  353
+ ],
+ "style": "dark",
+ "alt": "pp2a SDS-PAGE: two ssDNA / +cDNA pairs (the second much fainter) and pp2a alone; the 2 pp2a + 2 DNA band shifts up and the pp2a + DNA band shifts down with cDNA",
+ "gel": {
+  "poly": [
+   [
+    122,
+    42
+   ],
+   [
+    291,
+    40
+   ],
+   [
+    299,
+    333
+   ],
+   [
+    126,
+    333
+   ]
   ],
-  "style": "dark",
-  "alt": "pp2a SDS-PAGE: two ssDNA / +cDNA pairs (the second much fainter) and pp2a alone; the 2 pp2a + 2 DNA band shifts up and the pp2a + DNA band shifts down with cDNA",
-  "gel": {
-    "poly": [
-      [
-        122,
-        42
-      ],
-      [
-        291,
-        40
-      ],
-      [
-        299,
-        333
-      ],
-      [
-        126,
-        333
-      ]
+  "wellY": 47,
+  "tilt": 0
+ },
+ "species": {
+  "protein": {
+   "name": "pp2a only",
+   "note": "unreacted protein",
+   "cls": "protein",
+   "icon": {
+    "k": "protein",
+    "tet": 2
+   }
+  },
+  "p2d2_ss": {
+   "name": "2 pp2a + 2 ssDNA ring",
+   "note": "survives TCO resin",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2circ"
+   }
+  },
+  "p1d_ss": {
+   "name": "Circular pp2a + ssDNA",
+   "note": "new band · survives TCO resin",
+   "cls": "ss",
+   "icon": {
+    "k": "circ"
+   }
+  },
+  "p2d2_ds": {
+   "name": "2 pp2a + 2 dsDNA ring",
+   "note": "dimer ring · runs slower",
+   "cls": "ds",
+   "icon": {
+    "k": "p2d2circ",
+    "ds": true
+   }
+  },
+  "p1d_ds": {
+   "name": "Circular pp2a + dsDNA",
+   "note": "runs faster · survives TCO resin",
+   "cls": "circ",
+   "icon": {
+    "k": "circ",
+    "ds": true
+   }
+  },
+  "imp": {
+   "cls": "impurity"
+  },
+  "circ_ds": {
+   "name": "Circular pp2a + dsDNA",
+   "note": "new band · runs faster · product",
+   "cls": "circ",
+   "icon": {
+    "k": "circ",
+    "ds": true
+   }
+  }
+ },
+ "lanes": [
+  {
+   "id": "L1",
+   "x": 145,
+   "w": 26,
+   "label": "−",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 127,
+     "h": 7,
+     "i": 0.92,
+     "sp": "p2d2_ss"
+    },
+    {
+     "y": 164,
+     "h": 6,
+     "i": 0.21,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 194,
+     "h": 6,
+     "i": 0.2,
+     "sp": "protein"
+    },
+    {
+     "y": 278,
+     "h": 9,
+     "i": 0.95,
+     "sp": "imp",
+     "x": 144,
+     "w": 28
+    },
+    {
+     "y": 323,
+     "h": 9,
+     "i": 0.95,
+     "sp": "imp",
+     "x": 143,
+     "w": 30
+    },
+    {
+     "y": 157,
+     "h": 6,
+     "i": 0.19,
+     "sp": "imp"
+    },
+    {
+     "y": 217,
+     "h": 7,
+     "i": 0.2,
+     "sp": "imp"
+    },
+    {
+     "y": 147,
+     "h": 5,
+     "i": 0.08,
+     "sp": "imp"
+    },
+    {
+     "y": 206,
+     "h": 8,
+     "i": 0.07,
+     "sp": "imp"
+    }
+   ],
+   "sub": "cDNA"
+  },
+  {
+   "id": "L2",
+   "x": 175,
+   "w": 24,
+   "label": "+",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 119,
+     "h": 6,
+     "i": 0.5,
+     "sp": "p2d2_ds"
+    },
+    {
+     "y": 126,
+     "h": 6,
+     "i": 0.42,
+     "sp": "p2d2_ss"
+    },
+    {
+     "y": 173,
+     "h": 6,
+     "i": 0.24,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 163,
+     "h": 6,
+     "i": 0.18,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 192,
+     "h": 5,
+     "i": 0.05,
+     "sp": "protein"
+    },
+    {
+     "y": 276,
+     "h": 9,
+     "i": 1.0,
+     "sp": "imp",
+     "x": 176,
+     "w": 28
+    },
+    {
+     "y": 321,
+     "h": 9,
+     "i": 1.0,
+     "sp": "imp",
+     "x": 176,
+     "w": 30
+    },
+    {
+     "y": 208,
+     "h": 6,
+     "i": 0.2,
+     "sp": "imp"
+    },
+    {
+     "y": 218,
+     "h": 6,
+     "i": 0.15,
+     "sp": "imp"
+    },
+    {
+     "y": 157,
+     "h": 5,
+     "i": 0.1,
+     "sp": "imp"
+    },
+    {
+     "y": 146,
+     "h": 5,
+     "i": 0.07,
+     "sp": "imp"
+    }
+   ],
+   "sub": "cDNA"
+  },
+  {
+   "id": "L3",
+   "x": 201,
+   "w": 22,
+   "label": "−",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 124,
+     "h": 6,
+     "i": 0.26,
+     "sp": "p2d2_ss"
+    },
+    {
+     "y": 162,
+     "h": 6,
+     "i": 0.06,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 274,
+     "h": 8,
+     "i": 0.42,
+     "sp": "imp",
+     "x": 205,
+     "w": 26
+    },
+    {
+     "y": 319,
+     "h": 9,
+     "i": 0.66,
+     "sp": "imp",
+     "x": 206,
+     "w": 28
+    },
+    {
+     "y": 214,
+     "h": 6,
+     "i": 0.05,
+     "sp": "imp"
+    }
+   ],
+   "sub": "cDNA"
+  },
+  {
+   "id": "L4",
+   "x": 229,
+   "w": 22,
+   "label": "+",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 116,
+     "h": 6,
+     "i": 0.13,
+     "sp": "p2d2_ds"
+    },
+    {
+     "y": 170,
+     "h": 6,
+     "i": 0.1,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 273,
+     "h": 8,
+     "i": 0.4,
+     "sp": "imp",
+     "x": 235,
+     "w": 26
+    },
+    {
+     "y": 317,
+     "h": 9,
+     "i": 0.62,
+     "sp": "imp",
+     "x": 236,
+     "w": 28
+    },
+    {
+     "y": 205,
+     "h": 6,
+     "i": 0.07,
+     "sp": "imp"
+    }
+   ],
+   "sub": "cDNA"
+  },
+  {
+   "id": "L5",
+   "x": 260,
+   "w": 28,
+   "label": "pp2a",
+   "chip": "ctrl",
+   "bands": [
+    {
+     "y": 187,
+     "h": 7,
+     "i": 0.82,
+     "sp": "protein"
+    },
+    {
+     "y": 271,
+     "h": 9,
+     "i": 0.45,
+     "sp": "imp",
+     "x": 266,
+     "w": 28
+    },
+    {
+     "y": 315,
+     "h": 9,
+     "i": 0.55,
+     "sp": "imp",
+     "x": 268,
+     "w": 30
+    },
+    {
+     "y": 206,
+     "h": 5,
+     "i": 0.06,
+     "sp": "imp"
+    },
+    {
+     "y": 211,
+     "h": 5,
+     "i": 0.08,
+     "sp": "imp"
+    }
+   ],
+   "sub": "alone"
+  }
+ ],
+ "arrows": [
+  {
+   "from": [
+    "L1",
+    0
+   ],
+   "to": [
+    "L2",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L1",
+    0
+   ],
+   "to": [
+    "L2",
+    1
+   ]
+  },
+  {
+   "from": [
+    "L1",
+    1
+   ],
+   "to": [
+    "L2",
+    2
+   ]
+  },
+  {
+   "from": [
+    "L1",
+    1
+   ],
+   "to": [
+    "L2",
+    3
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    0
+   ],
+   "to": [
+    "L4",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    1
+   ],
+   "to": [
+    "L4",
+    1
+   ]
+  }
+ ],
+ "blank": "Blank gel: two ssDNA / +cDNA pairs and pp2a alone, loaded as the story unfolds",
+ "steps": [
+  {
+   "lanes": [
+    "L5"
+   ],
+   "say": "<b>pp2a alone</b>: protein reference; the two low bands appear here too, so they are not chimeras"
+  },
+  {
+   "lanes": [
+    "L1"
+   ],
+   "say": "<b>pp2a + ssDNA</b>: a strong 2 : 2 ring band over the weaker 1 : 1 new band"
+  },
+  {
+   "lanes": [
+    "L2"
+   ],
+   "say": "<b>+ cDNA</b>: the dimer ring shifts up, the 1 : 1 circle shifts down (circles run faster)"
+  },
+  {
+   "lanes": [
+    "L3",
+    "L4"
+   ],
+   "say": "<b>Same samples after TCO resin</b>: free pp2a is captured, both circular products stay"
+  },
+  {
+   "glow": [
+    [
+     "L2",
+     2
     ],
-    "wellY": 47,
-    "tilt": 0
+    [
+     "L4",
+     1
+    ]
+   ],
+   "say": "<b>Circular pp2a + dsDNA</b>: survives the resin, so it has no free tet: a true circle"
   },
-  "species": {
-    "protein": {
-      "name": "pp2a only",
-      "note": "unreacted protein",
-      "cls": "protein",
-      "icon": {
-        "k": "protein",
-        "tet": 2
-      }
-    },
-    "p2d2_ss": {
-      "name": "2 pp2a + 2 ssDNA",
-      "note": "2 : 2 chimera, likely a ring",
-      "cls": "ss",
-      "icon": {
-        "k": "p2d2circ"
-      }
-    },
-    "p1d_ss": {
-      "name": "pp2a + ssDNA",
-      "note": "linear 1 : 1 chimera",
-      "cls": "ss",
-      "icon": {
-        "k": "p1d",
-        "tet": 2
-      }
-    },
-    "p2d2_ds": {
-      "name": "2 pp2a + 2 dsDNA ring",
-      "note": "dimer ring · runs slower",
-      "cls": "circ",
-      "icon": {
-        "k": "p2d2circ",
-        "ds": true
-      }
-    },
-    "p1d_ds": {
-      "name": "pp2a + dsDNA",
-      "note": "linear · runs faster",
-      "cls": "ds",
-      "icon": {
-        "k": "p1d",
-        "tet": 2,
-        "ds": true
-      }
-    },
-    "imp": {
-      "cls": "impurity"
-    }
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ],
+ "groups": [
+  {
+   "label": "input",
+   "lanes": [
+    "L1",
+    "L2"
+   ]
   },
-  "lanes": [
-    {
-      "id": "L1",
-      "x": 145,
-      "w": 26,
-      "label": "−",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 127,
-          "h": 7,
-          "i": 0.92,
-          "sp": "p2d2_ss"
-        },
-        {
-          "y": 164,
-          "h": 6,
-          "i": 0.21,
-          "sp": "p1d_ss"
-        },
-        {
-          "y": 194,
-          "h": 6,
-          "i": 0.2,
-          "sp": "protein"
-        },
-        {
-          "y": 278,
-          "h": 9,
-          "i": 0.95,
-          "sp": "imp",
-          "x": 144,
-          "w": 28
-        },
-        {
-          "y": 323,
-          "h": 9,
-          "i": 0.95,
-          "sp": "imp",
-          "x": 143,
-          "w": 30
-        },
-        {
-          "y": 157,
-          "h": 6,
-          "i": 0.19,
-          "sp": "imp"
-        },
-        {
-          "y": 217,
-          "h": 7,
-          "i": 0.2,
-          "sp": "imp"
-        },
-        {
-          "y": 147,
-          "h": 5,
-          "i": 0.08,
-          "sp": "imp"
-        },
-        {
-          "y": 206,
-          "h": 8,
-          "i": 0.07,
-          "sp": "imp"
-        }
-      ],
-      "sub": "cDNA"
-    },
-    {
-      "id": "L2",
-      "x": 175,
-      "w": 24,
-      "label": "+",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 119,
-          "h": 6,
-          "i": 0.5,
-          "sp": "p2d2_ds"
-        },
-        {
-          "y": 126,
-          "h": 6,
-          "i": 0.42,
-          "sp": "p2d2_ss"
-        },
-        {
-          "y": 173,
-          "h": 6,
-          "i": 0.24,
-          "sp": "p1d_ds"
-        },
-        {
-          "y": 163,
-          "h": 6,
-          "i": 0.18,
-          "sp": "p1d_ss"
-        },
-        {
-          "y": 192,
-          "h": 5,
-          "i": 0.05,
-          "sp": "protein"
-        },
-        {
-          "y": 276,
-          "h": 9,
-          "i": 1.0,
-          "sp": "imp",
-          "x": 176,
-          "w": 28
-        },
-        {
-          "y": 321,
-          "h": 9,
-          "i": 1.0,
-          "sp": "imp",
-          "x": 176,
-          "w": 30
-        },
-        {
-          "y": 208,
-          "h": 6,
-          "i": 0.2,
-          "sp": "imp"
-        },
-        {
-          "y": 218,
-          "h": 6,
-          "i": 0.15,
-          "sp": "imp"
-        },
-        {
-          "y": 157,
-          "h": 5,
-          "i": 0.1,
-          "sp": "imp"
-        },
-        {
-          "y": 146,
-          "h": 5,
-          "i": 0.07,
-          "sp": "imp"
-        }
-      ],
-      "sub": "cDNA"
-    },
-    {
-      "id": "L3",
-      "x": 201,
-      "w": 22,
-      "label": "−",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 124,
-          "h": 6,
-          "i": 0.26,
-          "sp": "p2d2_ss"
-        },
-        {
-          "y": 162,
-          "h": 6,
-          "i": 0.06,
-          "sp": "p1d_ss"
-        },
-        {
-          "y": 274,
-          "h": 8,
-          "i": 0.42,
-          "sp": "imp",
-          "x": 205,
-          "w": 26
-        },
-        {
-          "y": 319,
-          "h": 9,
-          "i": 0.66,
-          "sp": "imp",
-          "x": 206,
-          "w": 28
-        },
-        {
-          "y": 214,
-          "h": 6,
-          "i": 0.05,
-          "sp": "imp"
-        }
-      ],
-      "sub": "cDNA"
-    },
-    {
-      "id": "L4",
-      "x": 229,
-      "w": 22,
-      "label": "+",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 116,
-          "h": 6,
-          "i": 0.13,
-          "sp": "p2d2_ds"
-        },
-        {
-          "y": 170,
-          "h": 6,
-          "i": 0.1,
-          "sp": "p1d_ds"
-        },
-        {
-          "y": 273,
-          "h": 8,
-          "i": 0.4,
-          "sp": "imp",
-          "x": 235,
-          "w": 26
-        },
-        {
-          "y": 317,
-          "h": 9,
-          "i": 0.62,
-          "sp": "imp",
-          "x": 236,
-          "w": 28
-        },
-        {
-          "y": 205,
-          "h": 6,
-          "i": 0.07,
-          "sp": "imp"
-        }
-      ],
-      "sub": "cDNA"
-    },
-    {
-      "id": "L5",
-      "x": 260,
-      "w": 28,
-      "label": "pp2a",
-      "chip": "ctrl",
-      "bands": [
-        {
-          "y": 187,
-          "h": 7,
-          "i": 0.82,
-          "sp": "protein"
-        },
-        {
-          "y": 271,
-          "h": 9,
-          "i": 0.45,
-          "sp": "imp",
-          "x": 266,
-          "w": 28
-        },
-        {
-          "y": 315,
-          "h": 9,
-          "i": 0.55,
-          "sp": "imp",
-          "x": 268,
-          "w": 30
-        },
-        {
-          "y": 206,
-          "h": 5,
-          "i": 0.06,
-          "sp": "imp"
-        },
-        {
-          "y": 211,
-          "h": 5,
-          "i": 0.08,
-          "sp": "imp"
-        }
-      ],
-      "sub": "alone"
-    }
-  ],
-  "arrows": [
-    {
-      "from": [
-        "L1",
-        0
-      ],
-      "to": [
-        "L2",
-        0
-      ]
-    },
-    {
-      "from": [
-        "L1",
-        0
-      ],
-      "to": [
-        "L2",
-        1
-      ]
-    },
-    {
-      "from": [
-        "L1",
-        1
-      ],
-      "to": [
-        "L2",
-        2
-      ]
-    },
-    {
-      "from": [
-        "L1",
-        1
-      ],
-      "to": [
-        "L2",
-        3
-      ]
-    },
-    {
-      "from": [
-        "L3",
-        0
-      ],
-      "to": [
-        "L4",
-        0
-      ]
-    },
-    {
-      "from": [
-        "L3",
-        1
-      ],
-      "to": [
-        "L4",
-        1
-      ]
-    }
-  ],
-  "blank": "Blank gel: two ssDNA / +cDNA pairs and pp2a alone, loaded as the story unfolds",
-  "steps": [
-    {
-      "lanes": [
-        "L5"
-      ],
-      "say": "<b>pp2a alone</b>: protein reference; the two low bands appear here too, so they are not chimeras"
-    },
-    {
-      "lanes": [
-        "L1",
-        "L3"
-      ],
-      "say": "<b>pp2a + ssDNA</b>: a strong 2 : 2 band over a weak 1 : 1; lane 3 is far fainter, no free pp2a"
-    },
-    {
-      "lanes": [
-        "L2",
-        "L4"
-      ],
-      "say": "<b>+ complementary strand</b>: the 2 : 2 band moves up (ring), the 1 : 1 moves down (linear)"
-    },
-    {
-      "glow": [
-        [
-          "L2",
-          0
-        ],
-        [
-          "L4",
-          0
-        ]
-      ],
-      "say": "<b>Dimer ring</b>: the up-shifted band is circular, 2 pp2a + 2 dsDNA, not a 1 : 1 circle"
-    },
-    {
-      "real": true,
-      "say": "Real gel, as imaged"
-    }
-  ]
+  {
+   "label": "TCO resin",
+   "lanes": [
+    "L3",
+    "L4"
+   ]
+  }
+ ]
 }

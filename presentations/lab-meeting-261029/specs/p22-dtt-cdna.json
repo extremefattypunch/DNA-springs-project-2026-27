@@ -41,24 +41,24 @@
   },
   "p1d_ss": {
    "name": "pp2a + ssDNA",
-   "note": "slide: pp2a+DNA \u00b7 linear 1 : 1",
+   "note": "slide: pp2a+DNA · linear 1 : 1",
    "cls": "ss",
    "icon": {
     "k": "p1d"
    }
   },
   "p1d_ds": {
-   "name": "pp2a + dsDNA",
-   "note": "+cDNA lanes only \u00b7 runs faster",
-   "cls": "ds",
+   "name": "Circular pp2a + dsDNA",
+   "note": "new band · runs faster · cDNA lanes",
+   "cls": "circ",
    "icon": {
-    "k": "p1d",
+    "k": "circ",
     "ds": true
    }
   },
   "p2d2_ss": {
    "name": "2 pp2a + 2 DNA",
-   "note": "slide label \u00b7 chain or ring",
+   "note": "slide label · chain or ring",
    "cls": "ss",
    "icon": {
     "k": "p2d2"
@@ -66,8 +66,8 @@
   },
   "p2d2_ds": {
    "name": "2 pp2a + 2 dsDNA ring",
-   "note": "+cDNA only \u00b7 ring runs slower",
-   "cls": "circ",
+   "note": "+cDNA only · dimer ring, runs slower",
+   "cls": "ds",
    "icon": {
     "k": "p2d2circ",
     "ds": true
@@ -304,7 +304,7 @@
  ],
  "groups": [
   {
-   "label": "cDNA added \u00b7 DTT",
+   "label": "cDNA added · DTT",
    "lanes": [
     "L1",
     "L2",
@@ -332,13 +332,13 @@
    "lanes": [
     "L4"
    ],
-   "say": "<b>No DTT + cDNA</b>: a 2:2 ring shifts up, pp2a + dsDNA shifts down"
+   "say": "<b>No DTT + cDNA</b>: the 1 : 1 circle shifts down, the 2 : 2 ring shifts up"
   },
   {
    "lanes": [
     "L2"
    ],
-   "say": "<b>8 mM DTT + cDNA</b>: chimera bands remain, but the dsDNA shift is faint"
+   "say": "<b>8 mM DTT + cDNA</b>: chimera bands remain, but only a faint circular band"
   },
   {
    "lanes": [
@@ -356,10 +356,14 @@
    "glow": [
     [
      "L4",
-     0
+     3
+    ],
+    [
+     "L2",
+     2
     ]
    ],
-   "say": "<b>2 pp2a + 2 dsDNA ring</b>: the circular product forms only without DTT; DTT blocks it"
+   "say": "<b>Circular pp2a + dsDNA</b>: forms without DTT, barely at 8 mM, gone at 16-20 mM"
   },
   {
    "real": true,

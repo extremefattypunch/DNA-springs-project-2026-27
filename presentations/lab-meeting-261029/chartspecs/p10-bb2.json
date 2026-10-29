@@ -1,0 +1,80 @@
+{
+ "id": "p10-bb2",
+ "image": "charts/p10-bb2.jpg",
+ "size": [
+  698,
+  532
+ ],
+ "title": "Backbone att 2 · 2026-08-28",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
+ "zero": 496,
+ "ppu": 2544,
+ "ticks": [
+  0,
+  0.02,
+  0.04,
+  0.06,
+  0.08,
+  0.1,
+  0.12,
+  0.14,
+  0.16
+ ],
+ "fmt": 2,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "ss",
+   "color": "#2c79d8",
+   "reps": [
+    0.1209,
+    0.1205,
+    0.1268
+   ],
+   "x": 202
+  },
+  {
+   "label": "ds",
+   "color": "#ec6934",
+   "reps": [
+    0.1121,
+    0.1095,
+    0.1039
+   ],
+   "x": 341
+  },
+  {
+   "label": "nicked",
+   "color": "#1cab76",
+   "reps": [
+    0.1153,
+    0.1106,
+    0.1143
+   ],
+   "x": 480
+  }
+ ],
+ "barW": 27,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>ssDNA chimera</b>: ratio 0.1227"
+  },
+  {
+   "bar": 1,
+   "say": "<b>dsDNA chimera</b>: 0.1085"
+  },
+  {
+   "bar": 2,
+   "say": "<b>nicked dsDNA</b>: 0.1134"
+  },
+  {
+   "glow": true,
+   "say": "<b>Highest ratio: ssDNA</b> again, with dsDNA lowest in both attempts"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ]
+}

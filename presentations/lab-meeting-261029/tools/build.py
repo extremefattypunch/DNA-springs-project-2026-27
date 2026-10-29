@@ -64,6 +64,10 @@ for gid, spec in list(gels.items()):
 if bad:
     sys.exit("spec errors (see above)")
 
+charts = {}
+for p in sorted((ROOT / "chartspecs").glob("*.json")):
+    c = json.loads(p.read_text()); charts[c["id"]] = c
+
 tpl = (ROOT / "template.html").read_text()
 if a.test:
     if a.test not in gels:
@@ -74,7 +78,7 @@ if a.test:
     html = tpl.replace("/*__DECK__*/null", json.dumps(payload, separators=(",", ":")))
     html = f'<base href="{ROOT.as_uri()}/">\n' + html
 else:
-    payload = {"slides": deck["slides"], "gels": gels}
+    payload = {"slides": deck["slides"], "gels": gels, "charts": charts}
     out = ROOT / "index.html"
     html = tpl.replace("/*__DECK__*/null", json.dumps(payload, separators=(",", ":")))
 out.write_text(html)

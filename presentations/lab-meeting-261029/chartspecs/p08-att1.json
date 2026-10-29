@@ -1,0 +1,81 @@
+{
+ "id": "p08-att1",
+ "image": "charts/p08-att1.jpg",
+ "size": [
+  856,
+  527
+ ],
+ "title": "Attempt 1 · 2026-08-12",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
+ "zero": 478.5,
+ "ppu": 2044,
+ "ticks": [
+  0,
+  0.025,
+  0.05,
+  0.075,
+  0.1,
+  0.125,
+  0.15,
+  0.175,
+  0.2
+ ],
+ "fmt": 3,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "0-tet",
+   "color": "#2c79d8",
+   "reps": [
+    0.1471,
+    0.1529,
+    0.1545
+   ],
+   "x": 194
+  },
+  {
+   "label": "1-tet",
+   "color": "#ec6934",
+   "reps": [
+    0.1108,
+    0.1118,
+    0.1196
+   ],
+   "x": 329
+  },
+  {
+   "label": "2-tet",
+   "color": "#1cab76",
+   "reps": [
+    0.102,
+    0.1088,
+    0.109
+   ],
+   "sub": "",
+   "x": 463
+  }
+ ],
+ "barW": 27,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>0-tet sfGFP</b>: no tetrazine, ratio 0.1515"
+  },
+  {
+   "bar": 1,
+   "say": "<b>1-tet</b>: one tetrazine drops it to 0.1141"
+  },
+  {
+   "bar": 2,
+   "say": "<b>2-tet</b>: two tetrazines, 0.1066"
+  },
+  {
+   "glow": true,
+   "say": "<b>Highest ratio: 0-tet</b>. Adding tetrazine dims the 400 nm excitation peak"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ]
+}

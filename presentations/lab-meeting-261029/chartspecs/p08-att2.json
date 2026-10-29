@@ -1,0 +1,79 @@
+{
+ "id": "p08-att2",
+ "image": "charts/p08-att2.jpg",
+ "size": [
+  686,
+  529
+ ],
+ "title": "Attempt 2 · 2026-08-21",
+ "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
+ "zero": 468,
+ "ppu": 2128,
+ "ticks": [
+  0,
+  0.025,
+  0.05,
+  0.075,
+  0.1,
+  0.125,
+  0.15,
+  0.175
+ ],
+ "fmt": 3,
+ "ylabel": "I(400) / I(peak)",
+ "bars": [
+  {
+   "label": "0-tet",
+   "color": "#2c79d8",
+   "reps": [
+    0.1409,
+    0.1378,
+    0.1389
+   ],
+   "x": 195
+  },
+  {
+   "label": "1-tet",
+   "color": "#ec6934",
+   "reps": [
+    0.1055,
+    0.1062,
+    0.1092
+   ],
+   "x": 329
+  },
+  {
+   "label": "2-tet",
+   "color": "#1cab76",
+   "reps": [
+    0.1105,
+    0.1139
+   ],
+   "sub": "(n=2)",
+   "x": 464
+  }
+ ],
+ "barW": 27,
+ "steps": [
+  {
+   "bar": 0,
+   "say": "<b>0-tet sfGFP</b>: ratio 0.1392"
+  },
+  {
+   "bar": 1,
+   "say": "<b>1-tet</b>: down to 0.1070"
+  },
+  {
+   "bar": 2,
+   "say": "<b>2-tet</b> (n = 2): 0.1122, about level with 1-tet"
+  },
+  {
+   "glow": true,
+   "say": "<b>Highest ratio: 0-tet</b> again. Both tet forms are quenched"
+  },
+  {
+   "real": true,
+   "say": "Original chart"
+  }
+ ]
+}

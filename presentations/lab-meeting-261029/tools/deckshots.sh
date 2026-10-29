@@ -8,7 +8,9 @@ root, n = pathlib.Path(sys.argv[1]), int(sys.argv[2])
 deck = json.loads((root / 'deck.json').read_text()); sl = deck['slides'][n - 1]
 k = 1
 for p in sl.get('panels', []):
-    k += len(json.loads((root / 'specs' / (p['gel'] + '.json')).read_text())['steps'])
+    f = root / 'specs' / (p['gel'] + '.json') if 'gel' in p else root / 'chartspecs' / (p['chart'] + '.json')
+    k += len(json.loads(f.read_text())['steps'])
+k += len(sl.get('points', []))
 print(k)
 PY
 )

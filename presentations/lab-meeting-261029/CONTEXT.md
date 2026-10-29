@@ -25,6 +25,14 @@ Top of gel = slow = large. Typical order, slow to fast, in protein stain:
 4. free DNA (faint in protein stain)
 5. **protein only** (unreacted) - "sfGFP", "pp2a"; pp2a often shows as a doublet.
 
+## PP2A correction from Ian (overrides the generic rule below for pp2a)
+- For 2-tet pp2a, the band just BELOW pp2a + ssDNA in a +cDNA lane is the 1 : 1
+  CIRCULAR pp2a + dsDNA product (it runs FASTER) and is the band that glows. It is
+  the same "new band" seen after GST cleavage. Only 1-tet down-shifts are linear.
+- The up-shifted 2 pp2a + 2 dsDNA ring is the wrong product: label it, never glow it.
+- After TCO resin, free pp2a disappears and both circular products remain.
+- sfGFP slides follow the generic rule (circular runs slower) and are correct.
+
 ## Hybridization (paper Fig 4 / S4) - the arrows
 - Adding cDNA shifts chimera bands. **Linear** dsDNA chimeras run **faster** (arrow
   points DOWN). **Circular** dsDNA chimeras run **slower** (arrow points UP, often a

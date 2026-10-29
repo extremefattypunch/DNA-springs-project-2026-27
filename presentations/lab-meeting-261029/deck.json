@@ -53,22 +53,61 @@
    "title": "Flurometry"
   },
   {
-   "kind": "image",
+   "kind": "gel",
    "page": 8,
-   "src": "slides/p-08.jpg",
-   "title": "Effect of Tet quenching"
+   "title": "Effect of Tet quenching - tet addition dims excitation peak",
+   "section": "assay",
+   "panels": [
+    {
+     "chart": "p08-att1"
+    },
+    {
+     "chart": "p08-att2"
+    },
+    {
+     "chart": "p08-att3"
+    }
+   ]
   },
   {
-   "kind": "image",
+   "kind": "gel",
    "page": 9,
-   "src": "slides/p-09.jpg",
-   "title": "Concentration ladder - inner filter effect"
+   "title": "Concentration ladder - inner filter effect",
+   "section": "assay",
+   "callouts": [
+    {
+     "x": 1300,
+     "y": 52,
+     "w": 560,
+     "html": "<b>What justifies the use of band ratio as our fluorometry metric?</b>"
+    },
+    {
+     "x": 96,
+     "y": 178,
+     "w": 1728,
+     "html": "<b>Inner filter effect:</b> at high concentration the sample absorbs much of the excitation light before it reaches the detected volume (and re-absorbs emission), so signal stops scaling with concentration. The literature reports it from about 5 µM. Here the I(400)/I(peak) ratio stays roughly constant at 2–4 µM, then climbs from 8 µM up."
+    }
+   ],
+   "panels": [
+    {
+     "chart": "p09-ladder"
+    }
+   ],
+   "top": 316
   },
   {
-   "kind": "image",
+   "kind": "gel",
    "page": 10,
-   "src": "slides/p-10.jpg",
-   "title": "Effect of force application"
+   "title": "Effect of force application",
+   "section": "assay",
+   "panels": [
+    {
+     "chart": "p10-bb1"
+    },
+    {
+     "chart": "p10-bb2"
+    }
+   ]
   },
   {
    "kind": "image",
@@ -77,10 +116,193 @@
    "title": "What is MD analysis? How?"
   },
   {
-   "kind": "image",
-   "page": 12,
-   "src": "slides/p-12.jpg",
-   "title": "sfGFP MD analysis"
+   "kind": "media",
+   "page": "12a",
+   "section": "md",
+   "title": "sfGFP MD: the simulated systems",
+   "layout": "row",
+   "rowH": 470,
+   "items": [
+    {
+     "video": "md/sfgfp/S3_spring27_overview.mp4",
+     "poster": "md/sfgfp/S3_spring27_overview_still.png",
+     "cap": "<b>Overview</b>: barrel, two Tet2-Et/sTCO tethers, 27 bp duplex"
+    },
+    {
+     "video": "md/sfgfp/S3_spring27_strain.mp4",
+     "poster": "md/sfgfp/S3_spring27_strain_still.png",
+     "cap": "<b>Strain</b>: putty tube scaled by per-residue RMSF"
+    },
+    {
+     "video": "md/sfgfp/S3_spring27_chromophore.mp4",
+     "poster": "md/sfgfp/S3_spring27_chromophore_still.png",
+     "cap": "<b>Chromophore</b>: the three H-bonds that stop it twisting"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Sites</b>: Asp133 and Asn149 on adjacent β-strands, 31.3 Å apart, His148 between them bonded to the chromophore"
+    },
+    {
+     "text": "<b>Systems compared</b>: WT sfGFP · 2× Tet2-Et unclicked · clicked, no DNA (the zero) · 50 nt ssDNA closed loop · 50 bp dsDNA closed loop"
+    },
+    {
+     "text": "<b>Animations</b> show the 27 bp spring chimera (50 ns, water stripped, superposed on the barrel core)"
+    },
+    {
+     "text": "<b>Scale</b>: 4,050 ns of production, 81 replicates across 17 systems"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12b",
+   "section": "md",
+   "title": "sfGFP: Ramachandran plots at the modified sites",
+   "figW": 1180,
+   "q": "Does adding the tet groups change the protein’s local conformation?",
+   "items": [
+    {
+     "img": "md/sfgfp/ramachandran.png",
+     "cap": null
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Asp133</b> sits in the rare left-handed α basin: WT +57, +16",
+     "hl": 0
+    },
+    {
+     "text": "Unclicked 2× Tet2-Et pushes it to +74, +2, about <b>17.5° out</b> of its basin"
+    },
+    {
+     "text": "After the click it returns to +60, +18, <b>back beside WT</b>"
+    },
+    {
+     "text": "<b>Asn149</b> stays in β: −127, +137 (WT), −125, +124 (tet), −114, +133 (clicked)"
+    },
+    {
+     "text": "<b>Answer</b>: no significant change; only a local shift at the one positive-φ site"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12c",
+   "section": "md",
+   "title": "sfGFP: backbone rigidity (RMSF)",
+   "figW": 1180,
+   "q": "Does the spring deform the scaffold? Does the fold stay intact?",
+   "items": [
+    {
+     "img": "md/sfgfp/fig2_rmsf.png",
+     "cap": "Cα RMSF, aligned on the barrel core"
+    },
+    {
+     "img": "md/sfgfp/fig1_force_response.png",
+     "cap": "Axial force clamp between the two Cβ atoms"
+    }
+   ],
+   "points": [
+    {
+     "text": "The β-barrel stays <b>uniformly rigid</b> (≈ 0.4 Å on the strands) in every system",
+     "hl": 0
+    },
+    {
+     "text": "RMSF traces of WT, 2× Tet2-Et and the springs <b>overlie each other</b>; only loops and tethers move",
+     "hl": 0
+    },
+    {
+     "text": "Force clamp: 0–20 pN moves the sites by hundredths of an Å; <b>κ > 107 kBT nm⁻²</b>",
+     "hl": 1
+    },
+    {
+     "text": "On the clicked topology <b>κ ≈ 350 kBT nm⁻²</b>, 2–3.5× Zocchi’s generic 100: a 4 pN spring moves the sites 0.03 Å",
+     "hl": 1
+    },
+    {
+     "text": "<b>Answer</b>: the scaffold is not deformed; structural integrity persists"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12d",
+   "section": "md",
+   "title": "sfGFP: forces applied, force field vs model",
+   "figW": 1180,
+   "q": "How much force reaches the protein, and do the models agree with the force field?",
+   "items": [
+    {
+     "img": "md/sfgfp/fig6_force_extension.png",
+     "cap": "Force measured on the bare duplex, restraint windows"
+    },
+    {
+     "img": "md/sfgfp/fig7_headline.png",
+     "cap": "Site displacement against modelled force"
+    }
+   ],
+   "points": [
+    {
+     "text": "Measured directly: <b>27 bp 28.0 pN</b>, 40 bp 15.8 pN, 40 bp nicked 13.2 pN",
+     "hl": 0
+    },
+    {
+     "text": "That is ≈ the <b>Euler buckling load</b> (27 bp: 26.8 pN); up to 35 pN in the largest box",
+     "hl": 0
+    },
+    {
+     "text": "Zocchi’s kinked branch predicts only <b>2.4–6.6 pN</b>: the force field gives ≈ 6× more",
+     "hl": 0
+    },
+    {
+     "text": "Every construct pulls its sites slightly <b>together</b>; displacement vs force r = +0.08, p = 0.81 over 11 constructs",
+     "hl": 1
+    },
+    {
+     "text": "Even the force-free 50 nt ssDNA loop compresses the sites by 0.32 Å, as much as any duplex",
+     "hl": 1
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12e",
+   "section": "md",
+   "title": "sfGFP: DNA dynamics",
+   "figW": 1180,
+   "q": "Is the DNA kinked or coiled? Does it interact with the protein beyond pushing?",
+   "items": [
+    {
+     "img": "md/sfgfp/fig4_dna_bend.png",
+     "cap": "Axis bend per base-pair step along each duplex"
+    },
+    {
+     "img": "md/sfgfp/fig5_kink_threshold.png",
+     "cap": "Base-pair opening against imposed curvature"
+    }
+   ],
+   "points": [
+    {
+     "text": "The duplex bends <b>smoothly</b> at 4.8–5.2°/bp, nucleosome-like, with no local spike",
+     "hl": 0
+    },
+    {
+     "text": "Only 0.03–0.83 base pairs open at any instant: the duplex stays <b>intact</b>",
+     "hl": 0
+    },
+    {
+     "text": "Compression windows: pairs start opening at 5.5°/bp and always open above <b>8.7°/bp</b> (Curuksu: 8.6–9.3)",
+     "hl": 1
+    },
+    {
+     "text": "So the chimera is <b>not bent enough to kink</b> on this force field",
+     "hl": 1
+    },
+    {
+     "text": "The DNA touches the protein in 72–98 % of frames (50 nt ssDNA loop 93 %): <b>local contact</b>, not action at a distance"
+    }
+   ]
   },
   {
    "kind": "image",
@@ -262,10 +484,243 @@
    "title": "[Plans] Phosphatase activity assay"
   },
   {
-   "kind": "image",
-   "page": 31,
-   "src": "slides/p-31.jpg",
-   "title": "MD analysis pp2a"
+   "kind": "media",
+   "page": "31a",
+   "section": "md",
+   "title": "PP2A Aα MD: the simulated systems",
+   "layout": "row",
+   "rowH": 440,
+   "items": [
+    {
+     "video": "md/pp2a/P0_apo_overview.mp4",
+     "poster": "md/pp2a/P0_apo_overview_still.png",
+     "cap": "<b>apo Aα</b> (ff19SB/OPC)"
+    },
+    {
+     "video": "md/pp2a/P2_clicked_overview.mp4",
+     "poster": "md/pp2a/P2_clicked_overview_still.png",
+     "cap": "<b>clicked, no DNA</b>: the zero"
+    },
+    {
+     "video": "md/pp2a/P3_ss50_overview.mp4",
+     "poster": "md/pp2a/P3_ss50_overview_still.png",
+     "cap": "<b>50 nt ssDNA</b>, closed loop"
+    },
+    {
+     "video": "md/pp2a/P4_ds50_overview.mp4",
+     "poster": "md/pp2a/P4_ds50_overview_still.png",
+     "cap": "<b>50 bp dsDNA</b>, closed loop"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Sites</b>: Tet2-Et at Asp7 and Asn553 (construct D6X / N552X), the two tips of the HEAT horseshoe"
+    },
+    {
+     "text": "<b>Systems</b>: apo · 2× Tet2-Et unclicked · clicked, no DNA · 50 nt ssDNA loop · 50 bp dsDNA loop"
+    },
+    {
+     "text": "One 100 ns trajectory each, <b>425 ns over 5 systems</b>; the unclicked system has no animation"
+    },
+    {
+     "text": "The strand closes a covalent loop across the horseshoe’s mouth"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "31b",
+   "section": "md",
+   "title": "PP2A Aα MD: close-ups of the sites and strain",
+   "layout": "row",
+   "rowH": 440,
+   "items": [
+    {
+     "video": "md/pp2a/P2_clicked_sites.mp4",
+     "poster": "md/pp2a/P2_clicked_sites_still.png",
+     "cap": "<b>clicked</b>: the two adducts, Cβ–Cβ drawn"
+    },
+    {
+     "video": "md/pp2a/P3_ss50_sites.mp4",
+     "poster": "md/pp2a/P3_ss50_sites_still.png",
+     "cap": "<b>50 nt ssDNA</b>: sites"
+    },
+    {
+     "video": "md/pp2a/P4_ds50_sites.mp4",
+     "poster": "md/pp2a/P4_ds50_sites_still.png",
+     "cap": "<b>50 bp dsDNA</b>: sites"
+    },
+    {
+     "video": "md/pp2a/P3_ss50_strain.mp4",
+     "poster": "md/pp2a/P3_ss50_strain_still.png",
+     "cap": "<b>50 nt ssDNA</b>: putty by RMSF"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Sites view</b>: close-up of both Tet2-Et/sTCO adducts with the Cβ7–Cβ553 distance",
+     "hl": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "text": "<b>Strain view</b>: backbone tube scaled and coloured by per-residue Cα RMSF",
+     "hl": 3
+    },
+    {
+     "text": "Apo strain animation (not shown here): the N-terminal tail wanders, the core stays put"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "31c",
+   "section": "md",
+   "title": "PP2A: Ramachandran plots at the modified sites",
+   "figW": 1180,
+   "q": "Does adding the tet groups change the protein’s local conformation?",
+   "items": [
+    {
+     "img": "md/pp2a/pp2a_ramachandran.png",
+     "cap": null
+    }
+   ],
+   "points": [
+    {
+     "text": "In the AlphaFold model <b>Asp7</b> sits in left-handed α (+65, +57), on the floppy N-tail (pLDDT 52)",
+     "hl": 0
+    },
+    {
+     "text": "Unclicked 2× Tet2-Et flips it to <b>right-handed α</b>: −53, −46"
+    },
+    {
+     "text": "Clicked (+35, +53), ssDNA (+49, +33) and dsDNA (+65, +14) put it <b>back in left-handed α</b>"
+    },
+    {
+     "text": "<b>Asn553</b> (HEAT 14 helix) stays at −52 to −60, −29 to −46 in every system"
+    },
+    {
+     "text": "<b>Answer</b>: only the tail site moves, and the click restores it"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "31d",
+   "section": "md",
+   "title": "PP2A: backbone rigidity (RMSF)",
+   "figW": 1180,
+   "q": "Does the spring deform the scaffold? Does the fold stay intact?",
+   "items": [
+    {
+     "img": "md/pp2a/pp2a_fig2_rmsf.png",
+     "cap": "Cα RMSF aligned on the core, HEAT repeats shaded"
+    },
+    {
+     "img": "md/pp2a/pp2a_fig5_heat_bend.png",
+     "cap": "Bend and twist per HEAT repeat; horseshoe aperture"
+    }
+   ],
+   "points": [
+    {
+     "text": "Core RMSF <b>2.1–2.6 Å</b> for apo, tet, clicked and 50 nt ssDNA; helix fraction ≈ 0.77 throughout",
+     "hl": 0
+    },
+    {
+     "text": "The <b>50 bp dsDNA</b> run is the outlier: core RMSF 17 Å, RMSD up to 57 Å",
+     "hl": 0
+    },
+    {
+     "text": "HEAT 12 is the most variable repeat; with ssDNA the aperture changes by only <b>+0.8 ± 2.8 Å</b>",
+     "hl": 1
+    },
+    {
+     "text": "Along the spring coordinate κ ≈ <b>1–2 kBT nm⁻²</b>, about 100× softer than sfGFP’s barrel"
+    },
+    {
+     "text": "<b>Answer</b>: a single strand leaves the scaffold intact; a soft horseshoe could feel a few pN"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "31e",
+   "section": "md",
+   "title": "PP2A: forces applied, force field vs model",
+   "figW": 1180,
+   "q": "How much force reaches the protein, and do the models agree with the force field?",
+   "items": [
+    {
+     "img": "md/pp2a/pp2a_fig7_headline.png",
+     "cap": "Cβ7–Cβ553 against the clicked zero"
+    },
+    {
+     "img": "md/pp2a/pp2a_fig4_force_extension.png",
+     "cap": "Bare-strand restraint windows against the models"
+    }
+   ],
+   "points": [
+    {
+     "text": "Against the clicked zero: ssDNA <b>−3.1 ± 3.5 Å</b> (p = 0.39), dsDNA <b>+8.0 ± 6.8 Å</b> (p = 0.26); neither resolved",
+     "hl": 0
+    },
+    {
+     "text": "The strand sits at 95 Å, its own rms size: Marko–Siggia says it <b>pulls with 1.74 pN</b>",
+     "hl": 0
+    },
+    {
+     "text": "A 50 bp duplex at this span would <b>push</b> 2.0–2.6 pN by Zocchi’s kinked branch"
+    },
+    {
+     "text": "Bare ss50 windows agree with Marko–Siggia within error (−1.23 ± 1.70 pN at 100 Å)",
+     "hl": 1
+    },
+    {
+     "text": "Bare ds50 at 62 Å: <b>+11.2 ± 1.9 pN</b> measured against 0.9 pN modelled, again far above the model",
+     "hl": 1
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "31f",
+   "section": "md",
+   "title": "PP2A: DNA dynamics",
+   "figW": 1180,
+   "q": "Is the DNA kinked or coiled? Does it interact with the protein beyond pulling?",
+   "items": [
+    {
+     "img": "md/pp2a/pp2a_fig6_dna_kink.png",
+     "cap": "Bend, sharp turns, torsions and stacking along each strand"
+    },
+    {
+     "img": "md/pp2a/pp2a_fig8_strand.png",
+     "cap": "Strand size and modelled tension over time"
+    }
+   ],
+   "points": [
+    {
+     "text": "ssDNA end-to-end <b>95 ± 9 Å</b> against a free-chain rms of 94 Å: neither slack nor taut",
+     "hl": 1
+    },
+    {
+     "text": "Sharp (> 90°) backbone turns in 18 % of frames, hottest at nt 3 by the tether: <b>no interior kink</b>",
+     "hl": 0
+    },
+    {
+     "text": "78 % of adjacent bases stay stacked; 15 % of the backbone in BII",
+     "hl": 0
+    },
+    {
+     "text": "<b>3 of 50 nt</b> on the protein at any time, mostly the N-tail (Met1–Asp5, Tet sites, Gln557)"
+    },
+    {
+     "text": "dsDNA bends 4.9°/bp; the 6.3 open base pairs are at the end (bp 50): <b>fraying, not a kink</b>",
+     "hl": 0
+    }
+   ]
   },
   {
    "kind": "image",
