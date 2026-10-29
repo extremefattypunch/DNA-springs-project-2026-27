@@ -32,7 +32,17 @@ def frame(page, title, src, q, cap, pts):
             "points": [{"text": t, "msg": {"step": i + 1}} for i, t in enumerate(pts)]}
 
 
-def clip(page, title, name, q, cap, pts):
+def clip(page, title, name, q, cap, pts, overlay=None):
+    s = clip0(page, title, name, q, cap, pts)
+    if overlay:
+        s['items'].append(dict(overlay, over=0))
+        for pt in s['points']:
+            if pt['text'].startswith('ALT:'):
+                pt['text'] = pt['text'][4:]; pt['alt'] = True
+    return s
+
+
+def clip0(page, title, name, q, cap, pts):
     return {"kind": "media", "page": page, "section": "cryoem", "title": title, "figW": 1200, "q": q,
             "items": [{"video": f"cryo/{name}.mp4", "poster": f"cryo/{name}_poster.jpg", "cap": cap, "dark": True}],
             "points": [dict(text=t, **({"seek": s} if s else {})) for t, s in pts]}
@@ -92,6 +102,7 @@ SLIDES = [
          "How do projection, the CTF and noise alter an observation?", MANIM.format(n="01"), [
              ("<b>Projection</b>: the beam integrates the 3D potential along z, so one view cannot fix depth", [0, 6.3]),
              ("<b>A beam from another direction</b>: the detector frame rotates to x′, y′, z′. The rotation <b>R</b> turns the particle so we always integrate along the beam (z′), whatever its direction", [6.3, 14.3]),
+             ("ALT:In a real sample, particles sit in the ice in <b>every orientation</b>, so the beam effectively strikes each one from a different direction: each image needs its own R", None),
              ("<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)", [14.3, 24]),
              ("<b>Noise</b>: independent and comparable to the signal here; far larger than it in real micrographs", [24, 31.5]),
              ("Together, in Fourier space:" + eq(
@@ -101,7 +112,7 @@ SLIDES = [
              ("<b class=\"kn\">Known</b>: the image <i>Y</i><sub>i</sub> and its CTF <i>C</i><sub>i</sub> (from the fitted Δf). "
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
              ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),
-             ("<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into", None)]),
+             ("<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into", None)], overlay={'video': 'cryo/cryosparc_orientations.mp4', 'poster': 'cryo/cryosparc_orientations_poster.jpg', 'dark': True, 'cap': 'Animation from the CryoSPARC guide (guide.cryosparc.com): rays striking objects on their way to the detector'}),
     {"kind": "media", "page": "c10", "section": "cryoem", "items": [], "title": "Central slice theorem",
      "q": "Each 2D Fourier image samples a central plane through the 3D Fourier volume", "points": [{"text": t} for t in [
          "<b>Projection.</b> The image integrates the scattering potential V along the beam direction z. R is a rotation matrix, so changing R changes the direction the beam passes through the molecule"

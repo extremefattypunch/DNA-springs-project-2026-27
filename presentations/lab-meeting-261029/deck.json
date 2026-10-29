@@ -2529,6 +2529,13 @@
      "poster": "cryo/01_forward_model_poster.jpg",
      "cap": "Ian’s Manim clip 01: mathematical illustration in dimensionless units (each click plays the next beat)",
      "dark": true
+    },
+    {
+     "video": "cryo/cryosparc_orientations.mp4",
+     "poster": "cryo/cryosparc_orientations_poster.jpg",
+     "dark": true,
+     "cap": "Animation from the CryoSPARC guide (guide.cryosparc.com): rays striking objects on their way to the detector",
+     "over": 0
     }
    ],
    "points": [
@@ -2545,6 +2552,10 @@
       6.3,
       14.3
      ]
+    },
+    {
+     "text": "In a real sample, particles sit in the ice in <b>every orientation</b>, so the beam effectively strikes each one from a different direction: each image needs its own R",
+     "alt": true
     },
     {
      "text": "<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)",

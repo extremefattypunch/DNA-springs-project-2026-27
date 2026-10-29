@@ -1112,6 +1112,11 @@ function buildMedia(el, cfg) {
       k = k - E + 1;
       showMarks(pts[k - 1] && pts[k - 1].marks);
     }
+    if (!E && items.some(it => it.over != null)) {   // overlay swap on slides without an explain phase
+      const alt = !!(pts[k - 1] && pts[k - 1].alt);
+      items.forEach((it, i) => place(i, boxes[i], it.over != null ? !alt : items.some(o => o.over === i) && alt));
+      if (eqBox) eqBox.classList.toggle('on', alt);
+    }
     lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', !cfg.final && i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
     let msg = null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;
