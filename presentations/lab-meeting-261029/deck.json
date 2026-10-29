@@ -98,28 +98,9 @@
    }
   },
   {
-   "kind": "media",
-   "page": 4,
-   "section": "synthesis",
-   "title": "How do we identify circular products?",
-   "items": [],
-   "big": true,
-   "points": [
-    {
-     "text": "<span class=\"lead\">By weight?</span><ul class=\"sub\"><li>Insufficient: linear and circular products cannot be distinguished</li></ul>"
-    },
-    {
-     "text": "<span class=\"lead\">Solution:</span><ul class=\"sub\"><li>Comparison of 1 tet vs 2 tet</li></ul>"
-    },
-    {
-     "text": "<span class=\"lead\">Hybridization: theory</span><ul class=\"sub\"><li>Linear products run differently from circular products</li></ul>"
-    }
-   ]
-  },
-  {
    "kind": "gel",
    "page": 5,
-   "title": "sfGFP",
+   "title": "sfGFP: how do we identify circular products?",
    "section": "synthesis",
    "panels": [
     {

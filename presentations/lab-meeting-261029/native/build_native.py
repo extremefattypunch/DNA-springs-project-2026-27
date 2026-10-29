@@ -233,6 +233,8 @@ deck = json.loads((ROOT / 'deck.json').read_text())
 out = []
 for s in deck['slides']:
     pg = s.get('page')
+    if pg == 4:      # 'How do we identify circular products?' merged into the sfGFP gel slide
+        continue
     if pg in ('1b', '29b', '30b', '22a', '22b', '22c', '22d', '19b'):
         continue
     if pg in SLIDES:

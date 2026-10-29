@@ -433,6 +433,11 @@ function chimera(ic) {
     parts.push(tri(36, 37, 55), tri(56, 37, 125));
     parts.push(prot(46, 48, 0, 16, 10.5));
     parts.push(handle(34, 41), handle(58, 41));
+  } else if (k === 'circlin') {      // same mass: circular OR linear (2-tet + ssDNA)
+    const c = 'M34,40 C14,20 24,4 46,4 C68,4 78,20 58,40';
+    parts.push(`<g transform="translate(-14,-2) scale(.72)"><path d="${c}" fill="none" stroke="var(--dna-line)" stroke-width="2.6" stroke-linecap="round"/>${tri(36, 37, 55)}${tri(56, 37, 125)}${prot(46, 48, 0, 16, 10.5)}${handle(34, 41)}${handle(58, 41)}</g>`);
+    parts.push(`<text x="47" y="64" text-anchor="middle" font-family="Archivo, sans-serif" font-size="13" font-weight="600" fill="var(--ink-3)">or</text>`);
+    parts.push(`<g transform="translate(38,-2) scale(.72)">${line(56, 38, 72, 6, true)}${prot(44, 46, 0, 16, 10.5)}${handle(31, 39)}${handle(56, 38)}</g>`);
   } else if (k === 'p2d1') {         // DNA bridging two proteins
     parts.push(line(31, 44, 61, 18, false));
     parts.push(prot(24, 50, -20, 14, 9));
@@ -643,7 +648,7 @@ function buildPanel(slideEl, spec, P) {
   sim.appendChild(svg);
   // arrows are recorded in the spec (ss band -> its hybridized band) but only the real
   // image shows them; the simulation does not draw them
-  const arrows = (SHOW_ARROWS ? (spec.arrows || []) : []).map(a => {
+  const arrows = (SHOW_ARROWS || spec.animArrows ? (spec.arrows || []) : []).map(a => {
     const A = laneById[a.from[0]]._bands[a.from[1]], B = laneById[a.to[0]]._bands[a.to[1]];
     if (!A || !B) return null;
     const dir = B.x >= A.x ? 1 : -1;

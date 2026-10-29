@@ -1,548 +1,549 @@
 {
-  "id": "p05-sfgfp",
-  "image": "gels/p05-sfgfp.jpg",
-  "size": [
-    704,
+ "id": "p05-sfgfp",
+ "image": "gels/p05-sfgfp.jpg",
+ "size": [
+  704,
+  228
+ ],
+ "style": "dark",
+ "alt": "sfGFP SDS-PAGE: 1-tet TCO, 1-tet BCN, sfGFP alone, 2-tet TCO, 2-tet BCN, each without and with complementary DNA",
+ "gel": {
+  "poly": [
+   [
+    236,
+    20
+   ],
+   [
+    628,
+    20
+   ],
+   [
+    628,
     228
+   ],
+   [
+    236,
+    228
+   ]
   ],
-  "style": "dark",
-  "alt": "sfGFP SDS-PAGE: 1-tet TCO, 1-tet BCN, sfGFP alone, 2-tet TCO, 2-tet BCN, each without and with complementary DNA",
-  "gel": {
-    "poly": [
-      [
-        236,
-        20
-      ],
-      [
-        628,
-        20
-      ],
-      [
-        628,
-        228
-      ],
-      [
-        236,
-        228
-      ]
+  "wellY": 24,
+  "tilt": 0
+ },
+ "species": {
+  "protein": {
+   "name": "sfGFP only",
+   "note": "unreacted protein",
+   "cls": "protein",
+   "icon": {
+    "k": "protein",
+    "tet": 0
+   }
+  },
+  "p1d_ss": {
+   "name": "sfGFP + ssDNA",
+   "note": "linear 1 : 1 chimera",
+   "cls": "ss",
+   "icon": {
+    "k": "p1d",
+    "tet": 1
+   }
+  },
+  "circ_ss": {
+   "name": "2-tet sfGFP + ssDNA",
+   "note": "circular + linear, same mass",
+   "cls": "ss",
+   "icon": {
+    "k": "circlin"
+   }
+  },
+  "p2d1_ss": {
+   "name": "2 sfGFP + ssDNA",
+   "note": "DNA bridges two proteins",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d1"
+   }
+  },
+  "p2d2r_ss": {
+   "name": "2 sfGFP + 2 ssDNA",
+   "note": "likely dimeric ring · 2-tet only",
+   "cls": "ss",
+   "icon": {
+    "k": "p2d2circ"
+   }
+  },
+  "p1d_ds": {
+   "name": "sfGFP + dsDNA",
+   "note": "linear · runs faster",
+   "cls": "ds",
+   "icon": {
+    "k": "p1d",
+    "ds": true
+   }
+  },
+  "p2d1_ds": {
+   "name": "2 sfGFP + dsDNA",
+   "note": "bridged · hybridized",
+   "cls": "ds",
+   "icon": {
+    "k": "p2d1",
+    "ds": true
+   }
+  },
+  "circ_ds": {
+   "name": "Circular sfGFP + dsDNA",
+   "note": "runs slower · product of interest",
+   "cls": "circ",
+   "icon": {
+    "k": "circ",
+    "ds": true
+   }
+  },
+  "p2d2r_ds": {
+   "name": "2 sfGFP + 2 dsDNA",
+   "note": "dimeric ring · runs slower",
+   "cls": "ds",
+   "icon": {
+    "k": "p2d2circ",
+    "ds": true
+   }
+  },
+  "imp": {
+   "cls": "impurity"
+  }
+ },
+ "lanes": [
+  {
+   "id": "L1",
+   "x": 267,
+   "w": 32,
+   "label": "ssDNA",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 145,
+     "h": 12,
+     "i": 0.74,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 101,
+     "h": 10,
+     "i": 0.36,
+     "sp": "p2d1_ss"
+    },
+    {
+     "y": 207,
+     "h": 14,
+     "i": 0.36,
+     "sp": "protein"
+    },
+    {
+     "y": 115,
+     "h": 7,
+     "i": 0.1,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L2",
+   "x": 305,
+   "w": 32,
+   "label": "+cDNA",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 151,
+     "h": 13,
+     "i": 0.72,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 115,
+     "h": 10,
+     "i": 0.3,
+     "sp": "p2d1_ds"
+    },
+    {
+     "y": 207,
+     "h": 14,
+     "i": 0.36,
+     "sp": "protein"
+    }
+   ]
+  },
+  {
+   "id": "L3",
+   "x": 340,
+   "w": 32,
+   "label": "ssDNA",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 147,
+     "h": 15,
+     "i": 1.0,
+     "sp": "p1d_ss"
+    },
+    {
+     "y": 101,
+     "h": 10,
+     "i": 0.52,
+     "sp": "p2d1_ss"
+    },
+    {
+     "y": 207,
+     "h": 14,
+     "i": 0.5,
+     "sp": "protein"
+    },
+    {
+     "y": 115,
+     "h": 7,
+     "i": 0.18,
+     "sp": "imp"
+    },
+    {
+     "y": 77,
+     "h": 9,
+     "i": 0.12,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L4",
+   "x": 376,
+   "w": 34,
+   "label": "+cDNA",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 150,
+     "h": 16,
+     "i": 0.92,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 114,
+     "h": 10,
+     "i": 0.38,
+     "sp": "p2d1_ds"
+    },
+    {
+     "y": 207,
+     "h": 14,
+     "i": 0.5,
+     "sp": "protein"
+    },
+    {
+     "y": 100,
+     "h": 8,
+     "i": 0.14,
+     "sp": "p2d1_ss"
+    }
+   ]
+  },
+  {
+   "id": "L5",
+   "x": 415,
+   "w": 32,
+   "label": "sfGFP",
+   "chip": "ctrl",
+   "bands": [
+    {
+     "y": 205,
+     "h": 15,
+     "i": 0.72,
+     "sp": "protein"
+    },
+    {
+     "y": 130,
+     "h": 14,
+     "i": 0.1,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L6",
+   "x": 449,
+   "w": 32,
+   "label": "ssDNA",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 146,
+     "h": 13,
+     "i": 0.64,
+     "sp": "circ_ss"
+    },
+    {
+     "y": 76,
+     "h": 10,
+     "i": 0.37,
+     "sp": "p2d2r_ss",
+     "x": 444
+    },
+    {
+     "y": 206,
+     "h": 13,
+     "i": 0.16,
+     "sp": "protein"
+    },
+    {
+     "y": 102,
+     "h": 7,
+     "i": 0.16,
+     "sp": "p2d1_ss"
+    },
+    {
+     "y": 55,
+     "h": 9,
+     "i": 0.12,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L7",
+   "x": 485,
+   "w": 32,
+   "label": "+cDNA",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 120,
+     "h": 12,
+     "i": 0.36,
+     "sp": "circ_ds"
+    },
+    {
+     "y": 149,
+     "h": 15,
+     "i": 0.47,
+     "sp": "p1d_ds"
+    },
+    {
+     "y": 62,
+     "h": 12,
+     "i": 0.38,
+     "sp": "p2d2r_ds",
+     "smear": {
+      "up": 12,
+      "k": 0.4
+     },
+     "x": 479
+    },
+    {
+     "y": 204,
+     "h": 13,
+     "i": 0.2,
+     "sp": "protein"
+    }
+   ]
+  },
+  {
+   "id": "L8",
+   "x": 521,
+   "w": 30,
+   "label": "ssDNA",
+   "chip": "ss",
+   "bands": [
+    {
+     "y": 143,
+     "h": 11,
+     "i": 0.7,
+     "sp": "circ_ss"
+    },
+    {
+     "y": 100,
+     "h": 9,
+     "i": 0.14,
+     "sp": "p2d1_ss"
+    },
+    {
+     "y": 73,
+     "h": 8,
+     "i": 0.12,
+     "sp": "p2d2r_ss"
+    },
+    {
+     "y": 204,
+     "h": 12,
+     "i": 0.19,
+     "sp": "protein"
+    },
+    {
+     "y": 182,
+     "h": 12,
+     "i": 0.11,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L9",
+   "x": 559,
+   "w": 38,
+   "label": "+cDNA",
+   "chip": "ds",
+   "bands": [
+    {
+     "y": 120,
+     "h": 15,
+     "i": 0.8,
+     "sp": "circ_ds"
+    },
+    {
+     "y": 141,
+     "h": 12,
+     "i": 0.35,
+     "sp": "circ_ss"
+    },
+    {
+     "y": 199,
+     "h": 13,
+     "i": 0.33,
+     "sp": "protein"
+    },
+    {
+     "y": 64,
+     "h": 22,
+     "i": 0.18,
+     "sp": "p2d2r_ds",
+     "blur": 1.5
+    },
+    {
+     "y": 171,
+     "h": 12,
+     "i": 0.14,
+     "sp": "imp"
+    }
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "label": "1-tet TCO",
+   "lanes": [
+    "L1",
+    "L2"
+   ]
+  },
+  {
+   "label": "1-tet BCN",
+   "lanes": [
+    "L3",
+    "L4"
+   ]
+  },
+  {
+   "label": "2-tet TCO",
+   "lanes": [
+    "L6",
+    "L7"
+   ]
+  },
+  {
+   "label": "2-tet BCN",
+   "lanes": [
+    "L8",
+    "L9"
+   ]
+  }
+ ],
+ "arrows": [
+  {
+   "from": [
+    "L1",
+    0
+   ],
+   "to": [
+    "L2",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L3",
+    0
+   ],
+   "to": [
+    "L4",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L6",
+    0
+   ],
+   "to": [
+    "L7",
+    0
+   ]
+  },
+  {
+   "from": [
+    "L8",
+    0
+   ],
+   "to": [
+    "L9",
+    0
+   ]
+  }
+ ],
+ "blank": "Blank gel: wells loaded left to right as the story unfolds",
+ "steps": [
+  {
+   "lanes": [
+    "L5"
+   ],
+   "say": "<b>sfGFP alone</b>: the unreacted protein sets the bottom reference"
+  },
+  {
+   "lanes": [
+    "L6",
+    "L8"
+   ],
+   "say": "<b>Can we identify circular products by weight? No.</b> With 2-tet sfGFP, the sfGFP + ssDNA band can be <b>circular or linear</b>: same mass, one band"
+  },
+  {
+   "lanes": [
+    "L1",
+    "L3"
+   ],
+   "say": "<b>1-tet sfGFP</b> has only one Tet site, so its sfGFP + ssDNA band can <b>only be linear</b> (no cDNA added yet)"
+  },
+  {
+   "lanes": [
+    "L2",
+    "L4",
+    "L7",
+    "L9"
+   ],
+   "say": "<b>Add the complementary strand (cDNA)</b>: the linear product runs <b>faster</b> (↓, 1-tet), the circular product runs <b>slower</b> (↑, 2-tet), so the two now separate"
+  },
+  {
+   "glow": [
+    [
+     "L7",
+     0
     ],
-    "wellY": 24,
-    "tilt": 0
+    [
+     "L9",
+     0
+    ]
+   ],
+   "say": "<b>Circular sfGFP–dsDNA chimera</b>: the up-shifted 2-tet band is the product of interest"
   },
-  "species": {
-    "protein": {
-      "name": "sfGFP only",
-      "note": "unreacted protein",
-      "cls": "protein",
-      "icon": {
-        "k": "protein",
-        "tet": 0
-      }
-    },
-    "p1d_ss": {
-      "name": "sfGFP + ssDNA",
-      "note": "linear 1 : 1 chimera",
-      "cls": "ss",
-      "icon": {
-        "k": "p1d",
-        "tet": 1
-      }
-    },
-    "circ_ss": {
-      "name": "2-tet sfGFP + ssDNA",
-      "note": "circular + linear, same mass",
-      "cls": "ss",
-      "icon": {
-        "k": "circ"
-      }
-    },
-    "p2d1_ss": {
-      "name": "2 sfGFP + ssDNA",
-      "note": "DNA bridges two proteins",
-      "cls": "ss",
-      "icon": {
-        "k": "p2d1"
-      }
-    },
-    "p2d2r_ss": {
-      "name": "2 sfGFP + 2 ssDNA",
-      "note": "likely dimeric ring · 2-tet only",
-      "cls": "ss",
-      "icon": {
-        "k": "p2d2circ"
-      }
-    },
-    "p1d_ds": {
-      "name": "sfGFP + dsDNA",
-      "note": "linear · runs faster",
-      "cls": "ds",
-      "icon": {
-        "k": "p1d",
-        "ds": true
-      }
-    },
-    "p2d1_ds": {
-      "name": "2 sfGFP + dsDNA",
-      "note": "bridged · hybridized",
-      "cls": "ds",
-      "icon": {
-        "k": "p2d1",
-        "ds": true
-      }
-    },
-    "circ_ds": {
-      "name": "Circular sfGFP + dsDNA",
-      "note": "runs slower · product of interest",
-      "cls": "circ",
-      "icon": {
-        "k": "circ",
-        "ds": true
-      }
-    },
-    "p2d2r_ds": {
-      "name": "2 sfGFP + 2 dsDNA",
-      "note": "dimeric ring · runs slower",
-      "cls": "ds",
-      "icon": {
-        "k": "p2d2circ",
-        "ds": true
-      }
-    },
-    "imp": {
-      "cls": "impurity"
-    }
-  },
-  "lanes": [
-    {
-      "id": "L1",
-      "x": 267,
-      "w": 32,
-      "label": "ssDNA",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 145,
-          "h": 12,
-          "i": 0.74,
-          "sp": "p1d_ss"
-        },
-        {
-          "y": 101,
-          "h": 10,
-          "i": 0.36,
-          "sp": "p2d1_ss"
-        },
-        {
-          "y": 207,
-          "h": 14,
-          "i": 0.36,
-          "sp": "protein"
-        },
-        {
-          "y": 115,
-          "h": 7,
-          "i": 0.1,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L2",
-      "x": 305,
-      "w": 32,
-      "label": "+cDNA",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 151,
-          "h": 13,
-          "i": 0.72,
-          "sp": "p1d_ds"
-        },
-        {
-          "y": 115,
-          "h": 10,
-          "i": 0.3,
-          "sp": "p2d1_ds"
-        },
-        {
-          "y": 207,
-          "h": 14,
-          "i": 0.36,
-          "sp": "protein"
-        }
-      ]
-    },
-    {
-      "id": "L3",
-      "x": 340,
-      "w": 32,
-      "label": "ssDNA",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 147,
-          "h": 15,
-          "i": 1.0,
-          "sp": "p1d_ss"
-        },
-        {
-          "y": 101,
-          "h": 10,
-          "i": 0.52,
-          "sp": "p2d1_ss"
-        },
-        {
-          "y": 207,
-          "h": 14,
-          "i": 0.5,
-          "sp": "protein"
-        },
-        {
-          "y": 115,
-          "h": 7,
-          "i": 0.18,
-          "sp": "imp"
-        },
-        {
-          "y": 77,
-          "h": 9,
-          "i": 0.12,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L4",
-      "x": 376,
-      "w": 34,
-      "label": "+cDNA",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 150,
-          "h": 16,
-          "i": 0.92,
-          "sp": "p1d_ds"
-        },
-        {
-          "y": 114,
-          "h": 10,
-          "i": 0.38,
-          "sp": "p2d1_ds"
-        },
-        {
-          "y": 207,
-          "h": 14,
-          "i": 0.5,
-          "sp": "protein"
-        },
-        {
-          "y": 100,
-          "h": 8,
-          "i": 0.14,
-          "sp": "p2d1_ss"
-        }
-      ]
-    },
-    {
-      "id": "L5",
-      "x": 415,
-      "w": 32,
-      "label": "sfGFP",
-      "chip": "ctrl",
-      "bands": [
-        {
-          "y": 205,
-          "h": 15,
-          "i": 0.72,
-          "sp": "protein"
-        },
-        {
-          "y": 130,
-          "h": 14,
-          "i": 0.1,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L6",
-      "x": 449,
-      "w": 32,
-      "label": "ssDNA",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 146,
-          "h": 13,
-          "i": 0.64,
-          "sp": "circ_ss"
-        },
-        {
-          "y": 76,
-          "h": 10,
-          "i": 0.37,
-          "sp": "p2d2r_ss",
-          "x": 444
-        },
-        {
-          "y": 206,
-          "h": 13,
-          "i": 0.16,
-          "sp": "protein"
-        },
-        {
-          "y": 102,
-          "h": 7,
-          "i": 0.16,
-          "sp": "p2d1_ss"
-        },
-        {
-          "y": 55,
-          "h": 9,
-          "i": 0.12,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L7",
-      "x": 485,
-      "w": 32,
-      "label": "+cDNA",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 120,
-          "h": 12,
-          "i": 0.36,
-          "sp": "circ_ds"
-        },
-        {
-          "y": 149,
-          "h": 15,
-          "i": 0.47,
-          "sp": "p1d_ds"
-        },
-        {
-          "y": 62,
-          "h": 12,
-          "i": 0.38,
-          "sp": "p2d2r_ds",
-          "smear": {
-            "up": 12,
-            "k": 0.4
-          },
-          "x": 479
-        },
-        {
-          "y": 204,
-          "h": 13,
-          "i": 0.2,
-          "sp": "protein"
-        }
-      ]
-    },
-    {
-      "id": "L8",
-      "x": 521,
-      "w": 30,
-      "label": "ssDNA",
-      "chip": "ss",
-      "bands": [
-        {
-          "y": 143,
-          "h": 11,
-          "i": 0.7,
-          "sp": "circ_ss"
-        },
-        {
-          "y": 100,
-          "h": 9,
-          "i": 0.14,
-          "sp": "p2d1_ss"
-        },
-        {
-          "y": 73,
-          "h": 8,
-          "i": 0.12,
-          "sp": "p2d2r_ss"
-        },
-        {
-          "y": 204,
-          "h": 12,
-          "i": 0.19,
-          "sp": "protein"
-        },
-        {
-          "y": 182,
-          "h": 12,
-          "i": 0.11,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L9",
-      "x": 559,
-      "w": 38,
-      "label": "+cDNA",
-      "chip": "ds",
-      "bands": [
-        {
-          "y": 120,
-          "h": 15,
-          "i": 0.8,
-          "sp": "circ_ds"
-        },
-        {
-          "y": 141,
-          "h": 12,
-          "i": 0.35,
-          "sp": "circ_ss"
-        },
-        {
-          "y": 199,
-          "h": 13,
-          "i": 0.33,
-          "sp": "protein"
-        },
-        {
-          "y": 64,
-          "h": 22,
-          "i": 0.18,
-          "sp": "p2d2r_ds",
-          "blur": 1.5
-        },
-        {
-          "y": 171,
-          "h": 12,
-          "i": 0.14,
-          "sp": "imp"
-        }
-      ]
-    }
-  ],
-  "groups": [
-    {
-      "label": "1-tet TCO",
-      "lanes": [
-        "L1",
-        "L2"
-      ]
-    },
-    {
-      "label": "1-tet BCN",
-      "lanes": [
-        "L3",
-        "L4"
-      ]
-    },
-    {
-      "label": "2-tet TCO",
-      "lanes": [
-        "L6",
-        "L7"
-      ]
-    },
-    {
-      "label": "2-tet BCN",
-      "lanes": [
-        "L8",
-        "L9"
-      ]
-    }
-  ],
-  "arrows": [
-    {
-      "from": [
-        "L1",
-        0
-      ],
-      "to": [
-        "L2",
-        0
-      ]
-    },
-    {
-      "from": [
-        "L3",
-        0
-      ],
-      "to": [
-        "L4",
-        0
-      ]
-    },
-    {
-      "from": [
-        "L6",
-        0
-      ],
-      "to": [
-        "L7",
-        0
-      ]
-    },
-    {
-      "from": [
-        "L8",
-        0
-      ],
-      "to": [
-        "L9",
-        0
-      ]
-    }
-  ],
-  "blank": "Blank gel: wells loaded left to right as the story unfolds",
-  "steps": [
-    {
-      "lanes": [
-        "L5"
-      ],
-      "say": "<b>sfGFP alone</b>: the unreacted protein sets the bottom reference"
-    },
-    {
-      "lanes": [
-        "L1",
-        "L3"
-      ],
-      "say": "<b>1-tet + ssDNA</b> (TCO, BCN): one reactive site, so only linear chimeras"
-    },
-    {
-      "lanes": [
-        "L6",
-        "L8"
-      ],
-      "say": "<b>2-tet + ssDNA</b>: circular and linear chimeras co-migrate at the same mass"
-    },
-    {
-      "lanes": [
-        "L2",
-        "L4",
-        "L7",
-        "L9"
-      ],
-      "say": "<b>+ complementary strand</b>: linear dsDNA chimeras run faster, circular ones run slower"
-    },
-    {
-      "glow": [
-        [
-          "L7",
-          0
-        ],
-        [
-          "L9",
-          0
-        ]
-      ],
-      "say": "<b>Circular sfGFP–dsDNA chimera</b>: the up-shifted 2-tet band is the product of interest"
-    },
-    {
-      "real": true,
-      "say": "Real gel, as imaged"
-    }
-  ]
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ],
+ "animArrows": true
 }
