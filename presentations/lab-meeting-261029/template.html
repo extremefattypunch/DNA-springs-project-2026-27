@@ -239,6 +239,22 @@ body {
 .tex.d { display: block; margin: 8px 0 6px; }
 .tex.d math { font-size: 1.22em; }
 .m-pt .eq.blk { display: block; margin: 6px 0 4px; font-size: 1.12em; white-space: normal; line-height: 1.5; }
+.s-badge { position: absolute; right: 64px; top: 58px; padding: 10px 22px; border-radius: 999px; color: #fff; font: 600 21px var(--font-display); letter-spacing: .02em; }
+.slide.cover { display: flex; flex-direction: column; justify-content: center; padding: 0 140px; box-sizing: border-box; }
+.c-title { margin: 0; font-size: 104px; font-weight: 760; letter-spacing: -.02em; color: var(--ink); }
+.c-sub { margin: 18px 0 0; font-size: 40px; font-weight: 500; color: var(--ink-2); }
+.c-meta { margin: 46px 0 0; font-size: 26px; color: var(--ink-3); border-top: 4px solid var(--sec-cryoem); padding-top: 22px; width: 900px; }
+.m-aside { position: absolute; background: var(--paper-2); border-left: 6px solid var(--sec, var(--ink-3)); border-radius: 10px; padding: 18px 24px; font-size: 21px; line-height: 1.38; color: var(--ink-2); box-sizing: border-box; }
+.m-aside b { color: var(--ink); }
+.m-aside ul { margin: 8px 0 0; padding-left: 22px; }
+.m-pts.big { gap: 22px; } .m-pts.big .m-pt { font-size: 29px; } .m-pts.big .m-pt::before { top: .5em; }
+.m-pt ul.sub { margin: 6px 0 2px; padding-left: 28px; list-style: circle; }
+.m-pt ul.sub li { font-size: .9em; margin: 4px 0; }
+.m-pt .lead { display: block; margin-bottom: 4px; }
+.t-done { color: var(--sec-synthesis); } .t-pend { color: var(--amber); } .t-todo { color: var(--sec-status); }
+.m-pt table.tb { border-collapse: collapse; margin: 8px 0 4px; font-size: .9em; }
+.m-pt table.tb th, .m-pt table.tb td { padding: 6px 22px 6px 0; text-align: left; border-bottom: 1px solid var(--rule); }
+.m-pt table.tb th { color: var(--ink); font-weight: 640; }
 .m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* explain phase: one plot full-slide with axis notes, then the split answer view */
 .m-item { transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s cubic-bezier(.3,.7,.2,1), height .6s cubic-bezier(.3,.7,.2,1), opacity .4s ease; }
@@ -945,8 +961,10 @@ function buildMedia(el, cfg) {
   const items = cfg.items || [], pts = cfg.points || [];
   const boxes = [], frames = [];
   let curMsg = null;
-  if (!items.length) {                 // equation/text slide: points span the full width
-    var ptBox = { x: 64, y: top + (cfg.q ? 52 : 6), w: 1792 };
+  if (!items.length) {                 // equation/text slide: points span the full width (minus an aside)
+    const aw = cfg.aside ? (cfg.aside.w || 600) : 0;
+    var ptBox = { x: 64, y: top + (cfg.q ? (cfg.qH || 60) : 6), w: 1792 - (aw ? aw + 56 : 0) };
+    if (aw) el.appendChild(h('div', 'm-aside', { html: cfg.aside.html, style: { left: (64 + 1792 - aw) + 'px', top: (top + 6) + 'px', width: aw + 'px' } }));
   } else if (cfg.layout === 'row') {
     const n = items.length, gap = 24, w = (1792 - (n - 1) * gap) / n;
     const h = Math.min(w / (cfg.aspect || 1.29) + 60, cfg.rowH || 520);
@@ -1012,7 +1030,7 @@ function buildMedia(el, cfg) {
         Object.assign(o.lab.style, { left: dx + 'px', top: dy + 'px', transform: dx < 0 ? 'translateX(-100%)' : '' }); }
     }));
   };
-  const ul = h('ul', 'm-pts' + (ptBox.cols ? ' cols' : ''), { style: { left: ptBox.x + 'px', top: ptBox.y + 'px', width: ptBox.w + 'px' } });
+  const ul = h('ul', 'm-pts' + (ptBox.cols ? ' cols' : '') + (cfg.big ? ' big' : ''), { style: { left: ptBox.x + 'px', top: ptBox.y + 'px', width: ptBox.w + 'px' } });
   const lis = pts.map(pt => { const li = h('li', 'm-pt', { html: pt.text }); ul.appendChild(li); return li; });
   items.forEach((_, i) => place(i, boxes[i], false));
   el.appendChild(ul);
@@ -1070,8 +1088,14 @@ function buildSlide(cfg, idx) {
   el.style.setProperty('--sec', (SECTIONS[cfg.section] || [])[1] || 'var(--ink-3)');
   stage.appendChild(el);
   const S = { cfg, el, steps: [{ panel: null }], panels: [] };
-  if (cfg.kind === 'media') {
+  if (cfg.kind === 'cover') {
+    el.classList.add('cover');
+    el.appendChild(h('h1', 'c-title', { text: cfg.title }));
+    if (cfg.subtitle) el.appendChild(h('p', 'c-sub', { html: cfg.subtitle }));
+    if (cfg.meta) el.appendChild(h('p', 'c-meta', { html: cfg.meta }));
+  } else if (cfg.kind === 'media') {
     el.appendChild(h('h2', 's-title', { text: cfg.title }));
+    if (cfg.badge) el.appendChild(h('div', 's-badge', { text: cfg.badge.text, style: { background: cfg.badge.color } }));
     const foot = h('div', 's-foot');
     foot.innerHTML = `<span class="sec-tag">${(SECTIONS[cfg.section] || [''])[0]}</span><span class="dots"></span><span class="s-page">${idx + 1} / ${DECK.slides.length}</span>`;
     el.appendChild(foot); S.dots = foot.querySelector('.dots');

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why DNA springs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const defs = S('defs', {}, sv);
+const lg = S('linearGradient', { id: 'laser', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+S('stop', { offset: '0%', 'stop-color': '#ff5a4f', 'stop-opacity': 0 }, lg); S('stop', { offset: '100%', 'stop-color': '#ff5a4f', 'stop-opacity': .45 }, lg);
+const mk = S('marker', { id: 'ar', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto' }, defs);
+S('path', { d: 'M0,0 L10,5 L0,10 z', fill: C.est }, mk);
+const blob = (cx, cy, r, g) => S('path', { d: `M${cx - r},${cy} C${cx - r},${cy - r * 1.1} ${cx + r * .9},${cy - r * 1.2} ${cx + r},${cy - r * .1} C${cx + r * 1.1},${cy + r} ${cx - r * .6},${cy + r * 1.15} ${cx - r},${cy} z`, fill: '#9aa3ae', stroke: '#c9d1d9', 'stroke-width': 2 }, g);
+const COLS = [{ x: 200, name: 'Single-molecule force', sub: 'optical / magnetic tweezers, AFM' }, { x: 590, name: 'Structural imaging', sub: 'cryoEM, X-ray' }, { x: 980, name: 'DNA-spring chimera', sub: 'this project' }];
+const G = COLS.map(c => { const g = S('g', {}, sv);
+  S('rect', { x: c.x - 180, y: 20, width: 360, height: 600, rx: 16, fill: C.panel, stroke: C.grid }, g);
+  S('text', { x: c.x, y: 62, 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 700, text: c.name }, g);
+  S('text', { x: c.x, y: 88, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: c.sub }, g); return g; });
+/* 1: tweezers */
+const tw = S('g', {}, G[0]);
+[[90, 1], [310, -1]].forEach(([x]) => S('polygon', { points: `${x - 60},110 ${x + 60},110 ${x},250`, fill: 'url(#laser)' }, tw));
+const hL = S('line', { stroke: '#6fa8ff', 'stroke-width': 4 }, tw), hR = S('line', { stroke: '#6fa8ff', 'stroke-width': 4 }, tw);
+blob(200, 255, 34, tw);
+const bL = S('circle', { r: 30, fill: '#e8edf2', stroke: '#fff', 'stroke-width': 2 }, tw), bR = S('circle', { r: 30, fill: '#e8edf2', stroke: '#fff', 'stroke-width': 2 }, tw);
+const aL = S('line', { stroke: C.est, 'stroke-width': 4, 'marker-end': 'url(#ar)' }, tw), aR = S('line', { stroke: C.est, 'stroke-width': 4, 'marker-end': 'url(#ar)' }, tw);
+S('text', { x: 200, y: 345, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'readout: one end-to-end distance' }, tw);
+S('rect', { x: 50, y: 358, width: 300, height: 90, rx: 6, fill: '#0b0e12', stroke: C.grid }, tw);
+const trace = S('path', { class: 'w', stroke: C.obs, 'stroke-width': 2 }, tw);
+/* 2: cryoEM */
+const em = S('g', {}, G[1]);
+const beam = S('polygon', { points: '560,105 620,105 690,150 490,150', fill: 'rgba(79,209,232,.18)' }, em);
+S('rect', { x: 450, y: 150, width: 280, height: 160, rx: 6, fill: 'rgba(79,209,232,.08)', stroke: C.grid }, em);
+[[480, 180], [540, 200], [610, 175], [680, 195], [500, 250], [575, 265], [650, 240], [700, 280], [470, 290], [620, 295]].forEach(([x, y], i) => blob(x, y, 13, em).setAttribute('transform', `rotate(${i * 37} ${x} ${y})`));
+S('text', { x: 590, y: 335, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'frozen particles at rest → 3D map' }, em);
+let rib = 'M470,410'; for (let i = 0; i < 12; i++) rib += ` q 10,${i % 2 ? 40 : -40} 20,0`;
+S('path', { d: rib, class: 'w', stroke: C.truth, 'stroke-width': 5, 'stroke-linecap': 'round' }, em);
+S('text', { x: 590, y: 470, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'atomic model' }, em);
+/* 3: chimera */
+const ch = S('g', {}, G[2]);
+blob(980, 290, 70, ch);
+const s1 = [912, 262], s2 = [1048, 262];
+const dna = S('g', {}, ch);
+const fa = S('line', { stroke: C.est, 'stroke-width': 4, 'marker-end': 'url(#ar)' }, ch), fb = S('line', { stroke: C.est, 'stroke-width': 4, 'marker-end': 'url(#ar)' }, ch);
+[s1, s2].forEach(([x, y]) => S('circle', { cx: x, cy: y, r: 8, fill: C.red }, ch));
+S('text', { x: 980, y: 395, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'the DNA arc pushes two chosen residues apart' }, ch);
+const grid2 = S('g', {}, ch);
+S('rect', { x: 850, y: 410, width: 260, height: 90, rx: 6, fill: 'rgba(79,209,232,.08)', stroke: C.grid }, grid2);
+[[880, 465], [945, 445], [1010, 470], [1075, 450]].forEach(([x, y]) => { blob(x, y, 12, grid2); S('path', { d: `M${x - 9},${y - 6} Q${x},${y - 30} ${x + 9},${y - 6}`, class: 'w', stroke: '#6fa8ff', 'stroke-width': 3 }, grid2); });
+S('text', { x: 980, y: 520, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'every particle on the grid carries its own spring' }, grid2);
+/* check rows */
+const ROWS = [['applies force', [1, 0, 1]], ['atomic structure', [0, 1, 1]]];
+const checks = COLS.map((c, i) => ROWS.map(([lab, v], r) => { const g = S('g', {}, sv);
+  S('text', { x: c.x - 150, y: 566 + r * 36, 'font-size': 19, text: lab }, g);
+  S('text', { x: c.x + 150, y: 568 + r * 36, 'text-anchor': 'end', 'font-size': 26, 'font-weight': 700, fill: v[i] ? C.truth : C.red, text: v[i] ? '✓' : '✗' }, g); return g; }));
+const glow = S('rect', { x: 800, y: 20, width: 360, height: 600, rx: 16, fill: 'none', stroke: C.truth, 'stroke-width': 4 }, sv);
+const foot = S('text', { x: 590, y: 680, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const T = [
+  { a: .25, b: .25, c: .25, ck: 0, g: 0, f: 0 }, { a: 1, b: .25, c: .25, ck: 1, g: 0, f: 0 }, { a: 1, b: 1, c: .25, ck: 2, g: 0, f: 0 },
+  { a: 1, b: 1, c: 1, ck: 2, g: 0, f: 0 }, { a: 1, b: 1, c: 1, ck: 3, g: 1, f: 1 }, { a: 1, b: 1, c: 1, ck: 3, g: 1, f: 2 }
+];
+Cryo.init(T, (P, t) => {
+  [P.a, P.b, P.c].forEach((o, i) => G[i].setAttribute('opacity', o.toFixed(3)));
+  checks.forEach((rows, i) => rows.forEach(g => g.setAttribute('opacity', P.ck > i + 0.5 ? 1 : 0)));
+  const j = 4 * Math.sin(t * 2.1), xL = 90 + j * 0.5, xR = 310 - j * 0.5;
+  bL.setAttribute('cx', xL); bL.setAttribute('cy', 255); bR.setAttribute('cx', xR); bR.setAttribute('cy', 255);
+  hL.setAttribute('x1', xL + 30); hL.setAttribute('y1', 255); hL.setAttribute('x2', 168); hL.setAttribute('y2', 255);
+  hR.setAttribute('x1', 232); hR.setAttribute('y1', 255); hR.setAttribute('x2', xR - 30); hR.setAttribute('y2', 255);
+  aL.setAttribute('x1', xL - 34); aL.setAttribute('y1', 255); aL.setAttribute('x2', xL - 74); aL.setAttribute('y2', 255);
+  aR.setAttribute('x1', xR + 34); aR.setAttribute('y1', 255); aR.setAttribute('x2', xR + 74); aR.setAttribute('y2', 255);
+  let d = ''; for (let i = 0; i <= 120; i++) { const x = 55 + i * 2.45, u = i / 120 * 12 + t * 1.5; d += (i ? 'L' : 'M') + x.toFixed(1) + ',' + (403 + 22 * Math.sin(u) * Math.cos(u * .37) + 6 * Math.sin(u * 5.3)).toFixed(1); }
+  trace.setAttribute('d', d);
+  beam.setAttribute('opacity', (0.6 + 0.4 * Math.sin(t * 3)).toFixed(2));
+  // DNA arc: two strands with rungs, gently breathing
+  const hgt = 92 + 6 * Math.sin(t * 1.6); dna.innerHTML = '';
+  const pt = (u, off) => { const x = s1[0] + (s2[0] - s1[0]) * u, y = s1[1] - hgt * 4 * u * (1 - u); return [x + off * Math.sin(u * Math.PI * 5), y + off * Math.cos(u * Math.PI * 5)]; };
+  [7, -7].forEach(off => { let p = ''; for (let i = 0; i <= 60; i++) { const [x, y] = pt(i / 60, off); p += (i ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1); } S('path', { d: p, class: 'w', stroke: '#6fa8ff', 'stroke-width': 3.5 }, dna); });
+  for (let i = 1; i < 14; i++) { const [x1, y1] = pt(i / 14, 7), [x2, y2] = pt(i / 14, -7); S('line', { x1, y1, x2, y2, stroke: '#3d6fbf', 'stroke-width': 2 }, dna); }
+  fa.setAttribute('x1', s1[0] - 10); fa.setAttribute('y1', s1[1] + 4); fa.setAttribute('x2', s1[0] - 52 - 4 * Math.sin(t * 1.6)); fa.setAttribute('y2', s1[1] + 18);
+  fb.setAttribute('x1', s2[0] + 10); fb.setAttribute('y1', s2[1] + 4); fb.setAttribute('x2', s2[0] + 52 + 4 * Math.sin(t * 1.6)); fb.setAttribute('y2', s2[1] + 18);
+  glow.setAttribute('opacity', P.g.toFixed(3));
+  foot.textContent = P.f > 1.5 ? 'For each protein (sfGFP, PP2A): Synthesis, Assay, MD analysis — “SAM”' : P.f > 0.5 ? 'Force and atomic structure, on the same molecules, at the same time' : '';
+});
+</script>
+</body></html>

@@ -11,10 +11,14 @@ to cryo/). Iframe slides use interactive/cryo/*.html, driven by {deck: 'cryo',
 step}. Video points carry seek [start, end] in seconds of the clip (beat
 boundaries from each scene's docstring and contact sheets).
 """
-import json, pathlib
+import html, json, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DROP = {25, 26, 27, 28}   # What is cryoEM downstream analysis? / Steps 1-3
+
+
+def tex(src, display=False):
+    return f'<span class="tex{" d" if display else ""}">{html.escape(src, quote=False)}</span>'
 
 
 def eq(html):
@@ -91,17 +95,19 @@ SLIDES = [
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
              ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),
              ("<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into", None)]),
-    clip("c10", "Central slice theorem: every image is a plane through the 3D Fourier transform", "03_orientation_fourier_slice",
-         "How do unknown 3D orientations and Fourier slices define reconstruction?", MANIM.format(n="03"), [
-             ("<b>Orientation R</b>: a viewing direction (2 angles) plus an in-plane rotation ψ (1 angle) = 3 degrees of freedom", [0, 13]),
-             ("<b>Projection</b>" + eq('(<i>P<sub>R</sub>V</i>)(<i>x</i>, <i>y</i>) = ∫ <i>V</i>(<i>R</i>ᵀ(<i>x</i>, <i>y</i>, <i>z</i>)ᵀ) d<i>z</i>') +
-              "Changing R changes the beam direction; sliding a dot along the beam leaves the image unchanged", [13, 29]),
-             ("<b>Fourier slice theorem</b>" + eq('ℱ₂{<i>P<sub>R</sub>V</i>}(<b>q</b>) = <i>V̂</i>(<i>R</i>ᵀ(<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0)ᵀ)') +
-              "The 2D transform of an image is the central plane of the 3D transform, perpendicular to the beam", [29, 43]),
-             ("Why: integrating over z and then transforming in x, y is the same as the 3D transform evaluated at k<sub>z</sub> = 0", None),
-             ("<b>Coverage</b>: well-spread views sample 92 % of the Fourier ball; views within 15° of one axis sample 26 % and leave a missing cone", [43, 51]),
-             ("With known poses, inserting slices and inverting converges on the true structure as views are added", [51, 62]),
-             ("In practice the poses are unknown: the density and every pose must be estimated together", [62, 76])]),
+    {"kind": "media", "page": "c10", "section": "cryoem", "items": [], "title": "Central slice theorem",
+     "q": "Each 2D Fourier image samples a central plane through the 3D Fourier volume", "points": [{"text": t} for t in [
+         "<b>Projection.</b> The image integrates the scattering potential V along the beam direction z. R is a rotation matrix, so changing R changes the direction the beam passes through the molecule"
+         + tex(r"(P_R V)(x,y) = \int_{-\infty}^{\infty} V\big(R^{\mathsf T}(x,y,z)^{\mathsf T}\big)\,dz", True),
+         "<b>The 3D Fourier transform</b> of the potential:"
+         + tex(r"\hat V(k_x,k_y,k_z) = \iiint V(x,y,z)\,e^{-2\pi i\,(k_x x + k_y y + k_z z)}\,dx\,dy\,dz", True),
+         "<b>The 2D Fourier transform of a projection</b> (R = I, beam along z):"
+         + tex(r"\mathcal F_2\{PV\}(q_x,q_y) = \iint \Big[\int V(x,y,z)\,dz\Big]\, e^{-2\pi i\,(q_x x + q_y y)}\,dx\,dy", True),
+         "The exponential does not depend on z, so it moves inside the z-integral: this is the 3D transform with k<sub>z</sub> = 0"
+         + tex(r"\mathcal F_2\{PV\}(q_x,q_y) = \iiint V(x,y,z)\,e^{-2\pi i\,(q_x x + q_y y + 0\cdot z)}\,dx\,dy\,dz = \hat V(q_x,q_y,0)", True),
+         "So the 2D transform of a projection is the <b>plane through the origin</b> of the 3D transform, perpendicular to the beam. For any orientation R the plane simply rotates:"
+         + tex(r"\mathcal F_2\{P_R V\}(\mathbf q) = \hat V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)", True),
+         "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"]]},
     frame("c11", "Reconstruction scheme 1: you know the poses", "recon.html",
           "Least squares: L(v) = ½ Σᵢ (yᵢ − Aᵢv)ᵀ Σᵢ⁻¹ (yᵢ − Aᵢv); ∇L = 0 gives the normal equations",
           "Live 2D reconstruction (64 × 64, nearest-neighbour gridding, noisy images) computed in the browser", [

@@ -1,28 +1,120 @@
 {
  "slides": [
   {
-   "kind": "image",
+   "kind": "cover",
    "page": 1,
-   "src": "slides/p-01.jpg",
-   "title": "Lab Meeting 261029"
+   "title": "Lab Meeting 261029",
+   "subtitle": "Ian Poon",
+   "meta": "DNA-spring protein chimeras: sfGFP and PP2A Aα"
   },
   {
-   "kind": "image",
+   "kind": "media",
+   "page": "1b",
+   "section": "background",
+   "title": "Why attach DNA springs to proteins?",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Force and atomic structure, on the same molecules, at the same time",
+   "items": [
+    {
+     "iframe": "interactive/springs.html",
+     "title": "Force methods vs structural methods vs DNA-spring chimeras",
+     "cap": "Schematic: what each approach can measure"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Single-molecule force methods</b> (optical and magnetic tweezers, AFM) apply and measure force, but read out only one end-to-end distance, not the structure",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Structural methods</b> (cryoEM, X-ray) give atomic structures, but of proteins at rest, with no force applied",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Our approach</b>: attach a DNA spring to the protein (sfGFP, PP2A) across two chosen residues, so the spring itself applies the force",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "Every molecule carries its own spring, so a whole sample is under load and can be frozen for cryoEM: <b>force and atomic structure simultaneously</b>, which the traditional single-molecule methods cannot do",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "For each protein we follow the same plan, <b>SAM</b>: Synthesis, Assay, MD analysis (next slide)",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": 2,
-   "src": "slides/p-02.jpg",
-   "title": "For each protein studied - we seek “SAM”"
+   "section": "background",
+   "title": "For each protein studied, we seek “SAM”",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>S</b>ynthesis goals</span><ul class=\"sub\"><li>First obtain evidence, by gel, that it can be synthesized</li><li>Then obtain a large purified batch for analysis</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>A</b>ssay goals</span><ul class=\"sub\"><li>Functional assays of the protein under mechanical tension from the attached DNA springs</li><li>Also structural imaging assays (cryoEM etc.)</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>M</b>D analysis goals</span><ul class=\"sub\"><li>A suitability test: can the addition of DNA springs meaningfully perturb our protein’s structure?</li><li>A computational/theoretical complement to the experimental results (e.g. theoretical force modelling of DNA-spring dynamics)</li></ul>"
+    }
+   ]
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 3,
-   "src": "slides/p-03.jpg",
-   "title": "sfGFP initial progress and open problems"
+   "section": "status",
+   "title": "sfGFP initial progress and open problems",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Synthesis</b></span><ul class=\"sub\"><li>SeArre and Micheal: purified and obtained WT and tet-mutant sfGFP</li><li>Micheal Schnebly: first obtained evidence of circular product on tet-mutant sfGFP on gel just before I arrived</li><li><span class=\"t-todo\">[To-Do]: obtain a batch of purified sfGFP chimera samples for further analysis</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Assay</b></span><ul class=\"sub\"><li>SeArre Abebe: initialized fluorometer. No protein sample readings taken yet</li><li><span class=\"t-todo\">[To-Do]: perform fluorometry readings once purified sfGFP chimera samples are obtained</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>MD analysis</b></span><ul class=\"sub\"><li>Darartu Gamada: initial talks with Doeke in 2020 for setting up MD on a ubiquitin with cysteine attachments. No other result documented in Notebook</li><li><span class=\"t-todo\">[To-Do]: set up MD system for tet-TCO/BCN protein chimeras</span></li></ul>"
+    }
+   ],
+   "badge": {
+    "text": "Project status: 4 months ago",
+    "color": "var(--sec-status)"
+   }
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 4,
-   "src": "slides/p-04.jpg",
-   "title": "How do we identify circular products?"
+   "section": "synthesis",
+   "title": "How do we identify circular products?",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\">By weight?</span><ul class=\"sub\"><li>Insufficient: linear and circular products cannot be distinguished</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\">Solution:</span><ul class=\"sub\"><li>Comparison of 1 tet vs 2 tet</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\">Hybridization: theory</span><ul class=\"sub\"><li>Linear products run differently from circular products</li></ul>"
+    }
+   ]
   },
   {
    "kind": "gel",
@@ -235,10 +327,30 @@
    "top": 220
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 11,
-   "src": "slides/p-11.jpg",
-   "title": "What is MD analysis? How?"
+   "section": "md",
+   "title": "What is MD analysis? How?",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Ramachandran plots</b></span><ul class=\"sub\"><li>Does the addition of tet groups significantly affect the structural conformation of our protein?</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Backbone rigidity: RMSF</b></span><ul class=\"sub\"><li>To what extent does the spring deform the entire scaffold? Does the overall structural integrity of the protein still persist?</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Forces applied: direct force field + modelled forces</b></span><ul class=\"sub\"><li>How much force can we actually transmit to the protein via the DNA springs?</li><li>Do theoretical models of force agree with the forces measured in the MD force field?</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>DNA dynamics</b></span><ul class=\"sub\"><li>Is the DNA kinked, or coiled up (under torsion), which would then affect DNA-spring force application?</li><li>Is the DNA otherwise interacting with the protein, other than applying direct mechanical force?</li></ul>"
+    }
+   ],
+   "aside": {
+    "w": 560,
+    "html": "<b>Recap: MD goals</b><ul><li>Force modelling (to make the system reproducible and configurable to different proteins)</li><li>Suitability of a candidate protein for study under a DNA spring</li></ul>"
+   }
   },
   {
    "kind": "media",
@@ -1033,16 +1145,50 @@
    ]
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 13,
-   "src": "slides/p-13.jpg",
-   "title": "Ian’s sfGFP progress summary"
+   "section": "status",
+   "title": "Ian’s sfGFP progress summary",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Synthesis</b></span><ul class=\"sub\"><li><span class=\"t-done\">[DONE]: obtain a batch of purified sfGFP chimera samples</span></li><li>High yield without need for purification: high throughput and cheap</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Assay</b>: fluorometry</span><ul class=\"sub\"><li><span class=\"t-done\">[DONE]: perform fluorometry readings once purified sfGFP chimera samples are obtained</span></li><li>Reproduced tet quenching results</li><li>Weak evidence of excitation/emission spectra change due to force applied</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>MD analysis</b></span><ul class=\"sub\"><li><span class=\"t-done\">[DONE]: set up MD system for tet-TCO/BCN sfGFP protein chimeras</span></li><li>Rigid backbone, minimal deformation under force</li><li>Chromophore environment largely unchanged under force, consistent with fluorometry results</li></ul>"
+    }
+   ],
+   "badge": {
+    "text": "Project status: current",
+    "color": "#00838f"
+   }
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 14,
-   "src": "slides/p-14.jpg",
-   "title": "PP2A initial progress and open problems"
+   "section": "status",
+   "title": "PP2A initial progress and open problems",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Synthesis</b></span><ul class=\"sub\"><li>SeArre and Micheal: purified and obtained WT and tet-mutant pp2a</li><li>Micheal Schnebly: could not obtain evidence of circular product on gel yet</li><li><span class=\"t-todo\">[To-Do]: obtain circular product pp2a</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Assay</b></span><ul class=\"sub\"><li>Not attempted before in lab</li><li><span class=\"t-todo\">[To-Do]: plan out pp2a assays</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>MD analysis</b></span><ul class=\"sub\"><li>Not attempted before in lab, although there is literature on MD of pp2a A-subunit isoforms and mutants; no direct mechanical tension or spring systems</li><li><span class=\"t-todo\">[To-Do]: set up MD system for tet-TCO/BCN protein chimeras</span></li></ul>"
+    }
+   ],
+   "badge": {
+    "text": "Project status: 4 months ago",
+    "color": "var(--sec-status)"
+   }
   },
   {
    "kind": "gel",
@@ -1164,40 +1310,128 @@
    ]
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 23,
-   "src": "slides/p-23.jpg",
-   "title": "[PENDING] PP2A assays"
+   "section": "assay",
+   "title": "[PENDING] PP2A assays",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\">Phosphatase activity assay</span>"
+    },
+    {
+     "text": "<span class=\"lead\">Substrate binding assay</span>"
+    },
+    {
+     "text": "<span class=\"lead\">Holoenzyme formation analysis</span>"
+    }
+   ],
+   "aside": {
+    "w": 640,
+    "html": "<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li><li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li></ul>"
+   }
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 24,
-   "src": "slides/p-24.jpg",
-   "title": "[Plans] Holoenzyme formation analysis"
+   "section": "assay",
+   "title": "[Plans] Holoenzyme formation analysis",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Structural deformation</b></span><ul class=\"sub\"><li>Align the relatively conserved C subunit, then measure centre-of-mass distances between HEAT repeats on the A subunit, WT vs spring attached</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Ascertain spring attachment</b></span><ul class=\"sub\"><li>Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model</li></ul>"
+    }
+   ],
+   "q": "cryoEM analysis"
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 29,
-   "src": "slides/p-29.jpg",
-   "title": "[Plans] Substrate binding assay"
+   "section": "assay",
+   "title": "[Plans] Substrate binding assay",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\">Assemble the spring-attached A subunit with the catalytic subunit C. Attach the B regulatory subunit to the biosensor AR2G</span>"
+    },
+    {
+     "text": "<span class=\"lead\">Binding and the dissociation constant:<span class=\"tex d\">AC + B \\;\\xrightleftharpoons[k_{\\mathrm{off}}]{\\;k_{\\mathrm{on}}\\;}\\; ABC, \\qquad K_D = \\frac{k_{\\mathrm{off}}}{k_{\\mathrm{on}}}</span></span>"
+    },
+    {
+     "text": "<span class=\"lead\"><table class=\"tb\"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table></span>"
+    }
+   ],
+   "q": "BLI (biolayer interferometry) assay: measure the dissociation constant"
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 30,
-   "src": "slides/p-30.jpg",
-   "title": "[Plans] Phosphatase activity assay"
+   "section": "assay",
+   "title": "[Plans] Phosphatase activity assay",
+   "items": [
+    {
+     "img": "native/difmup_kinetics.png",
+     "w": 537,
+     "h": 427,
+     "cap": "Velocity vs [substrate], replicates"
+    }
+   ],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\">Fitted with the standard Michaelis–Menten kinetics equation:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span></span>"
+    },
+    {
+     "text": "<span class=\"lead\"><table class=\"tb\"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table></span>"
+    }
+   ],
+   "q": "Fluorogenic phosphatase substrate DiFMUP",
+   "figW": 760
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 32,
-   "src": "slides/p-32-status.jpg",
-   "title": "Ian’s pp2a progress summary"
+   "section": "status",
+   "title": "Ian’s pp2a progress summary",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\"><b>Synthesis</b></span><ul class=\"sub\"><li><span class=\"t-done\">[DONE]: synthesized the lab’s first pp2a chimera circular product (gel verified)</span></li><li><span class=\"t-pend\">[PENDING]: obtain a purified sample batch for further analysis</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>Assay</b></span><ul class=\"sub\"><li><span class=\"t-done\">[DONE]: planned out 3 distinct assay routes for pp2a</span></li><li>Ian: set up all necessary downstream analysis tools for cryoEM</li><li>Micheal: loaded the sfGFP samples I made on the cryoEM grid, pending imaging session</li><li><span class=\"t-pend\">[PENDING]: substrate binding assay once purified sample batch obtained</span></li><li><span class=\"t-pend\">[PENDING]: holoenzyme formation analysis once purified sample batch imaged with cryoEM</span></li><li><span class=\"t-pend\">[PENDING]: phosphatase activity assay once purified sample batch obtained</span></li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\"><b>MD analysis</b></span><ul class=\"sub\"><li><span class=\"t-pend\">[PENDING]: set up MD system for tet-TCO/BCN pp2a protein chimeras</span></li><li><span class=\"t-pend\">Previous MD of pp2a in the literature shows a much more flexible structure, so it will likely respond to spring force application</span></li></ul>"
+    }
+   ],
+   "badge": {
+    "text": "Project status: current",
+    "color": "#00838f"
+   }
   },
   {
-   "kind": "image",
+   "kind": "media",
    "page": 33,
-   "src": "slides/p-33.jpg",
-   "title": "Technical Tutorials - Brief Walkthrough"
+   "section": "background",
+   "title": "Technical tutorials: brief walkthrough",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<span class=\"lead\">New experimental techniques to the lab that I troubleshot independently over the last 4 months. Possibly useful for the lab:</span><ul class=\"sub\"><li>Setting up the MD system for DNA-spring chimeras</li><li>Fluorometry data collection</li><li>Performing downstream cryoEM analysis with CryoSPARC</li></ul>"
+    },
+    {
+     "text": "<span class=\"lead\">Additional resources (to be documented via GitHub):</span><ul class=\"sub\"><li>Claude skills for optimal FAIRSHARE usage and CryoSPARC usage</li><li>Set-up instructions for CryoSPARC</li></ul>"
+    }
+   ]
   },
   {
    "kind": "media",
@@ -1534,62 +1768,27 @@
    "kind": "media",
    "page": "c10",
    "section": "cryoem",
-   "title": "Central slice theorem: every image is a plane through the 3D Fourier transform",
-   "figW": 1200,
-   "q": "How do unknown 3D orientations and Fourier slices define reconstruction?",
-   "items": [
-    {
-     "video": "cryo/03_orientation_fourier_slice.mp4",
-     "poster": "cryo/03_orientation_fourier_slice_poster.jpg",
-     "cap": "Ian’s Manim clip 03: mathematical illustration in dimensionless units (each click plays the next beat)",
-     "dark": true
-    }
-   ],
+   "items": [],
+   "title": "Central slice theorem",
+   "q": "Each 2D Fourier image samples a central plane through the 3D Fourier volume",
    "points": [
     {
-     "text": "<b>Orientation R</b>: a viewing direction (2 angles) plus an in-plane rotation ψ (1 angle) = 3 degrees of freedom",
-     "seek": [
-      0,
-      13
-     ]
+     "text": "<b>Projection.</b> The image integrates the scattering potential V along the beam direction z. R is a rotation matrix, so changing R changes the direction the beam passes through the molecule<span class=\"tex d\">(P_R V)(x,y) = \\int_{-\\infty}^{\\infty} V\\big(R^{\\mathsf T}(x,y,z)^{\\mathsf T}\\big)\\,dz</span>"
     },
     {
-     "text": "<b>Projection</b><span class=\"eq blk\">(<i>P<sub>R</sub>V</i>)(<i>x</i>, <i>y</i>) = ∫ <i>V</i>(<i>R</i>ᵀ(<i>x</i>, <i>y</i>, <i>z</i>)ᵀ) d<i>z</i></span>Changing R changes the beam direction; sliding a dot along the beam leaves the image unchanged",
-     "seek": [
-      13,
-      29
-     ]
+     "text": "<b>The 3D Fourier transform</b> of the potential:<span class=\"tex d\">\\hat V(k_x,k_y,k_z) = \\iiint V(x,y,z)\\,e^{-2\\pi i\\,(k_x x + k_y y + k_z z)}\\,dx\\,dy\\,dz</span>"
     },
     {
-     "text": "<b>Fourier slice theorem</b><span class=\"eq blk\">ℱ₂{<i>P<sub>R</sub>V</i>}(<b>q</b>) = <i>V̂</i>(<i>R</i>ᵀ(<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0)ᵀ)</span>The 2D transform of an image is the central plane of the 3D transform, perpendicular to the beam",
-     "seek": [
-      29,
-      43
-     ]
+     "text": "<b>The 2D Fourier transform of a projection</b> (R = I, beam along z):<span class=\"tex d\">\\mathcal F_2\\{PV\\}(q_x,q_y) = \\iint \\Big[\\int V(x,y,z)\\,dz\\Big]\\, e^{-2\\pi i\\,(q_x x + q_y y)}\\,dx\\,dy</span>"
     },
     {
-     "text": "Why: integrating over z and then transforming in x, y is the same as the 3D transform evaluated at k<sub>z</sub> = 0"
+     "text": "The exponential does not depend on z, so it moves inside the z-integral: this is the 3D transform with k<sub>z</sub> = 0<span class=\"tex d\">\\mathcal F_2\\{PV\\}(q_x,q_y) = \\iiint V(x,y,z)\\,e^{-2\\pi i\\,(q_x x + q_y y + 0\\cdot z)}\\,dx\\,dy\\,dz = \\hat V(q_x,q_y,0)</span>"
     },
     {
-     "text": "<b>Coverage</b>: well-spread views sample 92 % of the Fourier ball; views within 15° of one axis sample 26 % and leave a missing cone",
-     "seek": [
-      43,
-      51
-     ]
+     "text": "So the 2D transform of a projection is the <b>plane through the origin</b> of the 3D transform, perpendicular to the beam. For any orientation R the plane simply rotates:<span class=\"tex d\">\\mathcal F_2\\{P_R V\\}(\\mathbf q) = \\hat V\\big(R^{\\mathsf T}(q_x,q_y,0)^{\\mathsf T}\\big)</span>"
     },
     {
-     "text": "With known poses, inserting slices and inverting converges on the true structure as views are added",
-     "seek": [
-      51,
-      62
-     ]
-    },
-    {
-     "text": "In practice the poses are unknown: the density and every pose must be estimated together",
-     "seek": [
-      62,
-      76
-     ]
+     "text": "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"
     }
    ]
   },
