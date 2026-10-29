@@ -2540,24 +2540,31 @@
      ]
     },
     {
-     "text": "<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)",
+     "text": "<b>A beam from another direction</b>: the detector frame rotates to x′, y′, z′. The rotation <b>R</b> turns the particle so we always integrate along the beam (z′), whatever its direction",
      "seek": [
       6.3,
-      16
+      14.3
+     ]
+    },
+    {
+     "text": "<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)",
+     "seek": [
+      14.3,
+      24
      ]
     },
     {
      "text": "<b>Noise</b>: independent and comparable to the signal here; far larger than it in real micrographs",
      "seek": [
-      16,
-      23.5
+      24,
+      31.5
      ]
     },
     {
      "text": "Together, in Fourier space:<span class=\"eq blk\"><span class=\"kn\"><i>Y</i><sub>i</sub>(<b>q</b>)</span> = <span class=\"kn\"><i>C</i><sub>i</sub>(<b>q</b>)</span> <span class=\"un\"><i>Ṽ</i></span>(<span class=\"un\"><i>R</i><sub>i</sub></span>ᵀ[<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0]ᵀ) <i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class=\"un\"><b>t</b><sub>i</sub></span></sup> + <span class=\"nz\"><i>N</i><sub>i</sub>(<b>q</b>)</span></span>",
      "seek": [
-      23.5,
-      34
+      31.5,
+      42
      ]
     },
     {

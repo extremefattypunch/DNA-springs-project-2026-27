@@ -67,7 +67,7 @@ class Scene01ForwardModel(Scene):
         self.beat3_noise(d)
         self.beat4_statement(d)
 
-    # ================================================================ beat 1: 0–6.5 s
+    # ================================================================ beat 1: 0–14.5 s (incl. rotated beam)
     def beat1_projection(self, d):
         title = st.title_card("Projection, optical transfer and noise",
                               "How do projection, the CTF and noise\nalter an observation?")
@@ -123,8 +123,50 @@ class Scene01ForwardModel(Scene):
         self.play(LaggedStart(*[FadeIn(p, scale=0.5) for p in pdots], lag_ratio=0.12),
                   FadeIn(cap), FadeIn(side), run_time=0.9)
         self.wait(1.6)
-        self.play(FadeOut(VGroup(title, axes3, dots3, plane, plane_lab, view, view_lab, guides,
-                                 pdots, side, cap)), run_time=0.5)
+
+        # ---- a beam from another direction: the detector frame rotates to x', y', z'
+        a = np.radians(38.0)
+        v = np.array([np.sin(a), 0.0, np.cos(a)])             # new beam axis z' (lab frame)
+        u1 = np.array([np.cos(a), 0.0, -np.sin(a)])           # x'
+        u2 = np.array([0.0, 1.0, 0.0])                        # y'
+        c = Z_DET * v                                         # centre of the rotated detector
+        P = lambda r: obl(*r)
+        corners2 = [P(c + sx * HALF * u1 + sy * HALF * u2) for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+        plane2 = Polygon(*corners2, stroke_color=st.OBS, stroke_width=2.5, fill_color=st.GRID, fill_opacity=0.45)
+        axes2 = VGroup()
+        for vec, lab in ((u1, "x'"), (u2, "y'"), (v, "z'")):
+            end = P(1.45 * vec)
+            axes2.add(Arrow(P(np.zeros(3)), end, buff=0, stroke_width=3, color=st.EST, tip_length=0.16,
+                            max_tip_length_to_length_ratio=0.15),
+                      st.M(lab, size=36, color=st.EST).next_to(end, UR, buff=0.04))
+        proj2 = [q - np.dot(q - c, v) * v for q in Q]
+        guides2 = VGroup(*[DashedLine(P(q), P(r), dash_length=0.08, stroke_width=2, color=st.EST,
+                                      stroke_opacity=0.8) for q, r in zip(Q, proj2)])
+        pdots2 = VGroup(*[Dot(P(r), radius=0.09, color=st.OBS) for r in proj2])
+        start = np.array([vx, vy, 0.0])
+        view2 = Arrow(P(start + 2.0 * v), P(start + 0.55 * v), buff=0, color=st.EST, stroke_width=6,
+                      tip_length=0.25, max_tip_length_to_length_ratio=0.25)
+        view2_lab = st.T("projection\nalong z'", st.SMALL_SIZE + 2, st.EST).next_to(view2, LEFT, buff=0.15)
+        new_cap = st.caption("beam from a new direction: detector frame rotates to x', y', z'",
+                             color=st.TEXT, size=st.BODY_SIZE)
+        r_eq = st.M(r"\mathbf p_j=(R\,\mathbf x_j)_{x,y}", size=44)
+        r_note = st.T("R: the 3D rotation that puts\nthe beam along z', so we\nalways integrate along the\nbeam, whatever its direction",
+                      st.SMALL_SIZE + 2, st.TEXT)
+        r_side = VGroup(r_eq, r_note).arrange(DOWN, aligned_edge=LEFT, buff=0.35)
+        st.fit_width(r_side, 5.6)
+        r_side.move_to([4.1, -0.35, 0])
+
+        self.play(FadeOut(VGroup(guides, pdots, side)), plane.animate.set_stroke(opacity=0.3).set_fill(opacity=0.12),
+                  FadeOut(plane_lab), ReplacementTransform(cap, new_cap), run_time=0.6)
+        self.play(FadeIn(axes2), FadeIn(plane2), run_time=1.0)
+        self.wait(0.8)
+        self.play(ReplacementTransform(view, view2), ReplacementTransform(view_lab, view2_lab), run_time=1.2)
+        self.play(LaggedStart(*[Create(g) for g in guides2], lag_ratio=0.12), run_time=0.9)
+        self.play(LaggedStart(*[FadeIn(p, scale=0.5) for p in pdots2], lag_ratio=0.12), run_time=0.6)
+        self.play(FadeIn(r_side), run_time=0.7)
+        self.wait(2.2)
+        self.play(FadeOut(VGroup(title, axes3, dots3, plane, axes2, plane2, view2, view2_lab, guides2,
+                                 pdots2, r_side, new_cap)), run_time=0.5)
 
 
     # ================================================================ beat 2: 6–16 s

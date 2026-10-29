@@ -91,12 +91,13 @@ SLIDES = [
     clip("c8", "Forward model: what one particle image contains", "01_forward_model",
          "How do projection, the CTF and noise alter an observation?", MANIM.format(n="01"), [
              ("<b>Projection</b>: the beam integrates the 3D potential along z, so one view cannot fix depth", [0, 6.3]),
-             ("<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)", [6.3, 16]),
-             ("<b>Noise</b>: independent and comparable to the signal here; far larger than it in real micrographs", [16, 23.5]),
+             ("<b>A beam from another direction</b>: the detector frame rotates to x′, y′, z′. The rotation <b>R</b> turns the particle so we always integrate along the beam (z′), whatever its direction", [6.3, 14.3]),
+             ("<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)", [14.3, 24]),
+             ("<b>Noise</b>: independent and comparable to the signal here; far larger than it in real micrographs", [24, 31.5]),
              ("Together, in Fourier space:" + eq(
                  '<span class="kn"><i>Y</i><sub>i</sub>(<b>q</b>)</span> = <span class="kn"><i>C</i><sub>i</sub>(<b>q</b>)</span> '
                  '<span class="un"><i>Ṽ</i></span>(<span class="un"><i>R</i><sub>i</sub></span>ᵀ[<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0]ᵀ) '
-                 '<i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class="un"><b>t</b><sub>i</sub></span></sup> + <span class="nz"><i>N</i><sub>i</sub>(<b>q</b>)</span>'), [23.5, 34]),
+                 '<i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class="un"><b>t</b><sub>i</sub></span></sup> + <span class="nz"><i>N</i><sub>i</sub>(<b>q</b>)</span>'), [31.5, 42]),
              ("<b class=\"kn\">Known</b>: the image <i>Y</i><sub>i</sub> and its CTF <i>C</i><sub>i</sub> (from the fitted Δf). "
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
              ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),
