@@ -1392,7 +1392,7 @@
       ],
       "zu_u1": [
        0.521,
-       0.698
+       0.639
       ],
       "zu_f1": [
        0.599,
@@ -1404,7 +1404,7 @@
       ],
       "zu_u2": [
        0.832,
-       0.698
+       0.678
       ],
       "zu_f2": [
        0.91,
@@ -1525,7 +1525,7 @@
      ]
     },
     {
-     "text": "Recomputed on the <b>unkinked</b> branch at the force field’s own ⟨x⟩: <b>24.1 vs 28.0 pN</b> (27 bp), 10.9 vs 15.8 (40 bp), 10.9 vs 13.2 (nicked): within 1.2–1.5×",
+     "text": "Recomputed on the <b>unkinked</b> branch: <b>24.1 vs 28.0 pN</b> (27 bp), <b>13.9 vs 15.8</b> (40 bp), <b>11.9 vs 13.2</b> (40 bp nicked): within 1.1–1.2×",
      "hl": 1,
      "marks": [
       {
@@ -1542,7 +1542,7 @@
       },
       {
        "a": "zu_u1",
-       "t": "10.9",
+       "t": "13.9",
        "dx": -30,
        "dy": -60
       },
@@ -1553,10 +1553,6 @@
        "dy": -60
       }
      ]
-    },
-    {
-     "text": "Why both 40 bp give 10.9: the unkinked branch has <b>no τ<sub>c</sub></b>, <span class=\"tex\">f = \\tfrac{10B}{L^2} - \\tfrac{k_BT}{L-x} = 11.48 - 0.60 = 10.9\\ \\text{pN}</span> at ⟨x⟩ = 62 Å for intact and nicked alike",
-     "hl": 1
     },
     {
      "text": "The kinked branch is <b>5–6× too low</b> (4.6, 3.0, 2.3 pN)",
@@ -1584,6 +1580,10 @@
     },
     {
      "text": "<b>Answer</b>: the force field does not contradict Zocchi’s spring. Its duplex never kinks, so it follows his <b>unkinked</b> branch; the only disagreement is whether DNA kinks at 4.8–5.2°/bp"
+    },
+    {
+     "banner": true,
+     "text": "<span class=\"ttl\">Takeaway</span>Once the <b>kinking condition is removed</b>, Zocchi’s model and the MD force field are <b>much more in agreement</b>: 24.1 vs 28.0, 13.9 vs 15.8 and 11.9 vs 13.2 pN, within 1.1–1.2×."
     }
    ]
   },

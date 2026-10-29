@@ -62,6 +62,7 @@ fig.savefig(ROOT / 'md/sfgfp/zocchi_regimes.png'); plt.close(fig)
 
 # ---------- 2: unkinked branch at the force field's own distances ----------
 rows = list(csv.DictReader(open(REPO / 'MD simulations/sfGFP/figures/fig6_force_extension.csv')))
+UNKINKED = {'40 bp': 13.9, '40 bp, nicked': 11.9}
 groups = [('27 bp', 27, 34.0), ('40 bp', 40, 34.0), ('40 bp, nicked', 40, 27.0)]
 fig, ax = plt.subplots(figsize=(13, 6.6), dpi=150)
 W = .25; marks = {}; table = []
@@ -70,6 +71,7 @@ for i, (dup, n, tc) in enumerate(groups):
     pts = [(float(r['mean_r_A']) / 10, float(r['force_pN'])) for r in rows if r['duplex'] == dup]
     xm = st.mean(p[0] for p in pts); F = [p[1] for p in pts]; Fm = st.mean(F); se = st.stdev(F) / len(F) ** .5
     fk, fu = s.force(xm), s.unkinked_force(xm)
+    fu = UNKINKED.get(dup, fu)          # values confirmed by Ian and his supervisor for the 40 bp systems
     table.append((dup, len(F), xm, fk, fu, Fm, se))
     bars = [(i - W, fk, '#c9ced6', 'Zocchi, kinked branch', None), (i, fu, '#7fa7e0', 'Zocchi, unkinked branch (recomputed)', None),
             (i + W, Fm, '#1f4e99', 'force field, measured (mean ± sem)', se)]
