@@ -93,6 +93,16 @@ slides = {
     {'text': 'Close to the <b>Euler load</b> (dashed: 26.8 pN for 27 bp, 11.9 pN for 40 bp)', 'hl': 0, 'marks': [M('fe_euler27', 'Euler', 30, 14)]},
     {'text': 'Zocchi’s <b>kinked</b> branch (grey) predicts only 2.4–6.6 pN: 5–6× less', 'hl': 0, 'marks': [M('fe_zocchi', 'kinked', 30, -55)]},
     {'text': '<b>What we learn</b>: the force-field duplex behaves as a smoothly bent, unkinked rod pushing tens of pN. The next two slides show why Zocchi’s model expects less'}]},
+'12e0': {'title': 'Kinked vs unkinked DNA: how the shape sets the force', 'figW': 1180, 'msgChannel': 'cryo',
+  'q': 'Same duplex, same end-to-end distance; only how the bend is distributed differs',
+  'items': [{'iframe': 'interactive/kink.html', 'title': 'Kinked vs unkinked duplex',
+             'cap': 'Schematic: 27 bp duplex at x = 68 Å; forces from Zocchi’s model (B = 200 pN nm², τ<sub>c</sub> = 34 pN nm)'}],
+  'points': [{'text': t, 'msg': {'step': i + 1}} for i, t in enumerate([
+    'Both ends are held closer than the duplex’s length (x &lt; L), so the duplex <b>must bend</b>. The question is <b>where</b> the bending goes',
+    '<b>Unkinked</b> (Zocchi’s Euler-buckling picture): the bend is shared by <b>every base-pair step</b>, a few degrees each. Every step is strained, the whole rod stores bending energy, and it pushes back on the ends with ≈ π²B/L² (≈ 24 pN for 27 bp)',
+    '<b>Kinked</b>: one step breaks sharply (base stacking lost, often a pair opened) while the two arms stay <b>straight and relaxed</b>. Almost all the bending sits in one spot',
+    '<b>Effect on force transduction</b>: a kink acts as a <b>release valve</b>. The relaxed arms store almost no energy, so the push is capped by the kink’s critical torque τ<sub>c</sub>: only ≈ 5–7 pN reaches the protein',
+    'Squeeze the ends closer: the smooth rod keeps pushing at ≈ its Euler load; the kinked rod stays weak. So whether the DNA kinks decides whether the spring delivers tens of pN or a few. <b>Next</b>: does our DNA kink in MD, and what does Zocchi’s model predict?'])]},
 '12e': {'title': 'sfGFP: DNA dynamics', 'q': 'Is the DNA kinked or coiled? Does it interact with the protein beyond pushing?',
   'items': [fig(S, 'fig4_dna_bend.png', 'Axis bend per base-pair step along each duplex')],
   'explain': [
@@ -204,7 +214,7 @@ for sl in deck['slides']:
         for p in sl['points']:
             p['text'] = p['text'].replace('425 ns over 5 systems', '500 ns over 5 systems')
 # slides added after the original deck: insert after their predecessor
-for pg, after in (('12f2', '12f'),):
+for pg, after in (('12f2', '12f'), ('12e0', '12d')):
     if not any(str(x.get('page')) == pg for x in deck['slides']):
         i = next(i for i, x in enumerate(deck['slides']) if str(x.get('page')) == after)
         deck['slides'].insert(i + 1, {'kind': 'media', 'page': pg, 'section': 'md', 'figW': 1180, 'exH': 590, **slides[pg]})

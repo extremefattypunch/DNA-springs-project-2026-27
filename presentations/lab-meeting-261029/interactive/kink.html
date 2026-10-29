@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kinked vs unkinked DNA</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* Same duplex (27 bp, L = 8.91 nm), same end-to-end distance x, two shapes.
+   Unkinked: circular arc, bend shared by every step. Kinked: two straight arms, all the bend at one step.
+   Forces from Zocchi (Molecular Machines §2.15), B = 200 pN nm², tau_c = 34 pN nm. */
+const sv = document.getElementById('sv');
+const NBP = 27, LNM = 8.91, B = 200, KT = 4.11, TAU = 34;
+const gamma = LNM * TAU / (2 * B), R2 = LNM * (1 - gamma * gamma / 90);
+const fUnk = x => 10 * B / LNM ** 2 - KT / (LNM - x);
+const fKink = x => TAU / (R2 * Math.sqrt(1 - (x / R2) ** 2));
+const PX = 46;                                   // px per nm
+const defs = S('defs', {}, sv);
+const mk = S('marker', { id: 'ar', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4, markerHeight: 4, orient: 'auto' }, defs);
+S('path', { d: 'M0,0 L10,5 L0,10 z', fill: C.est }, mk);
+const P = [{ cx: 300, name: 'Unkinked (smooth, Euler-like)', col: '#6fa8ff' }, { cx: 880, name: 'Kinked', col: '#6fa8ff' }];
+P.forEach(p => {
+  p.g = S('g', {}, sv);
+  S('rect', { x: p.cx - 270, y: 16, width: 540, height: 640, rx: 16, fill: C.panel, stroke: C.grid }, p.g);
+  S('text', { x: p.cx, y: 54, 'text-anchor': 'middle', 'font-size': 25, 'font-weight': 700, text: p.name }, p.g);
+  p.dna = S('g', {}, p.g);
+  p.base = S('line', { stroke: '#9aa3ae', 'stroke-width': 10, 'stroke-linecap': 'round' }, p.g);
+  p.ends = [S('circle', { r: 9, fill: C.red }, p.g), S('circle', { r: 9, fill: C.red }, p.g)];
+  p.arr = [S('line', { stroke: C.est, 'stroke-width': 6, 'marker-end': 'url(#ar)' }, p.g), S('line', { stroke: C.est, 'stroke-width': 6, 'marker-end': 'url(#ar)' }, p.g)];
+  p.fT = S('text', { x: p.cx, y: 392, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 700, fill: C.est }, p.g);
+  p.xT = S('text', { x: p.cx, y: 360, 'text-anchor': 'middle', 'font-size': 15, class: 'mut' }, p.g);
+  S('text', { x: p.cx - 240, y: 436, 'font-size': 15, class: 'mut', text: 'bend at each base-pair step (°)' }, p.g);
+  p.bars = S('g', {}, p.g);
+  p.note = S('text', { x: p.cx, y: 640, 'text-anchor': 'middle', 'font-size': 16, class: 'mut' }, p.g);
+  p.tag = S('text', { x: p.cx, y: 84, 'text-anchor': 'middle', 'font-size': 16, class: 'mut' }, p.g);
+});
+P[0].tag.textContent = 'every step bends a little'; P[1].tag.textContent = 'one step breaks, the arms stay straight';
+const foot = S('text', { x: 590, y: 700, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 600 }, sv);
+const BY = 300;                                   // y of the protein/ends line
+/* centre-line of each shape: returns array of [x,y] points (px) for s in [0,1] */
+function arcShape(cx, x) {                        // circular arc of length L, chord x (nm)
+  let th = Math.PI;                               // total turning angle: solve L/th * 2 sin(th/2) = x
+  for (let i = 0; i < 60; i++) { const f = 2 * Math.sin(th / 2) / th - x / LNM, d = (Math.cos(th / 2) * th - 2 * Math.sin(th / 2)) / (th * th); th -= f / d; }
+  const Rr = LNM / th, pts = [];
+  for (let i = 0; i <= 120; i++) { const a = -th / 2 + th * i / 120; pts.push([cx + Rr * Math.sin(a) * PX, BY - (Rr * Math.cos(a) - Rr * Math.cos(th / 2)) * PX]); }
+  return { pts, th };
+}
+function kinkShape(cx, x) {
+  const h = Math.sqrt(Math.max(0, (LNM / 2) ** 2 - (x / 2) ** 2)), pts = [];
+  for (let i = 0; i <= 120; i++) { const u = i / 120, xs = (u - .5) * x, y = h * (1 - Math.abs(u - .5) * 2); pts.push([cx + xs * PX, BY - y * PX]); }
+  return { pts, th: 2 * Math.atan2(h, x / 2) };   // bend at the apex = turning between the two arms
+}
+function drawDNA(g, pts) {
+  g.innerHTML = '';
+  const n = pts.length - 1, nrm = i => { const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l]; };
+  [9, -9].forEach(o => { let d = ''; pts.forEach((p, i) => { const [nx, ny] = nrm(i), w = o * Math.sin(i / n * Math.PI * 2 * 2.6); d += (i ? 'L' : 'M') + (p[0] + nx * w).toFixed(1) + ',' + (p[1] + ny * w).toFixed(1); }); S('path', { d, class: 'w', stroke: '#6fa8ff', 'stroke-width': 4 }, g); });
+  for (let k = 1; k < NBP; k++) { const i = Math.round(k / NBP * n), [nx, ny] = nrm(i), w = 9 * Math.sin(i / n * Math.PI * 2 * 2.6), p = pts[i];
+    S('line', { x1: p[0] + nx * w, y1: p[1] + ny * w, x2: p[0] - nx * w, y2: p[1] - ny * w, stroke: '#3d6fbf', 'stroke-width': 2.2 }, g); }
+}
+function bars(p, perStep) {
+  p.bars.innerHTML = ''; const x0 = p.cx - 240, w = 480 / perStep.length, y0 = 610, sc = 4;
+  S('line', { x1: x0, y1: y0, x2: x0 + 480, y2: y0, stroke: C.grid }, p.bars);
+  perStep.forEach((v, i) => { const hh = Math.min(150, v * sc); S('rect', { x: x0 + i * w + 1, y: y0 - hh, width: w - 2, height: hh, fill: v > 20 ? C.red : '#6fa8ff' }, p.bars);
+    if (v > 37.5) S('text', { x: x0 + i * w + w / 2, y: y0 - hh - 8, 'text-anchor': 'middle', 'font-size': 15, fill: C.red, text: v.toFixed(0) + '° (off scale)' }, p.bars); });
+}
+const T = [{ a: 0, b: 0, x: 6.8, sq: 0, k: 0 }, { a: 1, b: 0, x: 6.8, sq: 0, k: 1 }, { a: 1, b: 0, x: 6.8, sq: 0, k: 2 },
+           { a: 1, b: 1, x: 6.8, sq: 0, k: 3 }, { a: 1, b: 1, x: 6.8, sq: 0, k: 4 }, { a: 1, b: 1, x: 6.8, sq: 1, k: 5 }];
+const FT = ['', 'Same 27 bp duplex, same end-to-end distance: only the shape differs',
+  'Smooth: the bend is spread evenly, so the whole rod stores bending energy and pushes hard',
+  'Kinked: the bend is concentrated at one step; the straight arms store almost nothing',
+  'A kink is a release valve: once it forms, the push is capped by the kink torque τc',
+  'Pushing the ends closer: the smooth rod keeps pushing ≈ π²B/L², the kinked one stays weak'];
+let ph = 0;
+Cryo.init(T, (S_, t, dt) => {
+  ph += (dt || 0) * S_.sq;
+  const x = S_.x - S_.sq * 1.6 * (0.5 - 0.5 * Math.cos(ph * 1.1));      // squeeze 6.8 -> 5.2 nm
+  P[0].g.setAttribute('opacity', (0.2 + 0.8 * S_.a).toFixed(2)); P[1].g.setAttribute('opacity', (0.2 + 0.8 * S_.b).toFixed(2));
+  [[P[0], arcShape(P[0].cx, x), fUnk(x)], [P[1], kinkShape(P[1].cx, x), fKink(x)]].forEach(([p, sh, f], j) => {
+    drawDNA(p.dna, sh.pts);
+    const xl = p.cx - x / 2 * PX, xr = p.cx + x / 2 * PX;
+    p.base.setAttribute('x1', xl); p.base.setAttribute('x2', xr); p.base.setAttribute('y1', BY + 16); p.base.setAttribute('y2', BY + 16);
+    p.ends[0].setAttribute('cx', xl); p.ends[0].setAttribute('cy', BY); p.ends[1].setAttribute('cx', xr); p.ends[1].setAttribute('cy', BY);
+    const len = 8 + f * 2.4;
+    p.arr[0].setAttribute('x1', xl - 14); p.arr[0].setAttribute('y1', BY); p.arr[0].setAttribute('x2', xl - 14 - len); p.arr[0].setAttribute('y2', BY);
+    p.arr[1].setAttribute('x1', xr + 14); p.arr[1].setAttribute('y1', BY); p.arr[1].setAttribute('x2', xr + 14 + len); p.arr[1].setAttribute('y2', BY);
+    p.fT.textContent = `push on the ends ≈ ${f.toFixed(1)} pN`;
+    p.xT.textContent = `end-to-end distance x = ${(x * 10).toFixed(0)} Å · contour L = 89 Å`;
+    const deg = sh.th * 180 / Math.PI, steps = NBP - 1;
+    const per = j === 0 ? Array(steps).fill(deg / steps) : Array.from({ length: steps }, (_, i) => i === Math.floor(steps / 2) ? deg : 0);
+    bars(p, per);
+    p.note.textContent = j === 0 ? `≈ ${(deg / steps).toFixed(1)}° at every step (total ${deg.toFixed(0)}°)` : `${deg.toFixed(0)}° at one step, 0° elsewhere`;
+  });
+  foot.textContent = FT[Math.round(S_.k)];
+});
+</script>
+</body></html>
