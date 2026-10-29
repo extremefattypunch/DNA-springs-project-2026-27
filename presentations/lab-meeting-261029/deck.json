@@ -131,7 +131,9 @@
    "section": "synthesis",
    "panels": [
     {
-     "gel": "p05-sfgfp"
+     "gel": "p05-sfgfp",
+     "bigLabels": true,
+     "dx": -120
     }
    ]
   },

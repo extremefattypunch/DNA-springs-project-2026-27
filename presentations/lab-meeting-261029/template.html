@@ -287,6 +287,13 @@ body {
 .m-pt table.tb.big { font-size: 1em; margin: 4px 0 10px; }
 .m-pt table.tb.big th, .m-pt table.tb.big td { padding: 12px 40px 12px 0; }
 .chart-sub { position: absolute; transform: translateX(-50%); font: 600 19px var(--font-display); color: var(--ink-2); white-space: nowrap; z-index: 3; transition: opacity .3s; }
+.biglbl .lbl { gap: 14px; }
+.biglbl .lbl .ico { width: 116px; height: 82px; border-width: 2px; }
+.biglbl .lbl .ico svg { width: 108px; height: 74px; }
+.biglbl .lbl .txt b { font-size: 29px; line-height: 1.08; }
+.biglbl .lbl .txt span { font-size: 22px; line-height: 1.18; }
+.biglbl .lbl .sw { width: 30px; height: 15px; vertical-align: 2px; }
+.biglbl .lbl .sw::after { top: 4.5px; height: 6px; }
 .lbl.crossed .txt { position: relative; }
 .lbl.crossed .txt b, .lbl.crossed .txt span { text-decoration: line-through; text-decoration-color: #d8433b; text-decoration-thickness: 2.5px; }
 .lbl.crossed .ico { position: relative; }
@@ -544,7 +551,7 @@ function buildPanel(slideEl, spec, P) {
   const sc = lo, rg = range(sc);
   const gw = rg.gw, gh = rg.gh;
   const cx0 = P.x + RWl + (P.w - RWl - RWr - gw) / 2;
-  const gl = Math.min(Math.max(cx0, rg.xa), rg.xb);
+  const gl = Math.min(Math.max(cx0, rg.xa), rg.xb) + (P.dx || 0);   // P.dx: nudge the gel sideways (same size)
   const gt = Math.min(Math.max(P.y + headH + (P.h - headH - gh) * .2, rg.ya), rg.yb);
   const ox = gl - gx0 * sc, oy = gt - gy0 * sc;
   const X = x => ox + x * sc, Y = y => oy + y * sc;
@@ -554,7 +561,7 @@ function buildPanel(slideEl, spec, P) {
   const wellY = spec.gel.wellY != null ? spec.gel.wellY : gy0 + 6;
   const wellAt = x => wellY + (x - (gx0 + gx1) / 2) * tn;
 
-  const root = h('div', 'panel', { style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
+  const root = h('div', 'panel' + (P.bigLabels ? ' biglbl' : ''), { style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
   const gel = h('div', 'gel ' + (spec.style || 'dark') + (TEST && MODE === 'overlay' ? ' mode-overlay' : ''));
   root.appendChild(gel);
   slideEl.appendChild(root);
@@ -564,10 +571,10 @@ function buildPanel(slideEl, spec, P) {
   }
 
   // real image (revealed at the end) and pinned non-gel crops (e.g. a conditions table)
-  const real = h('div', 'real', { style: { left: X(0) + 'px', top: Y(0) + 'px', width: iw * sc + 'px', height: ih * sc + 'px' } });
+  const real = h('div', 'real', { style: { left: X(0) - (P.dx || 0) + 'px', top: Y(0) + 'px', width: iw * sc + 'px', height: ih * sc + 'px' } });
   real.appendChild(h('img', null, { src: spec.image, alt: spec.alt || 'Gel image as shown on the original slide', draggable: 'false' }));
   gel.appendChild(real);
-  const realTag = h('div', 'real-tag', { text: 'Real gel', style: { left: X(0) + 'px', top: Y(0) - 34 + 'px' } });
+  const realTag = h('div', 'real-tag', { text: 'Real gel', style: { left: X(0) - (P.dx || 0) + 'px', top: Y(0) - 34 + 'px' } });
   gel.appendChild(realTag);
 
   const sim = h('div', 'sim-layer'); gel.appendChild(sim);
@@ -727,13 +734,15 @@ function buildPanel(slideEl, spec, P) {
     el.innerHTML = sp.note
       ? `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b>${sp.name}</b><span><i class="sw"></i>${sp.note}</span></div>`
       : `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b><i class="sw"></i>${sp.name}</b></div>`;
-    const railX0 = side === 'left' ? gl - RAILGAP - RAIL : gl + gw + RAILGAP;
-    Object.assign(el.style, { left: railX0 + 'px', width: RAIL + 'px', justifyContent: side === 'left' ? 'flex-start' : 'flex-start' });
+    // bigLabels: same gel scale, labels widen into the free space beside the gel
+    const railW = !P.bigLabels ? RAIL : side === 'left' ? gl - RAILGAP - 22 : 1898 - (gl + gw + RAILGAP);
+    const railX0 = side === 'left' ? gl - RAILGAP - railW : gl + gw + RAILGAP;
+    Object.assign(el.style, { left: railX0 + 'px', width: railW + 'px', justifyContent: side === 'left' ? 'flex-start' : 'flex-start' });
     sim.appendChild(el);
     const path = s('path', { class: 'b' }), dot = s('circle', { r: 3.2 });
     const lg = s('g', {}); lg.appendChild(path); lg.appendChild(dot); lg.style.opacity = 0;
     leaders.appendChild(lg);
-    labels[key] = { el, side, lg, path, dot, railX0, railW: RAIL };
+    labels[key] = { el, side, lg, path, dot, railX0, railW };
   });
 
   // caption
@@ -776,7 +785,7 @@ function layoutLabels(G, st) {
     L.ty = L.tgt.y;
     groupsBySide[L.side].push(L);
   }
-  const top = G.geom.P.y - 30, bottom = G.geom.P.y + G.geom.P.h + 20, LH = 62;
+  const top = G.geom.P.y - 30, bottom = G.geom.P.y + G.geom.P.h + 20, LH = G.geom.P.bigLabels ? 98 : 62;
   for (const side of ['left', 'right']) {
     const arr = groupsBySide[side].sort((a, b) => a.ty - b.ty);
     // merge overlapping labels into stacks centred on their bands' mean row
