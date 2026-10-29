@@ -1285,6 +1285,10 @@
    "exH": 590,
    "title": "Why Zocchi’s model puts our springs in the kinked regime",
    "items": [],
+   "aside": {
+    "w": 540,
+    "html": "<b>Variables</b><table class=\"gl\"><tr><td>L</td><td>contour length along the helix, 0.33 nm × N<sub>bp</sub> (8.9 nm for 27 bp)</td></tr><tr><td>B</td><td>bending stiffness of dsDNA, ≈ 200 pN nm²</td></tr><tr><td>τ<sub>c</sub></td><td>critical torque: bending torque at which one base-pair step gives way and the duplex kinks (34 pN nm; 27 if nicked)</td></tr><tr><td>γ</td><td>kink parameter Lτ<sub>c</sub>/2B: how close the rod is to kinking</td></tr><tr><td>x<sub>c</sub></td><td>critical end-to-end distance: below it, the rod kinks</td></tr><tr><td>κ<sub>c</sub></td><td>critical curvature τ<sub>c</sub>/B: bending per length at which kinking starts</td></tr><tr><td>x<sub>MD</sub></td><td>end-to-end distance of the duplex in our chimera MD, 63–73 Å</td></tr><tr><td>R</td><td>effective arm length of the kinked rod</td></tr><tr><td>f<sub>kinked</sub></td><td>push of the kinked rod on its ends</td></tr></table>"
+   },
    "q": "Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers",
    "points": [
     {
