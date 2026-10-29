@@ -1044,6 +1044,74 @@
   },
   {
    "kind": "media",
+   "page": "12f1",
+   "section": "md",
+   "figW": 1180,
+   "exH": 590,
+   "title": "The set-up behind the force plots: a bare DNA duplex",
+   "intro": "So how exactly were these <b>MD force field</b> vs <b>Zocchi theoretical</b> force results even calculated in the first place?",
+   "msgChannel": "cryo",
+   "q": "What is simulated, what each variable means, and how the force is read off",
+   "items": [
+    {
+     "iframe": "interactive/setup.html",
+     "title": "Bare duplex restraint simulation",
+     "cap": "Animated schematic of the MD set-up; readout values are real 27 bp runs (stiff restraint)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>System</b>: bare dsDNA <dfn>duplex</dfn> (two base-paired strands) in water, <b>no protein</b>",
+     "msg": {
+      "step": 0
+     }
+    },
+    {
+     "text": "<b>L</b>: length along the helix, 89 Å (27 bp)",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>x₀</b>: rest length of a virtual spring on the ends, <b>set by us</b>; x₀ &lt; L forces a bend",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>x(t)</b>: end-to-end distance now; jiggles ≈ ±1 Å by <b>thermal motion</b> at 300 K, not by any kick",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>⟨x⟩</b>: time average of x(t); the spring stretches to it, so <b>f = k(⟨x⟩ − x₀)</b>",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Fixed?</b> Yes per run (x within ≈ 1 Å); one run = one point (⟨x⟩, f)",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "<b>Zocchi</b>: predicts f(x) from <b>B</b> (bending stiffness) and <b>τ<sub>c</sub></b> (kink torque)",
+     "msg": {
+      "step": 6
+     }
+    },
+    {
+     "text": "Below <b>x<sub>c</sub></b> the model kinks: arms of length <b>R</b>, push of a few pN",
+     "msg": {
+      "step": 7
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": "12e0",
    "section": "md",
    "figW": 1180,
@@ -1208,73 +1276,6 @@
     }
    ],
    "eqbox": "<b>Kink angle</b> (Zocchi, <i>Molecular Machines</i> §2.15, Fig. 2.31): internal angle at the kink π − 2θ, so the duplex bends by 2θ, with<span class=\"tex d\">\\theta = \\arccos\\!\\Big(\\frac{x}{2R}\\Big) - \\Delta \\quad (2.177)</span><span class=\"tex d\">\\Delta = \\arccos\\!\\Big(\\frac{x_c}{2R}\\Big) \\quad (2.178)</span><span class=\"tex d\">R = \\frac{L}{2}\\Big(1-\\frac{\\gamma^2}{90}\\Big)\\ (2.197),\\quad x_c = L\\Big(1-\\frac{\\gamma^2}{15}\\Big)\\ (2.194)</span><span class=\"tex d\">\\gamma = \\frac{L\\,\\tau_c}{2B}</span>27 bp at x = 68 Å: 2θ = 51°; 40 bp at x = 66 Å: 2θ = 76° (τ<sub>c</sub> = 34 pN nm, B = 200 pN nm²)"
-  },
-  {
-   "kind": "media",
-   "page": "12f1",
-   "section": "md",
-   "figW": 1180,
-   "exH": 590,
-   "title": "The set-up behind the force plots: a bare DNA duplex",
-   "msgChannel": "cryo",
-   "q": "What is simulated, what each variable means, and how the force is read off",
-   "items": [
-    {
-     "iframe": "interactive/setup.html",
-     "title": "Bare duplex restraint simulation",
-     "cap": "Animated schematic of the MD set-up; readout values are real 27 bp runs (stiff restraint)"
-    }
-   ],
-   "points": [
-    {
-     "text": "<b>System</b>: bare dsDNA <dfn>duplex</dfn> (two base-paired strands) in water, <b>no protein</b>",
-     "msg": {
-      "step": 1
-     }
-    },
-    {
-     "text": "<b>L</b>: length along the helix, 89 Å (27 bp)",
-     "msg": {
-      "step": 2
-     }
-    },
-    {
-     "text": "<b>x₀</b>: rest length of a virtual spring on the ends, <b>set by us</b>; x₀ &lt; L forces a bend",
-     "msg": {
-      "step": 3
-     }
-    },
-    {
-     "text": "<b>x(t)</b>: end-to-end distance now; jiggles ≈ ±1 Å by <b>thermal motion</b> at 300 K, not by any kick",
-     "msg": {
-      "step": 4
-     }
-    },
-    {
-     "text": "<b>⟨x⟩</b>: time average of x(t); the spring stretches to it, so <b>f = k(⟨x⟩ − x₀)</b>",
-     "msg": {
-      "step": 5
-     }
-    },
-    {
-     "text": "<b>Fixed?</b> Yes per run (x within ≈ 1 Å); one run = one point (⟨x⟩, f)",
-     "msg": {
-      "step": 6
-     }
-    },
-    {
-     "text": "<b>Zocchi</b>: predicts f(x) from <b>B</b> (bending stiffness) and <b>τ<sub>c</sub></b> (kink torque)",
-     "msg": {
-      "step": 7
-     }
-    },
-    {
-     "text": "Below <b>x<sub>c</sub></b> the model kinks: arms of length <b>R</b>, push of a few pN",
-     "msg": {
-      "step": 8
-     }
-    }
-   ]
   },
   {
    "kind": "media",

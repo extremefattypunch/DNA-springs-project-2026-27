@@ -130,11 +130,11 @@ slides = {
       + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)},
     {'text': '<span class="headline"><b>Headline</b>: our chimeras hold the duplex at 63–73 Å, below x<sub>c</sub> = 86 Å (27 bp) and 121 Å (40 bp). Zocchi’s model therefore puts them in the <b>kinked</b> regime and predicts only <b>≈ 3–7 pN</b></span>'},
     {'banner': True, 'text': '<span class="ttl">Main idea</span>Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b>: once bending exceeds it, DNA must kink, and the push collapses to a few pN.<br><br>The MD force field has <b>no such threshold</b>. A kink could only emerge from base pairs actually breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b> and keeps pushing at tens of pN.'}]},
-'12f1': {'title': 'The set-up behind the force plots: a bare DNA duplex', 'figW': 1180, 'msgChannel': 'cryo',
+'12f1': {'title': 'The set-up behind the force plots: a bare DNA duplex', 'intro': 'So how exactly were these <b>MD force field</b> vs <b>Zocchi theoretical</b> force results even calculated in the first place?', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'What is simulated, what each variable means, and how the force is read off',
   'items': [{'iframe': 'interactive/setup.html', 'title': 'Bare duplex restraint simulation',
              'cap': 'Animated schematic of the MD set-up; readout values are real 27 bp runs (stiff restraint)'}],
-  'points': [{'text': t, 'msg': {'step': i + 1}} for i, t in enumerate([
+  'points': [{'text': t, 'msg': {'step': i}} for i, t in enumerate([
     '<b>System</b>: bare dsDNA <dfn>duplex</dfn> (two base-paired strands) in water, <b>no protein</b>',
     '<b>L</b>: length along the helix, 89 Å (27 bp)',
     '<b>x₀</b>: rest length of a virtual spring on the ends, <b>set by us</b>; x₀ &lt; L forces a bend',
@@ -226,12 +226,12 @@ for sl in deck['slides']:
         for p in sl['points']:
             p['text'] = p['text'].replace('425 ns over 5 systems', '500 ns over 5 systems')
 # slides added after the original deck: insert after their predecessor
-for pg, after in (('12f2', '12f'), ('12f1', '12e'), ('12e0', '12d')):
+for pg, after in (('12f2', '12f'), ('12f1', '12d'), ('12e0', '12d')):
     if not any(str(x.get('page')) == pg for x in deck['slides']):
         i = next(i for i, x in enumerate(deck['slides']) if str(x.get('page')) == after)
         deck['slides'].insert(i + 1, {'kind': 'media', 'page': pg, 'section': 'md', 'figW': 1180, 'exH': 590, **slides[pg]})
 # fixed order for the Zocchi block: set-up, derivation, plots
-order = ['12e', '12f1', '12f', '12f2']
+order = ['12f1', '12e0', '12e', '12f', '12f2']
 idx = [i for i, x in enumerate(deck['slides']) if str(x.get('page')) in order]
 block = sorted((deck['slides'][i] for i in idx), key=lambda x: order.index(str(x['page'])))
 for i, sl in zip(idx, block): deck['slides'][i] = sl
