@@ -103,33 +103,41 @@ slides = {
     {'text': 'The highest single step stays a broad bump, not a kink', 'hl': 0, 'marks': [M('db_27peak', 'broad', 30, -60)]},
     {'text': 'The DNA touches the protein in 72–98 % of frames (ssDNA loop 93 %): <b>local contact</b>, not action at a distance'},
     {'text': '<b>Answer</b>: no kink, no coiling of the duplex; but the DNA lies against the protein'}]},
-'12f': {'title': 'sfGFP: Zocchi’s DNA-spring model, kinked and unkinked', 'items': [], 'q': 'What does Zocchi’s model (Molecular Machines §2.15) predict for our springs?',
+'12f': {'title': 'sfGFP: why Zocchi’s model puts our springs in the kinked regime', 'items': [], 'exH': 590,
+  'q': 'Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers',
   'points': [
-    {'text': '<b>Setup.</b> A duplex of N base pairs is an elastic rod with contour length ' + tex(r'L = 0.33\,\mathrm{nm}\times N') + ' and bending modulus ' + tex(r'B = k_BT\,\ell_p \approx 200\ \mathrm{pN\,nm^2}')
-      + ' (persistence length ℓ<sub>p</sub> ≈ 50 nm, k<sub>B</sub>T = 4.1 pN nm). Its ends are held at end-to-end distance x &lt; L, so it must bend, and it pushes them apart with a force f(x).'},
-    {'text': '<b>Unkinked branch</b> (smoothly bent rod), eq. 2.203: the first term is the elastic push of the bent rod, the second a correction for its thermal fluctuations'
-      + tex(r'f_{\mathrm{unkinked}}(x) = \frac{10\,B}{L^2} - \frac{k_BT}{L - x}', True)},
-    {'text': '<b>Kinked branch</b>: the rod breaks at one point, with kink energy ' + tex(r'E_k = \tau_c \arccos(x/2R)') + ' (eq. 2.196); the force is ' + tex(r'f = -\,dE_k/dx') + ':'
-      + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}}, \qquad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big)', True)},
-    {'text': '<b>Which branch?</b> The rod kinks once its bending torque reaches the <dfn>critical torque</dfn> τ<sub>c</sub> ≈ 27 (nicked) to 34 (intact) pN nm, i.e. when x drops below (eqs 2.188, 2.194)'
-      + tex(r'x_c = L\Big(1-\frac{\gamma^2}{15}\Big), \qquad \gamma = \frac{L\,\tau_c}{2B}', True)},
-    {'text': '<b>Our springs.</b> 27 bp: L = 8.9 nm, γ = 0.76, x<sub>c</sub> = 86 Å. The sfGFP chimeras span 63–73 Å &lt; x<sub>c</sub>, so the model puts them on the <b>kinked</b> branch: f ≈ 5.5–6.8 pN (40 bp: x<sub>c</sub> = 121 Å, f ≈ 3.0 pN). In curvature terms, kinking starts at τ<sub>c</sub>/B = 2.6–3.2°/bp, and our chimeras are bent 4.8–5.2°/bp'},
-    {'text': '<b>But the simulated duplexes never kinked</b> (smooth bending, previous slide). So the force field should be compared with the <b>unkinked</b> branch: next slide'}]},
-'12f2': {'title': 'sfGFP: the unkinked branch is the Euler load, and matches the force field', 'items': [], 'q': 'Showing that the force-field measurement sits on Zocchi’s unkinked branch',
+    {'text': '<b>Inputs.</b> Zocchi’s rod parameters, and what our MD measured: in the sfGFP chimeras the duplex ends sit <b>x = 63–73 Å</b> apart, bent <b>4.8–5.2° per bp</b>'
+      + tex(r'L = 0.33\,\mathrm{nm}\times N_{\mathrm{bp}}, \qquad B = k_BT\,\ell_p \approx 200\ \mathrm{pN\,nm^2}, \qquad \tau_c = 34\ (\text{intact}),\ 27\ (\text{nicked})\ \mathrm{pN\,nm}', True)},
+    {'text': '<b>Step 1: the kink parameter</b> (eq. 2.194)'
+      + tex(r'\gamma = \frac{L\,\tau_c}{2B} = \frac{8.91 \times 34}{2 \times 200} = 0.76\ \ (27\ \text{bp}), \qquad \frac{13.2 \times 34}{2 \times 200} = 1.12\ \ (40\ \text{bp})', True)},
+    {'text': '<b>Step 2: the critical distance</b> (eq. 2.188): below x<sub>c</sub> the bending torque would exceed τ<sub>c</sub>, so the rod kinks instead'
+      + tex(r'x_c = L\Big(1-\frac{\gamma^2}{15}\Big) = 8.91\,(1 - 0.038) = 8.57\ \text{nm} = 86\ \text{Å}\ \ (27\ \text{bp}), \qquad 121\ \text{Å}\ \ (40\ \text{bp})', True)},
+    {'text': '<b>Step 3: compare with the MD.</b>'
+      + tex(r'x_{\mathrm{MD}} = 63\text{–}73\ \text{Å} \;<\; x_c = 86\ \text{Å}\ (27\ \text{bp}),\ 121\ \text{Å}\ (40\ \text{bp}) \quad\Longrightarrow\quad \text{kinked regime}', True)},
+    {'text': '<b>Same answer from curvature</b>: a rod kinks once its bending torque Bκ reaches τ<sub>c</sub>'
+      + tex(r'\kappa_c = \frac{\tau_c}{B} = \frac{34}{200}\ \text{nm}^{-1} \;\Rightarrow\; \kappa_c \times 0.33\ \tfrac{\text{nm}}{\text{bp}} = 3.2^\circ/\text{bp}\ \ (2.6^\circ/\text{bp nicked}) \;<\; 4.8\text{–}5.2^\circ/\text{bp in the MD}', True)},
+    {'text': '<b>So the model predicts the kinked-branch force</b> (eq. 2.196), only a few pN:'
+      + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)
+      + 'Yet the simulated duplexes <b>never kinked</b> (smooth bending, DNA dynamics slide): next slide'}]},
+'12f2': {'title': 'sfGFP: kinked vs unkinked regime, and the force field', 'q': 'What changes between the regimes, and which one does the force field follow?',
+  'items': [fig(S, 'zocchi_regimes.png', 'Zocchi’s force against end-to-end distance, both branches'),
+            fig(S, 'zocchi_unkinked_vs_ff.png', 'Zocchi recomputed at the force field’s own distances')],
+  'explain': [
+    {'item': 0, 'text': 'x-axis: end-to-end distance x of the duplex; y-axis: the force f it pushes its ends apart with. <b>Solid</b>: the unkinked branch where Zocchi applies it (x &gt; x<sub>c</sub>), '
+      + tex(r'f = 10B/L^2 - k_BT/(L-x)') + '. <b>Dotted</b>: the kinked branch (x &lt; x<sub>c</sub>), ' + tex(r'f = \tau_c / \big(2R\sqrt{1-(x/2R)^2}\big)')
+      + '. <b>Dashed</b>: the unkinked branch continued below x<sub>c</sub>, i.e. the push of a rod that never kinks. Grey band: where our chimeras hold the duplex.',
+     'marks': [M('zr_xc27', 'x_c, 27 bp', 30, -60), M('zr_kink27', 'kinked: 5–7 pN', -30, 20), M('zr_unk27', 'unkinked: ≈ 24 pN', -30, -60), M('zr_chim', 'our chimeras', 30, 14)]},
+    {'item': 1, 'text': 'Bare duplexes in the force field (no protein), held at ⟨x⟩ = 49 Å (27 bp) and 62 Å (40 bp), both below x<sub>c</sub>. For each duplex: <b>grey</b> = Zocchi’s kinked prediction at that ⟨x⟩; '
+      '<b>light blue</b> = Zocchi recomputed on the unkinked branch at the same ⟨x⟩; <b>dark blue</b> = what the force field measured, ' + tex(r'\langle k(r - x_0)\rangle') + ' (mean ± sem; dots are single runs).',
+     'marks': [M('zu_k0', 'kinked 4.6', -30, -60), M('zu_u0', 'unkinked 24.1', -30, -70), M('zu_f0', 'measured 28.0', 30, -60)]}],
   'points': [
-    {'text': '<b>1 · Euler buckling.</b> A rod of length L under end load F bends with shape y(s):'
-      + tex(r"B\,y''(s) + F\,y(s) = 0,\quad y(0)=y(L)=0 \;\Rightarrow\; y = A\sin\frac{\pi s}{L},\quad F_E = \frac{\pi^2 B}{L^2}", True)
-      + 'Once buckled, it pushes back with ≈ F<sub>E</sub> almost regardless of how far its ends are pushed together'},
-    {'text': '<b>2 · The unkinked branch is the Euler load.</b> Split Zocchi’s formula:'
-      + tex(r'f_{\mathrm{unkinked}}(x) = \underbrace{\frac{\pi^2 B}{L^2}}_{F_E} + \underbrace{\frac{(10-\pi^2)\,B}{L^2}}_{+1.3\%\ \text{of}\ F_E} - \underbrace{\frac{k_BT}{L-x}}_{\text{thermal}}', True)
-      + '27 bp at the measured ⟨x⟩ = 4.9 nm: F<sub>E</sub> = 24.9, +0.3, −1.0 pN, so f<sub>unkinked</sub> = 24.2 pN, within 3 % of F<sub>E</sub> (40 bp: 10.9 vs 11.3 pN)'},
-    {'text': '<b>3 · The force field</b> (previous slides):' + tex(r'\langle F\rangle_{\mathrm{FF}} = k\,(\langle r\rangle - x_0) = 28.0 \pm 1.2\ \mathrm{pN}\ (27\ \mathrm{bp}),\quad 15.8 \pm 1.6\ \mathrm{pN}\ (40\ \mathrm{bp})', True)
-      + 'flat across ⟨r⟩, the buckled-rod signature of step 1'},
-    {'text': '<b>4 · Set them equal.</b> If the force-field duplex is an unkinked rod, ' + tex(r'\langle F\rangle_{\mathrm{FF}} = \pi^2 B_{\mathrm{FF}}/L^2') + ', so'
-      + tex(r'B_{\mathrm{FF}} = \frac{\langle F\rangle_{\mathrm{FF}}\,L^2}{\pi^2}, \qquad \ell_p^{\mathrm{FF}} = \frac{B_{\mathrm{FF}}}{k_BT}', True)
-      + '27 bp: B<sub>FF</sub> = 209–225 pN nm², ℓ<sub>p</sub> = <b>51–55 nm</b>; 40 bp: 265–279 pN nm², 64–68 nm (range: L counted over N or N − 1 base-pair steps). Real DNA: ℓ<sub>p</sub> ≈ 50 nm. The measurement is the unkinked branch with ordinary DNA stiffness'},
-    {'text': '<b>5 · The kinked branch cannot fit.</b> At the same ⟨x⟩ it gives 4.6 pN (27 bp) and 3.0 pN (40 bp), 6× and 5× below the measurement'},
-    {'text': '<b>Conclusion</b>: the force field and Zocchi agree on the <b>unkinked</b> spring (F ≈ π²B/L²). They differ only on <b>whether the duplex kinks</b> at 4.8–5.2°/bp: Zocchi’s τ<sub>c</sub> = 27–34 pN nm says it should, the force-field duplex does not'}]},
+    {'text': '<b>Kinked regime</b> (x &lt; x<sub>c</sub>): the kink takes up the bending, so the push collapses to a few pN', 'hl': 0, 'marks': [M('zr_kink27', '5–7 pN', 30, 14), M('zr_kink40', '≈ 3 pN', 30, 14)]},
+    {'text': '<b>Unkinked regime</b>: the push stays near the Euler load π²B/L² ≈ 10B/L² (24.9 pN for 27 bp, 11.3 pN for 40 bp), almost independent of x', 'hl': 0, 'marks': [M('zr_unk27', '≈ 24 pN', -30, -60), M('zr_unk40', '≈ 11 pN', 30, -50)]},
+    {'text': 'Our chimeras (grey band) sit well inside the kinked regime of the model: <b>5×</b> less force than if the rod stays unkinked', 'hl': 0, 'marks': [M('zr_chim', 'chimeras', 30, 14), M('zr_xc27', 'x_c', 30, -60)]},
+    {'text': 'Recomputed on the <b>unkinked</b> branch at the force field’s own ⟨x⟩: <b>24.1 vs 28.0 pN</b> (27 bp), 10.9 vs 15.8 (40 bp), 10.9 vs 13.2 (nicked): within 1.2–1.5×', 'hl': 1,
+     'marks': [M('zu_u0', '24.1', -30, -70), M('zu_f0', '28.0', 30, -60), M('zu_u1', '10.9', -30, -60), M('zu_f1', '15.8', 30, -60)]},
+    {'text': 'The kinked branch is <b>5–6× too low</b> (4.6, 3.0, 2.3 pN)', 'hl': 1, 'marks': [M('zu_k0', '4.6', -30, -60), M('zu_k1', '3.0', -30, -60), M('zu_k2', '2.3', -30, -60)]},
+    {'text': '<b>Answer</b>: the force field does not contradict Zocchi’s spring. Its duplex never kinks, so it follows his <b>unkinked</b> branch; the only disagreement is whether DNA kinks at 4.8–5.2°/bp'}]},
 '31c': {'title': 'PP2A: Ramachandran plots at the modified sites', 'q': 'Does adding the tet groups change the protein’s local conformation?',
   'items': [fig(P, 'pp2a_ramachandran.png', 'Backbone φ/ψ at the two modified sites')],
   'explain': [
