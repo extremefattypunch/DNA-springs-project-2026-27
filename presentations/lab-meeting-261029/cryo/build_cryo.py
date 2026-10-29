@@ -108,7 +108,8 @@ SLIDES = [
              ("Together, in Fourier space:" + eq(
                  '<span class="kn"><i>Y</i><sub>i</sub>(<b>q</b>)</span> = <span class="kn"><i>C</i><sub>i</sub>(<b>q</b>)</span> '
                  '<span class="un"><i>Ṽ</i></span>(<span class="un"><i>R</i><sub>i</sub></span>ᵀ[<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0]ᵀ) '
-                 '<i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class="un"><b>t</b><sub>i</sub></span></sup> + <span class="nz"><i>N</i><sub>i</sub>(<b>q</b>)</span>'), [31.5, 42]),
+                 '<i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class="un"><b>t</b><sub>i</sub></span></sup> + <span class="nz"><i>N</i><sub>i</sub>(<b>q</b>)</span>'), [31.5, 37.8]),
+             ("<b>Takeaway</b>: projection loses depth, the CTF filters frequencies and noise swamps each image, so the 3D source must be recovered from many images", [37.8, 42]),
              ("<b class=\"kn\">Known</b>: the image <i>Y</i><sub>i</sub> and its CTF <i>C</i><sub>i</sub> (from the fitted Δf). "
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
              ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),

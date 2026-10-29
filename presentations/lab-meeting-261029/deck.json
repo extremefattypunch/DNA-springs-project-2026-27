@@ -2575,6 +2575,13 @@
      "text": "Together, in Fourier space:<span class=\"eq blk\"><span class=\"kn\"><i>Y</i><sub>i</sub>(<b>q</b>)</span> = <span class=\"kn\"><i>C</i><sub>i</sub>(<b>q</b>)</span> <span class=\"un\"><i>Ṽ</i></span>(<span class=\"un\"><i>R</i><sub>i</sub></span>ᵀ[<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0]ᵀ) <i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class=\"un\"><b>t</b><sub>i</sub></span></sup> + <span class=\"nz\"><i>N</i><sub>i</sub>(<b>q</b>)</span></span>",
      "seek": [
       31.5,
+      37.8
+     ]
+    },
+    {
+     "text": "<b>Takeaway</b>: projection loses depth, the CTF filters frequencies and noise swamps each image, so the 3D source must be recovered from many images",
+     "seek": [
+      37.8,
       42
      ]
     },
