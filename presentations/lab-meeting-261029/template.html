@@ -1042,7 +1042,9 @@ function buildMedia(el, cfg) {
   const lis = pts.map(pt => { const li = h(pt.banner ? 'div' : 'li', pt.banner ? 'm-banner' : 'm-pt', { html: pt.text }); (pt.banner ? el : ul).appendChild(li); return li; });
   items.forEach((_, i) => place(i, boxes[i], false));
   el.appendChild(ul);
+  const FULL = pts.length + Math.max(0, E - 1);
   return { kind: 'media', k: -1, apply(k) {
+    if (cfg.final) k = FULL;           // final: open on the finished state, no click-through
     this.k = k;
     if (E) {
       if (k < E) {                       // explain phase: one plot fills the slide
@@ -1060,10 +1062,10 @@ function buildMedia(el, cfg) {
       k = k - E + 1;
       showMarks(pts[k - 1] && pts[k - 1].marks);
     }
-    lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', i === k - 1); });
+    lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', !cfg.final && i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
     let msg = null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;
-    curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [], step: 0, static: STATIC_MEDIA }, msg || {});
+    curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [], step: 0, static: STATIC_MEDIA || !!cfg.final }, msg || {});
     frames.forEach(f => { try { f.contentWindow.postMessage(curMsg, '*'); } catch (e) {} });
     els.forEach((e, i) => e.classList.toggle('mhl', Array.isArray(hl) ? hl.includes(i) : hl === i));
     // managed videos: each point with seek [a, b] plays that segment once, then holds its last frame
@@ -1086,7 +1088,7 @@ function buildMedia(el, cfg) {
       else if (STATIC_MEDIA) go(seg[1] - 0.05, false);
       else go(seg[0], true, seg[1]);
     });
-  }, n: pts.length + Math.max(0, E - 1), videos: [...el.querySelectorAll('video')] };
+  }, n: cfg.final ? 0 : FULL, videos: [...el.querySelectorAll('video')] };
 }
 
 /* ---------------- slides ---------------- */

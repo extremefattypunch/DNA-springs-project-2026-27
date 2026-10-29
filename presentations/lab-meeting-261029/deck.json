@@ -1932,7 +1932,8 @@
       "step": 6
      }
     }
-   ]
+   ],
+   "final": true
   },
   {
    "kind": "media",
@@ -1983,7 +1984,8 @@
      "text": "<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail",
      "hl": 0
     }
-   ]
+   ],
+   "final": true
   },
   {
    "kind": "media",
@@ -2037,7 +2039,8 @@
       "step": 6
      }
     }
-   ]
+   ],
+   "final": true
   },
   {
    "kind": "media",
@@ -2091,7 +2094,8 @@
       "step": 6
      }
     }
-   ]
+   ],
+   "final": true
   },
   {
    "kind": "media",

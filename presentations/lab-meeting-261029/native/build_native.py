@@ -245,6 +245,9 @@ for s in deck['slides']:
     for parent, child in ((1, '1b'), (29, '29b'), (30, '30b')):
         if pg == parent and child == '1b':   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
+for x in out:
+    if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)
+        x['final'] = True
 deck['slides'] = out
 (ROOT / 'deck.json').write_text(json.dumps(deck, indent=1, ensure_ascii=False))
 print(len(out), 'slides;', sum(1 for s in out if s['kind'] == 'image'), 'image slides left')
