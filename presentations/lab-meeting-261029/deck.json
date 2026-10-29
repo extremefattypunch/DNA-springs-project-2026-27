@@ -104,6 +104,69 @@
    "top": 316
   },
   {
+   "kind": "media",
+   "page": "9b",
+   "section": "assay",
+   "title": "What the band ratio measures",
+   "figW": 1180,
+   "q": "Interactive: 1-tet concentration series, 2026-08-25",
+   "items": [
+    {
+     "iframe": "interactive/dilution.html",
+     "cap": "Lamp-corrected excitation spectra, normalised to peak = 1 (mean of n = 3 per concentration)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Band ratio = I(400) / I(peak)</b>, read off each sample’s lamp-corrected excitation spectrum (S1 ÷ R1)"
+    },
+    {
+     "text": "<b>I(peak)</b>: the spectrum’s maximum, ≈ 485–489 nm, the anionic chromophore band",
+     "msg": {
+      "ann": [
+       "peak"
+      ]
+     }
+    },
+    {
+     "text": "<b>I(400)</b>: the intensity at 400 nm, the neutral chromophore band",
+     "msg": {
+      "ann": [
+       "peak",
+       "400"
+      ]
+     }
+    },
+    {
+     "text": "With peak = 1, each curve’s height at 400 nm <b>is</b> its band ratio: 2–4 µM lowest (≈ 0.10), 32 µM highest (0.146)",
+     "msg": {
+      "ann": [
+       "peak",
+       "400"
+      ]
+     }
+    },
+    {
+     "text": "Dividing by I(peak) cancels concentration and lamp drift, but only at low absorbance: from 8 µM the inner filter effect lifts the ratio",
+     "msg": {
+      "ann": [
+       "peak",
+       "400"
+      ]
+     }
+    },
+    {
+     "text": "<b>Try it</b>: click legend entries to hide traces, drag across the plot to zoom, double-click to reset",
+     "msg": {
+      "ann": [
+       "peak",
+       "400"
+      ]
+     }
+    }
+   ]
+  },
+  {
    "kind": "gel",
    "page": 10,
    "title": "Effect of force application",

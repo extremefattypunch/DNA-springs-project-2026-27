@@ -217,6 +217,7 @@ body {
 /* ---------- media slides (MD figures, videos, findings) ---------- */
 .m-item { position: absolute; display: flex; flex-direction: column; gap: 8px; }
 .m-frame { position: relative; flex: 1; min-height: 0; background: #fbfbf9; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; transition: box-shadow .3s, border-color .3s; }
+.m-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
 .m-frame img, .m-frame video { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; }
 .m-item.mhl .m-frame { border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent), 0 0 24px color-mix(in srgb, var(--amber) 35%, transparent); }
 .m-cap { font-size: 19px; line-height: 1.25; color: var(--ink-2); }
@@ -911,7 +912,8 @@ function applyChart(C, k, animate) {
 function buildMedia(el, cfg) {
   const top = cfg.top || 160, bottom = 950;
   const items = cfg.items || [], pts = cfg.points || [];
-  const boxes = [];
+  const boxes = [], frames = [];
+  let curMsg = null;
   if (cfg.layout === 'row') {
     const n = items.length, gap = 24, w = (1792 - (n - 1) * gap) / n;
     const h = Math.min(w / (cfg.aspect || 1.29) + 60, cfg.rowH || 520);
@@ -927,7 +929,11 @@ function buildMedia(el, cfg) {
     const b = boxes[i];
     const box = h('div', 'm-item', { style: { left: b.x + 'px', top: b.y + 'px', width: b.w + 'px', height: b.h + 'px' } });
     const fr = h('div', 'm-frame');
-    if (it.video) {
+    if (it.iframe) {
+      const f = h('iframe', null, { src: it.iframe, title: it.title || 'Interactive spectra viewer', loading: 'eager' });
+      f.addEventListener('load', () => { try { f.contentWindow.postMessage(Object.assign({ preset: true, ann: [] }, curMsg || {}), '*'); } catch (e) {} });
+      fr.appendChild(f); frames.push(f);
+    } else if (it.video) {
       const v = h('video', null, { src: it.video, muted: '', loop: '', playsinline: '', preload: 'auto', poster: it.poster || '', 'aria-label': it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD animation' });
       v.muted = true; fr.appendChild(v);
     } else fr.appendChild(h('img', null, { src: it.img, alt: it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD figure', draggable: 'false' }));
@@ -943,6 +949,9 @@ function buildMedia(el, cfg) {
     this.k = k;
     lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
+    let msg = null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;
+    curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [] }, msg || {});
+    frames.forEach(f => { try { f.contentWindow.postMessage(curMsg, '*'); } catch (e) {} });
     els.forEach((e, i) => e.classList.toggle('mhl', Array.isArray(hl) ? hl.includes(i) : hl === i));
   }, n: pts.length, videos: [...el.querySelectorAll('video')] };
 }
@@ -1072,6 +1081,11 @@ function autoPanels(cfg) {
   });
 }
 
+// keys pressed inside an embedded viewer are forwarded here
+addEventListener('message', e => {
+  const k = e.data && e.data.deckKey; if (!k) return;
+  dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+});
 // type a slide number then Enter to jump there (Esc cancels)
 let typed = '', typedTimer = null;
 const goto = h('div', 'goto', { 'aria-live': 'polite' }); document.body.appendChild(goto);
