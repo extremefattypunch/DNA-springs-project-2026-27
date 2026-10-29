@@ -183,72 +183,72 @@
      "anns": {
       "br_pk2": [
        0.436,
-       0.854
+       0.663
       ],
       "br_400_2": [
-       0.071,
-       0.909
+       0.076,
+       0.861
       ],
       "br_em2": [
        0.53,
-       0.857
+       0.651
       ],
       "br_pk4": [
-       0.431,
-       0.8
+       0.432,
+       0.608
       ],
       "br_400_4": [
-       0.071,
-       0.904
+       0.076,
+       0.808
       ],
       "br_em4": [
        0.534,
-       0.806
+       0.599
       ],
       "br_pk8": [
-       0.431,
-       0.642
+       0.432,
+       0.535
       ],
       "br_400_8": [
-       0.071,
-       0.886
+       0.076,
+       0.727
       ],
       "br_em8": [
        0.534,
-       0.662
+       0.529
       ],
       "br_pk16": [
        0.436,
-       0.429
+       0.486
       ],
       "br_400_16": [
-       0.071,
-       0.857
+       0.076,
+       0.668
       ],
       "br_em16": [
-       0.539,
-       0.475
+       0.538,
+       0.483
       ],
       "br_pk32": [
-       0.44,
-       0.238
+       0.441,
+       0.457
       ],
       "br_400_32": [
-       0.071,
-       0.816
+       0.076,
+       0.621
       ],
       "br_em32": [
        0.547,
-       0.3
+       0.455
       ]
      },
-     "cap": "Mean of 3 scans per concentration · linear y, not normalised · excitation S1 ÷ R1 (lamp-corrected), emission S1"
+     "cap": "Mean of 3 scans per concentration · log y-axis, not normalised · excitation S1 ÷ R1 (lamp-corrected), emission S1"
     }
    ],
    "explain": [
     {
      "item": 0,
-     "text": "<b>Two spectra per sample, on one wavelength axis.</b> <b>Left (solid, left y-axis): excitation spectra</b>, detecting at 510 nm while the excitation sweeps 400 → 500 nm; lamp-corrected as S1 ÷ R1. <b>Right (dashed, right y-axis): emission spectra</b>, exciting at 485 nm while the detected wavelength sweeps 500 → 600 nm. Colour = concentration, light (2 µM) to dark (32 µM), labelled on each curve. Signal grows with concentration because there is more protein in the cuvette.",
+     "text": "<b>Two spectra per sample, on one wavelength axis.</b> <b>Left (solid, left y-axis): excitation spectra</b>, detecting at 510 nm while the excitation sweeps 400 → 500 nm; lamp-corrected as S1 ÷ R1. <b>Right (dashed, right y-axis): emission spectra</b>, exciting at 485 nm while the detected wavelength sweeps 500 → 600 nm. Colour = concentration, light (2 µM) to dark (32 µM), labelled on each curve. The y-axis is <b>logarithmic</b>, so equal concentration doublings would give equally spaced curves. <b>Inset</b>: I(peak) against concentration (log–log), with the straight line expected if fluorescence were proportional to concentration.",
      "marks": [
       {
        "a": "br_pk32",
@@ -307,37 +307,25 @@
      ]
     },
     {
-     "text": "<b>Purpose</b>: concentration independence. 2 µM → 32 µM raises I(peak) 11×, yet the ratio only moves 0.098 → 0.146, since both intensities scale with the amount of protein",
+     "text": "<span class=\"headline\"><b>Headline</b>: fluorescence is <b>not linear</b> in concentration: 16× more protein (2 → 32 µM) gives only 11× more I(peak), and the curves bunch up at the top. Our samples were not all at the same concentration, so we cannot simply rescale raw intensities: we need a <b>concentration-independent metric</b></span>",
      "hl": 0,
      "marks": [
       {
        "a": "br_pk32",
-       "t": "",
-       "dx": 0,
-       "dy": 0
+       "t": "32 µM",
+       "dx": -30,
+       "dy": -60
       },
       {
-       "a": "br_400_32",
-       "t": "",
-       "dx": 0,
-       "dy": 0
-      },
-      {
-       "a": "br_pk2",
-       "t": "",
-       "dx": 0,
-       "dy": 0
-      },
-      {
-       "a": "br_400_2",
-       "t": "",
-       "dx": 0,
-       "dy": 0
+       "a": "br_pk16",
+       "t": "16 µM",
+       "dx": -30,
+       "dy": 40
       }
      ]
     },
     {
-     "text": "The ratio is flat at 2–8 µM (0.097–0.105) and rises from <b>16 µM</b> (inner filter effect, next slide); all our comparisons are at ≤ 10 µM",
+     "text": "<b>The band ratio</b> is that metric: I(400) and I(peak) come from the same spectrum, so the concentration cancels. It stays at 0.097–0.105 from 2 to 8 µM, while I(peak) rises 4.5×",
      "hl": 0
     }
    ]
