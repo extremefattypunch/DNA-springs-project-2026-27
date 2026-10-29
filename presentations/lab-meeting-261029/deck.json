@@ -46,12 +46,6 @@
      "msg": {
       "step": 4
      }
-    },
-    {
-     "text": "For each protein we follow the same plan, <b>SAM</b>: Synthesis, Assay, MD analysis (next slide)",
-     "msg": {
-      "step": 5
-     }
     }
    ]
   },

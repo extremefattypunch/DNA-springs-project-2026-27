@@ -177,8 +177,7 @@ SLIDES = {
            '<b>Single-molecule force methods</b> (optical and magnetic tweezers, AFM) apply and measure force, but read out only one end-to-end distance, not the structure',
            '<b>Structural methods</b> (cryoEM, X-ray) give atomic structures, but of proteins at rest, with no force applied',
            '<b>Our approach</b>: attach a DNA spring to the protein (sfGFP, PP2A) across two chosen residues, so the spring itself applies the force',
-           'Every molecule carries its own spring, so a whole sample is under load and can be frozen for cryoEM: <b>force and atomic structure simultaneously</b>, which the traditional single-molecule methods cannot do',
-           'For each protein we follow the same plan, <b>SAM</b>: Synthesis, Assay, MD analysis (next slide)'])]},
+           'Every molecule carries its own spring, so a whole sample is under load and can be frozen for cryoEM: <b>force and atomic structure simultaneously</b>, which the traditional single-molecule methods cannot do'])]},
 '1c': {'kind': 'media', 'page': '1c', 'section': 'background', 'title': 'Three kinds of DNA spring, and why we need all three', 'figW': 1200,
        'items': [{'img': 'native/spring_types.svg', 'w': 1200, 'h': 560, 'cap': 'Schematic of the three chimeras used throughout'}],
        'points': [{'text': t, 'hl': 0} for t in [
