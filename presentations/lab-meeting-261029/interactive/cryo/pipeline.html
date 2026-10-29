@@ -17,7 +17,7 @@ const XR = ['Diffraction images', 'Spot finding', 'Indexing and integration', 'S
   null, 'Electron-density map', 'Atomic model building', 'Reciprocal-space refinement', 'Validation'];
 const EM = ['Electron movies', 'Motion and CTF correction', 'Particle picking', '2D classification', '3D reconstruction',
   '3D classification and refinement', '3D density map', 'Atomic model building', 'Real-space refinement', 'Validation'];
-const ROAD = { 1: 'defocus + CTF', 3: 'align + average', 4: 'Fourier slice', 5: 'classes + FSC' };
+const ROAD = { 1: 'defocus + CTF', 4: 'Fourier slice', 5: 'refinement' };
 const Y0 = 82, PITCH = 60, BH = 46, BW = 300;
 const rowY = i => Y0 + i * PITCH;
 function flow(list, cx, key) {

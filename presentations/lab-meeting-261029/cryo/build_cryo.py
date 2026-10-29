@@ -44,7 +44,7 @@ SLIDES = [
               "<b>X-ray</b>: the detector records only spot intensities, so the phases must be recovered (<b>phasing</b>) before any map exists",
               "<b>cryoEM</b>: every particle image is a real-space projection with its phases intact, but the particle’s <b>pose is unknown</b> and its signal is buried in noise",
               "<b>CryoSPARC, TOPAZ</b>: movies → 3D map. <b>RELION, EMReady, COOT</b>: map → atomic model",
-              "The next slides explain the boxed steps in order: defocus and the CTF, alignment, the Fourier slice theorem, reconstruction, classification and FSC"]),
+              "The next slides explain how the 3D map is made: defocus and the CTF, the forward model, the Fourier slice theorem, and reconstruction with known and unknown poses"]),
     frame("c2", "What does it mean to defocus a lens?", "lens.html",
           "Thin lens: 1/f = 1/s + 1/s′, with the object and the sensor fixed", DRAWN, [
               "<b>Stronger lens</b> (shorter f): the rays cross before the sensor and spread into a disc",
@@ -91,13 +91,6 @@ SLIDES = [
               "<b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>", None),
              ("Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies", None),
              ("<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into", None)]),
-    clip("c9", "2D classification: align first, then average", "02_alignment_averaging",
-         "Why align before averaging, and how fast does the noise fall?", MANIM.format(n="02"), [
-             ("Every image is the same pattern, rotated by φ<sub>i</sub> and shifted by <b>t</b><sub>i</sub>, plus noise", [0, 9]),
-             ("Averaging <b>without</b> aligning smears the dots into rings", [9, 15]),
-             ("Undo each rotation and shift first: the average is sharp, and only noise is left in the residual", [15, 26]),
-             ("Noise falls as σ/√N: 4× more particles give 2× the signal-to-noise ratio", [26, 38]),
-             ("2D classification does this for groups of similar views at once; junk particles collect in junk classes and are discarded", [38, 44.2])]),
     clip("c10", "Central slice theorem: every image is a plane through the 3D Fourier transform", "03_orientation_fourier_slice",
          "How do unknown 3D orientations and Fourier slices define reconstruction?", MANIM.format(n="03"), [
              ("<b>Orientation R</b>: a viewing direction (2 angles) plus an in-plane rotation ψ (1 angle) = 3 degrees of freedom", [0, 13]),
@@ -126,23 +119,7 @@ SLIDES = [
               eq('<i>V</i><sup>(<i>t</i>+1)</sup> = <i>V</i><sup>(<i>t</i>)</sup> − η<sub><i>t</i></sub> (1/|ℬ|) Σ<sub><i>i</i>∈ℬ</sub> ∇<sub><i>V</i></sub> ℓ<sub><i>i</i></sub>(<i>V</i><sup>(<i>t</i>)</sup>)') +
               "Cheap, noisy steps; no guarantee of the global optimum", None),
              ("<b>Regularisation</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise", [31, 39]),
-             ("<b>Risk</b>: aligning noisy images to a reference that already contains the same noise reinforces it. The defence is two independent half-sets (FSC, two slides on)", [39, 44.9])]),
-    clip("c13", "Heterogeneity: classification separates conformations", "05_classification_pca",
-         "How do heterogeneity and classification interact?", MANIM.format(n="05"), [
-             ("Two states that differ in one dot (state A vs state B)", [0, 9]),
-             ("Averaging a mixed set blurs the moving part: dot 5 appears faintly in both places", [9, 17]),
-             ("<b>PCA</b>: each image becomes a point; PC1 separates the states, PC2 is noise", [17, 29]),
-             ("A two-class <b>Gaussian mixture</b> fit by EM gives each image a probability for each class (soft assignment)", [29, 39]),
-             ("Class averages recover both states. In CryoSPARC, 3D classification and heterogeneous refinement do this with 3D maps", [39, 49.5])]),
-    clip("c14", "Half-maps and FSC: how resolution is judged", "06_fsc_resolution",
-         "Which resolution measures exist, and why keep them apart?", MANIM.format(n="06"), [
-             ("Split the particles into two halves and refine each <b>independently</b>: the signal agrees, the noise does not", [0, 9]),
-             ("<b>Fourier shell correlation</b>, shell by shell (S<sub>q</sub> = all <b>k</b> with |<b>k</b>| ≈ q):" +
-              eq('FSC(<i>q</i>) = Σ <i>V̂<sub>A</sub></i>(<b>k</b>) <i>V̂<sub>B</sub></i>(<b>k</b>)* / √(Σ |<i>V̂<sub>A</sub></i>|² Σ |<i>V̂<sub>B</sub></i>|²)'), [9, 17]),
-             ("<b>Resolution</b> d = 1/q where the half-map FSC falls below <b>0.143</b> (the gold-standard criterion)", [17, 25]),
-             ("One global number hides variation: <b>local resolution</b> is worse in flexible regions", [25, 31]),
-             ("<b>Map–model FSC</b> (cutoff 0.5) checks the fitted atomic model against the map", [31, 39]),
-             ("Neither cutoff is a positional error bar or a physical limit", [39, 46.1])]),
+             ("<b>Risk</b>: aligning noisy images to a reference that already contains the same noise reinforces it. The standard defence is to refine two independent half-sets and compare them", [39, 44.9])]),
 ]
 
 deck = json.loads((ROOT / "deck.json").read_text())
