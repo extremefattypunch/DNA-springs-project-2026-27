@@ -116,9 +116,9 @@ A24 = {'kind': 'media', 'page': 24, 'section': 'assay', 'title': '[Plans] Holoen
        '<b>Left</b>: the horseshoes overlaid; Aβ spans 59.6 Å from HEAT 1 to 15 vs 62.7 Å for Aα (more concave). <b>Right</b>: the shift per repeat, largest at HEAT 1–8 (up to ≈ 3 Å), near zero at the aligned end.'}],
   'points': [
     {'text': '<b>Structural deformation</b>: align on HEAT 12–15 and measure HEAT-repeat centre-of-mass shifts, WT vs spring attached', 'hl': 1},
-    {'text': '<b>Day et al.</b>: Aβ vs Aα shifts up to ≈ 3 Å; span 59.6 vs 62.7 Å', 'hl': 1},
     {'text': '<b>Ascertain spring attachment</b>: resolution level, neural-network particle picking, refinement to an atomic model', 'hl': 0},
-    {'text': '<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail', 'hl': 0}]}
+    {'text': '<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail', 'hl': 0},
+    {'text': '<span class="headline"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>', 'hl': 1}]}
 
 A29 = anim(29, '[Plans] B56-binding assay: biolayer interferometry (BLI)', 'bli.html', 'Method of Day et al. 2025: does the A subunit change how tightly B56 binds the AC core?',
     'Schematic of BLI; curves computed from Day et al.’s fitted rate constants (Fig. 5B, B56α); timings illustrative', [

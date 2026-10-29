@@ -1973,16 +1973,16 @@
      "hl": 1
     },
     {
-     "text": "<b>Day et al.</b>: Aβ vs Aα shifts up to ≈ 3 Å; span 59.6 vs 62.7 Å",
-     "hl": 1
-    },
-    {
      "text": "<b>Ascertain spring attachment</b>: resolution level, neural-network particle picking, refinement to an atomic model",
      "hl": 0
     },
     {
      "text": "<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail",
      "hl": 0
+    },
+    {
+     "text": "<span class=\"headline\"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>",
+     "hl": 1
     }
    ],
    "final": true
