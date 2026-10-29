@@ -386,27 +386,24 @@ class Scene01ForwardModel(Scene):
         head = st.T("Fourier-space observation model", st.BODY_SIZE + 4, st.TEXT, weight="BOLD")
         head.to_corner(UL, buff=st.MARGIN)
         clear_of_tag(head, self.tag_left)
-        tex = (r"\widetilde I_i(\mathbf k)=\mathrm{CTF}_i(\mathbf k)\,\widehat{P_{R_i}\rho}"
-               r"(\mathbf k)\,e^{-2\pi i\,\mathbf k\cdot\mathbf t_i}+\widetilde\epsilon_i(\mathbf k)")
-        eq = st.M(tex, size=56)
+        # same notation as the deck's slide text: Y = C V~(R^T[q,0]) e^{-2 pi i q.t} + N
+        parts = [r"Y_i(\mathbf q)", r"=", r"C_i(\mathbf q)\,", r"\tilde V\big(", r"R_i^{\mathsf T}",
+                 r"[q_x,q_y,0]^{\mathsf T}\big)", r"\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}", r"+", r"N_i(\mathbf q)"]
+        tex = "".join(parts)
+        eq = st.M(*parts, size=56)
         eq.move_to([0, 1.5, 0])
-        g = eq[0]
-        assert len(g) == 38, len(g)
+        g = eq
         note = st.simplified_note("simplified, pedagogical model: no envelopes, no detector "
                                   "response")
         note.next_to(eq, DOWN, buff=0.3)
 
-        # glyph groups (indices checked against the compiled formula)
+        # tex parts per term (see parts above)
         terms = [
-            ("projection", "line integral along the viewing direction",
-             [14, 15, 18, 19, 20, 21], st.TRUTH),
-            ("orientation", "a rotation in SO(3), unknown per image", [16, 17], st.EST),
-            ("CTF", "oscillating transfer with zeros and sign changes",
-             list(range(7, 14)), st.TEXT),
-            ("translation", "in-plane shift = phase ramp, unknown per image",
-             list(range(22, 31)), st.EST),
-            ("noise", "independent, zero-mean; real noise is more complex",
-             list(range(32, 38)), st.RESID),
+            ("projection", "line integral along the viewing direction", [3, 5], st.TRUTH),
+            ("orientation", "a rotation in SO(3), unknown per image", [4], st.EST),
+            ("CTF", "oscillating transfer with zeros and sign changes", [2], st.TEXT),
+            ("translation", "in-plane shift = phase ramp, unknown per image", [6], st.EST),
+            ("noise", "independent, zero-mean; real noise is more complex", [8], st.RESID),
         ]
         rows = VGroup()
         for name, desc, _, col in terms:
