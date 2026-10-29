@@ -2410,10 +2410,14 @@
      "text": "Exit wave after the protein:<span class=\"tex d\">\\Psi_{\\mathrm{exit}}(x,y) = e^{i\\phi(x,y)}</span>Under the WPOA, <span class=\"tex\">|\\phi| \\ll 1</span>, so a Taylor expansion gives<span class=\"tex d\">e^{i\\phi} \\approx 1 + i\\phi</span>"
     },
     {
-     "text": "Therefore,<span class=\"tex d\">\\Psi_{\\mathrm{exit}}(x,y) \\approx \\underset{\\color{#7a8794}\\text{unscattered reference}}{1} \\quad+\\quad \\underset{\\color{#7a8794}\\text{scattered wave}}{i\\phi(x,y)}</span>"
+     "text": "Therefore,<span class=\"tex d\">\\Psi_{\\mathrm{exit}}(x,y) \\approx 1 + i\\phi(x,y)</span>where <b>1</b> is the <b>unscattered reference</b> and <b>iφ(x, y)</b> is the <b>scattered wave</b>"
     },
     {
      "text": "Because <span class=\"tex\">i = e^{i\\pi/2}</span>, this perturbation is in <b>quadrature</b> (90° out of phase) with the reference, when φ is real"
+    },
+    {
+     "banner": true,
+     "text": "<span class=\"ttl\">Under this approximation</span><b>1.</b> The scattered wave always differs in phase from the unscattered wave by <b>π/2</b>.<br><br><b>2.</b> Their sum, the exit wave, is <b>virtually indistinguishable in intensity</b> from a wave that never passed through a protein, so we <b>cannot see the protein</b> yet."
     }
    ]
   },
@@ -2457,7 +2461,8 @@
       "step": 4
      }
     }
-   ]
+   ],
+   "intro": "<b>Key idea</b>: adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein."
   },
   {
    "kind": "media",

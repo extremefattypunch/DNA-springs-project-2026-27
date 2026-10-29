@@ -74,14 +74,14 @@ SLIDES = [
          "Incident plane wave:" + tex(r"\Psi_{\mathrm{in}}(\mathbf r, z) = e^{ikz}, \qquad k = \frac{2\pi}{\lambda}", True),
          "Exit wave after the protein:" + tex(r"\Psi_{\mathrm{exit}}(x,y) = e^{i\phi(x,y)}", True)
          + "Under the WPOA, " + tex(r"|\phi| \ll 1") + ", so a Taylor expansion gives" + tex(r"e^{i\phi} \approx 1 + i\phi", True),
-         "Therefore," + tex(r"\Psi_{\mathrm{exit}}(x,y) \approx \underset{\color{#7a8794}\text{unscattered reference}}{1} \quad+\quad \underset{\color{#7a8794}\text{scattered wave}}{i\phi(x,y)}", True),
-         "Because " + tex(r"i = e^{i\pi/2}") + ", this perturbation is in <b>quadrature</b> (90° out of phase) with the reference, when φ is real"]]},
-    frame("c6", "Key principle: defocus turns phase shifts into contrast", "contrast.html",
+         "Therefore," + tex(r"\Psi_{\mathrm{exit}}(x,y) \approx 1 + i\phi(x,y)", True) + "where <b>1</b> is the <b>unscattered reference</b> and <b>iφ(x, y)</b> is the <b>scattered wave</b>",
+         "Because " + tex(r"i = e^{i\pi/2}") + ", this perturbation is in <b>quadrature</b> (90° out of phase) with the reference, when φ is real"]] + [{"banner": True, "text": '<span class="ttl">Under this approximation</span><b>1.</b> The scattered wave always differs in phase from the unscattered wave by <b>π/2</b>.<br><br><b>2.</b> Their sum, the exit wave, is <b>virtually indistinguishable in intensity</b> from a wave that never passed through a protein, so we <b>cannot see the protein</b> yet.'}]},
+    dict(frame("c6", "Key principle: defocus turns phase shifts into contrast", "contrast.html",
           "How do we make the scattered wave visible?", DRAWN + " (φ exaggerated)", [
               "Extra phase χ = π/2: the scattered wave becomes <b>antiparallel</b> to the reference, so the particle is <b>dark</b>",
               "χ = 3π/2: <b>parallel</b>, so the particle is <b>bright</b> (contrast reversed)",
               "Contrast ≈ −2φ sin χ: <b>sin χ is the contrast transfer function</b>, largest at χ = π/2 + kπ",
-              "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q"]),
+              "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q"]), intro='<b>Key idea</b>: adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein.'),
     frame("c7", "Each defocus value gives contrast to different spatial frequencies", "ctf.html",
           "CTF(q) = sin χ(q), computed for 300 kV and Cₛ = 2.7 mm", DRAWN + "; CTF computed live", [
               "<b>Zeros</b>: the image carries no information at those q. <b>Negative lobes</b>: contrast reversed",

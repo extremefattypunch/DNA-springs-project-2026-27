@@ -1088,8 +1088,9 @@ function buildMedia(el, cfg) {
   items.forEach((it, i) => place(i, boxes[i], it.over != null));
   el.appendChild(ul);
   const FULL = pts.length + Math.max(0, E - 1);
+  const NB = pts.filter(p => p.banner).length;
   return { kind: 'media', k: -1, apply(k) {
-    if (cfg.final) k = FULL;           // final: open on the finished state, no click-through
+    if (cfg.final) k = FULL - NB + k;  // final: open on the finished state; only banner points take a click
     this.k = k;
     if (E) {
       if (k < E) {                       // explain phase: one plot fills the slide
@@ -1135,7 +1136,7 @@ function buildMedia(el, cfg) {
       else if (STATIC_MEDIA) go(seg[1] - 0.05, false);
       else go(seg[0], true, seg[1]);
     });
-  }, n: cfg.final ? 0 : FULL, videos: [...el.querySelectorAll('video')] };
+  }, n: cfg.final ? NB : FULL, videos: [...el.querySelectorAll('video')] };
 }
 
 /* ---------------- intro banner: a question shown on the first click, cleared on the next ---------------- */
