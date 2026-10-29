@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Archivo, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="560" fill="#ffffff"/>
+  <defs>
+    <radialGradient id="pg" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#c9cdd1"/><stop offset="1" stop-color="#7f858b"/></radialGradient>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b86e00"/></marker>
+  </defs>
+  <!-- three columns: protein ellipse with two tet sites, DNA arc above -->
+  <g id="col1" transform="translate(200,0)">
+    <text x="0" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#14202b">ssDNA spring</text>
+    <text x="0" y="80" text-anchor="middle" font-size="19" fill="#4a5866">single strand only</text>
+    <path d="M-95,330 C-120,170 120,170 95,330" fill="none" stroke="#15191d" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 0"/>
+    <ellipse cx="0" cy="370" rx="130" ry="62" fill="url(#pg)" stroke="#1b2026" stroke-width="3"/>
+    <circle cx="-95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/><circle cx="95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/>
+    <line x1="-112" y1="300" x2="-150" y2="285" stroke="#b86e00" stroke-width="4" marker-end="url(#ah)"/><line x1="112" y1="300" x2="150" y2="285" stroke="#b86e00" stroke-width="4" marker-end="url(#ah)"/>
+    <text x="0" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="#b86e00">weak force</text>
+    <text x="0" y="500" text-anchor="middle" font-size="18" fill="#4a5866">floppy strand: little push</text>
+  </g>
+  <g id="col2" transform="translate(600,0)">
+    <text x="0" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#14202b">dsDNA spring</text>
+    <text x="0" y="80" text-anchor="middle" font-size="19" fill="#4a5866">ssDNA + complementary strand (cDNA)</text>
+    <path d="M-100,330 C-128,160 128,160 100,330" fill="none" stroke="#9b8cf7" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-95,330 C-120,170 120,170 95,330" fill="none" stroke="#15191d" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="0" cy="370" rx="130" ry="62" fill="url(#pg)" stroke="#1b2026" stroke-width="3"/>
+    <circle cx="-95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/><circle cx="95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/>
+    <line x1="-112" y1="300" x2="-190" y2="270" stroke="#b86e00" stroke-width="7" marker-end="url(#ah)"/><line x1="112" y1="300" x2="190" y2="270" stroke="#b86e00" stroke-width="7" marker-end="url(#ah)"/>
+    <text x="0" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="#b86e00">strong force</text>
+    <text x="0" y="500" text-anchor="middle" font-size="18" fill="#4a5866">stiff duplex pushes the sites apart</text>
+  </g>
+  <g id="col3" transform="translate(1000,0)">
+    <text x="0" y="48" text-anchor="middle" font-size="30" font-weight="700" fill="#14202b">nicked dsDNA</text>
+    <text x="0" y="80" text-anchor="middle" font-size="19" fill="#4a5866">cDNA with one break in its backbone</text>
+    <path d="M-100,330 C-120,210 -60,172 -14,170" fill="none" stroke="#9b8cf7" stroke-width="7" stroke-linecap="round"/>
+    <path d="M14,170 C60,172 120,210 100,330" fill="none" stroke="#9b8cf7" stroke-width="7" stroke-linecap="round"/>
+    <path d="M-95,330 C-120,170 120,170 95,330" fill="none" stroke="#15191d" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="0" cy="168" r="17" fill="none" stroke="#b8372c" stroke-width="3"/>
+    <text x="0" y="130" text-anchor="middle" font-size="20" font-weight="700" fill="#b8372c">nick</text>
+    <ellipse cx="0" cy="370" rx="130" ry="62" fill="url(#pg)" stroke="#1b2026" stroke-width="3"/>
+    <circle cx="-95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/><circle cx="95" cy="332" r="11" fill="#3fe6a6" stroke="#0b3b2a" stroke-width="2"/>
+    <line x1="-112" y1="300" x2="-160" y2="281" stroke="#b86e00" stroke-width="5" marker-end="url(#ah)"/><line x1="112" y1="300" x2="160" y2="281" stroke="#b86e00" stroke-width="5" marker-end="url(#ah)"/>
+    <text x="0" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="#b86e00">reduced force</text>
+    <text x="0" y="500" text-anchor="middle" font-size="18" fill="#4a5866">same DNA mass, weaker spring</text>
+  </g>
+  <text x="600" y="545" text-anchor="middle" font-size="17" fill="#7a8794">Schematic (not to scale): green = Tet attachment sites on the protein, black = ssDNA, purple = complementary strand</text>
+</svg>

@@ -165,6 +165,13 @@ SLIDES = {
            '<b>Our approach</b>: attach a DNA spring to the protein (sfGFP, PP2A) across two chosen residues, so the spring itself applies the force',
            'Every molecule carries its own spring, so a whole sample is under load and can be frozen for cryoEM: <b>force and atomic structure simultaneously</b>, which the traditional single-molecule methods cannot do',
            'For each protein we follow the same plan, <b>SAM</b>: Synthesis, Assay, MD analysis (next slide)'])]},
+'1c': {'kind': 'media', 'page': '1c', 'section': 'background', 'title': 'Three kinds of DNA spring, and why we need all three', 'figW': 1200,
+       'items': [{'img': 'native/spring_types.svg', 'w': 1200, 'h': 560, 'cap': 'Schematic of the three chimeras used throughout'}],
+       'points': [{'text': t, 'hl': 0} for t in [
+           '<b>ssDNA</b>: a single strand is floppy, so it exerts <b>little force</b> on the two attachment sites',
+           '<b>dsDNA</b> (ssDNA + its complementary strand, cDNA): the stiff duplex must bend, so it <b>pushes the sites apart much harder</b>',
+           '<b>Nicked dsDNA</b>: the cDNA has <b>one break in its backbone</b>. Same DNA on the protein, but the nick relieves bending stress, so it delivers <b>less force</b>',
+           '<b>Why it matters</b>: the three carry similar amounts of DNA but different forces. Used as <b>controls</b> in the results that follow, a change seen only with the stronger spring is due to <b>force</b>, not to steric hindrance from simply having DNA there']]},
 2: text(2, 'For each protein studied, we seek “SAM”', 'background', [
     grp('<b>S</b>ynthesis goals', 'First obtain evidence, by gel, that it can be synthesized', 'Then obtain a large purified batch for analysis'),
     grp('<b>A</b>ssay goals', 'Functional assays of the protein under mechanical tension from the attached DNA springs', 'Also structural imaging assays (cryoEM etc.)'),
@@ -235,7 +242,7 @@ for s in deck['slides']:
     pg = s.get('page')
     if pg == 4:      # 'How do we identify circular products?' merged into the sfGFP gel slide
         continue
-    if pg in ('1b', '29b', '30b', '22a', '22b', '22c', '22d', '19b'):
+    if pg in ('1b', '1c', '29b', '30b', '22a', '22b', '22c', '22d', '19b'):
         continue
     if pg in SLIDES:
         s = SLIDES[pg]
@@ -244,8 +251,8 @@ for s in deck['slides']:
     if pg == 23:
         out += [SLIDES[x] for x in ('22b',)]   # 22a, 22c, 22d dropped at Ian's request
     out.append(s)
-    for parent, child in ((1, '1b'), (29, '29b'), (30, '30b')):
-        if pg == parent and child == '1b':   # 29b/30b result slides dropped at Ian's request
+    for parent, child in ((1, '1b'), (1, '1c'), (29, '29b'), (30, '30b')):
+        if pg == parent and child in ('1b', '1c'):   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
 for x in out:
     if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)

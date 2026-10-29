@@ -57,6 +57,39 @@
   },
   {
    "kind": "media",
+   "page": "1c",
+   "section": "background",
+   "title": "Three kinds of DNA spring, and why we need all three",
+   "figW": 1200,
+   "items": [
+    {
+     "img": "native/spring_types.svg",
+     "w": 1200,
+     "h": 560,
+     "cap": "Schematic of the three chimeras used throughout"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>ssDNA</b>: a single strand is floppy, so it exerts <b>little force</b> on the two attachment sites",
+     "hl": 0
+    },
+    {
+     "text": "<b>dsDNA</b> (ssDNA + its complementary strand, cDNA): the stiff duplex must bend, so it <b>pushes the sites apart much harder</b>",
+     "hl": 0
+    },
+    {
+     "text": "<b>Nicked dsDNA</b>: the cDNA has <b>one break in its backbone</b>. Same DNA on the protein, but the nick relieves bending stress, so it delivers <b>less force</b>",
+     "hl": 0
+    },
+    {
+     "text": "<b>Why it matters</b>: the three carry similar amounts of DNA but different forces. Used as <b>controls</b> in the results that follow, a change seen only with the stronger spring is due to <b>force</b>, not to steric hindrance from simply having DNA there",
+     "hl": 0
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": 2,
    "section": "background",
    "title": "For each protein studied, we seek “SAM”",
