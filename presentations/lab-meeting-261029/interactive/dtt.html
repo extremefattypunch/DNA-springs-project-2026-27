@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why add DTT</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* Schematic: without DTT two Tet-pp2a are joined by an S-S bridge, so one DNA strand can click
+   across both proteins (2:2 product). DTT reduces S-S to two SH, the proteins separate, and each
+   DNA strand closes on its own protein (1:1 circle). */
+const sv = document.getElementById('sv');
+const g = S('g', {}, sv);
+const RED = '#e5484d', TET = '#3fd9a0', DNA = '#6fa8ff', SS = '#f5d742';
+function prot(cx, cy) {
+  let d = ''; for (let i = 0; i <= 30; i++) { const a = Math.PI * (0.12 + 0.76 * i / 30); d += (i ? 'L' : 'M') + (cx + 70 * Math.cos(a)).toFixed(1) + ',' + (cy - 70 * Math.sin(a)).toFixed(1); }
+  S('path', { d, class: 'w', stroke: RED, 'stroke-width': 24, 'stroke-linecap': 'round' }, g);
+  const L = [cx + 70 * Math.cos(Math.PI * .88), cy - 70 * Math.sin(Math.PI * .88) + 14], R = [cx + 70 * Math.cos(Math.PI * .12), cy - 70 * Math.sin(Math.PI * .12) + 14];
+  [L, R].forEach(([x, y]) => S('circle', { cx: x, cy: y, r: 11, fill: TET, stroke: '#0e1116', 'stroke-width': 2 }, g));
+  return { L, R, top: [cx, cy - 82] };
+}
+function arc(a, b, bulge) {
+  const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2 + bulge;
+  S('path', { d: `M${a[0]},${a[1]} Q${mx},${my} ${b[0]},${b[1]}`, class: 'w', stroke: DNA, 'stroke-width': 7, 'stroke-linecap': 'round' }, g);
+}
+function label(x, y, t, col, size) { S('text', { x, y, 'text-anchor': 'middle', 'font-size': size || 20, 'font-weight': 700, fill: col || '#e5ebf0', text: t }, g); }
+const foot = S('text', { x: 590, y: 680, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 712, 'text-anchor': 'middle', 'font-size': 17, class: 'mut' }, sv);
+const TX = [
+  ['Without DTT: two pp2a molecules are linked by a disulfide (S–S) bond', 'cysteines on neighbouring proteins pair up, so the proteins stick together'],
+  ['The DNA strand clicks across BOTH proteins: intermolecular click', 'its two ends land on Tet groups of different proteins → 2 pp2a + 2 DNA products'],
+  ['Add DTT: it reduces the S–S bond to two free –SH groups', 'the two proteins separate into single molecules'],
+  ['Now each DNA strand can only close on its own protein: intramolecular click', 'both ends on the same protein → 1 pp2a + 1 DNA circular product'],
+  ['Expected result: more 1 : 1 circular product, less 2 : 2', 'intramolecular click is favoured once the proteins no longer stick together']
+];
+const T = TX.map((_, k) => ({ k, sep: k >= 2 ? 1 : 0 }));
+let ph = 0;
+Cryo.init(T, (P, t, dt) => {
+  ph += Math.max(0, dt || 0);
+  const k = Math.round(P.k), sep = P.sep; g.innerHTML = '';
+  const gap = 150 + 220 * sep, cy = 360;
+  const A = prot(590 - gap, cy), B = prot(590 + gap, cy);
+  label(590 - gap, cy + 70, 'pp2a', RED, 18); label(590 + gap, cy + 70, 'pp2a', RED, 18);
+  // disulfide bridge between the two proteins
+  if (sep < 0.5) { S('line', { x1: A.R[0] + 10, y1: cy - 20, x2: B.L[0] - 10, y2: cy - 20, stroke: SS, 'stroke-width': 6 }, g);
+    label(590, cy - 32, 'S–S', SS, 22); }
+  else { [[A.R[0] + 30, 'SH'], [B.L[0] - 30, 'SH']].forEach(([x, tx]) => label(x, cy - 12, tx, SS, 18)); }
+  if (k === 2 || k === 3) { S('rect', { x: 520, y: 120, width: 140, height: 50, rx: 10, fill: '#2b3440', stroke: SS, 'stroke-width': 2 }, g); label(590, 153, '+ DTT', SS, 24); }
+  if (k === 1) { arc(A.R, B.L, -150); label(590, cy - 190, 'one DNA bridges two proteins', DNA, 18); }
+  if (k >= 3) { arc(A.L, A.R, -330); arc(B.L, B.R, -330); label(590 - gap, cy - 190, '1 : 1 circle', DNA, 18); label(590 + gap, cy - 190, '1 : 1 circle', DNA, 18); }
+  if (k === 4) { S('rect', { x: 380, y: 520, width: 420, height: 60, rx: 12, fill: '#1A1F27', stroke: '#5bd67a', 'stroke-width': 2 }, g); label(590, 558, 'more 1 pp2a + 1 DNA', '#5bd67a', 24); }
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>

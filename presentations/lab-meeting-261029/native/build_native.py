@@ -62,6 +62,16 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
     ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 5),
     ('<b>Three readouts</b>, as in Day et al.: activity (DiFMUP), B56 binding (BLI), structure (cryoEM). Activity alone is not enough: Day et al. found the same activity but up to 4.7× weaker binding', 6)]]}
 
+DTT = {'kind': 'media', 'page': '21b', 'section': 'synthesis', 'title': 'Why add DTT? Favouring the 1 : 1 circle', 'figW': 1180, 'msgChannel': 'cryo',
+  'q': 'Breaking disulfide bonds so each pp2a reacts on its own',
+  'items': [{'iframe': 'interactive/dtt.html', 'title': 'DTT and intra- vs intermolecular click', 'cap': 'Schematic (not to scale): red = pp2a A subunit, green = Tet sites, blue = DNA, yellow = disulfide'}],
+  'points': [{'text': t, 'msg': {'step': i}} for i, t in enumerate([
+    'Without DTT, cysteines on neighbouring pp2a form <b>disulfide (S–S) bonds</b>: the proteins stick together',
+    'A DNA strand can then click across <b>two</b> proteins (<b>intermolecular</b>), giving 2 pp2a + 2 DNA products',
+    '<b>DTT</b> reduces S–S to two free –SH groups, so the proteins separate',
+    'Each DNA strand can now only close on its own protein (<b>intramolecular</b>): the 1 pp2a + 1 DNA circle',
+    '<b>Expected</b>: more 1 : 1 circular product, less 2 : 2 (next slide tests it)'])]}
+
 RESIN = {'kind': 'media', 'page': '19b', 'section': 'synthesis', 'title': 'How the TCO resin test works', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Is the new band a circular product? A resin that grabs any free Tet group can tell',
   'items': [{'iframe': 'interactive/resin.html', 'title': 'TCO resin capture', 'cap': 'Schematic of TCO resin capture (not to scale)'}],
@@ -212,6 +222,7 @@ SLIDES = {
         todo('set up MD system for tet-TCO/BCN protein chimeras'))], badge=AGO),
 23: A23,
 '19b': RESIN,
+'21b': DTT,
 '22a': PP_FN,
 '22b': PP_ABC,
 '22c': PP_HEAT,
@@ -242,12 +253,14 @@ for s in deck['slides']:
     pg = s.get('page')
     if pg == 4:      # 'How do we identify circular products?' merged into the sfGFP gel slide
         continue
-    if pg in ('1b', '1c', '29b', '30b', '22a', '22b', '22c', '22d', '19b'):
+    if pg in ('1b', '1c', '29b', '30b', '22a', '22b', '22c', '22d', '19b', '21b'):
         continue
     if pg in SLIDES:
         s = SLIDES[pg]
     if pg == 20:
         out.append(SLIDES['19b'])
+    if pg == 22:
+        out.append(SLIDES['21b'])
     if pg == 23:
         out += [SLIDES[x] for x in ('22b',)]   # 22a, 22c, 22d dropped at Ian's request
     out.append(s)

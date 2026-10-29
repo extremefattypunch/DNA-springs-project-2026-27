@@ -267,6 +267,8 @@ body {
   background: var(--paper); border: 3px solid var(--amber); border-radius: 22px; padding: 44px 56px; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--paper) 72%, transparent), 0 24px 60px rgba(0,0,0,.28);
   font-size: 36px; line-height: 1.4; color: var(--ink-2); transition: opacity .45s ease, transform .45s ease; }
 .m-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.m-banner.big { text-align: center; font-size: 48px; }
+.m-banner .emoji { display: block; font-size: 150px; line-height: 1.1; margin-bottom: 10px; }
 .m-banner.intro { top: 540px; }
 .m-banner b { color: var(--ink); }
 .m-banner .ttl { display: block; font-size: 24px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
@@ -1176,21 +1178,34 @@ function buildSlide(cfg, idx) {
     el.appendChild(foot);
     S.dots = foot.querySelector('.dots');
     if (cfg.intro) addIntro(el, S);
+    const panelSteps = [];               // per panel: its step objects, in order
     (cfg.panels || []).forEach((pc, pi) => {
       if (pc.chart) {
         const cs = (DECK.charts || {})[pc.chart];
         if (!cs) { console.warn('missing chart spec', pc.chart); return; }
         const C = buildChartPanel(el, cs, pc);
         S.panels.push(C);
-        cs.steps.forEach((st, k) => S.steps.push({ panel: pi, k: k + 1 }));
+        panelSteps[pi] = cs.steps.map((st, k) => ({ panel: pi, k: k + 1 }));
         return;
       }
       const spec = DECK.gels[pc.gel];
       if (!spec) { console.warn('missing gel spec', pc.gel); return; }
       const G = buildPanel(el, spec, pc);
       S.panels.push(G);
-      spec.steps.forEach((st, k) => S.steps.push({ panel: pi, k: k + 1 }));
+      G.hideUntil = !!pc.hideUntil;          // keep the whole panel (blank gel, caption) hidden until its first step
+      panelSteps[pi] = spec.steps.map((st, k) => ({ panel: pi, k: k + 1 }));
     });
+    // seq: explicit order of panel steps and temporary banners, e.g.
+    // [{panel: 0}, {banner: '...'}, {banner: '...', title: true}, {panel: 1}, {banner: '...'}]
+    S.banners = [];
+    (cfg.seq || panelSteps.map((_, i) => ({ panel: i }))).forEach(it => {
+      if (it.panel != null) (panelSteps[it.panel] || []).forEach((st, j) => S.steps.push(j === 0 && it.title ? Object.assign({ title: true }, st) : st));
+      else {
+        const bn = h('div', 'm-banner' + (it.big ? ' big' : ''), { html: it.banner }); el.appendChild(bn);
+        S.banners.push(bn); S.steps.push({ intro: true, banner: S.banners.length - 1, title: !!it.title });
+      }
+    });
+    if (cfg.titleHidden) { S.titleEl = el.querySelector('.s-title'); S.titleEl.style.transition = 'opacity .5s'; }
     if (cfg.banner) {                    // headline banner overlay as the slide's last step
       const bn = h('div', 'm-banner', { html: cfg.banner.html }); el.appendChild(bn);
       S.panels.push({ kind: 'media', apply(k) { bn.classList.toggle('on', k > 0); } });
@@ -1227,7 +1242,10 @@ function show(si, k, animate) {
   const counts = S.panels.map(() => 0);
   for (let i = 1; i <= k; i++) if (!S.steps[i].intro) counts[S.steps[i].panel]++;
   if (S.introEl) S.introEl.classList.toggle('on', k === 1);
+  if (S.banners) S.banners.forEach((bn, j) => bn.classList.toggle('on', S.steps[k] && S.steps[k].banner === j));
+  if (S.titleEl) { let t = false; for (let i = 1; i <= k; i++) if (S.steps[i].title) t = true; S.titleEl.style.opacity = t ? 1 : 0; }
   S.panels.forEach((G, pi) => G.kind === 'media' ? G.apply(counts[pi]) : (G.kind === 'chart' ? applyChart : applyPanel)(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
+  S.panels.forEach((G, pi) => { if (G.hideUntil && G.root) G.root.style.visibility = counts[pi] > 0 ? '' : 'hidden'; });
   slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (v.dataset.managed != null) { if (i !== si) { v.pause(); v._seg = undefined; } return; } if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
   if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
   cur = { s: si, k };

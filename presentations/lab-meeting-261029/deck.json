@@ -1847,7 +1847,77 @@
      "gel": "p21-sec"
     },
     {
-     "gel": "p21-dilute"
+     "gel": "p21-dilute",
+     "hideUntil": true
+    }
+   ],
+   "titleHidden": true,
+   "seq": [
+    {
+     "panel": 0
+    },
+    {
+     "banner": "<span class=\"ttl\">Great!</span>After the TCO resin, <b>only circular products stayed</b>: the 2 pp2a + 2 DNA ring and the <b>pp2a + DNA</b> (our new band of interest), as desired.<br><br>So we now have <b>proof of circular product synthesis of pp2a spring chimeras in the Hekstra lab</b>.<br><br>Now the question is: can we <b>purify</b> it for further assay experiments? Let’s head to the SEC to find out."
+    },
+    {
+     "banner": "<span class=\"emoji\">🥁</span>Drum rolls rolling…",
+     "big": true
+    },
+    {
+     "panel": 1,
+     "title": true
+    },
+    {
+     "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…",
+     "big": true
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "21b",
+   "section": "synthesis",
+   "title": "Why add DTT? Favouring the 1 : 1 circle",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Breaking disulfide bonds so each pp2a reacts on its own",
+   "items": [
+    {
+     "iframe": "interactive/dtt.html",
+     "title": "DTT and intra- vs intermolecular click",
+     "cap": "Schematic (not to scale): red = pp2a A subunit, green = Tet sites, blue = DNA, yellow = disulfide"
+    }
+   ],
+   "points": [
+    {
+     "text": "Without DTT, cysteines on neighbouring pp2a form <b>disulfide (S–S) bonds</b>: the proteins stick together",
+     "msg": {
+      "step": 0
+     }
+    },
+    {
+     "text": "A DNA strand can then click across <b>two</b> proteins (<b>intermolecular</b>), giving 2 pp2a + 2 DNA products",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>DTT</b> reduces S–S to two free –SH groups, so the proteins separate",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "Each DNA strand can now only close on its own protein (<b>intramolecular</b>): the 1 pp2a + 1 DNA circle",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Expected</b>: more 1 : 1 circular product, less 2 : 2 (next slide tests it)",
+     "msg": {
+      "step": 4
+     }
     }
    ]
   },
