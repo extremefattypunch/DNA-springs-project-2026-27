@@ -264,6 +264,7 @@ body {
 .m-pt table.tb { border-collapse: collapse; margin: 8px 0 4px; font-size: .9em; }
 .m-pt table.tb th, .m-pt table.tb td { padding: 6px 22px 6px 0; text-align: left; border-bottom: 1px solid var(--rule); }
 .m-pt table.tb th { color: var(--ink); font-weight: 640; }
+.chart-sub { position: absolute; transform: translateX(-50%); font: 600 19px var(--font-display); color: var(--ink-2); white-space: nowrap; z-index: 3; transition: opacity .3s; }
 .m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* explain phase: one plot full-slide with axis notes, then the split answer view */
 .m-item { transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s cubic-bezier(.3,.7,.2,1), height .6s cubic-bezier(.3,.7,.2,1), opacity .4s ease; }
@@ -929,8 +930,10 @@ function buildChartPanel(slideEl, spec, P) {
     lab.textContent = m.toFixed(4); g.appendChild(lab);
     const xl = s('text', { x: b.x, y: Y(0) + ih * .045, 'text-anchor': 'middle', 'font-size': ih * .048, 'font-weight': 600, fill: '#2b3036' });
     xl.textContent = b.label; svg.appendChild(xl);
-    if (b.sub) { const xs = s('text', { x: b.x, y: Y(0) + ih * .1, 'text-anchor': 'middle', 'font-size': ih * .04, fill: '#4a5057' }); xs.textContent = b.sub; svg.appendChild(xs); }
-    return { bar, err, dots, lab, halo };
+    // concentration line: an HTML label under the chart box, so the original image never covers it
+    let sub = null;
+    if (b.sub) { sub = h('div', 'chart-sub', { text: b.sub, style: { left: (ox + b.x * sc) + 'px', top: (oy + ih * sc + 6) + 'px' } }); root.appendChild(sub); }
+    return { bar, err, dots, lab, halo, sub };
   });
   let cap = null;
   if (P.caption) { cap = h('div', 'caption', { style: { left: P.caption.x + 'px', top: P.caption.y + 'px', width: P.caption.w + 'px' } }); root.appendChild(cap); }
@@ -947,6 +950,7 @@ function applyChart(C, k, animate) {
   C.groups.forEach((g, i) => {
     const vis = shown.has(i), parts = [g.bar, g.err, g.dots, g.lab];
     parts.forEach(e => { e.style.opacity = vis ? 1 : 0; e.style.transform = ''; });
+    if (g.sub) g.sub.style.opacity = vis ? 1 : 0;
     g.halo.classList.toggle('on', glow && (spec.glowBars ? spec.glowBars.includes(i) : i === C.top));
     if (vis && !wasShown.has(i) && fwd) {
       anim(g.bar, { transform: ['scaleY(0)', 'scaleY(1)'] }, { duration: .9, easing: [.3, .7, .2, 1] });
@@ -1248,6 +1252,7 @@ function autoPanels(cfg) {
       if (!p.rails) p.rails = [i === 0 ? 'left' : 'right'];
       if (!p.ib) p.ib = [p.x - 16, p.y - 10, p.x + p.w + 16, bottom - 44];
     }
+    if (p.chart) p.h -= 44;           // room below each chart for its concentration labels
     if (!p.caption) p.caption = { x: p.x + 24, y: bottom - 30, w: p.w - 48 };
     if (p.head && p.headY == null) p.headY = p.y - 46;
   });
