@@ -264,6 +264,8 @@ body {
 .mode-overlay .real { opacity: 1 !important; clip-path: none !important; z-index: 0; }
 .mode-overlay .band { opacity: .62; }
 
+/* paused: freeze looping CSS animations (glows, pulsing marks) */
+#stage.paused *, #stage.paused *::before, #stage.paused *::after { animation-play-state: paused !important; }
 /* ---------- HUD ---------- */
 .goto { position: fixed; left: 50%; top: calc(20px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 6; font: 600 18px var(--font-mono); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 16px; box-shadow: 0 6px 24px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: opacity .15s; }
 .goto.on { opacity: 1; }
@@ -279,6 +281,7 @@ body {
 <div id="hud" role="toolbar" aria-label="Slide controls">
   <button id="b-prev" type="button" aria-label="Previous slide">&larr;</button>
   <button id="b-next" type="button" aria-label="Next slide">&rarr;</button>
+  <button id="b-pause" type="button" aria-pressed="false" aria-label="Pause the animation (P)" style="min-width:64px">Pause</button>
   <label for="goto-n" style="display:flex;align-items:center;gap:4px;font:600 13px var(--font-mono);color:var(--ink)">Slide <input id="goto-n" type="text" inputmode="numeric" autocomplete="off" aria-label="Current slide; type a number and press Enter to jump" style="width:64px;text-align:center;font:inherit;padding:5px 6px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);color:var(--ink)"></label>
   <button id="b-full" type="button" aria-label="Toggle full screen">Full screen</button>
 </div>
@@ -1107,10 +1110,25 @@ function buildSlide(cfg, idx) {
 }
 
 let cur = { s: 0, k: 0 };
+/* Pause / Play: freezes the current slide's videos, gel/chart animations and live frames */
+let PAUSED = false;
+function setPaused(v) {
+  PAUSED = v;
+  RUNNING.forEach(c => { try { v ? c.pause() : c.play(); } catch (e) {} });
+  document.querySelectorAll('video').forEach(vd => {
+    if (v) { if (!vd.paused) { vd._wasPlaying = true; vd.pause(); } }
+    else if (vd._wasPlaying) { vd._wasPlaying = false; if (slides[cur.s] && slides[cur.s].el.contains(vd)) { const pr = vd.play(); if (pr && pr.catch) pr.catch(() => {}); } }
+  });
+  document.querySelectorAll('iframe').forEach(f => { if (/\/cryo\/|fluor\.html/.test(f.src)) try { f.contentWindow.postMessage({ deck: 'cryo', pause: v }, '*'); } catch (e) {} });
+  stage.classList.toggle('paused', v);
+  const b = document.getElementById('b-pause');
+  if (b) { b.textContent = v ? 'Play' : 'Pause'; b.setAttribute('aria-pressed', String(v)); b.setAttribute('aria-label', (v ? 'Resume' : 'Pause') + ' the animation (P)'); }
+}
 function show(si, k, animate) {
   si = Math.max(0, Math.min(slides.length - 1, si));
   const S = slides[si];
   k = Math.max(0, Math.min(S.steps.length - 1, k));
+  if (PAUSED) { document.querySelectorAll('video').forEach(vd => { vd._wasPlaying = false; }); setPaused(false); }
   stopAll();
   slides.forEach((x, i) => x.el.classList.toggle('on', i === si));
   // per-panel step counts at slide step k
@@ -1213,6 +1231,7 @@ addEventListener('keydown', e => {
   else if (e.key === 'Home') show(0, 0, false);
   else if (e.key === 'End') show(slides.length - 1, 0, false);
   else if (e.key === 'f') toggleFull();
+  else if (e.key === 'p' || e.key === 'P') setPaused(!PAUSED);
 });
 document.getElementById('viewport').addEventListener('click', e => { if (e.clientX < innerWidth * .2) prev(); else next(); });
 document.getElementById('b-prev').addEventListener('click', e => { e.stopPropagation(); if (cur.s > 0) show(cur.s - 1, 0, false); });
@@ -1229,6 +1248,7 @@ gotoIn.addEventListener('focus', () => gotoIn.select());
 gotoIn.addEventListener('blur', () => { gotoIn.value = `${cur.s + 1}/${slides.length}`; });
 gotoIn.addEventListener('click', e => e.stopPropagation());
 document.getElementById('b-full').addEventListener('click', e => { e.stopPropagation(); toggleFull(); });
+document.getElementById('b-pause').addEventListener('click', e => { e.stopPropagation(); setPaused(!PAUSED); });
 let tx0 = null;
 addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
 addEventListener('touchend', e => { if (tx0 == null) return; const dx = e.changedTouches[0].clientX - tx0; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } tx0 = null; });

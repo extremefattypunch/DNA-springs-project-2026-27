@@ -20,15 +20,15 @@ const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
 const lerp = (a, b, u) => a + (b - a) * u;
 
 const Cryo = {
-  step: 0, P: {}, targets: [], tau: 0.45, static: false, draw: null, onStep: null, t0: performance.now(),
+  step: 0, P: {}, targets: [], tau: 0.45, static: false, paused: false, clock: 0, draw: null, onStep: null, t0: performance.now(),
   init(targets, draw, opts) {
     this.targets = targets; this.draw = draw; Object.assign(this, opts || {});
     this.P = Object.assign({}, targets[0]);
     let last = performance.now();
     const loop = now => {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      const dt = this.paused ? 0 : Math.min(0.1, (now - last) / 1000); last = now; this.clock += dt;
       const T = this.targets[Math.min(this.step, this.targets.length - 1)];
-      const u = this.static ? 1 : 1 - Math.exp(-dt / this.tau);
+      const u = this.static ? 1 : this.paused ? 0 : 1 - Math.exp(-dt / this.tau);
       for (const k in T) {
         if (typeof T[k] !== 'number') { this.P[k] = T[k]; continue; }
         const c = this.P[k] == null ? T[k] : this.P[k];
@@ -36,7 +36,7 @@ const Cryo = {
         if (r && !this.static) this.P[k] = c + clamp(T[k] - c, -r * dt, r * dt);
         else this.P[k] = Math.abs(T[k] - c) < 1e-4 ? T[k] : lerp(c, T[k], u);
       }
-      this.draw(this.P, (now - this.t0) / 1000, dt);
+      this.draw(this.P, this.clock, dt);
       requestAnimationFrame(loop);
     };
     requestAnimationFrame(loop);
@@ -46,13 +46,14 @@ const Cryo = {
 addEventListener('message', e => {
   const m = e.data || {};
   if (m.deck && m.deck !== 'cryo') return;
+  if ('pause' in m) { Cryo.paused = !!m.pause; return; }   // deck's Pause/Play button
   if (m.static) Cryo.static = true;
   const s = m.step || 0;
   if (s !== Cryo.step) { const old = Cryo.step; Cryo.step = s; if (Cryo.onStep) Cryo.onStep(s, old); }
 });
 /* keep the deck's keys working after a click inside the frame */
 addEventListener('keydown', e => {
-  if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "PageDown", "PageUp", " ", "Enter", "Escape", "Backspace", "f"].includes(e.key) || /^[0-9]$/.test(e.key)) {
+  if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "PageDown", "PageUp", " ", "Enter", "Escape", "Backspace", "f", "p"].includes(e.key) || /^[0-9]$/.test(e.key)) {
     e.preventDefault(); parent.postMessage({ deckKey: e.key }, '*');
   }
 });
