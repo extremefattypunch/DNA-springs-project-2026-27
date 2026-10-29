@@ -65,11 +65,17 @@ SLIDES = [
               "Finer detail scatters further: the direction encodes the <b>spatial frequency q = 1/d</b>",
               "The objective lens sends each direction to one point of its back focal plane: a <b>Fourier transform</b> of the object",
               "At 300 kV (λ = 0.0197 Å) even 3 Å detail scatters by only ≈ 0.4°"]),
-    frame("c5", "Key assumption: the weak phase object approximation", "wpoa.html",
-          "Why is an in-focus protein invisible?", DRAWN + " (φ exaggerated)", [
-              "Exit wave Ψ<sub>exit</sub>(x, y) = e<sup>iφ(x,y)</sup>: the phasor turns by φ but keeps length 1",
-              "For |φ| ≪ 1: e<sup>iφ</sup> ≈ 1 + iφ = <b>unscattered reference</b> + <b>scattered wave</b>, 90° apart (i = e<sup>iπ/2</sup>)",
-              "Intensity |1 + iφ|² = 1 + φ² ≈ 1: <b>no first-order contrast</b>"]),
+    {"kind": "media", "page": "c5", "section": "cryoem", "items": [], "final": True, "big": True,
+     "title": "Key assumption: the weak phase object approximation",
+     "q": "Implication: the scattered wave is always 90° out of phase with the unscattered wave",
+     "aside": {"w": 600, "html": "<b>Also implies</b> the amplitude of the exit wave after scattering at the protein remains at unity, so there is <b>no contrast</b> between the unscattered reference and the scattered wave: the detector only picks up <b>intensity</b>, not the phase difference!"
+               + tex(r"I(x,y) = \big|e^{i\phi(x,y)}\big|^2 = 1", True)},
+     "points": [{"text": t} for t in [
+         "Incident plane wave:" + tex(r"\Psi_{\mathrm{in}}(\mathbf r, z) = e^{ikz}, \qquad k = \frac{2\pi}{\lambda}", True),
+         "Exit wave after the protein:" + tex(r"\Psi_{\mathrm{exit}}(x,y) = e^{i\phi(x,y)}", True)
+         + "Under the WPOA, " + tex(r"|\phi| \ll 1") + ", so a Taylor expansion gives" + tex(r"e^{i\phi} \approx 1 + i\phi", True),
+         "Therefore," + tex(r"\Psi_{\mathrm{exit}}(x,y) \approx \underset{\color{#7a8794}\text{unscattered reference}}{1} \quad+\quad \underset{\color{#7a8794}\text{scattered wave}}{i\phi(x,y)}", True),
+         "Because " + tex(r"i = e^{i\pi/2}") + ", this perturbation is in <b>quadrature</b> (90° out of phase) with the reference, when φ is real"]]},
     frame("c6", "Key principle: defocus turns phase shifts into contrast", "contrast.html",
           "How do we make the scattered wave visible?", DRAWN + " (φ exaggerated)", [
               "Extra phase χ = π/2: the scattered wave becomes <b>antiparallel</b> to the reference, so the particle is <b>dark</b>",

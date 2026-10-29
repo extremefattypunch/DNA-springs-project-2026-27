@@ -2302,35 +2302,27 @@
    "kind": "media",
    "page": "c5",
    "section": "cryoem",
+   "items": [],
+   "final": true,
+   "big": true,
    "title": "Key assumption: the weak phase object approximation",
-   "figW": 1180,
-   "msgChannel": "cryo",
-   "q": "Why is an in-focus protein invisible?",
-   "items": [
-    {
-     "iframe": "interactive/cryo/wpoa.html",
-     "title": "Key assumption: the weak phase object approximation",
-     "cap": "Animation drawn for this deck from the content of the cryoEM slides (φ exaggerated)"
-    }
-   ],
+   "q": "Implication: the scattered wave is always 90° out of phase with the unscattered wave",
+   "aside": {
+    "w": 600,
+    "html": "<b>Also implies</b> the amplitude of the exit wave after scattering at the protein remains at unity, so there is <b>no contrast</b> between the unscattered reference and the scattered wave: the detector only picks up <b>intensity</b>, not the phase difference!<span class=\"tex d\">I(x,y) = \\big|e^{i\\phi(x,y)}\\big|^2 = 1</span>"
+   },
    "points": [
     {
-     "text": "Exit wave Ψ<sub>exit</sub>(x, y) = e<sup>iφ(x,y)</sup>: the phasor turns by φ but keeps length 1",
-     "msg": {
-      "step": 1
-     }
+     "text": "Incident plane wave:<span class=\"tex d\">\\Psi_{\\mathrm{in}}(\\mathbf r, z) = e^{ikz}, \\qquad k = \\frac{2\\pi}{\\lambda}</span>"
     },
     {
-     "text": "For |φ| ≪ 1: e<sup>iφ</sup> ≈ 1 + iφ = <b>unscattered reference</b> + <b>scattered wave</b>, 90° apart (i = e<sup>iπ/2</sup>)",
-     "msg": {
-      "step": 2
-     }
+     "text": "Exit wave after the protein:<span class=\"tex d\">\\Psi_{\\mathrm{exit}}(x,y) = e^{i\\phi(x,y)}</span>Under the WPOA, <span class=\"tex\">|\\phi| \\ll 1</span>, so a Taylor expansion gives<span class=\"tex d\">e^{i\\phi} \\approx 1 + i\\phi</span>"
     },
     {
-     "text": "Intensity |1 + iφ|² = 1 + φ² ≈ 1: <b>no first-order contrast</b>",
-     "msg": {
-      "step": 3
-     }
+     "text": "Therefore,<span class=\"tex d\">\\Psi_{\\mathrm{exit}}(x,y) \\approx \\underset{\\color{#7a8794}\\text{unscattered reference}}{1} \\quad+\\quad \\underset{\\color{#7a8794}\\text{scattered wave}}{i\\phi(x,y)}</span>"
+    },
+    {
+     "text": "Because <span class=\"tex\">i = e^{i\\pi/2}</span>, this perturbation is in <b>quadrature</b> (90° out of phase) with the reference, when φ is real"
     }
    ]
   },

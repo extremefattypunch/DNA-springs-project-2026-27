@@ -20,7 +20,12 @@ const circ = S('circle', { cx: X(1), cy: Y(0), r: R * PHI, fill: 'none', stroke:
 const ref = S('line', { x1: X(0), y1: Y(0), x2: X(1) - 4, y2: Y(0), stroke: C.est, 'stroke-width': 8, 'marker-end': 'url(#ao)' }, sv);
 const sca = S('line', { x1: X(1), y1: Y(0) - 12, stroke: C.obs, 'stroke-width': 5, 'marker-end': 'url(#ac)' }, sv);
 const res = S('line', { x1: X(0), y1: Y(0), stroke: C.text, 'stroke-width': 3, 'marker-end': 'url(#aw)' }, sv);
-S('text', { x: OX + 10, y: OY - 14, 'font-size': 16, fill: C.text, text: 'resultant (white)' }, sv);
+const resL = S('text', { 'font-size': 16, fill: C.text, text: 'resultant = reference + scattered' }, sv);
+const rel = S('text', { 'font-size': 20, 'font-weight': 700, 'text-anchor': 'middle' }, sv);
+const banner = S('g', {}, sv);
+const bnR = S('rect', { x: 20, y: 18, width: 510, height: 92, rx: 14, 'stroke-width': 3, fill: '#1A1F27' }, banner);
+const bn1 = S('text', { x: 275, y: 56, 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 700 }, banner);
+const bn2 = S('text', { x: 275, y: 88, 'text-anchor': 'middle', 'font-size': 18 }, banner);
 const chiArc = S('path', { class: 'w', stroke: C.label, 'stroke-width': 2.5 }, sv);
 const chiT = S('text', { 'font-size': 22, class: 'm', 'font-style': 'italic', fill: C.label, text: 'χ' }, sv);
 S('text', { x: X(0.5), y: OY + 30, 'text-anchor': 'middle', 'font-size': 17, fill: C.est, text: 'unscattered reference' }, sv);
@@ -56,8 +61,8 @@ const l2 = S('text', { x: 30, y: 680, 'font-size': 19, class: 'mut' }, sv);
 const l3 = S('text', { x: 30, y: 712, 'font-size': 19, class: 'mut' }, sv);
 const TX = [
   ['No extra phase (in focus): scattered ⟂ reference, no contrast', 'The resultant has the reference’s length, so the particle is invisible.', '', ''],
-  ['Extra phase χ = π/2: scattered wave antiparallel, particle dark', 'The scattered wave now subtracts from the reference: less intensity where the protein is.', 'This is “phase contrast”: the same trick as a Zernike phase plate in light microscopy.', ''],
-  ['χ = 3π/2: scattered wave parallel, particle bright', 'Same particle, contrast reversed: the sign of the image depends on χ.', '', ''],
+  ['χ = π/2: scattered ANTIPARALLEL to reference → destructive interference, maximum contrast (dark)', 'The scattered wave now subtracts from the reference: less intensity where the protein is.', 'This is “phase contrast”: the same trick as a Zernike phase plate in light microscopy.', ''],
+  ['χ = 3π/2: scattered PARALLEL to reference → constructive interference, maximum contrast (bright)', 'Same particle, contrast reversed: the sign of the image depends on χ.', '', ''],
   ['Sweeping χ: contrast follows −2φ sin χ', 'Maximum contrast at χ = π/2 + kπ (sin χ = ±1); zero at χ = kπ.', 'sin χ is the contrast transfer function (CTF).', ''],
   ['Defocus is what adds χ, and the amount depends on spatial frequency q', 'A beam scattered to frequency q takes a longer path to the defocused image plane:', 'χ(q) = π λ Δf q² − ½ π Cs λ³ q⁴  (Δf defocus, Cs spherical aberration, λ wavelength).', 'So every spatial frequency gets its own χ: CTF(q) = sin χ(q) (next slide).']
 ];
@@ -72,9 +77,19 @@ Cryo.init(T, (P, t, dt) => {
   acc += (dt || 0) * 0.9 * P.sw;
   const chi = P.chi + acc, a = Math.PI / 2 + chi;
   const sx = 1 + PHI * Math.cos(a), sy = PHI * Math.sin(a);
-  sca.setAttribute('x2', X(sx)); sca.setAttribute('y2', Y(sy) - 12);
-  res.setAttribute('x2', X(sx)); res.setAttribute('y2', Y(sy));
-  scaT.setAttribute('x', X(1 + 0.5 * PHI * Math.cos(a)) - 34); scaT.setAttribute('y', Y(0.5 * PHI * Math.sin(a)) - 30);
+  const col = Math.abs(Math.cos(a)), off = 30 * col;            // separate arrows that lie along the axis
+  sca.setAttribute('y1', Y(0) + off); sca.setAttribute('x2', X(sx)); sca.setAttribute('y2', Y(sy) + off);
+  res.setAttribute('y1', Y(0) - off); res.setAttribute('x2', X(sx)); res.setAttribute('y2', Y(sy) - off);
+  scaT.setAttribute('x', X(1 + 0.5 * PHI * Math.cos(a)) - 34); scaT.setAttribute('y', Y(0.5 * PHI * Math.sin(a)) + off + (col > .5 ? 26 : -30));
+  resL.setAttribute('x', OX + 10); resL.setAttribute('y', Y(0) - off - 14);
+  const cs = Math.cos(a), ss = Math.sin(chi);
+  const R0 = col > .92 ? (cs < 0 ? ['ANTIPARALLEL', C.red] : ['PARALLEL', C.truth]) : col < .3 ? ['PERPENDICULAR (90°)', C.muted] : ['', C.muted];
+  rel.textContent = R0[0]; rel.setAttribute('fill', R0[1]); rel.setAttribute('x', X(1)); rel.setAttribute('y', Y(0) + (col > .5 ? 96 : -150));
+  const B = Math.abs(ss) < 0.25 ? ['NO interference effect', 'scattered ⟂ reference: zero contrast', C.muted]
+    : ss > 0.92 ? ['DESTRUCTIVE interference', 'maximum contrast: particle DARK', C.red]
+    : ss < -0.92 ? ['CONSTRUCTIVE interference', 'maximum contrast: particle BRIGHT', C.truth]
+    : [ss > 0 ? 'partly destructive' : 'partly constructive', 'some contrast', C.label];
+  bn1.textContent = B[0]; bn1.setAttribute('fill', B[2]); bn2.textContent = B[1]; bn2.setAttribute('fill', B[2]); bnR.setAttribute('stroke', B[2]);
   // chi arc from the 90° direction
   const rr = R * PHI * 0.55; let d = '';
   const c0 = Math.PI / 2, c1 = c0 + ((chi % TAU) + TAU) % TAU;
