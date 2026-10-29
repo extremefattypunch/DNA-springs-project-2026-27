@@ -1727,7 +1727,8 @@
     {
      "gel": "p17-gst"
     }
-   ]
+   ],
+   "intro": "Hmm, but I remembered that our pp2a mutants were made <b>with GST tags present</b>, as mentioned in one of Micheal’s notebooks.<br><br>Could the GST tag be <b>blocking one of the two Tet groups</b>, and hence inhibiting circular product formation?"
   },
   {
    "kind": "gel",
