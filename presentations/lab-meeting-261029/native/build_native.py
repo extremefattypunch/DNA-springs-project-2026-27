@@ -126,7 +126,8 @@ A29 = anim(29, '[Plans] B56-binding assay: biolayer interferometry (BLI)', 'bli.
     '<b>Baseline</b> in buffer: nothing binds',
     '<b>Association</b>: dip into the AC core dimer (31–500 nM); AC binds B56 and Δλ rises, at a rate set by k<sub>on</sub>',
     '<b>Dissociation</b>: back into buffer; AC falls off and Δλ decays, at a rate set by k<sub>off</sub>',
-    '<b>Fit</b> (1:1 binding):' + tex(r'AC + B \;\xrightleftharpoons[k_{\mathrm{off}}]{\;k_{\mathrm{on}}\;}\; ABC, \qquad K_D = \frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}', True) + 'smaller K<sub>D</sub> = tighter binding'])
+    '<b>Fit</b> (1:1 binding):' + tex(r'AC + B \;\xrightleftharpoons[k_{\mathrm{off}}]{\;k_{\mathrm{on}}\;}\; ABC, \qquad K_D = \frac{k_{\mathrm{off}}}{k_{\mathrm{on}}}', True) + 'smaller K<sub>D</sub> = tighter binding',
+    '<span class="headline"><b>Day et al. result</b>: Aβ binds B56 more weakly than Aα, K<sub>D</sub> 119.9 vs 25.7 nM for B56α (≈ 4.7×) and 14.0 vs 9.2 nM for B56γ (≈ 1.5×)</span>'])
 A29b = {'kind': 'media', 'page': '29b', 'section': 'assay', 'title': 'BLI results (Day et al.): Aβ binds B56 more weakly', 'figW': 900,
   'q': 'Day et al. Fig. 5 (n = 2): AαChimera and AβNT are their swap constructs',
   'items': [pic('day_fig5.png', 'Day et al. Fig. 5A: K_D of AC core dimers for B56α and B56γ')],
@@ -141,7 +142,8 @@ A30 = anim(30, '[Plans] Phosphatase activity assay (DiFMUP)', 'difmup.html', 'Me
     '<b>Substrate DiFMUP</b> is dark; PP2A removes its phosphate → <b>DiFMU</b>, which fluoresces blue',
     'The <b>initial slope</b> of fluorescence vs time is the velocity v at that substrate concentration',
     '<b>Repeat</b> at 2–128 µM (triplicate) and fit Michaelis–Menten:' + tex(r'v = \frac{V_{\max}\,[S]}{K_M + [S]}', True),
-    '<b>Day et al.</b>: Aα and Aβ give virtually the same curve. <b>Ours</b>: the same assay with and without the DNA spring'])
+    '<b>Ours</b>: the same assay with and without the DNA spring',
+    '<span class="headline"><b>Day et al. result</b>: same activity for Aα and Aβ, K<sub>M</sub> 25.6 vs 34.9 µM and V<sub>max</sub> 60.1 vs 56.8 fluorescence/s, despite their different B56 binding</span>'])
 A30b = {'kind': 'media', 'page': '30b', 'section': 'assay', 'title': 'DiFMUP results (Day et al.): same activity for Aα and Aβ', 'figW': 760,
   'q': 'Day et al. Fig. S4D, mean ± SD of 3 replicates',
   'items': [{'img': 'native/difmup_kinetics.png', 'w': 537, 'h': 427, 'cap': 'Day et al. Fig. S4D: velocity vs [DiFMUP]'}],
@@ -241,7 +243,7 @@ for s in deck['slides']:
         out += [SLIDES[x] for x in ('22b',)]   # 22a, 22c, 22d dropped at Ian's request
     out.append(s)
     for parent, child in ((1, '1b'), (29, '29b'), (30, '30b')):
-        if pg == parent:
+        if pg == parent and child == '1b':   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
 deck['slides'] = out
 (ROOT / 'deck.json').write_text(json.dumps(deck, indent=1, ensure_ascii=False))

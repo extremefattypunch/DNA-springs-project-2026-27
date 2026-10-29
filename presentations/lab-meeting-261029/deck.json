@@ -2030,33 +2030,12 @@
      "msg": {
       "step": 5
      }
-    }
-   ]
-  },
-  {
-   "kind": "media",
-   "page": "29b",
-   "section": "assay",
-   "title": "BLI results (Day et al.): Aβ binds B56 more weakly",
-   "figW": 900,
-   "q": "Day et al. Fig. 5 (n = 2): AαChimera and AβNT are their swap constructs",
-   "items": [
-    {
-     "img": "native/day_fig5.png",
-     "w": 785,
-     "h": 470,
-     "cap": "Day et al. Fig. 5A: K_D of AC core dimers for B56α and B56γ"
-    }
-   ],
-   "points": [
-    {
-     "text": "<table class=\"tb\"><tr><th></th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ vs Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table>"
     },
     {
-     "text": "Moving the Aβ N-terminus onto Aα (AαChimera) barely changes binding; removing it from Aβ (AβNT) only partly restores B56α binding"
-    },
-    {
-     "text": "<b>Ours</b>: spring-attached Aα–C vs WT Aα–C against the same immobilised B56"
+     "text": "<span class=\"headline\"><b>Day et al. result</b>: Aβ binds B56 more weakly than Aα, K<sub>D</sub> 119.9 vs 25.7 nM for B56α (≈ 4.7×) and 14.0 vs 9.2 nM for B56γ (≈ 1.5×)</span>",
+     "msg": {
+      "step": 6
+     }
     }
    ]
   },
@@ -2101,37 +2080,16 @@
      }
     },
     {
-     "text": "<b>Day et al.</b>: Aα and Aβ give virtually the same curve. <b>Ours</b>: the same assay with and without the DNA spring",
+     "text": "<b>Ours</b>: the same assay with and without the DNA spring",
      "msg": {
       "step": 5
      }
-    }
-   ]
-  },
-  {
-   "kind": "media",
-   "page": "30b",
-   "section": "assay",
-   "title": "DiFMUP results (Day et al.): same activity for Aα and Aβ",
-   "figW": 760,
-   "q": "Day et al. Fig. S4D, mean ± SD of 3 replicates",
-   "items": [
-    {
-     "img": "native/difmup_kinetics.png",
-     "w": 537,
-     "h": 427,
-     "cap": "Day et al. Fig. S4D: velocity vs [DiFMUP]"
-    }
-   ],
-   "points": [
-    {
-     "text": "<table class=\"tb\"><tr><th></th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 /s</td><td>56.8 ± 0.7 /s</td></tr></table>"
     },
     {
-     "text": "V<sub>max</sub> within 6 %: once assembled, both holoenzymes are <b>equally active</b>"
-    },
-    {
-     "text": "Yet B56 binding differs up to 4.7×: activity alone would have missed the difference, hence all three assays"
+     "text": "<span class=\"headline\"><b>Day et al. result</b>: same activity for Aα and Aβ, K<sub>M</sub> 25.6 vs 34.9 µM and V<sub>max</sub> 60.1 vs 56.8 fluorescence/s, despite their different B56 binding</span>",
+     "msg": {
+      "step": 6
+     }
     }
    ]
   },
