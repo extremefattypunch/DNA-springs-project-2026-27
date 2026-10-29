@@ -1202,106 +1202,113 @@
    "q": "Is the DNA kinked or coiled? Does it interact with the protein beyond pushing?",
    "items": [
     {
+     "img": "md/sfgfp/fig4_dna_bend_md.png",
+     "w": 1950,
+     "h": 1020,
+     "cap": "Axis bend per base-pair step in the MD chimeras (zoomed: 0–10°)",
+     "anns": {
+      "m_dk_md_S3_spring27": [
+       0.301,
+       0.264
+      ],
+      "m_dk_md_S4_spring40": [
+       0.425,
+       0.325
+      ],
+      "m_dk_md_S5_spring40nick": [
+       0.672,
+       0.224
+      ]
+     }
+    },
+    {
      "img": "md/sfgfp/fig4_dna_bend_kink.png",
      "w": 1950,
      "h": 1020,
-     "cap": "Axis bend per base-pair step: MD chimeras (solid) vs a kinked duplex (dashed)",
+     "cap": "Same profiles with a kinked duplex overlaid (0–100°)",
      "anns": {
-      "dk_md_S3_spring27": [
+      "k_dk_md_S3_spring27": [
        0.307,
-       0.866
+       0.84
       ],
-      "dk_md_S4_spring40": [
+      "k_dk_md_S4_spring40": [
        0.429,
-       0.869
+       0.847
       ],
-      "dk_md_S5_spring40nick": [
+      "k_dk_md_S5_spring40nick": [
        0.674,
-       0.863
+       0.836
       ],
-      "dk_kink27": [
+      "k_dk_kink27": [
        0.338,
-       0.491
+       0.476
       ],
-      "dk_kink40": [
+      "k_dk_kink40": [
        0.521,
-       0.288
+       0.263
       ],
-      "dk_band": [
+      "k_dk_band": [
        0.735,
-       0.874
+       0.854
       ]
-     }
+     },
+     "over": 0
     }
    ],
    "explain": [
     {
      "item": 0,
-     "text": "x-axis: base pair along the duplex; y-axis: <dfn>axis bend</dfn> at each base-pair step (°), the angle between the helix axes either side of it. <b>Solid</b>: our MD chimeras (mean of 6 runs each). <b>Dashed</b>: what a <dfn>kinked</dfn> duplex would look like at the same end-to-end distance, Zocchi’s kinked rod: two straight arms (0°) and the whole bend at one step.",
-     "marks": [
-      {
-       "a": "dk_kink27",
-       "t": "kink: 81° at one step",
-       "dx": 30,
-       "dy": -60
-      },
-      {
-       "a": "dk_kink40",
-       "t": "kink: 120°",
-       "dx": 30,
-       "dy": -50
-      },
-      {
-       "a": "dk_band",
-       "t": "all MD steps: 3–8°",
-       "dx": -30,
-       "dy": -60
-      }
-     ]
+     "text": "x-axis: base pair along the duplex; y-axis: <dfn>axis bend</dfn> at each base-pair step (°), the angle between the helix axes either side of it. Mean of 6 runs per chimera. Zoomed to 0–10°, the profiles look jagged: but is any of this a <dfn>kink</dfn>, a sharp break at one step?",
+     "marks": []
     }
    ],
    "points": [
     {
-     "text": "A kink is a single spike of <b>80–120°</b> at one step",
+     "text": "Zoomed in, the MD profiles look spiky: steps vary between <b>3 and 8°</b>",
+     "hl": 0
+    },
+    {
+     "text": "Now overlay what a <b>kinked</b> duplex would look like at the same end-to-end distance (Zocchi’s kinked rod): <b>51°</b> (27 bp) and <b>76°</b> (40 bp) at one step, 0° elsewhere",
      "hl": 0,
+     "alt": true,
      "marks": [
       {
-       "a": "dk_kink27",
-       "t": "81°",
+       "a": "k_dk_kink27",
+       "t": "51°",
        "dx": 30,
        "dy": -60
       },
       {
-       "a": "dk_kink40",
-       "t": "120°",
+       "a": "k_dk_kink40",
+       "t": "76°",
        "dx": 30,
        "dy": -50
       }
      ]
     },
     {
-     "text": "The MD duplexes stay at <b>3–8° per step</b> all along: the bend is spread smoothly (4.8–5.2°/bp on average), nucleosome-like",
+     "text": "On the same axis the MD “spikes” vanish into the 0–10° band: the duplex bends <b>smoothly</b>, 4.8–5.2°/bp on average, with no kink",
      "hl": 0,
+     "alt": true,
      "marks": [
       {
-       "a": "dk_band",
-       "t": "3–8°",
+       "a": "k_dk_band",
+       "t": "all MD steps",
        "dx": -30,
        "dy": -60
       }
      ]
     },
     {
-     "text": "Only 0.03–0.83 base pairs open at any instant: the duplex stays <b>intact</b>, no kink formed",
-     "hl": 0
+     "text": "The DNA touches the protein in 72–98 % of frames: <b>local contact</b>, not action at a distance",
+     "alt": true
     },
     {
-     "text": "The DNA touches the protein in 72–98 % of frames (ssDNA loop 93 %): <b>local contact</b>, not action at a distance"
-    },
-    {
-     "text": "<b>Answer</b>: no kink and no coiling; the DNA bends smoothly and lies against the protein"
+     "text": "<b>Answer</b>: no kink and no coiling; the DNA bends smoothly and lies against the protein",
+     "alt": true
     }
-   ]
+   ],
+   "eqbox": "<b>Kink angle</b> (Zocchi, <i>Molecular Machines</i> §2.15, Fig. 2.31): internal angle at the kink π − 2θ, so the duplex bends by 2θ, with<span class=\"tex d\">\\theta = \\arccos\\!\\Big(\\frac{x}{2R}\\Big) - \\Delta \\quad (2.177)</span><span class=\"tex d\">\\Delta = \\arccos\\!\\Big(\\frac{x_c}{2R}\\Big) \\quad (2.178)</span><span class=\"tex d\">R = \\frac{L}{2}\\Big(1-\\frac{\\gamma^2}{90}\\Big)\\ (2.197),\\quad x_c = L\\Big(1-\\frac{\\gamma^2}{15}\\Big)\\ (2.194)</span><span class=\"tex d\">\\gamma = \\frac{L\\,\\tau_c}{2B}</span>27 bp at x = 68 Å: 2θ = 51°; 40 bp at x = 66 Å: 2θ = 76° (τ<sub>c</sub> = 34 pN nm, B = 200 pN nm²)"
   },
   {
    "kind": "media",

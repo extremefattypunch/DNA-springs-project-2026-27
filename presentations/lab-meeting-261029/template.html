@@ -248,6 +248,10 @@ body {
 .m-aside b { color: var(--ink); }
 .m-aside ul { margin: 8px 0 0; padding-left: 22px; }
 .m-pts.big { gap: 22px; } .m-pts.big .m-pt { font-size: 29px; } .m-pts.big .m-pt::before { top: .5em; }
+.m-eqbox { position: absolute; left: 1290px; top: 690px; width: 566px; background: var(--paper-2); border-left: 6px solid var(--sec, var(--ink-3)); border-radius: 10px; padding: 12px 18px; font-size: 16px; line-height: 1.35; color: var(--ink-2); box-sizing: border-box; opacity: 0; transition: opacity .35s; }
+.m-eqbox.on { opacity: 1; }
+.m-eqbox .tex.d { margin: 2px 0; }
+.m-eqbox .tex.d math { font-size: 1.3em; }
 .m-banner { position: absolute; left: 50%; top: 52%; width: 1380px; transform: translate(-50%, -46%) scale(.96); opacity: 0; pointer-events: none; z-index: 4;
   background: var(--paper); border: 3px solid var(--amber); border-radius: 22px; padding: 44px 56px; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--paper) 72%, transparent), 0 24px 60px rgba(0,0,0,.28);
   font-size: 36px; line-height: 1.4; color: var(--ink-2); transition: opacity .45s ease, transform .45s ease; }
@@ -1026,6 +1030,9 @@ function buildMedia(el, cfg) {
     if (it.cap) box.appendChild(h('div', 'm-cap', { html: it.cap }));
     el.appendChild(box); return box;
   });
+  // equation box: shown under the points once a point with alt: true is reached
+  const eqBox = cfg.eqbox ? h('div', 'm-eqbox', { html: cfg.eqbox }) : null;
+  if (eqBox) el.appendChild(eqBox);
   if (cfg.q) el.appendChild(h('div', 'm-q', { text: cfg.q, style: { left: ptBox.x + 'px', top: (top + 6) + 'px', width: ptBox.w + 'px' } }));
   const ex = cfg.explain || [], E = ex.length;
   const exBox = h('div', 'm-ex', { style: { left: '64px', top: (top + (cfg.exH || 600) + 24) + 'px', width: '1792px' } });
@@ -1072,6 +1079,7 @@ function buildMedia(el, cfg) {
         return;
       }
       const alt = !!(pts[k - E] && pts[k - E].alt);
+      if (eqBox) eqBox.classList.toggle('on', alt);
       items.forEach((it, i) => place(i, boxes[i], it.over != null ? !alt : items.some(o => o.over === i) && alt));
       exBox.classList.remove('on'); ul.style.opacity = 1; if (qEl) qEl.style.opacity = 1;
       k = k - E + 1;
