@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TCO resin capture</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* Schematic: TCO groups on resin beads react with any exposed Tet group (click chemistry), so a
+   protein with a free Tet is held on the resin; a protein whose Tet groups are all capped flows through. */
+const sv = document.getElementById('sv');
+const g = S('g', {}, sv);
+const A = '#e5484d', TET = '#3fd9a0', TCO = '#ffd166', PEG = '#b48cf2', DNA = '#6fa8ff';
+function bead(p, cx, cy, r, n) {
+  n = n || 12;
+  S('circle', { cx, cy, r, fill: '#2b3440', stroke: '#5b6672', 'stroke-width': 3 }, p);
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, x = cx + Math.cos(a) * (r + 10), y = cy + Math.sin(a) * (r + 10);
+    S('line', { x1: cx + Math.cos(a) * r, y1: cy + Math.sin(a) * r, x2: x, y2: y, stroke: '#9aa3ae', 'stroke-width': 2 }, p);
+    S('rect', { x: x - 6, y: y - 6, width: 12, height: 12, rx: 3, fill: TCO }, p); }
+}
+/* protein: horseshoe with two Tet sites; caps: 'free' | 'peg' | 'dna' per site */
+function protein(p, cx, cy, caps, sc) {
+  sc = sc || 1; const R = 46 * sc; let d = '';
+  for (let i = 0; i <= 30; i++) { const a = Math.PI * (0.12 + 0.76 * i / 30); d += (i ? 'L' : 'M') + (cx + R * Math.cos(a)).toFixed(1) + ',' + (cy - R * Math.sin(a)).toFixed(1); }
+  S('path', { d, class: 'w', stroke: A, 'stroke-width': 18 * sc, 'stroke-linecap': 'round' }, p);
+  const tips = [[cx + R * Math.cos(Math.PI * .12), cy - R * Math.sin(Math.PI * .12)], [cx + R * Math.cos(Math.PI * .88), cy - R * Math.sin(Math.PI * .88)]];
+  tips.forEach(([x, y], i) => {
+    S('circle', { cx: x, cy: y + 10 * sc, r: 8 * sc, fill: TET, stroke: '#0e1116', 'stroke-width': 1.5 }, p);
+    if (caps[i] === 'peg') { let w = `M${x},${y + 18 * sc}`; for (let k = 1; k <= 6; k++) w += ` q${(k % 2 ? 8 : -8) * sc},${7 * sc} 0,${14 * sc}`;
+      S('path', { d: w, class: 'w', stroke: PEG, 'stroke-width': 4 * sc }, p); }
+  });
+  if (caps[0] === 'dna') { const [x1, y1] = tips[0], [x2, y2] = tips[1];
+    S('path', { d: `M${x1},${y1 + 18 * sc} Q${cx},${cy + 80 * sc} ${x2},${y2 + 18 * sc}`, class: 'w', stroke: DNA, 'stroke-width': 5 * sc }, p); }
+  return tips.map(([x, y]) => [x, y + 10 * sc]);
+}
+/* column with resin */
+function column(p, x, label) {
+  S('path', { d: `M${x - 90},120 L${x - 90},440 L${x - 22},500 L${x + 22},500 L${x + 90},440 L${x + 90},120`, class: 'w', stroke: '#9aa3ae', 'stroke-width': 3 }, p);
+  for (let i = 0; i < 6; i++) bead(p, x - 50 + (i % 3) * 50, 300 + Math.floor(i / 3) * 62, 17, 6);
+  S('text', { x, y: 102, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: '#e5ebf0', text: label }, p);
+  S('text', { x: x + 104, y: 330, 'font-size': 15, class: 'mut', text: 'TCO resin' }, p);
+  S('rect', { x: x - 75, y: 545, width: 150, height: 90, rx: 8, fill: 'rgba(79,209,232,.08)', stroke: '#3a424d', 'stroke-width': 2 }, p);
+  S('text', { x: x - 90, y: 600, 'text-anchor': 'end', 'font-size': 15, class: 'mut', text: 'flow-through' }, p);
+}
+const foot = S('text', { x: 590, y: 700, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 728, 'text-anchor': 'middle', 'font-size': 17, class: 'mut' }, sv);
+const TX = [
+  ['TCO resin: beads coated with TCO groups (yellow)', 'TCO reacts with Tet by click chemistry, the same reaction that attaches our DNA'],
+  ['A protein with an exposed Tet group clicks onto the bead', 'so it is held on the resin and does not come out in the flow-through'],
+  ['Capping: add excess TCO-PEG to 2-tet pp2a', 'every Tet group reacts with a PEG chain (purple), so none is left exposed'],
+  ['Test of the resin: capped vs exposed 2-tet pp2a', 'capped protein passes into the flow-through; exposed protein is trapped (next slide’s gels)'],
+  ['Why it matters: a 1:1 circular product has no free Tet', 'both Tet groups are used by its DNA, so it passes through; linear products with a free Tet are trapped']
+];
+const T = TX.map((_, k) => ({ k }));
+let ph = 0;
+Cryo.init(T, (P, t, dt) => {
+  ph += Math.max(0, dt || 0);
+  const k = Math.round(P.k); g.innerHTML = '';
+  const u = Cryo.static ? 1 : Math.min(1, (ph % 5) / 3);
+  if (k === 0) { bead(g, 590, 320, 90);
+    S('text', { x: 590, y: 328, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: '#e5ebf0', text: 'resin bead' }, g);
+    S('text', { x: 760, y: 200, 'font-size': 18, fill: TCO, text: 'TCO groups' }, g); }
+  if (k === 1) { bead(g, 590, 380, 90);
+    const y = 120 + (262 - 120) * u; const tips = protein(g, 590, y, ['free', 'free'], 1.4);
+    S('text', { x: 700, y: y - 30, 'font-size': 18, fill: TET, text: 'exposed Tet' }, g);
+    if (u > .95) S('text', { x: 590, y: 540, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: TCO, text: 'clicked: protein trapped on the bead' }, g); }
+  if (k === 2) { const caps = u > .6 ? ['peg', 'peg'] : ['free', 'free'];
+    protein(g, 590, 320, caps, 2.2);
+    for (let i = 0; i < 6; i++) { const x = 300 + i * 110 + 30 * Math.sin(ph + i), y = 520 + 20 * Math.cos(ph * 1.3 + i);
+      S('rect', { x: x - 6, y: y - 6, width: 12, height: 12, rx: 3, fill: TCO }, g); let w = `M${x},${y + 6}`;
+      for (let q = 1; q <= 4; q++) w += ` q${q % 2 ? 8 : -8},6 0,12`; S('path', { d: w, class: 'w', stroke: PEG, 'stroke-width': 4 }, g); }
+    S('text', { x: 590, y: 640, 'text-anchor': 'middle', 'font-size': 18, fill: PEG, text: 'excess TCO-PEG in solution' }, g);
+    S('text', { x: 590, y: 130, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: u > .6 ? PEG : TET, text: u > .6 ? 'both Tet groups capped by PEG' : '2-tet pp2a: two exposed Tet' }, g); }
+  if (k >= 3) {
+    const L = k === 3 ? [['2-tet pp2a + PEG', ['peg', 'peg'], true], ['2-tet pp2a, no PEG', ['free', 'free'], false]]
+                      : [['1:1 circular product', ['dna', 'dna'], true], ['linear (one free Tet)', ['dna', 'free'], false]];
+    L.forEach(([name, caps, passes], i) => {
+      const x = 300 + i * 520; column(g, x, name);
+      const y = passes ? 170 + (585 - 170) * u : 170 + (270 - 170) * Math.min(1, u * 2);
+      if (k === 4 && !passes) { const tips = protein(g, x, y, ['free', 'free'], 1.0);
+        const [x1, y1] = tips[0]; S('path', { d: `M${x1},${y1 + 8} q-30,40 -60,30`, class: 'w', stroke: DNA, 'stroke-width': 5 }, g); }
+      else protein(g, x, y, caps, 1.0);
+      if (u > .95) S('text', { x: x + 90, y: passes ? 600 : 250, 'font-size': 19, 'font-weight': 700,
+        fill: passes ? '#5bd67a' : C.red, text: passes ? 'passes through ✓' : 'trapped on resin' }, g);
+    });
+  }
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>

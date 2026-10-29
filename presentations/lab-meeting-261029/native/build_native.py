@@ -62,6 +62,16 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
     ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 5),
     ('<b>Three readouts</b>, as in Day et al.: activity (DiFMUP), B56 binding (BLI), structure (cryoEM). Activity alone is not enough: Day et al. found the same activity but up to 4.7× weaker binding', 6)]]}
 
+RESIN = {'kind': 'media', 'page': '19b', 'section': 'synthesis', 'title': 'How the TCO resin test works', 'figW': 1180, 'msgChannel': 'cryo',
+  'q': 'Is the new band a circular product? A resin that grabs any free Tet group can tell',
+  'items': [{'iframe': 'interactive/resin.html', 'title': 'TCO resin capture', 'cap': 'Schematic of TCO resin capture (not to scale)'}],
+  'points': [{'text': t, 'msg': {'step': i + 1}} for i, t in enumerate([
+    '<b>TCO resin</b>: beads coated with TCO groups, which click onto Tet, the same chemistry that attaches our DNA',
+    'A protein with an <b>exposed Tet</b> clicks onto the beads and is <b>trapped</b>: nothing comes out in the flow-through',
+    '<b>Excess TCO-PEG</b> caps every Tet on 2-tet pp2a, leaving none exposed',
+    '<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide)',
+    '<b>The point</b>: a 1:1 circular product uses both Tet groups for its DNA, so it passes through; linear products keep a free Tet and are trapped'])]}
+
 PP_FN = anim('22a', 'PP2A: what it does in the cell', 'pp2afn.html', 'Protein phosphatase 2A: a serine/threonine phosphatase, the cell’s main “off switch”',
     'Schematic of kinase/phosphatase signalling', [
     'Signalling proteins are switched by <b>phosphate groups</b> on serine/threonine residues',
@@ -193,6 +203,7 @@ SLIDES = {
     grp('<b>MD analysis</b>', 'Not attempted before in lab, although there is literature on MD of pp2a A-subunit isoforms and mutants; no direct mechanical tension or spring systems',
         todo('set up MD system for tet-TCO/BCN protein chimeras'))], badge=AGO),
 23: A23,
+'19b': RESIN,
 '22a': PP_FN,
 '22b': PP_ABC,
 '22c': PP_HEAT,
@@ -221,10 +232,12 @@ deck = json.loads((ROOT / 'deck.json').read_text())
 out = []
 for s in deck['slides']:
     pg = s.get('page')
-    if pg in ('1b', '29b', '30b', '22a', '22b', '22c', '22d'):
+    if pg in ('1b', '29b', '30b', '22a', '22b', '22c', '22d', '19b'):
         continue
     if pg in SLIDES:
         s = SLIDES[pg]
+    if pg == 20:
+        out.append(SLIDES['19b'])
     if pg == 23:
         out += [SLIDES[x] for x in ('22a', '22b', '22c', '22d')]
     out.append(s)

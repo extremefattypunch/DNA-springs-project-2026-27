@@ -1756,6 +1756,54 @@
    ]
   },
   {
+   "kind": "media",
+   "page": "19b",
+   "section": "synthesis",
+   "title": "How the TCO resin test works",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Is the new band a circular product? A resin that grabs any free Tet group can tell",
+   "items": [
+    {
+     "iframe": "interactive/resin.html",
+     "title": "TCO resin capture",
+     "cap": "Schematic of TCO resin capture (not to scale)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>TCO resin</b>: beads coated with TCO groups, which click onto Tet, the same chemistry that attaches our DNA",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "A protein with an <b>exposed Tet</b> clicks onto the beads and is <b>trapped</b>: nothing comes out in the flow-through",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Excess TCO-PEG</b> caps every Tet on 2-tet pp2a, leaving none exposed",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Control</b>: PEG-capped 2-tet pp2a passes through; uncapped 2-tet pp2a is trapped (next slide)",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>The point</b>: a 1:1 circular product uses both Tet groups for its DNA, so it passes through; linear products keep a free Tet and are trapped",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
    "kind": "gel",
    "page": 20,
    "title": "So is this new band circular product? Lets use resin to find out! First, check if TCO resin works",
