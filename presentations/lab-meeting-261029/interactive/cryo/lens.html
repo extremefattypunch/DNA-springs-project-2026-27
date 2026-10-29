@@ -39,8 +39,8 @@ const brIl = S('line', { y1: 60, y2: 60, stroke: C.alt, 'stroke-width': 1.5 }, b
 const brIt = S('text', { y: 50, 'text-anchor': 'middle', class: 'm', 'font-size': 22, 'font-style': 'italic', fill: C.alt, text: 's′' }, brI);
 
 // heading per state
-const heads = ['In focus: every ray from the point meets on the sensor', 'Stronger lens (shorter f): focus lands before the sensor',
-  'Weaker lens (longer f): focus lands beyond the sensor', 'Turning the focus knob = changing f; the sensor never moves'];
+const heads = ['In focus: every ray from the point meets on the sensor', 'Overfocus = stronger lens (shorter f): focus before the sensor',
+  'Underfocus = weaker lens (longer f): focus beyond the sensor', 'Turning the focus knob = changing f; the sensor never moves'];
 const hEls = heads.map(t => S('text', { x: 30, y: 516, 'font-size': 26, 'font-weight': 700, text: t }, sv));
 // equation and live numbers
 const eq = S('text', { x: 30, y: 572, class: 'm', 'font-size': 30, html: '<tspan font-style="italic">1/f</tspan> = <tspan font-style="italic">1/s</tspan> + <tspan font-style="italic">1/s′</tspan>' }, sv);
@@ -52,6 +52,12 @@ S('text', { x: 1030, y: 520, 'text-anchor': 'middle', 'font-size': 17, class: 'm
 S('rect', { x: 950, y: 532, width: 160, height: 160, rx: 8, fill: '#000', stroke: C.grid }, sv);
 const dot = S('circle', { cx: 1030, cy: 612, fill: 'url(#spot)' }, sv);
 const blurT = S('text', { x: 1030, y: 716, 'text-anchor': 'middle', 'font-size': 16, class: 'mut' }, sv);
+/* live lens state badge */
+const badge = S('g', {}, sv);
+const bRect = S('rect', { x: 952, y: 72, width: 210, height: 66, rx: 14, 'stroke-width': 3 }, badge);
+const bT = S('text', { x: 1057, y: 102, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700 }, badge);
+const bS = S('text', { x: 1057, y: 126, 'text-anchor': 'middle', 'font-size': 12 }, badge);
+S('text', { x: 1057, y: 156, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: 'lens state, live' }, badge);
 
 const T = [
   { f: F0, h0: 1, h1: 0, h2: 0, h3: 0, sw: 0 },
@@ -87,6 +93,9 @@ Cryo.init(T, (P, t) => {
   const rr = 6 + spread * 0.55;
   dot.setAttribute('r', rr.toFixed(1)); dot.setAttribute('opacity', clamp(14 / rr, 0.15, 1).toFixed(2));
   blurT.textContent = spread > 3 ? 'blurred disc' : 'sharp point';
+  const st = Math.abs(df) < 4 ? ['IN FOCUS', 'sharp image', C.truth] : df < 0 ? ['OVERFOCUS', 'focus before the sensor', C.est] : ['UNDERFOCUS', 'focus beyond the sensor', C.alt];
+  bT.textContent = st[0]; bT.setAttribute('fill', st[2]); bS.textContent = st[1]; bS.setAttribute('fill', st[2]);
+  bRect.setAttribute('stroke', st[2]); bRect.setAttribute('fill', '#1A1F27');
 }, { rates: {} });
 </script>
 </body></html>
