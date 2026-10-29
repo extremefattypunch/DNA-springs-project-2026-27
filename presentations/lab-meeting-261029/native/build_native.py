@@ -272,10 +272,11 @@ for s in deck['slides']:
     for parent, child in ((1, '1b'), (1, '1c'), (29, '29b'), (30, '30b')):
         if pg == parent and child in ('1b', '1c'):   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
-INTRO = {'22b': 'Now that our gels give at least some evidence of a <b>circular product</b>, it makes sense to start thinking about the next step: designing <b>assays that test the physiological function of PP2A</b> under spring attachment.<br><br>Before that, we first need to understand the <b>key features of PP2A</b>.', '19b': 'But we haven’t asked: is this new band <b>truly a circular product</b>?<br><br>The most definitive answer is to run a <b>TCO resin test</b>.', 11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
+INTRO = {33: 'New <b>structural biology workflow</b> development for the <b>Hekstra lab</b>?', '22b': 'Now that our gels give at least some evidence of a <b>circular product</b>, it makes sense to start thinking about the next step: designing <b>assays that test the physiological function of PP2A</b> under spring attachment.<br><br>Before that, we first need to understand the <b>key features of PP2A</b>.', '19b': 'But we haven’t asked: is this new band <b>truly a circular product</b>?<br><br>The most definitive answer is to run a <b>TCO resin test</b>.', 11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
 for x in out:
     if x.get('page') in INTRO: x['intro'] = INTRO[x['page']]
     if x.get('page') == '22b': x['introTtl'] = 'Next step'
+    if x.get('page') == 33: x['introTtl'] = 'Bonus section'
     if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)
         x['final'] = True
 deck['slides'] = out

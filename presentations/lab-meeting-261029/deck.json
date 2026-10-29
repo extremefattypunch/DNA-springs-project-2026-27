@@ -2239,7 +2239,9 @@
     }
    ],
    "figW": 720,
-   "figRight": true
+   "figRight": true,
+   "intro": "New <b>structural biology workflow</b> development for the <b>Hekstra lab</b>?",
+   "introTtl": "Bonus section"
   },
   {
    "kind": "media",
