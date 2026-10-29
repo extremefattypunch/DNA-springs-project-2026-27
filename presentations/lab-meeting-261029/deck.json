@@ -1934,6 +1934,15 @@
     {
      "gel": "p22-dtt-cdna"
     }
+   ],
+   "top": 250,
+   "callouts": [
+    {
+     "x": 96,
+     "y": 132,
+     "w": 1728,
+     "html": "<b>Protocol</b>: pp2a is first incubated in <b>DTT</b> to reduce its disulfide bonds; the DTT is then <b>desalted away</b> before the DNA is added and clicks onto the Tet groups. <b>Problem</b>: click chemistry is still inhibited even after desalting (right gel). <b>Left gel</b>: find the <b>minimum DTT</b> that still reduces all or most disulfide bonds, so as little DTT as possible is carried over."
+    }
    ]
   },
   {
