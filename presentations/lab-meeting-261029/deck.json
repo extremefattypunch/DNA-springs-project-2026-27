@@ -2386,7 +2386,7 @@
      }
     },
     {
-     "text": "The objective lens sends each direction to one point of its back focal plane: a <b>Fourier transform</b> of the object",
+     "text": "The objective lens sends each direction to one point of its back focal plane: fine detail lands far from the centre",
      "msg": {
       "step": 3
      }
@@ -2497,7 +2497,7 @@
      }
     },
     {
-     "text": "More defocus: stronger low-resolution contrast and faster oscillation. Thon rings reveal each micrograph’s Δf (CTF estimation)",
+     "text": "More defocus: stronger low-resolution contrast and faster oscillation",
      "msg": {
       "step": 2
      }

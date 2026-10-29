@@ -44,8 +44,8 @@ const TXT = [
   ['A plane wave arrives: flat wavefronts, one direction.', '', '', ''],
   ['A repeat of spacing d sends part of the wave off at angle α.', 'The unscattered wave (orange) carries on; the scattered beams (purple) are weak.', 'Bragg: 2d sin θ = λ, so the scattering angle α = 2θ ≈ λ / d for small angles.', ''],
   ['Finer detail (smaller d) scatters to larger angles.', 'α ≈ λ q, with spatial frequency q = 1/d: the direction encodes the spatial frequency.', 'At 300 kV, λ = 0.0197 Å: 3 Å detail scatters by only ≈ 6.6 mrad (0.38°).', ''],
-  ['The lens sends each direction to one point of its back focal plane.', 'Distance from the centre ∝ q: the back focal plane holds the Fourier transform of the object.', 'The image forms when these beams recombine with the unscattered wave; their relative', 'phase on the way there decides the contrast (next slides).'],
-  ['Every spacing in the object has its own spot: high resolution = far from the centre.', 'Spot spacing ∝ 1/d (compare with the previous step).', 'The micrograph’s Fourier transform (pipeline slide) is this map, for millions of spacings at once.', '']
+  ['The lens sends each direction to one point of its back focal plane.', 'Distance from the centre ∝ q: each spatial frequency has its own place.', 'The image forms when these beams recombine with the unscattered wave; their relative', 'phase on the way there decides the contrast (next slides).'],
+  ['Every spacing in the object has its own spot: high resolution = far from the centre.', 'Spot spacing ∝ 1/d (compare with the previous step).', 'A real protein has millions of spacings, so it fills this plane with spots.', '']
 ];
 function beamPoly(m, a, x0, x1) {
   const ta = Math.tan(m * a), w = WB / Math.cos(m * a);

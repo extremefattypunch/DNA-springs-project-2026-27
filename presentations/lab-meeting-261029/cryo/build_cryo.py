@@ -63,7 +63,7 @@ SLIDES = [
           "Where does each spatial frequency go?", DRAWN, [
               "A repeat of spacing d scatters the wave by α ≈ λ/d (Bragg: 2d sin θ = λ, with α = 2θ)",
               "Finer detail scatters further: the direction encodes the <b>spatial frequency q = 1/d</b>",
-              "The objective lens sends each direction to one point of its back focal plane: a <b>Fourier transform</b> of the object",
+              "The objective lens sends each direction to one point of its back focal plane: fine detail lands far from the centre",
               "At 300 kV (λ = 0.0197 Å) even 3 Å detail scatters by only ≈ 0.4°"]),
     {"kind": "media", "page": "c5", "section": "cryoem", "items": [], "final": True, "big": True,
      "title": "Key assumption: the weak phase object approximation",
@@ -85,7 +85,7 @@ SLIDES = [
     frame("c7", "Each defocus value gives contrast to different spatial frequencies", "ctf.html",
           "CTF(q) = sin χ(q), computed for 300 kV and Cₛ = 2.7 mm", DRAWN + "; CTF computed live", [
               "<b>Zeros</b>: the image carries no information at those q. <b>Negative lobes</b>: contrast reversed",
-              "More defocus: stronger low-resolution contrast and faster oscillation. Thon rings reveal each micrograph’s Δf (CTF estimation)",
+              "More defocus: stronger low-resolution contrast and faster oscillation",
               "Collecting over a <b>range of Δf</b> puts the zeros at different q, so every q is measured somewhere",
               "An envelope also damps high q: high resolution needs many averaged particles"]),
     clip("c8", "Forward model: what one particle image contains", "01_forward_model",

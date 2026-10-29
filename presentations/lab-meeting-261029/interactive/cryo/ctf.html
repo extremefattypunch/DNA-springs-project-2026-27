@@ -31,8 +31,8 @@ const envP = S('path', { class: 'w', stroke: C.red, 'stroke-width': 2, 'stroke-d
 const zeros = S('g', {}, sv);
 const dfT = S('text', { x: PX1, y: 44, 'text-anchor': 'end', 'font-size': 22, 'font-weight': 700, fill: C.label }, sv);
 // Thon rings
-S('text', { x: 80, y: 404, 'font-size': 16, class: 'mut', text: 'power spectrum |CTF|², edge = 5 Å' }, sv);
-const fo = S('foreignObject', { x: 80, y: 414, width: 240, height: 240 }, sv);
+// ring image removed from the slide (avoids introducing power spectra / Thon rings here)
+const fo = S('foreignObject', { x: 80, y: 414, width: 240, height: 240, visibility: 'hidden' }, sv);
 const cv = document.createElement('canvas'); cv.width = 240; cv.height = 240;
 Object.assign(cv.style, { width: '240px', height: '240px', display: 'block', borderRadius: '6px' }); fo.appendChild(cv);
 const ctx = cv.getContext('2d'), im = ctx.createImageData(240, 240);
@@ -56,7 +56,7 @@ S('text', { x: 360, y: 550, 'font-size': 15, class: 'mut', text: 'four micrograp
 const TX = [
   ['Reading the plot', 'x: spatial frequency q (fine detail to the right); y: sin χ(q).', '+1/−1 = full contrast (dark/bright); 0 = that frequency is not transferred.', 'One curve = one micrograph at one defocus (here 300 kV, Cs 2.7 mm).'],
   ['Zeros lose information; negative lobes flip contrast', 'Red dots: frequencies the image carries no information about.', 'Blue lobes: those details appear with reversed contrast (white on dark).', 'At q → 0 the CTF → 0 too: the particle’s overall shape is weak.'],
-  ['Changing the defocus moves the zeros', 'More defocus: stronger low-q contrast, faster oscillation at high q.', 'The ring pattern in each micrograph’s power spectrum (left) reveals its Δf:', 'CTF estimation (CTFFIND, CryoSPARC Patch CTF) fits Δf to these Thon rings.'],
+  ['Changing the defocus moves the zeros', 'More defocus: stronger low-q contrast, faster oscillation at high q.', 'So each defocus value gives contrast to a different set of spatial frequencies.', ''],
   ['Many defocus values fill each other’s gaps', 'Each micrograph is recorded at its own Δf (here 0.9, 1.2, 1.7, 2.6 µm).', 'Their zeros fall at different q, so together they measure every q.', 'CTF correction flips negative lobes back and weights each q by how well it was seen.'],
   ['In reality an envelope also damps high q', 'Beam incoherence, drift and radiation damage multiply the CTF by an envelope (dashed).', 'High-resolution detail is transferred weakly: this is why many particles must be averaged.', '']
 ];
