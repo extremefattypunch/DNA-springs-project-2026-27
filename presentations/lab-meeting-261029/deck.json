@@ -1192,36 +1192,6 @@
   },
   {
    "kind": "media",
-   "page": "12f",
-   "section": "md",
-   "figW": 1180,
-   "exH": 590,
-   "title": "sfGFP: why Zocchi’s model puts our springs in the kinked regime",
-   "items": [],
-   "q": "Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers",
-   "points": [
-    {
-     "text": "<b>Inputs.</b> Zocchi’s rod parameters, and what our MD measured: in the sfGFP chimeras the duplex ends sit <b>x = 63–73 Å</b> apart, bent <b>4.8–5.2° per bp</b><span class=\"tex d\">L = 0.33\\,\\mathrm{nm}\\times N_{\\mathrm{bp}}, \\qquad B = k_BT\\,\\ell_p \\approx 200\\ \\mathrm{pN\\,nm^2}, \\qquad \\tau_c = 34\\ (\\text{intact}),\\ 27\\ (\\text{nicked})\\ \\mathrm{pN\\,nm}</span>"
-    },
-    {
-     "text": "<b>Step 1: the kink parameter</b> (eq. 2.194)<span class=\"tex d\">\\gamma = \\frac{L\\,\\tau_c}{2B} = \\frac{8.91 \\times 34}{2 \\times 200} = 0.76\\ \\ (27\\ \\text{bp}), \\qquad \\frac{13.2 \\times 34}{2 \\times 200} = 1.12\\ \\ (40\\ \\text{bp})</span>"
-    },
-    {
-     "text": "<b>Step 2: the critical distance</b> (eq. 2.188): below x<sub>c</sub> the bending torque would exceed τ<sub>c</sub>, so the rod kinks instead<span class=\"tex d\">x_c = L\\Big(1-\\frac{\\gamma^2}{15}\\Big) = 8.91\\,(1 - 0.038) = 8.57\\ \\text{nm} = 86\\ \\text{Å}\\ \\ (27\\ \\text{bp}), \\qquad 121\\ \\text{Å}\\ \\ (40\\ \\text{bp})</span>"
-    },
-    {
-     "text": "<b>Step 3: compare with the MD.</b><span class=\"tex d\">x_{\\mathrm{MD}} = 63\\text{–}73\\ \\text{Å} \\;&lt;\\; x_c = 86\\ \\text{Å}\\ (27\\ \\text{bp}),\\ 121\\ \\text{Å}\\ (40\\ \\text{bp}) \\quad\\Longrightarrow\\quad \\text{kinked regime}</span>"
-    },
-    {
-     "text": "<b>Same answer from curvature</b>: a rod kinks once its bending torque Bκ reaches τ<sub>c</sub><span class=\"tex d\">\\kappa_c = \\frac{\\tau_c}{B} = \\frac{34}{200}\\ \\text{nm}^{-1} \\;\\Rightarrow\\; \\kappa_c \\times 0.33\\ \\tfrac{\\text{nm}}{\\text{bp}} = 3.2^\\circ/\\text{bp}\\ \\ (2.6^\\circ/\\text{bp nicked}) \\;&lt;\\; 4.8\\text{–}5.2^\\circ/\\text{bp in the MD}</span>"
-    },
-    {
-     "text": "<b>So the model predicts the kinked-branch force</b> (eq. 2.196), only a few pN:<span class=\"tex d\">f_{\\mathrm{kinked}}(x) = \\frac{\\tau_c}{2R\\sqrt{1-(x/2R)^2}},\\quad R = \\frac{L}{2}\\Big(1-\\frac{\\gamma^2}{90}\\Big) \\;\\Rightarrow\\; 5.5\\text{–}6.8\\ \\text{pN}\\ (27\\ \\text{bp}),\\ \\ 3.0\\text{–}3.2\\ \\text{pN}\\ (40\\ \\text{bp})</span>Yet the simulated duplexes <b>never kinked</b> (smooth bending, DNA dynamics slide): next slide"
-    }
-   ]
-  },
-  {
-   "kind": "media",
    "page": "12f1",
    "section": "md",
    "figW": 1180,
@@ -1284,6 +1254,39 @@
      "msg": {
       "step": 8
      }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "12f",
+   "section": "md",
+   "figW": 1180,
+   "exH": 590,
+   "title": "Why Zocchi’s model puts our springs in the kinked regime",
+   "items": [],
+   "q": "Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers",
+   "points": [
+    {
+     "text": "<b>Inputs</b>: Zocchi’s parameters; in our chimera MD the ends sit <b>x = 63–73 Å</b> apart, bent <b>4.8–5.2°/bp</b><span class=\"tex d\">L = 0.33\\,\\mathrm{nm}\\times N_{\\mathrm{bp}}, \\qquad B = k_BT\\,\\ell_p \\approx 200\\ \\mathrm{pN\\,nm^2}, \\qquad \\tau_c = 34\\ (\\text{intact}),\\ 27\\ (\\text{nicked})\\ \\mathrm{pN\\,nm}</span>"
+    },
+    {
+     "text": "<b>Step 1: the kink parameter</b> (eq. 2.194)<span class=\"tex d\">\\gamma = \\frac{L\\,\\tau_c}{2B} = \\frac{8.91 \\times 34}{2 \\times 200} = 0.76\\ \\ (27\\ \\text{bp}), \\qquad \\frac{13.2 \\times 34}{2 \\times 200} = 1.12\\ \\ (40\\ \\text{bp})</span>"
+    },
+    {
+     "text": "<b>Step 2: the critical distance</b> (eq. 2.188), compared with our MD distances<span class=\"tex d\">x_c = L\\Big(1-\\frac{\\gamma^2}{15}\\Big) = 86\\ \\text{Å}\\ (27\\ \\text{bp}),\\ 121\\ \\text{Å}\\ (40\\ \\text{bp}) \\;&gt;\\; x_{\\mathrm{MD}} = 63\\text{–}73\\ \\text{Å} \\;\\Rightarrow\\; \\text{kinked regime}</span>"
+    },
+    {
+     "text": "<b>Same from curvature</b>: kinking starts once the bending torque Bκ reaches τ<sub>c</sub><span class=\"tex d\">\\kappa_c = \\frac{\\tau_c}{B} = \\frac{34}{200}\\ \\text{nm}^{-1} \\;\\Rightarrow\\; \\kappa_c \\times 0.33\\ \\tfrac{\\text{nm}}{\\text{bp}} = 3.2^\\circ/\\text{bp}\\ \\ (2.6^\\circ/\\text{bp nicked}) \\;&lt;\\; 4.8\\text{–}5.2^\\circ/\\text{bp in the MD}</span>"
+    },
+    {
+     "text": "<b>So the model predicts the kinked-branch force</b> (eq. 2.196):<span class=\"tex d\">f_{\\mathrm{kinked}}(x) = \\frac{\\tau_c}{2R\\sqrt{1-(x/2R)^2}},\\quad R = \\frac{L}{2}\\Big(1-\\frac{\\gamma^2}{90}\\Big) \\;\\Rightarrow\\; 5.5\\text{–}6.8\\ \\text{pN}\\ (27\\ \\text{bp}),\\ \\ 3.0\\text{–}3.2\\ \\text{pN}\\ (40\\ \\text{bp})</span>"
+    },
+    {
+     "text": "<span class=\"headline\"><b>Headline</b>: our chimeras hold the duplex at 63–73 Å, below x<sub>c</sub> = 86 Å (27 bp) and 121 Å (40 bp). Zocchi’s model therefore puts them in the <b>kinked</b> regime and predicts only <b>≈ 3–7 pN</b></span>"
+    },
+    {
+     "text": "<b>Main idea</b>: Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b> above which DNA must kink. The MD force field has <b>no such threshold</b>: a kink could only emerge from base pairs breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b>"
     }
    ]
   },
@@ -1525,6 +1528,10 @@
        "dy": -60
       }
      ]
+    },
+    {
+     "text": "Why both 40 bp give 10.9: the unkinked branch has <b>no τ<sub>c</sub></b>, <span class=\"tex\">f = \\tfrac{10B}{L^2} - \\tfrac{k_BT}{L-x} = 11.48 - 0.60 = 10.9\\ \\text{pN}</span> at ⟨x⟩ = 62 Å for intact and nicked alike",
+     "hl": 1
     },
     {
      "text": "The kinked branch is <b>5–6× too low</b> (4.6, 3.0, 2.3 pN)",

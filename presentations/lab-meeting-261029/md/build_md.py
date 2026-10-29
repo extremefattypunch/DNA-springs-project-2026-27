@@ -113,22 +113,21 @@ slides = {
     {'text': 'The highest single step stays a broad bump, not a kink', 'hl': 0, 'marks': [M('db_27peak', 'broad', 30, -60)]},
     {'text': 'The DNA touches the protein in 72–98 % of frames (ssDNA loop 93 %): <b>local contact</b>, not action at a distance'},
     {'text': '<b>Answer</b>: no kink, no coiling of the duplex; but the DNA lies against the protein'}]},
-'12f': {'title': 'sfGFP: why Zocchi’s model puts our springs in the kinked regime', 'items': [], 'exH': 590,
+'12f': {'title': 'Why Zocchi’s model puts our springs in the kinked regime', 'items': [], 'exH': 590,
   'q': 'Zocchi’s equations (Molecular Machines §2.15) evaluated with our MD numbers',
   'points': [
-    {'text': '<b>Inputs.</b> Zocchi’s rod parameters, and what our MD measured: in the sfGFP chimeras the duplex ends sit <b>x = 63–73 Å</b> apart, bent <b>4.8–5.2° per bp</b>'
+    {'text': '<b>Inputs</b>: Zocchi’s parameters; in our chimera MD the ends sit <b>x = 63–73 Å</b> apart, bent <b>4.8–5.2°/bp</b>'
       + tex(r'L = 0.33\,\mathrm{nm}\times N_{\mathrm{bp}}, \qquad B = k_BT\,\ell_p \approx 200\ \mathrm{pN\,nm^2}, \qquad \tau_c = 34\ (\text{intact}),\ 27\ (\text{nicked})\ \mathrm{pN\,nm}', True)},
     {'text': '<b>Step 1: the kink parameter</b> (eq. 2.194)'
       + tex(r'\gamma = \frac{L\,\tau_c}{2B} = \frac{8.91 \times 34}{2 \times 200} = 0.76\ \ (27\ \text{bp}), \qquad \frac{13.2 \times 34}{2 \times 200} = 1.12\ \ (40\ \text{bp})', True)},
-    {'text': '<b>Step 2: the critical distance</b> (eq. 2.188): below x<sub>c</sub> the bending torque would exceed τ<sub>c</sub>, so the rod kinks instead'
-      + tex(r'x_c = L\Big(1-\frac{\gamma^2}{15}\Big) = 8.91\,(1 - 0.038) = 8.57\ \text{nm} = 86\ \text{Å}\ \ (27\ \text{bp}), \qquad 121\ \text{Å}\ \ (40\ \text{bp})', True)},
-    {'text': '<b>Step 3: compare with the MD.</b>'
-      + tex(r'x_{\mathrm{MD}} = 63\text{–}73\ \text{Å} \;<\; x_c = 86\ \text{Å}\ (27\ \text{bp}),\ 121\ \text{Å}\ (40\ \text{bp}) \quad\Longrightarrow\quad \text{kinked regime}', True)},
-    {'text': '<b>Same answer from curvature</b>: a rod kinks once its bending torque Bκ reaches τ<sub>c</sub>'
+    {'text': '<b>Step 2: the critical distance</b> (eq. 2.188), compared with our MD distances'
+      + tex(r'x_c = L\Big(1-\frac{\gamma^2}{15}\Big) = 86\ \text{Å}\ (27\ \text{bp}),\ 121\ \text{Å}\ (40\ \text{bp}) \;>\; x_{\mathrm{MD}} = 63\text{–}73\ \text{Å} \;\Rightarrow\; \text{kinked regime}', True)},
+    {'text': '<b>Same from curvature</b>: kinking starts once the bending torque Bκ reaches τ<sub>c</sub>'
       + tex(r'\kappa_c = \frac{\tau_c}{B} = \frac{34}{200}\ \text{nm}^{-1} \;\Rightarrow\; \kappa_c \times 0.33\ \tfrac{\text{nm}}{\text{bp}} = 3.2^\circ/\text{bp}\ \ (2.6^\circ/\text{bp nicked}) \;<\; 4.8\text{–}5.2^\circ/\text{bp in the MD}', True)},
-    {'text': '<b>So the model predicts the kinked-branch force</b> (eq. 2.196), only a few pN:'
-      + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)
-      + 'Yet the simulated duplexes <b>never kinked</b> (smooth bending, DNA dynamics slide): next slide'}]},
+    {'text': '<b>So the model predicts the kinked-branch force</b> (eq. 2.196):'
+      + tex(r'f_{\mathrm{kinked}}(x) = \frac{\tau_c}{2R\sqrt{1-(x/2R)^2}},\quad R = \frac{L}{2}\Big(1-\frac{\gamma^2}{90}\Big) \;\Rightarrow\; 5.5\text{–}6.8\ \text{pN}\ (27\ \text{bp}),\ \ 3.0\text{–}3.2\ \text{pN}\ (40\ \text{bp})', True)},
+    {'text': '<span class="headline"><b>Headline</b>: our chimeras hold the duplex at 63–73 Å, below x<sub>c</sub> = 86 Å (27 bp) and 121 Å (40 bp). Zocchi’s model therefore puts them in the <b>kinked</b> regime and predicts only <b>≈ 3–7 pN</b></span>'},
+    {'text': '<b>Main idea</b>: Zocchi’s model has a <b>threshold torque τ<sub>c</sub></b> above which DNA must kink. The MD force field has <b>no such threshold</b>: a kink could only emerge from base pairs breaking, which did not happen at 4.8–5.2°/bp, so the simulated duplex stays <b>unkinked</b>'}]},
 '12f1': {'title': 'The set-up behind the force plots: a bare DNA duplex', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'What is simulated, what each variable means, and how the force is read off',
   'items': [{'iframe': 'interactive/setup.html', 'title': 'Bare duplex restraint simulation',
@@ -156,6 +155,7 @@ slides = {
     {'text': 'Our chimeras (grey band) sit well inside the kinked regime of the model: <b>5×</b> less force than if the rod stays unkinked', 'hl': 0, 'marks': [M('zr_chim', 'chimeras', 30, 14), M('zr_xc27', 'x_c', 30, -60)]},
     {'text': 'Recomputed on the <b>unkinked</b> branch at the force field’s own ⟨x⟩: <b>24.1 vs 28.0 pN</b> (27 bp), 10.9 vs 15.8 (40 bp), 10.9 vs 13.2 (nicked): within 1.2–1.5×', 'hl': 1,
      'marks': [M('zu_u0', '24.1', -30, -70), M('zu_f0', '28.0', 30, -60), M('zu_u1', '10.9', -30, -60), M('zu_f1', '15.8', 30, -60)]},
+    {'text': 'Why both 40 bp give 10.9: the unkinked branch has <b>no τ<sub>c</sub></b>, ' + tex(r'f = \tfrac{10B}{L^2} - \tfrac{k_BT}{L-x} = 11.48 - 0.60 = 10.9\ \text{pN}') + ' at ⟨x⟩ = 62 Å for intact and nicked alike', 'hl': 1},
     {'text': 'The kinked branch is <b>5–6× too low</b> (4.6, 3.0, 2.3 pN)', 'hl': 1, 'marks': [M('zu_k0', '4.6', -30, -60), M('zu_k1', '3.0', -30, -60), M('zu_k2', '2.3', -30, -60)]},
     {'text': '<b>Answer</b>: the force field does not contradict Zocchi’s spring. Its duplex never kinks, so it follows his <b>unkinked</b> branch; the only disagreement is whether DNA kinks at 4.8–5.2°/bp'}]},
 '31c': {'title': 'PP2A: Ramachandran plots at the modified sites', 'q': 'Does adding the tet groups change the protein’s local conformation?',
@@ -224,9 +224,14 @@ for sl in deck['slides']:
         for p in sl['points']:
             p['text'] = p['text'].replace('425 ns over 5 systems', '500 ns over 5 systems')
 # slides added after the original deck: insert after their predecessor
-for pg, after in (('12f2', '12f'), ('12f1', '12f'), ('12e0', '12d')):
+for pg, after in (('12f2', '12f'), ('12f1', '12e'), ('12e0', '12d')):
     if not any(str(x.get('page')) == pg for x in deck['slides']):
         i = next(i for i, x in enumerate(deck['slides']) if str(x.get('page')) == after)
         deck['slides'].insert(i + 1, {'kind': 'media', 'page': pg, 'section': 'md', 'figW': 1180, 'exH': 590, **slides[pg]})
+# fixed order for the Zocchi block: set-up, derivation, plots
+order = ['12e', '12f1', '12f', '12f2']
+idx = [i for i, x in enumerate(deck['slides']) if str(x.get('page')) in order]
+block = sorted((deck['slides'][i] for i in idx), key=lambda x: order.index(str(x['page'])))
+for i, sl in zip(idx, block): deck['slides'][i] = sl
 (ROOT / 'deck.json').write_text(json.dumps(deck, indent=1, ensure_ascii=False))
 print('updated', len(slides), 'slides')
