@@ -2246,40 +2246,35 @@
    "title": "cryoEM downstream analysis: how it differs from X-ray crystallography",
    "figW": 1180,
    "msgChannel": "cryo",
-   "q": "What is cryoEM downstream analysis?",
+   "q": "",
    "items": [
     {
      "iframe": "interactive/cryo/pipeline.html",
      "title": "cryoEM downstream analysis: how it differs from X-ray crystallography",
-     "cap": "Animation drawn for this deck from the content of the cryoEM slides; diffraction image and micrographs from the original slide (not PP2A data)"
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides"
     }
    ],
    "points": [
     {
-     "text": "<b>X-ray</b>: the detector records only spot intensities, so the phases must be recovered (<b>phasing</b>) before any map exists",
+     "text": "Both cryoEM and X-ray crystallography work with <b>diffracted waves</b> (an electron beam and X-ray photons, respectively) arriving at the detector from the protein",
      "msg": {
       "step": 1
      }
     },
     {
-     "text": "<b>cryoEM</b>: every particle image is a real-space projection with its phases intact, but the particle’s <b>pose is unknown</b> and its signal is buried in noise",
+     "text": "Both <b>reconstruct a 3D volume</b> from the 2D images collected:<table class=\"tb cmp\"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr><tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr><tr><td>Detector records</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr><tr><td>Must recover</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>",
      "msg": {
       "step": 2
      }
     },
     {
-     "text": "<b>CryoSPARC, TOPAZ</b>: movies → 3D map. <b>RELION, EMReady, COOT</b>: map → atomic model",
-     "msg": {
-      "step": 3
-     }
-    },
-    {
-     "text": "The next slides explain how the 3D map is made: defocus and the CTF, the forward model, the Fourier slice theorem, and reconstruction with known and unknown poses",
+     "text": "Once the volume is reconstructed, both <b>fit an atomic model</b> into it to obtain the final structure",
      "msg": {
       "step": 4
      }
     }
-   ]
+   ],
+   "final": true
   },
   {
    "kind": "media",

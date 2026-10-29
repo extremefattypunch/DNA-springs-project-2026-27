@@ -58,16 +58,6 @@ const bluT = S('text', { x: 970, y: rowY(9) - 6, 'font-size': 18, 'font-weight':
 const bluT2 = S('text', { x: 970, y: rowY(9) + 16, 'font-size': 18, 'font-weight': 700, fill: '#5B8DEF', text: 'COOT' }, sv);
 const bluT3 = S('text', { x: 970, y: rowY(9) + 38, 'font-size': 15, fill: '#5B8DEF', text: 'map \u2192 atomic model' }, sv);
 
-function fo(x, y, w, h, html, cls) {
-  const f = S('foreignObject', { x, y, width: w, height: h }, sv);
-  const d = document.createElement('div'); d.className = cls || 'note'; d.innerHTML = html; f.appendChild(d); return f;
-}
-const imX = S('image', { href: 'xray.jpg', x: 14, y: 74, width: 196, height: 156, preserveAspectRatio: 'xMidYMid slice' }, sv);
-const capX = fo(14, 234, 196, 40, 'Bragg spots: intensities only', 'cap');
-const imE = S('image', { href: 'micrograph.jpg', x: 970, y: 120, width: 196, height: 158, preserveAspectRatio: 'xMidYMid slice' }, sv);
-const capE = fo(970, 282, 196, 40, 'micrograph and its Fourier transform (not PP2A)', 'cap');
-const noteX = fo(14, 300, 200, 400, 'The detector records spot <b>intensities</b> |F|². The <b>phases</b> are lost, so a separate <b>phasing</b> step is needed before any map exists.');
-const noteE = fo(970, 330, 200, 330, 'Each particle image is a real-space <b>projection</b>, so the <b>phases are kept</b>: there is no phasing step. Instead each particle’s <b>orientation is unknown</b> and its signal is buried in noise.');
 // roadmap tags
 const road = Object.entries(ROAD).map(([i, t]) => {
   const y = rowY(+i) + BH / 2;
@@ -89,8 +79,6 @@ const vis = (el, o) => { el.setAttribute('opacity', clamp(o, 0, 1).toFixed(3)); 
 Cryo.init(T, P => {
   bx.forEach(b => vis(b.el, P.x - b.i));
   be.forEach(b => vis(b.el, P.e - b.i));
-  vis(imX, P.x * 2); vis(capX, P.x * 2); vis(imE, P.e * 2 * (1 - P.rd)); vis(capE, P.e * 2 * (1 - P.rd));
-  vis(noteX, P.nx); vis(noteE, P.ne * (1 - P.br));
   const ph = bx.find(b => b.name === 'Phasing');
   ph.rect.setAttribute('stroke', P.ph > 0.5 ? C.est : C.grid); ph.rect.setAttribute('stroke-width', 1.5 + 2 * P.ph);
   ph.rect.setAttribute('filter', P.ph > 0.5 ? 'url(#gl)' : '');

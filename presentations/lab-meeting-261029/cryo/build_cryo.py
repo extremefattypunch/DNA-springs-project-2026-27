@@ -137,13 +137,15 @@ RECON = [
 
 
 SLIDES = [
-    frame("c1", "cryoEM downstream analysis: how it differs from X-ray crystallography", "pipeline.html",
-          "What is cryoEM downstream analysis?",
-          DRAWN + "; diffraction image and micrographs from the original slide (not PP2A data)", [
-              "<b>X-ray</b>: the detector records only spot intensities, so the phases must be recovered (<b>phasing</b>) before any map exists",
-              "<b>cryoEM</b>: every particle image is a real-space projection with its phases intact, but the particle’s <b>pose is unknown</b> and its signal is buried in noise",
-              "<b>CryoSPARC, TOPAZ</b>: movies → 3D map. <b>RELION, EMReady, COOT</b>: map → atomic model",
-              "The next slides explain how the 3D map is made: defocus and the CTF, the forward model, the Fourier slice theorem, and reconstruction with known and unknown poses"]),
+    dict(frame("c1", "cryoEM downstream analysis: how it differs from X-ray crystallography", "pipeline.html", "",
+          DRAWN, [
+              "Both cryoEM and X-ray crystallography work with <b>diffracted waves</b> (an electron beam and X-ray photons, respectively) arriving at the detector from the protein",
+              "Both <b>reconstruct a 3D volume</b> from the 2D images collected:"
+              '<table class="tb cmp"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr>'
+              '<tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr>'
+              '<tr><td>Detector records</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr>'
+              '<tr><td>Must recover</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>',
+              "Once the volume is reconstructed, both <b>fit an atomic model</b> into it to obtain the final structure"]), final=True),
     frame("c2", "What does it mean to defocus a lens?", "lens.html",
           "Thin lens: 1/f = 1/s + 1/s′, with the object and the sensor fixed", DRAWN, [
               "<b>Stronger lens</b> (shorter f): the rays cross before the sensor and spread into a disc",
@@ -212,6 +214,10 @@ SLIDES = [
          + tex(r"\mathcal F_2\{P_R V\}(\mathbf q) = \tilde V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)", True),
          "<b>Consequence</b>: every particle image fills one central plane of V̂. Images from many orientations fill the 3D Fourier volume, and an inverse 3D transform gives back V (next slide); orientations clustered around one axis leave a missing cone unmeasured"]]},
 ] + RECON
+
+for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
+    if _s["page"] == "c1":
+        _s["points"][-1]["msg"] = {"step": 4}
 
 deck = json.loads((ROOT / "deck.json").read_text())
 keep = [s for s in deck["slides"] if s.get("page") not in DROP and not str(s.get("page", "")).startswith("c")]
