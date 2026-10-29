@@ -77,22 +77,15 @@ slides = {
     {'text': 'With <b>no force</b>, the site distance is 31.61 ± 0.07 Å: the unloaded barrel barely fluctuates', 'hl': 1, 'marks': [M('cl_0', '0 pN', 30, -60)]},
     {'text': '0 → 20 pN shifts it by only <b>0.14 Å</b>; the 4 pN dip is replicate noise. Compliance 0.0105 ± 0.0057 Å/pN (includes zero), so <b>κ > 107 k<sub>B</sub>T nm⁻²</b>', 'hl': 1, 'marks': [M('cl_20', '20 pN', -30, -60), M('cl_4', 'noise', 30, 14)]},
     {'text': '<b>Answer</b>: the backbone is already super rigid without any force, and force barely changes it'}]},
-'12d': {'title': 'sfGFP: forces applied, force field vs model', 'q': 'How hard does a bent duplex push in the force field?',
-  'items': [fig(S, 'fig6_force_extension.png', 'Force measured on the bare duplex, one point per run')],
-  'explain': [
-    {'item': 0, 'text': '<b>The experiment.</b> A bare <dfn>duplex</dfn> (the double-stranded DNA alone: 27 bp, 40 bp or 40 bp nicked; no protein) is held by a <dfn>harmonic restraint</dfn> on its <dfn>end-to-end separation</dfn> r, the distance between the two linker nitrogens that would attach to the protein:'
-      + tex(r'U(r) = \tfrac{1}{2}\,k\,(r - x_0)^2, \qquad F = k\,(\langle r\rangle - x_0)', True)
-      + tex('r') + ': the end-to-end separation in each frame; ' + tex(r'x_0') + ': the separation the restraint is centred on (one per run); ' + tex('k') + ': restraint stiffness, 200 (stiff) or 33 (soft) kJ mol⁻¹ nm⁻². '
-      'The duplex wants to straighten, so it sits at ' + tex(r'\langle r\rangle > x_0') + '; the restraint then holds it with exactly the force ' + tex('F') + ' that the duplex pushes with.'},
-    {'item': 0, 'text': '<b>Reading the plot.</b> x-axis: ' + tex(r'\langle r\rangle') + ', where the duplex actually sat (Å); y-axis: ' + tex('F') + ' (pN). Every point is one run. <b>Colour</b> = duplex (blue 27 bp, red 40 bp, green 40 bp nicked); <b>shape</b> = restraint (circle stiff, square soft). '
-      'Solid lines: mean force per duplex. Dashed: the <dfn>Euler buckling load</dfn> ' + tex(r'F_E = \pi^2 B / L^2') + ' (B = 200 pN nm², L = contour length), the push of a smoothly bent elastic rod. Grey band: what <dfn>Zocchi’s kinked branch</dfn> predicts for the same duplexes.',
-     'marks': [M('fe_27', '27 bp: 28 pN', 30, -60), M('fe_euler27', 'Euler load, 27 bp', 30, 14), M('fe_40', '40 bp: 15.8 pN', 30, 10), M('fe_zocchi', 'Zocchi kinked branch', 30, -55)]}],
+'12d': {'title': 'sfGFP: forces applied, force field vs model', 'items': [], 'big': True,
   'points': [
-    {'text': 'Measured: <b>27 bp 28.0 ± 1.2 pN</b> (25 runs), 40 bp 15.8 ± 1.6 pN (10 runs), 40 bp nicked 13.2 pN', 'hl': 0, 'marks': [M('fe_27', '28 pN', 30, -60), M('fe_40', '15.8 pN', 30, 10)]},
-    {'text': 'Roughly <b>flat</b> across ⟨r⟩: the duplex pushes with about the same force however far its ends are pushed together, as a buckled rod does', 'hl': 0},
-    {'text': 'Close to the <b>Euler load</b> (dashed: 26.8 pN for 27 bp, 11.9 pN for 40 bp)', 'hl': 0, 'marks': [M('fe_euler27', 'Euler', 30, 14)]},
-    {'text': 'Zocchi’s <b>kinked</b> branch (grey) predicts only 2.4–6.6 pN: 5–6× less', 'hl': 0, 'marks': [M('fe_zocchi', 'kinked', 30, -55)]},
-    {'text': '<b>What we learn</b>: the force-field duplex behaves as a smoothly bent, unkinked rod pushing tens of pN. The next two slides show why Zocchi’s model expects less'}]},
+    {'text': '<b>So does our MD force field agree with previously modelled forces</b>, in particular Zocchi et al.’s DNA-spring model?'},
+    {'text': '<table class="tb big"><tr><th>DNA spring</th><th>MD force field (measured)</th><th>Zocchi model (at our chimera geometry)</th><th>ratio</th></tr>'
+      '<tr><td>27 bp dsDNA</td><td><b>28.0 ± 1.2 pN</b></td><td>5.5–6.8 pN</td><td>≈ 4–5×</td></tr>'
+      '<tr><td>40 bp dsDNA</td><td><b>15.8 ± 1.6 pN</b></td><td>3.0–3.2 pN</td><td>≈ 5×</td></tr>'
+      '<tr><td>40 bp nicked dsDNA</td><td><b>13.2 ± 1.3 pN</b></td><td>2.3–2.5 pN</td><td>≈ 5–6×</td></tr></table>'
+      '<span style="font-size:.75em;color:var(--ink-3)">MD: bare duplex, mean ± sem of 25 / 10 / 10 runs. Zocchi: τ<sub>c</sub> = 34 pN nm (27 nicked), B = 200 pN nm², at the 63–73 Å end-to-end distances of the sfGFP chimeras</span>'},
+    {'text': '<b>No, it does not</b>: the force field gives roughly <b>5× more force</b> than Zocchi’s model, for every spring. Let’s now take a deeper look at why in the next slides'}]},
 '12e0': {'title': 'Kinked vs unkinked DNA: how the shape sets the force', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Same duplex, same end-to-end distance; only how the bend is distributed differs',
   'items': [{'iframe': 'interactive/kink.html', 'title': 'Kinked vs unkinked duplex',
