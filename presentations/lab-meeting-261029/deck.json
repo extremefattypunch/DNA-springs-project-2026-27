@@ -95,57 +95,6 @@
    ]
   },
   {
-   "kind": "gel",
-   "page": 8,
-   "title": "Effect of Tet quenching - tet addition dims excitation peak",
-   "section": "assay",
-   "panels": [
-    {
-     "chart": "p08-att1"
-    },
-    {
-     "chart": "p08-att2"
-    },
-    {
-     "chart": "p08-att3"
-    }
-   ],
-   "callouts": [
-    {
-     "x": 96,
-     "y": 820,
-     "w": 1728,
-     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum: concentration-independent up to 8 µM (concentration-series slide), and every reading here is ≤ 10 µM. Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
-    }
-   ]
-  },
-  {
-   "kind": "gel",
-   "page": 9,
-   "title": "Concentration ladder - inner filter effect",
-   "section": "assay",
-   "callouts": [
-    {
-     "x": 1300,
-     "y": 52,
-     "w": 560,
-     "html": "<b>What justifies the use of band ratio as our fluorometry metric?</b>"
-    },
-    {
-     "x": 96,
-     "y": 178,
-     "w": 1728,
-     "html": "<b>Why this metric?</b> <b>Concentration independence</b>: I(400) and I(peak) both scale with the amount of protein, so their ratio cancels it and reports only the chromophore’s neutral/anionic balance. That holds only below the <b>inner filter effect</b> (the sample absorbs the excitation light before it reaches the detected volume; literature: from ≈ 5 µM). Here the ratio is flat up to 8 µM and rises from <b>16 µM</b>; every reading we compare is ≤ <b>10 µM</b>."
-    }
-   ],
-   "panels": [
-    {
-     "chart": "p09-ladder"
-    }
-   ],
-   "top": 316
-  },
-  {
    "kind": "media",
    "page": "9b",
    "section": "assay",
@@ -208,6 +157,57 @@
        "400"
       ]
      }
+    }
+   ]
+  },
+  {
+   "kind": "gel",
+   "page": 9,
+   "title": "Concentration ladder - inner filter effect",
+   "section": "assay",
+   "callouts": [
+    {
+     "x": 1300,
+     "y": 52,
+     "w": 560,
+     "html": "<b>What justifies the use of band ratio as our fluorometry metric?</b>"
+    },
+    {
+     "x": 96,
+     "y": 178,
+     "w": 1728,
+     "html": "<b>Why this metric?</b> <b>Concentration independence</b>: I(400) and I(peak) both scale with the amount of protein, so their ratio cancels it and reports only the chromophore’s neutral/anionic balance. That holds only below the <b>inner filter effect</b> (the sample absorbs the excitation light before it reaches the detected volume; literature: from ≈ 5 µM). Here the ratio is flat up to 8 µM and rises from <b>16 µM</b>; every reading we compare is ≤ <b>10 µM</b>."
+    }
+   ],
+   "panels": [
+    {
+     "chart": "p09-ladder"
+    }
+   ],
+   "top": 316
+  },
+  {
+   "kind": "gel",
+   "page": 8,
+   "title": "Effect of Tet quenching - tet addition dims excitation peak",
+   "section": "assay",
+   "panels": [
+    {
+     "chart": "p08-att1"
+    },
+    {
+     "chart": "p08-att2"
+    },
+    {
+     "chart": "p08-att3"
+    }
+   ],
+   "callouts": [
+    {
+     "x": 96,
+     "y": 820,
+     "w": 1728,
+     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum: concentration-independent up to 8 µM (previous slide), and every reading here is ≤ 10 µM. Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
     }
    ]
   },
