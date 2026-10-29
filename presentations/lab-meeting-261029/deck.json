@@ -1270,30 +1270,6 @@
   },
   {
    "kind": "image",
-   "page": 25,
-   "src": "slides/p-25.jpg",
-   "title": "What is cryoEM downstream analysis?"
-  },
-  {
-   "kind": "image",
-   "page": 26,
-   "src": "slides/p-26.jpg",
-   "title": "Step 1: Quality Control"
-  },
-  {
-   "kind": "image",
-   "page": 27,
-   "src": "slides/p-27.jpg",
-   "title": "Step 2: Density Map → Fit Atomic Model"
-  },
-  {
-   "kind": "image",
-   "page": 28,
-   "src": "slides/p-28.jpg",
-   "title": "Step 3 analyze: Degree of A isoforms subunit deformation"
-  },
-  {
-   "kind": "image",
    "page": 29,
    "src": "slides/p-29.jpg",
    "title": "[Plans] Substrate binding assay"
@@ -2196,6 +2172,670 @@
    "page": 33,
    "src": "slides/p-33.jpg",
    "title": "Technical Tutorials - Brief Walkthrough"
+  },
+  {
+   "kind": "media",
+   "page": "c1",
+   "section": "cryoem",
+   "title": "cryoEM downstream analysis: how it differs from X-ray crystallography",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "What is cryoEM downstream analysis?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/pipeline.html",
+     "title": "cryoEM downstream analysis: how it differs from X-ray crystallography",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides; diffraction image and micrographs from the original slide (not PP2A data)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>X-ray</b>: the detector records only spot intensities, so the phases must be recovered (<b>phasing</b>) before any map exists",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>cryoEM</b>: every particle image is a real-space projection with its phases intact, but the particle’s <b>pose is unknown</b> and its signal is buried in noise",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>CryoSPARC, TOPAZ</b>: movies → 3D map. <b>RELION, EMReady, COOT</b>: map → atomic model",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "The next slides explain the boxed steps in order: defocus and the CTF, alignment, the Fourier slice theorem, reconstruction, classification and FSC",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c2",
+   "section": "cryoem",
+   "title": "What does it mean to defocus a lens?",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Thin lens: 1/f = 1/s + 1/s′, with the object and the sensor fixed",
+   "items": [
+    {
+     "iframe": "interactive/cryo/lens.html",
+     "title": "What does it mean to defocus a lens?",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Stronger lens</b> (shorter f): the rays cross before the sensor and spread into a disc",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Weaker lens</b> (longer f): the rays would meet beyond the sensor; again a disc. In the TEM this is <b>underfocus</b>",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "The objective lens current sets f, so turning the focus knob moves the focus by Δf. cryoEM images are taken deliberately ≈ 0.5–3 µm out of focus",
+     "msg": {
+      "step": 3
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c3",
+   "section": "cryoem",
+   "title": "Effect 1: the protein shifts the phase of the electron wave",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "What happens to the electron beam as it passes through protein?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/wave.html",
+     "title": "Effect 1: the protein shifts the phase of the electron wave",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides (phase shift exaggerated)"
+    }
+   ],
+   "points": [
+    {
+     "text": "An <b>amplitude object</b> absorbs electrons: the wave leaves weaker, and the image is darker there",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "A <b>phase object</b> keeps the amplitude but delays the wave by φ (amplitude decrease is minor; the <b>phase shift</b> dominates)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "A protein in ice is almost a pure phase object, and the detector records |ψ|² = |e<sup>iφ</sup>|² = 1: <b>in focus it is nearly invisible</b>",
+     "msg": {
+      "step": 3
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c4",
+   "section": "cryoem",
+   "title": "Effect 2: the protein scatters the wave (diffraction)",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Where does each spatial frequency go?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/scatter.html",
+     "title": "Effect 2: the protein scatters the wave (diffraction)",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides"
+    }
+   ],
+   "points": [
+    {
+     "text": "A repeat of spacing d scatters the wave by α ≈ λ/d (Bragg: 2d sin θ = λ, with α = 2θ)",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "Finer detail scatters further: the direction encodes the <b>spatial frequency q = 1/d</b>",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "The objective lens sends each direction to one point of its back focal plane: a <b>Fourier transform</b> of the object",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "At 300 kV (λ = 0.0197 Å) even 3 Å detail scatters by only ≈ 0.4°",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c5",
+   "section": "cryoem",
+   "title": "Key assumption: the weak phase object approximation",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Why is an in-focus protein invisible?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/wpoa.html",
+     "title": "Key assumption: the weak phase object approximation",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides (φ exaggerated)"
+    }
+   ],
+   "points": [
+    {
+     "text": "Exit wave Ψ<sub>exit</sub>(x, y) = e<sup>iφ(x,y)</sup>: the phasor turns by φ but keeps length 1",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "For |φ| ≪ 1: e<sup>iφ</sup> ≈ 1 + iφ = <b>unscattered reference</b> + <b>scattered wave</b>, 90° apart (i = e<sup>iπ/2</sup>)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "Intensity |1 + iφ|² = 1 + φ² ≈ 1: <b>no first-order contrast</b>",
+     "msg": {
+      "step": 3
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c6",
+   "section": "cryoem",
+   "title": "Key principle: defocus turns phase shifts into contrast",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "How do we make the scattered wave visible?",
+   "items": [
+    {
+     "iframe": "interactive/cryo/contrast.html",
+     "title": "Key principle: defocus turns phase shifts into contrast",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides (φ exaggerated)"
+    }
+   ],
+   "points": [
+    {
+     "text": "Extra phase χ = π/2: the scattered wave becomes <b>antiparallel</b> to the reference, so the particle is <b>dark</b>",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "χ = 3π/2: <b>parallel</b>, so the particle is <b>bright</b> (contrast reversed)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "Contrast ≈ −2φ sin χ: <b>sin χ is the contrast transfer function</b>, largest at χ = π/2 + kπ",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c7",
+   "section": "cryoem",
+   "title": "Each defocus value gives contrast to different spatial frequencies",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "CTF(q) = sin χ(q), computed for 300 kV and Cₛ = 2.7 mm",
+   "items": [
+    {
+     "iframe": "interactive/cryo/ctf.html",
+     "title": "Each defocus value gives contrast to different spatial frequencies",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides; CTF computed live"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Zeros</b>: the image carries no information at those q. <b>Negative lobes</b>: contrast reversed",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "More defocus: stronger low-resolution contrast and faster oscillation. Thon rings reveal each micrograph’s Δf (CTF estimation)",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "Collecting over a <b>range of Δf</b> puts the zeros at different q, so every q is measured somewhere",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "An envelope also damps high q: high resolution needs many averaged particles",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c8",
+   "section": "cryoem",
+   "title": "Forward model: what one particle image contains",
+   "figW": 1200,
+   "q": "How do projection, the CTF and noise alter an observation?",
+   "items": [
+    {
+     "video": "cryo/01_forward_model.mp4",
+     "poster": "cryo/01_forward_model_poster.jpg",
+     "cap": "Ian’s Manim clip 01: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Projection</b>: the beam integrates the 3D potential along z, so one view cannot fix depth",
+     "seek": [
+      0,
+      6.3
+     ]
+    },
+    {
+     "text": "<b>CTF</b>: every spatial frequency is scaled, removed (at a zero) or sign-reversed (negative lobe)",
+     "seek": [
+      6.3,
+      16
+     ]
+    },
+    {
+     "text": "<b>Noise</b>: independent and comparable to the signal here; far larger than it in real micrographs",
+     "seek": [
+      16,
+      23.5
+     ]
+    },
+    {
+     "text": "Together, in Fourier space:<span class=\"eq blk\"><span class=\"kn\"><i>Y</i><sub>i</sub>(<b>q</b>)</span> = <span class=\"kn\"><i>C</i><sub>i</sub>(<b>q</b>)</span> <span class=\"un\"><i>Ṽ</i></span>(<span class=\"un\"><i>R</i><sub>i</sub></span>ᵀ[<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0]ᵀ) <i>e</i><sup>−2π<i>i</i> <b>q</b>·<span class=\"un\"><b>t</b><sub>i</sub></span></sup> + <span class=\"nz\"><i>N</i><sub>i</sub>(<b>q</b>)</span></span>",
+     "seek": [
+      23.5,
+      34
+     ]
+    },
+    {
+     "text": "<b class=\"kn\">Known</b>: the image <i>Y</i><sub>i</sub> and its CTF <i>C</i><sub>i</sub> (from the fitted Δf). <b class=\"un\">Unknown</b>: each particle’s pose (<i>R</i><sub>i</sub>, <b>t</b><sub>i</sub>) and the 3D potential <i>V</i>"
+    },
+    {
+     "text": "Two Fourier rules keep it simple: a <b>shift</b> becomes a phase ramp e<sup>−2πi q·t</sup>, and a <b>blur</b> (convolution) becomes a product, so the CTF just multiplies"
+    },
+    {
+     "text": "<b>Ultimate goal</b>: the 3D potential V in real space, to fit the atomic model into"
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c9",
+   "section": "cryoem",
+   "title": "2D classification: align first, then average",
+   "figW": 1200,
+   "q": "Why align before averaging, and how fast does the noise fall?",
+   "items": [
+    {
+     "video": "cryo/02_alignment_averaging.mp4",
+     "poster": "cryo/02_alignment_averaging_poster.jpg",
+     "cap": "Ian’s Manim clip 02: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "Every image is the same pattern, rotated by φ<sub>i</sub> and shifted by <b>t</b><sub>i</sub>, plus noise",
+     "seek": [
+      0,
+      9
+     ]
+    },
+    {
+     "text": "Averaging <b>without</b> aligning smears the dots into rings",
+     "seek": [
+      9,
+      15
+     ]
+    },
+    {
+     "text": "Undo each rotation and shift first: the average is sharp, and only noise is left in the residual",
+     "seek": [
+      15,
+      26
+     ]
+    },
+    {
+     "text": "Noise falls as σ/√N: 4× more particles give 2× the signal-to-noise ratio",
+     "seek": [
+      26,
+      38
+     ]
+    },
+    {
+     "text": "2D classification does this for groups of similar views at once; junk particles collect in junk classes and are discarded",
+     "seek": [
+      38,
+      44.2
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c10",
+   "section": "cryoem",
+   "title": "Central slice theorem: every image is a plane through the 3D Fourier transform",
+   "figW": 1200,
+   "q": "How do unknown 3D orientations and Fourier slices define reconstruction?",
+   "items": [
+    {
+     "video": "cryo/03_orientation_fourier_slice.mp4",
+     "poster": "cryo/03_orientation_fourier_slice_poster.jpg",
+     "cap": "Ian’s Manim clip 03: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Orientation R</b>: a viewing direction (2 angles) plus an in-plane rotation ψ (1 angle) = 3 degrees of freedom",
+     "seek": [
+      0,
+      13
+     ]
+    },
+    {
+     "text": "<b>Projection</b><span class=\"eq blk\">(<i>P<sub>R</sub>V</i>)(<i>x</i>, <i>y</i>) = ∫ <i>V</i>(<i>R</i>ᵀ(<i>x</i>, <i>y</i>, <i>z</i>)ᵀ) d<i>z</i></span>Changing R changes the beam direction; sliding a dot along the beam leaves the image unchanged",
+     "seek": [
+      13,
+      29
+     ]
+    },
+    {
+     "text": "<b>Fourier slice theorem</b><span class=\"eq blk\">ℱ₂{<i>P<sub>R</sub>V</i>}(<b>q</b>) = <i>V̂</i>(<i>R</i>ᵀ(<i>q<sub>x</sub></i>, <i>q<sub>y</sub></i>, 0)ᵀ)</span>The 2D transform of an image is the central plane of the 3D transform, perpendicular to the beam",
+     "seek": [
+      29,
+      43
+     ]
+    },
+    {
+     "text": "Why: integrating over z and then transforming in x, y is the same as the 3D transform evaluated at k<sub>z</sub> = 0"
+    },
+    {
+     "text": "<b>Coverage</b>: well-spread views sample 92 % of the Fourier ball; views within 15° of one axis sample 26 % and leave a missing cone",
+     "seek": [
+      43,
+      51
+     ]
+    },
+    {
+     "text": "With known poses, inserting slices and inverting converges on the true structure as views are added",
+     "seek": [
+      51,
+      62
+     ]
+    },
+    {
+     "text": "In practice the poses are unknown: the density and every pose must be estimated together",
+     "seek": [
+      62,
+      76
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c11",
+   "section": "cryoem",
+   "title": "Reconstruction scheme 1: you know the poses",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Least squares: L(v) = ½ Σᵢ (yᵢ − Aᵢv)ᵀ Σᵢ⁻¹ (yᵢ − Aᵢv); ∇L = 0 gives the normal equations",
+   "items": [
+    {
+     "iframe": "interactive/cryo/recon.html",
+     "title": "Reconstruction scheme 1: you know the poses",
+     "cap": "Live 2D reconstruction (64 × 64, nearest-neighbour gridding, noisy images) computed in the browser"
+    }
+   ],
+   "points": [
+    {
+     "text": "One image = one central line (a plane in 3D). Backprojecting it gives only streaks",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "More views fan out from the origin: low frequencies are measured by every image, high ones by few",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "The <b>backprojection</b> (right-hand side) over-counts the centre, so it is blurred; dividing by the <b>count</b> (left-hand matrix) sharpens it",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "Noise averages down where a frequency is measured often; the edges stay noisy (hence weighting and regularisation)",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Preferred orientation</b> leaves a missing wedge (a cone in 3D) that no amount of averaging fills",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c12",
+   "section": "cryoem",
+   "title": "Reconstruction scheme 2: you don’t know any poses",
+   "figW": 1200,
+   "q": "What does iterative reconstruction optimise?",
+   "items": [
+    {
+     "video": "cryo/04_iterative_refinement.mp4",
+     "poster": "cryo/04_iterative_refinement_poster.jpg",
+     "cap": "Ian’s Manim clip 04: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "Compare each image with the projection predicted from the current map; the residual measures the mismatch",
+     "seek": [
+      0,
+      9
+     ]
+    },
+    {
+     "text": "<b>Pose step</b>: hold the map and search each particle’s orientation and shift to shrink its residual",
+     "seek": [
+      9,
+      19
+     ]
+    },
+    {
+     "text": "<b>Map step</b>: hold the poses and update the map (scheme 1). Alternate until the loss stops falling; one particle here stays in a local minimum",
+     "seek": [
+      19,
+      31
+     ]
+    },
+    {
+     "text": "<b>Ab initio</b> (no starting map): CryoSPARC combines branch-and-bound pose search with stochastic gradient descent on random mini-batches ℬ:<span class=\"eq blk\"><i>V</i><sup>(<i>t</i>+1)</sup> = <i>V</i><sup>(<i>t</i>)</sup> − η<sub><i>t</i></sub> (1/|ℬ|) Σ<sub><i>i</i>∈ℬ</sub> ∇<sub><i>V</i></sub> ℓ<sub><i>i</i></sub>(<i>V</i><sup>(<i>t</i>)</sup>)</span>Cheap, noisy steps; no guarantee of the global optimum"
+    },
+    {
+     "text": "<b>Regularisation</b>: a smaller data misfit is not a better map; without a penalty the fit chases the noise",
+     "seek": [
+      31,
+      39
+     ]
+    },
+    {
+     "text": "<b>Risk</b>: aligning noisy images to a reference that already contains the same noise reinforces it. The defence is two independent half-sets (FSC, two slides on)",
+     "seek": [
+      39,
+      44.9
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c13",
+   "section": "cryoem",
+   "title": "Heterogeneity: classification separates conformations",
+   "figW": 1200,
+   "q": "How do heterogeneity and classification interact?",
+   "items": [
+    {
+     "video": "cryo/05_classification_pca.mp4",
+     "poster": "cryo/05_classification_pca_poster.jpg",
+     "cap": "Ian’s Manim clip 05: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "Two states that differ in one dot (state A vs state B)",
+     "seek": [
+      0,
+      9
+     ]
+    },
+    {
+     "text": "Averaging a mixed set blurs the moving part: dot 5 appears faintly in both places",
+     "seek": [
+      9,
+      17
+     ]
+    },
+    {
+     "text": "<b>PCA</b>: each image becomes a point; PC1 separates the states, PC2 is noise",
+     "seek": [
+      17,
+      29
+     ]
+    },
+    {
+     "text": "A two-class <b>Gaussian mixture</b> fit by EM gives each image a probability for each class (soft assignment)",
+     "seek": [
+      29,
+      39
+     ]
+    },
+    {
+     "text": "Class averages recover both states. In CryoSPARC, 3D classification and heterogeneous refinement do this with 3D maps",
+     "seek": [
+      39,
+      49.5
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c14",
+   "section": "cryoem",
+   "title": "Half-maps and FSC: how resolution is judged",
+   "figW": 1200,
+   "q": "Which resolution measures exist, and why keep them apart?",
+   "items": [
+    {
+     "video": "cryo/06_fsc_resolution.mp4",
+     "poster": "cryo/06_fsc_resolution_poster.jpg",
+     "cap": "Ian’s Manim clip 06: mathematical illustration in dimensionless units (each click plays the next beat)",
+     "dark": true
+    }
+   ],
+   "points": [
+    {
+     "text": "Split the particles into two halves and refine each <b>independently</b>: the signal agrees, the noise does not",
+     "seek": [
+      0,
+      9
+     ]
+    },
+    {
+     "text": "<b>Fourier shell correlation</b>, shell by shell (S<sub>q</sub> = all <b>k</b> with |<b>k</b>| ≈ q):<span class=\"eq blk\">FSC(<i>q</i>) = Σ <i>V̂<sub>A</sub></i>(<b>k</b>) <i>V̂<sub>B</sub></i>(<b>k</b>)* / √(Σ |<i>V̂<sub>A</sub></i>|² Σ |<i>V̂<sub>B</sub></i>|²)</span>",
+     "seek": [
+      9,
+      17
+     ]
+    },
+    {
+     "text": "<b>Resolution</b> d = 1/q where the half-map FSC falls below <b>0.143</b> (the gold-standard criterion)",
+     "seek": [
+      17,
+      25
+     ]
+    },
+    {
+     "text": "One global number hides variation: <b>local resolution</b> is worse in flexible regions",
+     "seek": [
+      25,
+      31
+     ]
+    },
+    {
+     "text": "<b>Map–model FSC</b> (cutoff 0.5) checks the fitted atomic model against the map",
+     "seek": [
+      31,
+      39
+     ]
+    },
+    {
+     "text": "Neither cutoff is a positional error bar or a physical limit",
+     "seek": [
+      39,
+      46.1
+     ]
+    }
+   ]
   }
  ]
 }

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Defocusing a lens</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const AX = 300, OX = 90, LX = 430, SX = 930, H = 130, S0 = LX - OX;     // s = 340 px
+const F0 = S0 * (SX - LX) / (S0 + SX - LX);                                 // in focus on the sensor
+const defs = S('defs', {}, sv);
+const rg = S('radialGradient', { id: 'spot' }, defs);
+S('stop', { offset: '0%', 'stop-color': '#fff', 'stop-opacity': 1 }, rg);
+S('stop', { offset: '100%', 'stop-color': '#fff', 'stop-opacity': 0 }, rg);
+
+S('line', { x1: 30, y1: AX, x2: 1150, y2: AX, stroke: C.grid, 'stroke-width': 1.5, 'stroke-dasharray': '6 6' }, sv);
+S('circle', { cx: OX, cy: AX, r: 7, fill: C.est }, sv);
+S('text', { x: OX, y: AX + 36, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'object point' }, sv);
+const lens = S('ellipse', { cx: LX, cy: AX, rx: 14, ry: H + 22, fill: 'rgba(79,209,232,.18)', stroke: C.obs, 'stroke-width': 2.5 }, sv);
+S('text', { x: LX, y: AX + H + 52, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'lens (focal length f)' }, sv);
+S('line', { x1: SX, y1: AX - H - 40, x2: SX, y2: AX + H + 40, stroke: '#c9d1d9', 'stroke-width': 6 }, sv);
+S('text', { x: SX, y: AX + H + 68, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'fixed sensor' }, sv);
+const blur = S('line', { x1: SX, x2: SX, stroke: C.est, 'stroke-width': 10, 'stroke-linecap': 'round' }, sv);
+const rays = [-1, 0, 1].map(k => ({
+  k, a: S('line', { stroke: C.est, 'stroke-width': 2.5 }, sv),
+  b: S('line', { stroke: C.alt, 'stroke-width': 2.5 }, sv),
+  c: S('line', { stroke: C.alt, 'stroke-width': 2, 'stroke-dasharray': '7 6', opacity: .6 }, sv)
+}));
+const img = S('circle', { r: 6, fill: C.alt }, sv);
+const imgL = S('text', { 'text-anchor': 'middle', 'font-size': 16, fill: C.alt, text: 'focus' }, sv);
+// s and s' brackets
+const brS = S('g', {}, sv), brI = S('g', {}, sv);
+S('line', { x1: OX, y1: 60, x2: LX, y2: 60, stroke: C.muted, 'stroke-width': 1.5 }, brS);
+S('text', { x: (OX + LX) / 2, y: 50, 'text-anchor': 'middle', class: 'm', 'font-size': 22, 'font-style': 'italic', text: 's' }, brS);
+const brIl = S('line', { y1: 60, y2: 60, stroke: C.alt, 'stroke-width': 1.5 }, brI);
+const brIt = S('text', { y: 50, 'text-anchor': 'middle', class: 'm', 'font-size': 22, 'font-style': 'italic', fill: C.alt, text: 's′' }, brI);
+
+// heading per state
+const heads = ['In focus: every ray from the point meets on the sensor', 'Stronger lens (shorter f): focus lands before the sensor',
+  'Weaker lens (longer f): focus lands beyond the sensor', 'Turning the focus knob = changing f; the sensor never moves'];
+const hEls = heads.map(t => S('text', { x: 30, y: 516, 'font-size': 26, 'font-weight': 700, text: t }, sv));
+// equation and live numbers
+const eq = S('text', { x: 30, y: 572, class: 'm', 'font-size': 30, html: '<tspan font-style="italic">1/f</tspan> = <tspan font-style="italic">1/s</tspan> + <tspan font-style="italic">1/s′</tspan>' }, sv);
+const nums = S('text', { x: 30, y: 612, 'font-size': 19, class: 'mut' }, sv);
+const note = S('text', { x: 30, y: 652, 'font-size': 19, class: 'mut' }, sv);
+const note2 = S('text', { x: 30, y: 684, 'font-size': 19, class: 'mut' }, sv);
+// what the sensor records
+S('text', { x: 1030, y: 520, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'sensor image' }, sv);
+S('rect', { x: 950, y: 532, width: 160, height: 160, rx: 8, fill: '#000', stroke: C.grid }, sv);
+const dot = S('circle', { cx: 1030, cy: 612, fill: 'url(#spot)' }, sv);
+const blurT = S('text', { x: 1030, y: 716, 'text-anchor': 'middle', 'font-size': 16, class: 'mut' }, sv);
+
+const T = [
+  { f: F0, h0: 1, h1: 0, h2: 0, h3: 0, sw: 0 },
+  { f: 0.86 * F0, h0: 0, h1: 1, h2: 0, h3: 0, sw: 0 },
+  { f: 1.13 * F0, h0: 0, h1: 0, h2: 1, h3: 0, sw: 0 },
+  { f: F0, h0: 0, h1: 0, h2: 0, h3: 1, sw: 1 }
+];
+Cryo.init(T, (P, t) => {
+  const f = P.f * (1 + 0.13 * P.sw * Math.sin(t * 1.3));
+  const sp = S0 * f / (S0 - f), xi = LX + sp;                  // image distance s'
+  lens.setAttribute('rx', clamp(2600 / f, 8, 24).toFixed(1));
+  let spread = 0;
+  rays.forEach(r => {
+    const ly = AX + r.k * H;
+    r.a.setAttribute('x1', OX); r.a.setAttribute('y1', AX); r.a.setAttribute('x2', LX); r.a.setAttribute('y2', ly);
+    const yAt = x => ly + (AX - ly) * (x - LX) / sp;          // after the lens every ray heads for (xi, AX)
+    const end = Math.min(xi, SX);
+    r.b.setAttribute('x1', LX); r.b.setAttribute('y1', ly); r.b.setAttribute('x2', SX); r.b.setAttribute('y2', yAt(SX));
+    if (xi > SX) { r.c.setAttribute('x1', SX); r.c.setAttribute('y1', yAt(SX)); r.c.setAttribute('x2', xi); r.c.setAttribute('y2', AX); r.c.setAttribute('opacity', .6); }
+    else r.c.setAttribute('opacity', 0);
+    spread = Math.max(spread, Math.abs(yAt(SX) - AX));
+  });
+  img.setAttribute('cx', xi); img.setAttribute('cy', AX);
+  imgL.setAttribute('x', xi); imgL.setAttribute('y', AX - 16);
+  blur.setAttribute('y1', AX - spread); blur.setAttribute('y2', AX + spread); blur.setAttribute('opacity', spread > 3 ? 1 : 0);
+  brIl.setAttribute('x1', LX); brIl.setAttribute('x2', xi); brIt.setAttribute('x', (LX + xi) / 2);
+  [P.h0, P.h1, P.h2, P.h3].forEach((o, i) => hEls[i].setAttribute('opacity', o.toFixed(3)));
+  const df = xi - SX;
+  nums.textContent = `s = ${S0} · f = ${f.toFixed(0)} · s′ = ${sp.toFixed(0)} · sensor at ${SX - LX}  →  focus ${Math.abs(df) < 3 ? 'on the sensor' : (df < 0 ? (-df).toFixed(0) + ' before' : df.toFixed(0) + ' beyond')} (arbitrary units)`;
+  note.textContent = P.h3 > 0.5 ? 'In the TEM the specimen and detector are fixed; the objective lens current sets f, so the focus moves by Δf.'
+    : 'A point is imaged as a point only when s′ equals the sensor distance; otherwise it spreads into a disc.';
+  note2.textContent = P.h3 > 0.5 ? 'cryoEM images are deliberately recorded out of focus (underfocus, weaker lens, Δf ≈ 0.5–3 µm): next slides show why.' : '';
+  const rr = 6 + spread * 0.55;
+  dot.setAttribute('r', rr.toFixed(1)); dot.setAttribute('opacity', clamp(14 / rr, 0.15, 1).toFixed(2));
+  blurT.textContent = spread > 3 ? 'blurred disc' : 'sharp point';
+}, { rates: {} });
+</script>
+</body></html>

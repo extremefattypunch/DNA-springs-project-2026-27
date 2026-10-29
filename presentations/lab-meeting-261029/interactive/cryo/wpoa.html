@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weak phase object</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const OX = 70, OY = 430, R = 330, PHI = 0.42;     // display phase (exaggerated)
+const defs = S('defs', {}, sv);
+const mkA = (id, col) => { const m = S('marker', { id, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse' }, defs); S('path', { d: 'M0,0 L10,5 L0,10 z', fill: col }, m); };
+mkA('ao', C.est); mkA('ac', C.obs); mkA('aw', C.text);
+const X = re => OX + R * re, Y = im => OY - R * im;
+S('line', { x1: OX - 30, y1: OY, x2: OX + R + 90, y2: OY, stroke: C.grid, 'stroke-width': 1.5 }, sv);
+S('line', { x1: OX, y1: OY + 40, x2: OX, y2: OY - 250, stroke: C.grid, 'stroke-width': 1.5 }, sv);
+S('text', { x: OX + R + 96, y: OY + 6, 'font-size': 18, class: 'mut', text: 'Re' }, sv);
+S('text', { x: OX + 8, y: OY - 254, 'font-size': 18, class: 'mut', text: 'Im' }, sv);
+let arcD = ''; for (let a = -0.15; a <= 0.75; a += 0.02) arcD += (arcD ? 'L' : 'M') + X(Math.cos(a)) + ',' + Y(Math.sin(a));
+S('path', { d: arcD, class: 'w', stroke: C.grid, 'stroke-width': 1.5, 'stroke-dasharray': '5 5' }, sv);
+S('text', { x: X(Math.cos(0.72)) + 8, y: Y(Math.sin(0.72)), 'font-size': 16, class: 'mut', text: '|ψ| = 1' }, sv);
+const ref = S('line', { x1: X(0), y1: Y(0), stroke: C.est, 'stroke-width': 5, 'marker-end': 'url(#ao)' }, sv);
+const ext = S('line', { x1: X(0), y1: Y(0), stroke: C.text, 'stroke-width': 4, 'marker-end': 'url(#aw)' }, sv);
+const sca = S('line', { stroke: C.obs, 'stroke-width': 5, 'marker-end': 'url(#ac)' }, sv);
+const rt = S('path', { class: 'w', stroke: C.obs, 'stroke-width': 1.5 }, sv);
+const phArc = S('path', { class: 'w', stroke: C.text, 'stroke-width': 1.5 }, sv);
+const phT = S('text', { 'font-size': 22, class: 'm', 'font-style': 'italic', text: 'φ' }, sv);
+const refT = S('text', { x: X(0.5), y: OY + 34, 'text-anchor': 'middle', 'font-size': 18, fill: C.est, text: 'unscattered reference: 1' }, sv);
+const extT = S('text', { 'font-size': 18, fill: C.text }, sv);
+const scaT = S('text', { 'font-size': 18, fill: C.obs }, sv);
+// right panel: a particle's phase profile and what the detector sees in focus
+const PX0 = 640, PX1 = 1140, py = (y0, h, v) => y0 - h * v;
+const rg = S('g', {}, sv);
+S('text', { x: PX0, y: 92, 'font-size': 18, fill: C.obs, text: 'phase shift φ(x) across a particle' }, rg);
+const phiP = S('path', { class: 'w', stroke: C.obs, 'stroke-width': 3 }, rg);
+S('line', { x1: PX0, y1: 250, x2: PX1, y2: 250, stroke: C.grid }, rg);
+S('text', { x: PX0, y: 300, 'font-size': 18, fill: C.text, text: 'in-focus intensity |1 + iφ(x)|²' }, rg);
+const intP = S('path', { class: 'w', stroke: C.text, 'stroke-width': 3 }, rg);
+const one = S('line', { x1: PX0, x2: PX1, stroke: C.grid, 'stroke-dasharray': '5 5' }, rg);
+S('text', { x: PX1 + 6, y: 0, 'font-size': 15, class: 'mut', text: '' }, rg);
+const strip = S('g', {}, rg);
+const stripT = S('text', { x: PX0, y: 516, 'font-size': 16, class: 'mut', text: 'detector image of the particle (same grey scale as the background)' }, rg);
+const NS_ = 60, cells = [];
+for (let i = 0; i < NS_; i++) cells.push(S('rect', { x: PX0 + i * (PX1 - PX0) / NS_, y: 528, width: (PX1 - PX0) / NS_ + 1, height: 44, 'shape-rendering': 'crispEdges' }, strip));
+const right = [rg];
+const eq = S('text', { x: 30, y: 40, class: 'm', 'font-size': 27 }, sv);
+const t1 = S('text', { x: 30, y: 640, 'font-size': 20 }, sv);
+const t2 = S('text', { x: 30, y: 672, 'font-size': 20, class: 'mut' }, sv);
+const t3 = S('text', { x: 30, y: 704, 'font-size': 20, class: 'mut' }, sv);
+const EQ = [
+  'incident wave  <tspan font-style="italic">Ψ</tspan><tspan baseline-shift="sub" font-size="17">in</tspan> = <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="17" font-style="italic">ikz</tspan>  (a phasor of length 1)',
+  'exit wave  <tspan font-style="italic">Ψ</tspan><tspan baseline-shift="sub" font-size="17">exit</tspan>(<tspan font-style="italic">x, y</tspan>) = <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="17" font-style="italic">iφ(x,y)</tspan>',
+  'weak phase object, |φ| ≪ 1:  <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="17" font-style="italic">iφ</tspan> ≈ 1 + <tspan font-style="italic">iφ</tspan>',
+  '<tspan font-style="italic">I</tspan> = |1 + <tspan font-style="italic">iφ</tspan>|² = 1 + φ² ≈ 1'
+];
+const TX = [
+  ['The reference: the wave that would arrive with no specimen.', '', ''],
+  ['The protein rotates the phasor by φ but keeps its length 1, so the intensity stays 1.', 'The detector records only the length squared, so it sees nothing.', ''],
+  ['Taylor: the exit wave = the unscattered reference 1 plus a small scattered wave iφ.', 'Multiplying by i is a 90° turn: the scattered wave is in quadrature with the reference.', 'Arrows at right angles add to a resultant of almost the same length.'],
+  ['Intensity changes only at second order (φ², ~1 % for φ = 0.1): no usable contrast in focus.', 'To see the particle, the scattered wave must be turned (anti)parallel to the reference:', 'that extra phase is what defocus provides (next slide).']
+];
+const T = [
+  { e: 0, s: 0, r: 0, k: 0 }, { e: 1, s: 0, r: 0, k: 1 }, { e: 1, s: 1, r: 0, k: 2 }, { e: 1, s: 1, r: 1, k: 3 }
+];
+const prof = x => 0.9 * Math.exp(-((x - 0.42) ** 2) / 0.006) + 0.6 * Math.exp(-((x - 0.6) ** 2) / 0.004);
+Cryo.init(T, P => {
+  ref.setAttribute('x2', X(1) - 4); ref.setAttribute('y2', Y(0));
+  const a = PHI * P.e;
+  ext.setAttribute('x2', X(Math.cos(a))); ext.setAttribute('y2', Y(Math.sin(a))); ext.setAttribute('opacity', P.e);
+  extT.setAttribute('x', X(Math.cos(a)) + 14); extT.setAttribute('y', Y(Math.sin(a)) - 8); extT.setAttribute('opacity', P.e);
+  extT.innerHTML = P.s > 0.5 ? '<tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="13">iφ</tspan> ≈ 1 + <tspan font-style="italic">iφ</tspan>' : 'exit wave <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="13">iφ</tspan>';
+  let d = ''; for (let u = 0; u <= a; u += 0.02) d += (d ? 'L' : 'M') + (OX + 120 * Math.cos(u)) + ',' + (OY - 120 * Math.sin(u));
+  phArc.setAttribute('d', d || 'M0,0'); phArc.setAttribute('opacity', P.e);
+  phT.setAttribute('x', OX + 132 * Math.cos(a / 2) + 4); phT.setAttribute('y', OY - 132 * Math.sin(a / 2) + 8); phT.setAttribute('opacity', P.e);
+  sca.setAttribute('x1', X(1)); sca.setAttribute('y1', Y(0)); sca.setAttribute('x2', X(1)); sca.setAttribute('y2', Y(PHI * P.s) + 6);
+  sca.setAttribute('opacity', P.s);
+  rt.setAttribute('d', `M${X(1) - 22},${Y(0)} L${X(1) - 22},${Y(0) - 22} L${X(1)},${Y(0) - 22}`); rt.setAttribute('opacity', P.s);
+  scaT.setAttribute('x', X(1) + 16); scaT.setAttribute('y', Y(PHI / 2) + 6); scaT.textContent = 'scattered wave iφ (90°)'; scaT.setAttribute('opacity', P.s);
+  // right panel
+  let dp = '', di = '';
+  for (let i = 0; i <= 200; i++) {
+    const u = i / 200, x = PX0 + u * (PX1 - PX0), ph = 0.25 * prof(u);
+    dp += (i ? 'L' : 'M') + x + ',' + py(240, 520, ph);
+    di += (i ? 'L' : 'M') + x + ',' + py(470, 120, 1 + ph * ph);
+  }
+  phiP.setAttribute('d', dp); intP.setAttribute('d', di);
+  one.setAttribute('y1', py(470, 120, 1)); one.setAttribute('y2', py(470, 120, 1));
+  cells.forEach((c, i) => { const ph = 0.25 * prof((i + 0.5) / NS_), g = Math.round(150 * (1 + ph * ph)); c.setAttribute('fill', `rgb(${g},${g},${g})`); });
+  right.forEach(e => e.setAttribute('opacity', P.r));
+  const k = Math.round(P.k);
+  eq.innerHTML = EQ[k]; [t1, t2, t3].forEach((e, i) => e.textContent = TX[k][i]);
+  refT.setAttribute('opacity', 1);
+});
+</script>
+</body></html>

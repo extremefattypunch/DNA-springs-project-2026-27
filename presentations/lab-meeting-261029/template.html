@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
 /* Layout: a fixed 1920x1080 stage scaled to the window; each gel slide is a
    title row, one or two gel panels (imager-dark slab, label rails either
@@ -22,6 +22,7 @@
   --sec-md: #a8406f;
   --sec-background: #5a646e;
   --sec-status: #b8372c;
+  --sec-cryoem: #1f8aa6;
   --dna-line: #15191d;
   --protein-stroke: #1b2026;
   --letterbox: #dfe4e9;
@@ -32,7 +33,7 @@
   :root:not([data-theme="light"]) {
     --paper: #1b232c; --paper-2: #26303b; --ink: #e5ebf0; --ink-2: #a3b0bc; --ink-3: #6f7d8a;
     --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
-    --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e;
+    --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e; --sec-cryoem: #5fc8e4;
     --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
     color-scheme: dark;
   }
@@ -40,7 +41,7 @@
 :root[data-theme="dark"] {
   --paper: #1b232c; --paper-2: #26303b; --ink: #e5ebf0; --ink-2: #a3b0bc; --ink-3: #6f7d8a;
   --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
-  --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e;
+  --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e; --sec-cryoem: #5fc8e4;
   --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
   color-scheme: dark;
 }
@@ -219,6 +220,8 @@ body {
 .m-frame { position: relative; flex: 1; min-height: 0; background: #fbfbf9; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; transition: box-shadow .3s, border-color .3s; }
 .m-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
 .m-frame img, .m-frame video { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; }
+.m-frame.dark { background: #0E1116; border-color: #2a313b; }
+.m-frame.dark video { inset: 0; width: 100%; height: 100%; }
 .m-item.mhl .m-frame { border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 35%, transparent), 0 0 24px color-mix(in srgb, var(--amber) 35%, transparent); }
 .m-cap { font-size: 19px; line-height: 1.25; color: var(--ink-2); }
 .m-cap b { color: var(--ink); font-weight: 620; }
@@ -229,6 +232,10 @@ body {
 .m-pt.on { opacity: 1; transform: none; }
 .m-pt.now { color: var(--ink); }
 .m-pt b { color: var(--ink); font-weight: 640; }
+.eq { font-family: "STIX Two Text", "Cambria Math", Georgia, serif; font-size: 1.12em; color: var(--ink); white-space: nowrap; }
+.eq i { font-style: italic; } .eq .kn { color: var(--sec-synthesis); } .eq .un { color: var(--sec-status); } .eq .nz { color: var(--ink-3); }
+.m-pt b.kn { color: var(--sec-synthesis); } .m-pt b.un { color: var(--sec-status); }
+.m-pt .eq.blk { display: block; margin: 6px 0 4px; font-size: 1.12em; white-space: normal; line-height: 1.5; }
 .m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* explain phase: one plot full-slide with axis notes, then the split answer view */
 .m-item { transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s cubic-bezier(.3,.7,.2,1), height .6s cubic-bezier(.3,.7,.2,1), opacity .4s ease; }
@@ -290,7 +297,7 @@ const stage = document.getElementById('stage');
 const SECTIONS = {
   synthesis: ['Synthesis', 'var(--sec-synthesis)'], assay: ['Assay', 'var(--sec-assay)'],
   md: ['MD analysis', 'var(--sec-md)'], background: ['Background', 'var(--sec-background)'],
-  status: ['Project status', 'var(--sec-status)']
+  status: ['Project status', 'var(--sec-status)'], cryoem: ['cryoEM downstream', 'var(--sec-cryoem)']
 };
 
 /* ---------------- helpers ---------------- */
@@ -926,6 +933,7 @@ function applyChart(C, k, animate) {
 
 /* ---------------- media slides ---------------- */
 function buildMedia(el, cfg) {
+  const STATIC_MEDIA = !!TEST || !!SHOT;
   const top = cfg.top || 160, bottom = 950;
   const items = cfg.items || [], pts = cfg.points || [];
   const boxes = [], frames = [];
@@ -939,19 +947,21 @@ function buildMedia(el, cfg) {
     const fw = cfg.figW || 1160, n = items.length, gap = 22;
     const hh = (bottom - top - (n - 1) * gap) / n;
     items.forEach((_, i) => boxes.push({ x: 64, y: top + i * (hh + gap), w: fw, h: hh }));
-    var ptBox = { x: 64 + fw + 48, y: top + (cfg.q ? 52 : 6), w: 1792 - fw - 48 };
+    var ptBox = { x: 64 + fw + 48, y: top + (cfg.q ? (cfg.qH || (cfg.q.length > 46 ? 86 : 52)) : 6), w: 1792 - fw - 48 };
   }
   const els = items.map((it, i) => {
     const b = boxes[i];
     const box = h('div', 'm-item', { style: { left: b.x + 'px', top: b.y + 'px', width: b.w + 'px', height: b.h + 'px' } });
-    const fr = h('div', 'm-frame');
+    const fr = h('div', 'm-frame' + (it.dark || it.iframe && cfg.msgChannel === 'cryo' ? ' dark' : ''));
     if (it.iframe) {
       const f = h('iframe', null, { src: it.iframe, title: it.title || 'Interactive spectra viewer', loading: 'eager' });
       f.addEventListener('load', () => { try { f.contentWindow.postMessage(Object.assign({ preset: true, ann: [] }, curMsg || {}), '*'); } catch (e) {} });
       fr.appendChild(f); frames.push(f);
     } else if (it.video) {
-      const v = h('video', null, { src: it.video, muted: '', loop: '', playsinline: '', preload: 'auto', poster: it.poster || '', 'aria-label': it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD animation' });
-      v.muted = true; fr.appendChild(v);
+      const managed = pts.some(p => p.seek && (p.vid || 0) === i);
+      const v = h('video', null, { src: it.video, muted: '', playsinline: '', preload: 'auto', poster: it.poster || '', 'aria-label': it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD animation' });
+      if (!managed) v.loop = true; else v.dataset.managed = i;
+      v.muted = true; fr.appendChild(v); it._v = v;
     } else {
       const wrap = h('div', 'm-img');
       wrap.appendChild(h('img', null, { src: it.img, alt: it.cap ? it.cap.replace(/<[^>]+>/g, '') : 'MD figure', draggable: 'false' }));
@@ -1018,9 +1028,29 @@ function buildMedia(el, cfg) {
     lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
     let msg = null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;
-    curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [] }, msg || {});
+    curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [], step: 0, static: STATIC_MEDIA }, msg || {});
     frames.forEach(f => { try { f.contentWindow.postMessage(curMsg, '*'); } catch (e) {} });
     els.forEach((e, i) => e.classList.toggle('mhl', Array.isArray(hl) ? hl.includes(i) : hl === i));
+    // managed videos: each point with seek [a, b] plays that segment once, then holds its last frame
+    items.forEach((it, vi) => {
+      const v = it._v; if (!v || v.dataset.managed == null) return;
+      let j = -1; for (let i = 0; i < k; i++) if (pts[i].seek && (pts[i].vid || 0) === vi) j = i;
+      const first = pts.find(p => p.seek && (p.vid || 0) === vi);
+      const seg = j >= 0 ? pts[j].seek : null, fresh = j === k - 1 && j >= 0;
+      if (v._seg === (seg && j) && !fresh) return;
+      v._seg = seg ? j : null; cancelAnimationFrame(v._raf); v.pause();
+      const go = (t, play, end) => {
+        const run = () => { try { v.currentTime = t; } catch (e) {}
+          if (!play || STATIC_MEDIA) return;
+          const pr = v.play(); if (pr && pr.catch) pr.catch(() => {});
+          const tick = () => { if (v.currentTime >= end - 0.04 || v.ended) { v.pause(); return; } v._raf = requestAnimationFrame(tick); };
+          v._raf = requestAnimationFrame(tick); };
+        if (v.readyState >= 1) run(); else v.addEventListener('loadedmetadata', run, { once: true });
+      };
+      if (!seg) go(first ? first.seek[0] + (first.hold0 || 0.6) : 0, false);
+      else if (STATIC_MEDIA) go(seg[1] - 0.05, false);
+      else go(seg[0], true, seg[1]);
+    });
   }, n: pts.length + Math.max(0, E - 1), videos: [...el.querySelectorAll('video')] };
 }
 
@@ -1081,7 +1111,7 @@ function show(si, k, animate) {
   const counts = S.panels.map(() => 0);
   for (let i = 1; i <= k; i++) counts[S.steps[i].panel]++;
   S.panels.forEach((G, pi) => G.kind === 'media' ? G.apply(counts[pi]) : (G.kind === 'chart' ? applyChart : applyPanel)(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
-  slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
+  slides.forEach((x, i) => x.el.querySelectorAll('video').forEach(v => { if (v.dataset.managed != null) { if (i !== si) { v.pause(); v._seg = undefined; } return; } if (i === si && !STATIC) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } else v.pause(); }));
   if (S.dots) [...S.dots.children].forEach((d, i) => { d.className = i < k ? 'done' : i === k ? 'now' : ''; });
   cur = { s: si, k };
   try { history.replaceState(null, '', '#s' + (si + 1)); } catch (e) {}

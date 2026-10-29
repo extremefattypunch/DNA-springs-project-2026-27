@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Defocus makes phase contrast</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const OX = 60, OY = 330, R = 300, PHI = 0.42, TAU = 2 * Math.PI;
+const defs = S('defs', {}, sv);
+const mkA = (id, col, w) => { const m = S('marker', { id, viewBox: '0 0 10 10', refX: 8.5, refY: 5, markerWidth: w || 6, markerHeight: w || 6, orient: 'auto' }, defs); S('path', { d: 'M0,0 L10,5 L0,10 z', fill: col }, m); };
+mkA('ao', C.est, 3.4); mkA('ac', C.obs); mkA('aw', C.text);
+const X = re => OX + R * re, Y = im => OY - R * im;
+S('line', { x1: OX - 30, y1: OY, x2: X(1.55), y2: OY, stroke: C.grid, 'stroke-width': 1.5 }, sv);
+S('line', { x1: OX, y1: OY + 170, x2: OX, y2: OY - 170, stroke: C.grid, 'stroke-width': 1.5 }, sv);
+const circ = S('circle', { cx: X(1), cy: Y(0), r: R * PHI, fill: 'none', stroke: C.grid, 'stroke-dasharray': '4 5' }, sv);
+const ref = S('line', { x1: X(0), y1: Y(0), x2: X(1) - 4, y2: Y(0), stroke: C.est, 'stroke-width': 8, 'marker-end': 'url(#ao)' }, sv);
+const sca = S('line', { x1: X(1), y1: Y(0) - 12, stroke: C.obs, 'stroke-width': 5, 'marker-end': 'url(#ac)' }, sv);
+const res = S('line', { x1: X(0), y1: Y(0), stroke: C.text, 'stroke-width': 3, 'marker-end': 'url(#aw)' }, sv);
+S('text', { x: OX + 10, y: OY - 14, 'font-size': 16, fill: C.text, text: 'resultant (white)' }, sv);
+const chiArc = S('path', { class: 'w', stroke: C.label, 'stroke-width': 2.5 }, sv);
+const chiT = S('text', { 'font-size': 22, class: 'm', 'font-style': 'italic', fill: C.label, text: 'χ' }, sv);
+S('text', { x: X(0.5), y: OY + 30, 'text-anchor': 'middle', 'font-size': 17, fill: C.est, text: 'unscattered reference' }, sv);
+const scaT = S('text', { 'font-size': 17, fill: C.obs, text: 'scattered' }, sv);
+const resT = S('text', { x: OX, y: OY + 205, 'font-size': 19 }, sv);
+// intensity meter
+S('text', { x: 560, y: 62, 'font-size': 17, class: 'mut', text: '|resultant|² = intensity' }, sv);
+S('rect', { x: 560, y: 76, width: 46, height: 400, rx: 6, fill: C.panel, stroke: C.grid }, sv);
+const lvl = S('rect', { x: 562, width: 42, rx: 4, fill: C.text }, sv);
+const one = S('line', { x1: 552, x2: 614, stroke: C.est, 'stroke-width': 2 }, sv);
+S('text', { x: 620, y: 0, 'font-size': 15, fill: C.est, text: '' }, sv);
+const oneT = S('text', { x: 620, 'font-size': 15, fill: C.est, text: 'no specimen' }, sv);
+// particle image and profile
+S('text', { x: 760, y: 62, 'font-size': 17, class: 'mut', text: 'what the detector shows' }, sv);
+const fo = S('foreignObject', { x: 760, y: 76, width: 220, height: 220 }, sv);
+const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; cv.className = 'px';
+Object.assign(cv.style, { width: '220px', height: '220px', display: 'block', borderRadius: '6px' }); fo.appendChild(cv);
+const ctx = cv.getContext('2d'), im = ctx.createImageData(64, 64);
+const verd = S('text', { x: 870, y: 326, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 700 }, sv);
+// CTF readout: contrast vs chi
+const GX0 = 760, GX1 = 1095, GY = 470, GH = 90;
+S('text', { x: GX0, y: 372, 'font-size': 17, class: 'mut', text: 'contrast ≈ −2φ sin χ   (sin χ = the CTF)' }, sv);
+S('line', { x1: GX0, y1: GY, x2: GX1, y2: GY, stroke: C.grid }, sv);
+let cd = ''; for (let i = 0; i <= 200; i++) { const c = i / 200 * TAU; cd += (i ? 'L' : 'M') + (GX0 + (GX1 - GX0) * i / 200) + ',' + (GY - GH * Math.sin(c)); }
+S('path', { d: cd, class: 'w', stroke: C.label, 'stroke-width': 2.5 }, sv);
+[['0', 0], ['π/2', 0.25], ['π', 0.5], ['3π/2', 0.75], ['2π', 1]].forEach(([l, u]) => S('text', { x: GX0 + (GX1 - GX0) * u, y: GY + GH + 26, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: l }, sv));
+S('text', { x: GX1 + 6, y: GY - GH + 5, 'font-size': 14, class: 'mut', text: 'dark' }, sv);
+S('text', { x: GX1 + 6, y: GY + GH + 5, 'font-size': 14, class: 'mut', text: 'bright' }, sv);
+const gdot = S('circle', { r: 8, fill: C.label }, sv);
+const head = S('text', { x: 30, y: 612, 'font-size': 23, 'font-weight': 700 }, sv);
+const l1 = S('text', { x: 30, y: 648, 'font-size': 19, class: 'mut' }, sv);
+const l2 = S('text', { x: 30, y: 680, 'font-size': 19, class: 'mut' }, sv);
+const l3 = S('text', { x: 30, y: 712, 'font-size': 19, class: 'mut' }, sv);
+const TX = [
+  ['No extra phase (in focus): scattered ⟂ reference, no contrast', 'The resultant has the reference’s length, so the particle is invisible.', '', ''],
+  ['Extra phase χ = π/2: scattered wave antiparallel, particle dark', 'The scattered wave now subtracts from the reference: less intensity where the protein is.', 'This is “phase contrast”: the same trick as a Zernike phase plate in light microscopy.', ''],
+  ['χ = 3π/2: scattered wave parallel, particle bright', 'Same particle, contrast reversed: the sign of the image depends on χ.', '', ''],
+  ['Sweeping χ: contrast follows −2φ sin χ', 'Maximum contrast at χ = π/2 + kπ (sin χ = ±1); zero at χ = kπ.', 'sin χ is the contrast transfer function (CTF).', ''],
+  ['Defocus is what adds χ, and the amount depends on spatial frequency q', 'A beam scattered to frequency q takes a longer path to the defocused image plane:', 'χ(q) = π λ Δf q² − ½ π Cs λ³ q⁴  (Δf defocus, Cs spherical aberration, λ wavelength).', 'So every spatial frequency gets its own χ: CTF(q) = sin χ(q) (next slide).']
+];
+const T = [
+  { chi: 0, sw: 0, k: 0 }, { chi: Math.PI / 2, sw: 0, k: 1 }, { chi: 1.5 * Math.PI, sw: 0, k: 2 },
+  { chi: 1.5 * Math.PI, sw: 1, k: 3 }, { chi: Math.PI / 2, sw: 0, k: 4 }
+];
+let acc = 0;
+Cryo.onStep = (s, old) => { if (old === 3 && s !== 3) { Cryo.P.chi = Cryo.P.chi + acc; while (Cryo.P.chi - T[s].chi > Math.PI) Cryo.P.chi -= TAU; while (T[s].chi - Cryo.P.chi > Math.PI) Cryo.P.chi += TAU; acc = 0; } };
+const prof = (x, y) => Math.exp(-((x - 0.45) ** 2 + (y - 0.5) ** 2) / 0.012) + 0.7 * Math.exp(-((x - 0.62) ** 2 + (y - 0.42) ** 2) / 0.008);
+Cryo.init(T, (P, t, dt) => {
+  acc += (dt || 0) * 0.9 * P.sw;
+  const chi = P.chi + acc, a = Math.PI / 2 + chi;
+  const sx = 1 + PHI * Math.cos(a), sy = PHI * Math.sin(a);
+  sca.setAttribute('x2', X(sx)); sca.setAttribute('y2', Y(sy) - 12);
+  res.setAttribute('x2', X(sx)); res.setAttribute('y2', Y(sy));
+  scaT.setAttribute('x', X(1 + 0.5 * PHI * Math.cos(a)) - 34); scaT.setAttribute('y', Y(0.5 * PHI * Math.sin(a)) - 30);
+  // chi arc from the 90° direction
+  const rr = R * PHI * 0.55; let d = '';
+  const c0 = Math.PI / 2, c1 = c0 + ((chi % TAU) + TAU) % TAU;
+  for (let u = c0; u <= c1 + 1e-6; u += 0.03) d += (d ? 'L' : 'M') + (X(1) + rr * Math.cos(u)) + ',' + (Y(0) - rr * Math.sin(u));
+  chiArc.setAttribute('d', d || 'M0,0');
+  const cm = (c0 + c1) / 2; chiT.setAttribute('x', X(1) + (rr + 18) * Math.cos(cm) - 6); chiT.setAttribute('y', Y(0) - (rr + 18) * Math.sin(cm) + 8);
+  chiT.setAttribute('opacity', c1 - c0 > 0.15 ? 1 : 0);
+  const I = sx * sx + sy * sy;
+  resT.textContent = `|1 + scattered|² = ${I.toFixed(2)}  (φ exaggerated to ${PHI})`;
+  const H = 400 / 2.2; lvl.setAttribute('y', 476 - H * I); lvl.setAttribute('height', H * I);
+  one.setAttribute('y1', 476 - H); one.setAttribute('y2', 476 - H); oneT.setAttribute('y', 476 - H + 5);
+  // particle image: I = |1 + i φ e^{iχ}|² with a gentler φ for realism
+  const s = Math.sin(chi);
+  for (let j = 0; j < 64; j++) for (let i = 0; i < 64; i++) {
+    const ph = 0.22 * prof(i / 64, j / 64), v = 1 - 2 * ph * s + ph * ph;
+    const g = clamp(Math.round(140 * v), 0, 255), o = 4 * (j * 64 + i);
+    im.data[o] = im.data[o + 1] = im.data[o + 2] = g; im.data[o + 3] = 255;
+  }
+  ctx.putImageData(im, 0, 0);
+  verd.textContent = Math.abs(s) < 0.2 ? 'invisible' : (s > 0 ? 'dark particle' : 'bright particle');
+  verd.setAttribute('fill', Math.abs(s) < 0.2 ? C.red : C.truth);
+  const u = (((chi % TAU) + TAU) % TAU) / TAU;
+  gdot.setAttribute('cx', GX0 + (GX1 - GX0) * u); gdot.setAttribute('cy', GY - GH * s);
+  const k = Math.round(P.k); head.textContent = TX[k][0]; l1.textContent = TX[k][1]; l2.textContent = TX[k][2]; l3.textContent = TX[k][3];
+});
+</script>
+</body></html>

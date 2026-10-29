@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two routes to a structure</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+<style>
+.note { font: 400 16.5px/1.32 "Archivo", sans-serif; color: #ECEDEF; }
+.note b { color: #FFD166; font-weight: 600; }
+.cap { font: 400 14px/1.25 "Archivo", sans-serif; color: #9AA3AE; text-align: center; }
+</style></head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const XR = ['Diffraction images', 'Spot finding', 'Indexing and integration', 'Scaling and merging', 'Phasing',
+  null, 'Electron-density map', 'Atomic model building', 'Reciprocal-space refinement', 'Validation'];
+const EM = ['Electron movies', 'Motion and CTF correction', 'Particle picking', '2D classification', '3D reconstruction',
+  '3D classification and refinement', '3D density map', 'Atomic model building', 'Real-space refinement', 'Validation'];
+const ROAD = { 1: 'defocus + CTF', 3: 'align + average', 4: 'Fourier slice', 5: 'classes + FSC' };
+const Y0 = 82, PITCH = 60, BH = 46, BW = 300;
+const rowY = i => Y0 + i * PITCH;
+function flow(list, cx, key) {
+  const g = S('g', {}, sv), boxes = [];
+  let prev = null;
+  list.forEach((name, i) => {
+    if (!name) return;
+    const y = rowY(i);
+    if (prev != null) {
+      const a = S('line', { x1: cx, y1: rowY(prev) + BH, x2: cx, y2: y - 4, stroke: C.grid, 'stroke-width': 2, 'marker-end': 'url(#ah)' }, g);
+      boxes.push({ el: a, i: i - 0.5 });
+    }
+    const bg = S('g', {}, g);
+    const r = S('rect', { x: cx - BW / 2, y, width: BW, height: BH, rx: 10, fill: C.panel, stroke: C.grid, 'stroke-width': 1.5 }, bg);
+    S('text', { x: cx, y: y + BH / 2 + 6.5, 'text-anchor': 'middle', 'font-size': 18.5, 'font-weight': 600, text: name }, bg);
+    boxes.push({ el: bg, i, rect: r, name });
+    prev = i;
+  });
+  return boxes;
+}
+const defs = S('defs', {}, sv);
+const mk = S('marker', { id: 'ah', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto' }, defs);
+S('path', { d: 'M0,0 L10,5 L0,10 z', fill: C.grid }, mk);
+const glowF = S('filter', { id: 'gl', x: '-30%', y: '-60%', width: '160%', height: '220%' }, defs);
+S('feGaussianBlur', { stdDeviation: 5, result: 'b' }, glowF);
+const fm = S('feMerge', {}, glowF); S('feMergeNode', { in: 'b' }, fm); S('feMergeNode', { in: 'SourceGraphic' }, fm);
+
+const hx = S('text', { x: 380, y: 48, 'text-anchor': 'middle', 'font-size': 25, 'font-weight': 700, text: 'X-ray crystallography' }, sv);
+const he = S('text', { x: 800, y: 48, 'text-anchor': 'middle', 'font-size': 25, 'font-weight': 700, fill: C.obs, text: 'Single-particle cryoEM' }, sv);
+const bx = flow(XR, 380), be = flow(EM, 800);
+
+// outline brackets (Ian's red and blue boxes)
+const redR = S('rect', { x: 636, y: rowY(0) - 9, width: 328, height: rowY(5) + BH - rowY(0) + 16, rx: 14, fill: 'none', stroke: C.red, 'stroke-width': 3 }, sv);
+const bluR = S('rect', { x: 636, y: rowY(6) - 6, width: 328, height: rowY(9) + BH - rowY(6) + 14, rx: 14, fill: 'none', stroke: '#5B8DEF', 'stroke-width': 3 }, sv);
+const redT = S('text', { x: 970, y: rowY(0) + 2, 'font-size': 18, 'font-weight': 700, fill: C.red, text: 'CryoSPARC, TOPAZ' }, sv);
+const redT2 = S('text', { x: 970, y: rowY(0) + 24, 'font-size': 15, fill: C.red, text: 'images → 3D map' }, sv);
+const bluT = S('text', { x: 970, y: rowY(9) - 6, 'font-size': 18, 'font-weight': 700, fill: '#5B8DEF', text: 'RELION, EMReady,' }, sv);
+const bluT2 = S('text', { x: 970, y: rowY(9) + 16, 'font-size': 18, 'font-weight': 700, fill: '#5B8DEF', text: 'COOT' }, sv);
+const bluT3 = S('text', { x: 970, y: rowY(9) + 38, 'font-size': 15, fill: '#5B8DEF', text: 'map \u2192 atomic model' }, sv);
+
+function fo(x, y, w, h, html, cls) {
+  const f = S('foreignObject', { x, y, width: w, height: h }, sv);
+  const d = document.createElement('div'); d.className = cls || 'note'; d.innerHTML = html; f.appendChild(d); return f;
+}
+const imX = S('image', { href: 'xray.jpg', x: 14, y: 74, width: 196, height: 156, preserveAspectRatio: 'xMidYMid slice' }, sv);
+const capX = fo(14, 234, 196, 40, 'Bragg spots: intensities only', 'cap');
+const imE = S('image', { href: 'micrograph.jpg', x: 970, y: 120, width: 196, height: 158, preserveAspectRatio: 'xMidYMid slice' }, sv);
+const capE = fo(970, 282, 196, 40, 'micrograph and its Fourier transform (not PP2A)', 'cap');
+const noteX = fo(14, 300, 200, 400, 'The detector records spot <b>intensities</b> |F|². The <b>phases</b> are lost, so a separate <b>phasing</b> step is needed before any map exists.');
+const noteE = fo(970, 330, 200, 330, 'Each particle image is a real-space <b>projection</b>, so the <b>phases are kept</b>: there is no phasing step. Instead each particle’s <b>orientation is unknown</b> and its signal is buried in noise.');
+// roadmap tags
+const road = Object.entries(ROAD).map(([i, t]) => {
+  const y = rowY(+i) + BH / 2;
+  const g = S('g', {}, sv);
+  S('line', { x1: 966, y1: y, x2: 984, y2: y, stroke: C.obs, 'stroke-width': 2 }, g);
+  const tx = S('text', { x: 990, y: y + 6, 'font-size': 16, 'font-weight': 600, fill: C.obs, text: t }, g);
+  return g;
+});
+const roadHead = S('text', { x: 970, y: rowY(0) + 60, 'font-size': 15, fill: C.muted, text: 'explained on the next slides:' }, sv);
+
+const T = [
+  { x: 0, e: 0, ph: 0, br: 0, rd: 0, nx: 0, ne: 0 },
+  { x: 9.9, e: 0, ph: 1, br: 0, rd: 0, nx: 1, ne: 0 },
+  { x: 9.9, e: 9.9, ph: 1, br: 0, rd: 0, nx: 1, ne: 1 },
+  { x: 9.9, e: 9.9, ph: 0, br: 1, rd: 0, nx: 0.35, ne: 0 },
+  { x: 9.9, e: 9.9, ph: 0, br: 1, rd: 1, nx: 0.35, ne: 0 }
+];
+const vis = (el, o) => { el.setAttribute('opacity', clamp(o, 0, 1).toFixed(3)); };
+Cryo.init(T, P => {
+  bx.forEach(b => vis(b.el, P.x - b.i));
+  be.forEach(b => vis(b.el, P.e - b.i));
+  vis(imX, P.x * 2); vis(capX, P.x * 2); vis(imE, P.e * 2 * (1 - P.rd)); vis(capE, P.e * 2 * (1 - P.rd));
+  vis(noteX, P.nx); vis(noteE, P.ne * (1 - P.br));
+  const ph = bx.find(b => b.name === 'Phasing');
+  ph.rect.setAttribute('stroke', P.ph > 0.5 ? C.est : C.grid); ph.rect.setAttribute('stroke-width', 1.5 + 2 * P.ph);
+  ph.rect.setAttribute('filter', P.ph > 0.5 ? 'url(#gl)' : '');
+  [redR, redT, redT2, bluR, bluT, bluT2, bluT3].forEach(e => vis(e, P.br));
+  road.forEach(g => vis(g, P.rd)); vis(roadHead, P.rd);
+  be.forEach(b => { if (!b.rect) return; const on = P.rd > 0.5 && ROAD[b.i]; b.rect.setAttribute('stroke', on ? C.obs : C.grid); });
+}, { rates: { x: 9, e: 9 } });
+</script>
+</body></html>

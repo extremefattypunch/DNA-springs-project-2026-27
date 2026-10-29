@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contrast transfer function</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const LAM = 0.0197, CS = 2.7e7, QMAX = 1 / 3, BF = 80;            // 300 kV, Cs 2.7 mm, B-factor envelope (Å²)
+const chi = (q, df) => Math.PI * LAM * df * q * q - 0.5 * Math.PI * CS * LAM ** 3 * q ** 4;
+const env = q => Math.exp(-BF * q * q / 4);
+const PX0 = 80, PX1 = 1130, PY = 190, PA = 110;
+const qx = q => PX0 + (PX1 - PX0) * q / QMAX;
+// axes
+S('line', { x1: PX0, y1: PY, x2: PX1, y2: PY, stroke: C.grid }, sv);
+S('line', { x1: PX0, y1: PY - PA - 10, x2: PX0, y2: PY + PA + 10, stroke: C.grid }, sv);
+[[1, '+1'], [0, '0'], [-1, '−1']].forEach(([v, l]) => S('text', { x: PX0 - 10, y: PY - PA * v + 5, 'text-anchor': 'end', 'font-size': 15, class: 'mut', text: l }, sv));
+S('text', { x: PX0 - 52, y: PY - PA - 22, 'font-size': 18, fill: C.label, class: 'm', html: 'CTF = sin <tspan font-style="italic">χ</tspan>(<tspan font-style="italic">q</tspan>)' }, sv);
+[20, 10, 8, 6, 5, 4, 3].forEach(d => {
+  const x = qx(1 / d);
+  S('line', { x1: x, y1: PY + PA + 6, x2: x, y2: PY + PA + 14, stroke: C.grid }, sv);
+  S('text', { x, y: PY + PA + 32, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: d + ' Å' }, sv);
+});
+S('text', { x: PX1, y: PY + PA + 56, 'text-anchor': 'end', 'font-size': 16, class: 'mut', text: 'spatial frequency q = 1/d  (labelled by the spacing d it describes) →' }, sv);
+const neg = S('path', { fill: 'rgba(91,141,239,.30)' }, sv);
+const curve = S('path', { class: 'w', stroke: C.label, 'stroke-width': 2.2 }, sv);
+const envP = S('path', { class: 'w', stroke: C.red, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, sv);
+const zeros = S('g', {}, sv);
+const dfT = S('text', { x: PX1, y: 44, 'text-anchor': 'end', 'font-size': 22, 'font-weight': 700, fill: C.label }, sv);
+// Thon rings
+S('text', { x: 80, y: 404, 'font-size': 16, class: 'mut', text: 'power spectrum |CTF|², edge = 5 Å' }, sv);
+const fo = S('foreignObject', { x: 80, y: 414, width: 240, height: 240 }, sv);
+const cv = document.createElement('canvas'); cv.width = 240; cv.height = 240;
+Object.assign(cv.style, { width: '240px', height: '240px', display: 'block', borderRadius: '6px' }); fo.appendChild(cv);
+const ctx = cv.getContext('2d'), im = ctx.createImageData(240, 240);
+// text
+const head = S('text', { x: 360, y: 420, 'font-size': 22, 'font-weight': 700 }, sv);
+const tl = [0, 1, 2].map(i => S('text', { x: 360, y: 454 + i * 30, 'font-size': 18.5, class: 'mut' }, sv));
+// multi-defocus panel
+const DFS = [9000, 12000, 17000, 26000], MC = [C.obs, C.truth, C.est, C.alt];
+const mg = S('g', {}, sv);
+const MX0 = 410, MX1 = 1130, mqx = q => MX0 + (MX1 - MX0) * q / QMAX;
+DFS.forEach((df, i) => {
+  const y0 = 576 + i * 24; let d = '';
+  for (let j = 0; j <= 900; j++) { const q = QMAX * j / 900; d += (j ? 'L' : 'M') + mqx(q).toFixed(1) + ',' + (y0 - 10 * Math.sin(chi(q, df))).toFixed(1); }
+  S('path', { d, class: 'w', stroke: MC[i], 'stroke-width': 1.2 }, mg);
+  S('text', { x: MX0 - 8, y: y0 + 5, 'text-anchor': 'end', 'font-size': 13, fill: MC[i], text: (df / 1e4).toFixed(1) + ' µm' }, mg);
+});
+{ let d = `M${MX0},722`; for (let j = 0; j <= 900; j++) { const q = QMAX * j / 900; let s = 0; DFS.forEach(df => s += Math.sin(chi(q, df)) ** 2); d += 'L' + mqx(q).toFixed(1) + ',' + (722 - 34 * s / DFS.length * 1.6).toFixed(1); }
+  d += `L${MX1},722Z`; S('path', { d, fill: 'rgba(91,214,122,.35)', stroke: C.truth, 'stroke-width': 1.2 }, mg);
+  S('text', { x: MX0 - 8, y: 722, 'text-anchor': 'end', 'font-size': 13, fill: C.truth, text: 'sum' }, mg); }
+S('text', { x: 360, y: 550, 'font-size': 15, class: 'mut', text: 'four micrographs at different defocus, and the summed |CTF|²: the zeros do not line up' }, mg);
+const TX = [
+  ['Reading the plot', 'x: spatial frequency q (fine detail to the right); y: sin χ(q).', '+1/−1 = full contrast (dark/bright); 0 = that frequency is not transferred.', 'One curve = one micrograph at one defocus (here 300 kV, Cs 2.7 mm).'],
+  ['Zeros lose information; negative lobes flip contrast', 'Red dots: frequencies the image carries no information about.', 'Blue lobes: those details appear with reversed contrast (white on dark).', 'At q → 0 the CTF → 0 too: the particle’s overall shape is weak.'],
+  ['Changing the defocus moves the zeros', 'More defocus: stronger low-q contrast, faster oscillation at high q.', 'The ring pattern in each micrograph’s power spectrum (left) reveals its Δf:', 'CTF estimation (CTFFIND, CryoSPARC Patch CTF) fits Δf to these Thon rings.'],
+  ['Many defocus values fill each other’s gaps', 'Each micrograph is recorded at its own Δf (here 0.9, 1.2, 1.7, 2.6 µm).', 'Their zeros fall at different q, so together they measure every q.', 'CTF correction flips negative lobes back and weights each q by how well it was seen.'],
+  ['In reality an envelope also damps high q', 'Beam incoherence, drift and radiation damage multiply the CTF by an envelope (dashed).', 'High-resolution detail is transferred weakly: this is why many particles must be averaged.', '']
+];
+const T = [
+  { df: 15000, z: 0, sw: 0, m: 0, e: 0, k: 0 }, { df: 15000, z: 1, sw: 0, m: 0, e: 0, k: 1 },
+  { df: 15000, z: 1, sw: 1, m: 0, e: 0, k: 2 }, { df: 15000, z: 0, sw: 0, m: 1, e: 0, k: 3 },
+  { df: 15000, z: 1, sw: 0, m: 1, e: 1, k: 4 }
+];
+let acc = 0;
+Cryo.init(T, (P, t, dt) => {
+  acc += (dt || 0) * P.sw;
+  const df = P.df + P.sw * 10000 * Math.sin(acc * 0.7);
+  const E = q => lerp(1, env(q), P.e);
+  let d = '', dn = `M${PX0},${PY}`, z = '';
+  const N = 2100;
+  for (let j = 0; j <= N; j++) {
+    const q = QMAX * j / N, v = Math.sin(chi(q, df)) * E(q), x = qx(q), y = PY - PA * v;
+    d += (j ? 'L' : 'M') + x.toFixed(1) + ',' + y.toFixed(1);
+    dn += 'L' + x.toFixed(1) + ',' + (v < 0 ? y : PY).toFixed(1);
+  }
+  curve.setAttribute('d', d); curve.setAttribute('opacity', 1 - 0.6 * P.m);
+  neg.setAttribute('d', dn + `L${PX1},${PY}Z`); neg.setAttribute('opacity', P.z);
+  zeros.innerHTML = '';
+  if (P.z > 0.02) for (let n = 1; n < 200; n++) {           // χ = nπ  →  solve for q
+    const a = 0.5 * Math.PI * CS * LAM ** 3, b = Math.PI * LAM * df, disc = b * b - 4 * a * n * Math.PI;
+    if (disc < 0) break; const q2 = (b - Math.sqrt(disc)) / (2 * a), q = Math.sqrt(q2);
+    if (q > QMAX) break;
+    S('circle', { cx: qx(q), cy: PY, r: 4, fill: C.red, opacity: P.z }, zeros);
+  }
+  let de = '';
+  for (let j = 0; j <= 200; j++) { const q = QMAX * j / 200; de += (j ? 'L' : 'M') + qx(q) + ',' + (PY - PA * env(q)); }
+  envP.setAttribute('d', de); envP.setAttribute('opacity', P.e);
+  dfT.textContent = `defocus Δf = ${(df / 1e4).toFixed(2)} µm`;
+  // Thon rings: |CTF|² on a 2D grid, edge = q of 3 Å
+  for (let j = 0; j < 240; j++) for (let i = 0; i < 240; i++) {
+    const q = Math.hypot(i - 119.5, j - 119.5) / 120 * 0.2, v = Math.sin(chi(q, df)) ** 2 * E(q) ** 2;
+    const g = q > 0.2 ? 14 : Math.round(20 + 225 * v), o = 4 * (j * 240 + i);
+    im.data[o] = im.data[o + 1] = im.data[o + 2] = g; im.data[o + 3] = 255;
+  }
+  ctx.putImageData(im, 0, 0);
+  mg.setAttribute('opacity', P.m);
+  const k = Math.round(P.k); head.textContent = TX[k][0]; tl.forEach((e, i) => e.textContent = TX[k][i + 1]);
+});
+</script>
+</body></html>

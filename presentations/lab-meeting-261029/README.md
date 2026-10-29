@@ -10,6 +10,12 @@ Source for the animated deck. `index.html` is generated, do not edit it.
 - `tools/build.py` -> `index.html`; `tools/render.sh ID`, `tools/steps.sh ID` render
   checks into `_render/ID/`; `tools/play.mjs` drives the built deck in headless Chrome.
 
+cryoEM section (last 14 slides): `cryo/build_cryo.py` writes it into `deck.json`
+(replacing PDF pages 25-28). Ian's Manim clips are copied into `cryo/`; a media point
+with `seek: [a, b]` plays that beat of the clip once and holds. The optics and
+reconstruction slides are iframes in `interactive/cryo/` driven by `{deck: 'cryo', step}`;
+`tools/cryoshot.sh PAGE STEP` renders one frame.
+
 Navigation: right arrow / space / page down / click = next step, left arrow /
 page up = back, f = full screen, `#sN` in the link opens slide N.
 

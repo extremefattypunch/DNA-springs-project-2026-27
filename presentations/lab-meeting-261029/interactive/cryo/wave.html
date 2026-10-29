@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amplitude and phase objects</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const X0 = 40, X1 = 860, B0 = 360, B1 = 520, AMP = 62, K = 2 * Math.PI / 58, W = 2 * Math.PI * 0.7;
+const rows = [
+  { y: 190, name: 'Amplitude object: absorbs electrons', col: C.est, kind: 'amp' },
+  { y: 470, name: 'Phase object: slows the wave inside (a protein ≈ this)', col: C.obs, kind: 'ph' }
+];
+rows.forEach(r => {
+  r.g = S('g', {}, sv);
+  r.title = S('text', { x: X0, y: r.y - AMP - 34, 'font-size': 22, 'font-weight': 700, fill: r.col, text: r.name }, sv);
+  r.box = S('rect', { x: B0, y: r.y - AMP - 16, width: B1 - B0, height: 2 * AMP + 32, rx: 8, fill: r.kind === 'amp' ? 'rgba(245,161,66,.16)' : 'rgba(79,209,232,.14)', stroke: r.col, 'stroke-width': 2 }, sv);
+  r.ref = S('path', { class: 'w', stroke: C.muted, 'stroke-width': 2, 'stroke-dasharray': '5 6' }, sv);
+  r.w = S('path', { class: 'w', stroke: '#fff', 'stroke-width': 3 }, sv);
+  r.lab = S('text', { x: 640, y: r.y + AMP + 40, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+  // detector pixel
+  S('text', { x: 1030, y: r.y - AMP - 34, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'detector: |ψ|²' }, sv);
+  r.pxRef = S('rect', { x: 935, y: r.y - 50, width: 86, height: 86, rx: 6, stroke: C.grid }, sv);
+  r.pxObj = S('rect', { x: 1040, y: r.y - 50, width: 86, height: 86, rx: 6, stroke: C.grid }, sv);
+  S('text', { x: 978, y: r.y + 60, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'no object' }, sv);
+  S('text', { x: 1083, y: r.y + 60, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: 'with object' }, sv);
+  r.verd = S('text', { x: 1030, y: r.y + 92, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700 }, sv);
+});
+S('line', { x1: 900, y1: 40, x2: 900, y2: 620, stroke: C.grid, 'stroke-width': 1 }, sv);
+const head = S('text', { x: X0, y: 34, class: 'm', 'font-size': 24 }, sv);
+const foot = S('text', { x: X0, y: 676, 'font-size': 20 }, sv);
+const foot2 = S('text', { x: X0, y: 708, 'font-size': 20, class: 'mut' }, sv);
+
+const T = [
+  { a: 0, p: 0, A: 1, PH: 0, f: 0 },
+  { a: 1, p: 0, A: 0.6, PH: 0, f: 0 },
+  { a: 1, p: 1, A: 0.6, PH: 1.6, f: 0 },
+  { a: 1, p: 1, A: 0.6, PH: 1.6, f: 1 }
+];
+function path(fn, xa) {
+  let d = ''; xa = xa || X0;
+  for (let x = xa; x <= X1; x += 3) d += (x === xa ? 'M' : 'L') + x + ',' + fn(x).toFixed(1);
+  return d;
+}
+Cryo.init(T, (P, t) => {
+  const ph0 = W * t;
+  rows.forEach((r, i) => {
+    const on = i === 0 ? P.a : P.p;
+    r.box.setAttribute('opacity', on); r.title.setAttribute('opacity', 0.35 + 0.65 * on);
+    let amp, phase;
+    if (r.kind === 'amp') {
+      const a = lerp(1, P.A, on);
+      amp = x => x < B0 ? 1 : x > B1 ? a : Math.pow(a, (x - B0) / (B1 - B0));
+      phase = () => 0;
+    } else {
+      const F = P.PH * on;
+      amp = () => 1;
+      phase = x => x < B0 ? 0 : x > B1 ? F : F * (x - B0) / (B1 - B0);
+    }
+    r.w.setAttribute('d', path(x => r.y - AMP * amp(x) * Math.sin(K * x - ph0 + phase(x))));
+    r.ref.setAttribute('d', path(x => r.y - AMP * Math.sin(K * x - ph0), B1 + 1));
+    r.ref.setAttribute('opacity', on * 0.9);
+    const I = r.kind === 'amp' ? Math.pow(lerp(1, P.A, on), 2) : 1;
+    const g = Math.round(235 * I);
+    r.pxRef.setAttribute('fill', 'rgb(235,235,235)'); r.pxObj.setAttribute('fill', `rgb(${g},${g},${g})`);
+    r.verd.textContent = on < 0.5 ? '' : (r.kind === 'amp' ? 'darker: visible' : 'identical: invisible');
+    r.verd.setAttribute('fill', r.kind === 'amp' ? C.truth : C.red);
+    r.lab.textContent = on < 0.5 ? '' : (r.kind === 'amp' ? 'amplitude drops, phase unchanged' : 'same amplitude, phase shifted by φ (dashed = no object)');
+  });
+  head.innerHTML = 'Incident plane wave <tspan font-style="italic">Ψ</tspan><tspan baseline-shift="sub" font-size="16">in</tspan> = <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="16" font-style="italic">ikz</tspan>, travelling left to right; the phase shift is exaggerated for display';
+  foot.textContent = P.f > 0.5 ? 'A protein in ice is made of light atoms (C, N, O, H): 300 keV electrons are barely absorbed, but their phase is shifted.' : '';
+  foot2.innerHTML = P.f > 0.5 ? 'The detector counts electrons, |ψ|², and |<tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="14">iφ</tspan>|² = 1: in focus, the protein is nearly invisible.' : '';
+});
+</script>
+</body></html>

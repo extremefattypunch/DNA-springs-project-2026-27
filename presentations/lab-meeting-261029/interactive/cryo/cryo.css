@@ -1,0 +1,10 @@
+html, body { margin: 0; height: 100%; background: #0E1116; overflow: hidden; }
+body { font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; color: #ECEDEF; }
+svg.stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+svg.stage { fill: #ECEDEF; }
+svg text { font-family: "Archivo", "Helvetica Neue", Arial, sans-serif; }
+svg .m { font-family: "STIX Two Text", "Cambria Math", Georgia, serif; }
+svg .mut { fill: #9AA3AE; }
+svg path.w, svg polyline { fill: none; }
+canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+.tag { position: absolute; right: 12px; top: 10px; font: 600 13px "Archivo", sans-serif; letter-spacing: .06em; color: #FFD166; border: 1px solid #FFD166; border-radius: 4px; padding: 2px 7px; }

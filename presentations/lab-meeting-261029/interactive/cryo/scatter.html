@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scattering by diffraction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo.js"></script>
+<script>
+const sv = document.getElementById('sv');
+const AX = 300, OBX = 300, LX = 790, FX = 1010, LAM = 26, WB = 52, V = 40;
+const defs = S('defs', {}, sv);
+const cp = S('clipPath', { id: 'cl' }, defs); const cpr = S('rect', { x: 0, y: 30, width: 1180, height: 540 }, cp);
+const gBeams = S('g', { 'clip-path': 'url(#cl)' }, sv);
+const gInc = S('g', {}, sv);
+const gObj = S('g', {}, sv);
+const lens = S('ellipse', { cx: LX, cy: AX, rx: 13, ry: 250, fill: 'rgba(79,209,232,.15)', stroke: C.obs, 'stroke-width': 2.5 }, sv);
+const lensT = S('text', { x: LX, y: AX + 274, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: 'objective lens' }, sv);
+const bfp = S('line', { x1: FX, y1: AX - 240, x2: FX, y2: AX + 240, stroke: C.grid, 'stroke-width': 2, 'stroke-dasharray': '4 5' }, sv);
+const bfpT = S('text', { x: FX, y: AX + 274, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: 'back focal plane' }, sv);
+const spots = [-1, 0, 1].map(m => S('circle', { r: m ? 9 : 11, fill: m ? C.alt : C.est }, sv));
+const qLab = S('text', { 'font-size': 17, fill: C.alt }, sv);
+const dBr = S('g', {}, sv);
+const dL = S('line', { stroke: C.text, 'stroke-width': 2 }, dBr);
+const dT = S('text', { 'font-size': 24, class: 'm', 'font-style': 'italic', text: 'd', 'text-anchor': 'end' }, dBr);
+const arc = S('path', { class: 'w', stroke: C.text, 'stroke-width': 1.8 }, sv);
+const aT = S('text', { 'font-size': 22, class: 'm', 'font-style': 'italic', text: 'α' }, sv);
+const head = S('text', { x: 30, y: 608, 'font-size': 23, 'font-weight': 700 }, sv);
+const l1 = S('text', { x: 30, y: 646, 'font-size': 19, class: 'mut' }, sv);
+const l2 = S('text', { x: 30, y: 678, 'font-size': 19, class: 'mut' }, sv);
+const l3 = S('text', { x: 30, y: 710, 'font-size': 19, class: 'mut' }, sv);
+S('text', { x: 40, y: 54, 'font-size': 17, fill: C.est, text: 'incident plane wave' }, sv);
+const objT = S('text', { x: OBX, y: 54, 'text-anchor': 'middle', 'font-size': 17, fill: C.alt, text: 'object with repeat d' }, sv);
+
+const T = [
+  { o: 0, d: 150, L: 0, txt: 0 },
+  { o: 1, d: 150, L: 0, txt: 1 },
+  { o: 1, d: 72, L: 0, txt: 2 },
+  { o: 1, d: 72, L: 1, txt: 3 },
+  { o: 1, d: 110, L: 1, txt: 4 }
+];
+const TXT = [
+  ['A plane wave arrives: flat wavefronts, one direction.', '', '', ''],
+  ['A repeat of spacing d sends part of the wave off at angle α.', 'The unscattered wave (orange) carries on; the scattered beams (purple) are weak.', 'Bragg: 2d sin θ = λ, so the scattering angle α = 2θ ≈ λ / d for small angles.', ''],
+  ['Finer detail (smaller d) scatters to larger angles.', 'α ≈ λ q, with spatial frequency q = 1/d: the direction encodes the spatial frequency.', 'At 300 kV, λ = 0.0197 Å: 3 Å detail scatters by only ≈ 6.6 mrad (0.38°).', ''],
+  ['The lens sends each direction to one point of its back focal plane.', 'Distance from the centre ∝ q: the back focal plane holds the Fourier transform of the object.', 'The image forms when these beams recombine with the unscattered wave; their relative', 'phase on the way there decides the contrast (next slides).'],
+  ['Every spacing in the object has its own spot: high resolution = far from the centre.', 'Spot spacing ∝ 1/d (compare with the previous step).', 'The micrograph’s Fourier transform (pipeline slide) is this map, for millions of spacings at once.', '']
+];
+function beamPoly(m, a, x0, x1) {
+  const ta = Math.tan(m * a), w = WB / Math.cos(m * a);
+  const y = x => AX + ta * (x - x0);
+  return `${x0},${y(x0) - w} ${x1},${y(x1) - w} ${x1},${y(x1) + w} ${x0},${y(x0) + w}`;
+}
+const beams = [-1, 0, 1].map(m => ({ m, poly: S('polygon', { fill: m ? 'rgba(180,140,242,.16)' : 'rgba(245,161,66,.16)' }, gBeams),
+  conv: S('polygon', { fill: m ? 'rgba(180,140,242,.16)' : 'rgba(245,161,66,.16)' }, gBeams), fronts: S('g', {}, gBeams) }));
+Cryo.init(T, (P, t) => {
+  const a = Math.atan(LAM / P.d), off = (V * t) % LAM;
+  // incident wavefronts
+  gInc.innerHTML = '';
+  for (let x = 40 + off; x < OBX; x += LAM) S('line', { x1: x, y1: AX - 170, x2: x, y2: AX + 170, stroke: C.est, 'stroke-width': 2.5, opacity: 0.85 }, gInc);
+  // object: point scatterers with repeat d
+  gObj.innerHTML = '';
+  for (let n = -6; n <= 6; n++) { const y = AX + n * P.d; if (Math.abs(y - AX) < 200) S('circle', { cx: OBX, cy: y, r: 9, fill: C.alt, opacity: P.o }, gObj); }
+  objT.setAttribute('opacity', P.o);
+  // beams
+  const xe = P.L > 0.5 ? LX : 1180;
+  beams.forEach(b => {
+    const show = b.m === 0 ? 1 : P.o, ta = Math.tan(b.m * a);
+    b.poly.setAttribute('points', beamPoly(b.m, a, OBX, xe)); b.poly.setAttribute('opacity', show);
+    b.fronts.innerHTML = '';
+    const ca = Math.cos(b.m * a), sa = Math.sin(b.m * a);
+    for (let s = off; s < 1100; s += LAM) {
+      const cx = OBX + s * ca, cy = AX + s * sa; if (cx > xe) break;
+      S('line', { x1: cx + WB * sa, y1: cy - WB * ca, x2: cx - WB * sa, y2: cy + WB * ca, stroke: b.m ? C.alt : C.est, 'stroke-width': 2.5, opacity: show * (b.m ? 0.75 : 0.85) }, b.fronts);
+    }
+    const yl = AX + ta * (LX - OBX), ys = AX + (FX - LX) * ta * 1.0;
+    b.conv.setAttribute('points', `${LX},${yl - WB} ${FX},${ys} ${LX},${yl + WB}`); b.conv.setAttribute('opacity', P.L * show);
+    const sp = spots[b.m + 1]; sp.setAttribute('cx', FX); sp.setAttribute('cy', ys); sp.setAttribute('opacity', P.L * show);
+  });
+  [lens, lensT, bfp, bfpT].forEach(e => e.setAttribute('opacity', P.L));
+  const ys1 = AX + (FX - LX) * Math.tan(a);
+  qLab.setAttribute('x', FX + 18); qLab.setAttribute('y', ys1 + 6); qLab.textContent = 'q = 1/d'; qLab.setAttribute('opacity', P.L);
+  // d bracket and angle
+  dL.setAttribute('x1', OBX - 26); dL.setAttribute('x2', OBX - 26); dL.setAttribute('y1', AX); dL.setAttribute('y2', AX + P.d);
+  dT.setAttribute('x', OBX - 34); dT.setAttribute('y', AX + P.d / 2 + 8); dBr.setAttribute('opacity', P.o);
+  const R = 150;
+  arc.setAttribute('d', `M${OBX + R},${AX} A${R},${R} 0 0 1 ${OBX + R * Math.cos(a)},${AX + R * Math.sin(a)}`); arc.setAttribute('opacity', P.o);
+  aT.setAttribute('x', OBX + R + 10); aT.setAttribute('y', AX + R * Math.sin(a / 2) + 12); aT.setAttribute('opacity', P.o);
+  const k = Math.round(P.txt), L = TXT[clamp(k, 0, TXT.length - 1)];
+  head.textContent = L[0]; l1.textContent = L[1]; l2.textContent = L[2]; l3.textContent = L[3];
+});
+</script>
+</body></html>
