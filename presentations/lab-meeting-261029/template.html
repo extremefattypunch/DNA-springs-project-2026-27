@@ -168,6 +168,12 @@ body {
 .grp::before, .grp::after { content: ""; position: absolute; top: -2px; width: 2px; height: 9px; background: var(--ink-2); }
 .grp::before { left: 0; } .grp::after { right: 0; }
 .grp span { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); white-space: nowrap; font-size: 21px; font-weight: 620; font-stretch: 90%; color: var(--ink); }
+.grp-resin { border-top: 4px solid #b86e00; }
+.grp-resin::before, .grp-resin::after { background: #b86e00; width: 4px; height: 12px; }
+.grp-resin span { background: #b86e00; color: #fff; padding: 3px 12px; border-radius: 999px; font-size: 16px; bottom: 8px; }
+.grp-noresin { border-top: 3px dashed var(--ink-3); }
+.grp-noresin::before, .grp-noresin::after { background: var(--ink-3); }
+.grp-noresin span { background: var(--paper); color: var(--ink-2); border: 2px dashed var(--ink-3); padding: 2px 10px; border-radius: 999px; font-size: 16px; bottom: 40px; }
 
 .lbl {
   position: absolute; display: flex; align-items: center; gap: 10px; box-sizing: border-box;
@@ -648,7 +654,7 @@ function buildPanel(slideEl, spec, P) {
     const x0 = Math.min(...xs.map((x, i) => x - (ls[i].w || 20) / 2)), x1 = Math.max(...xs.map((x, i) => x + (ls[i].w || 20) / 2));
     const hasSub = ls.some(l => l.sub);
     const top = Y(wellAt((x0 + x1) / 2)) - (hasSub ? 58 : 40);
-    const el = h('div', 'grp fade hidden', { style: { left: X(x0) + 'px', top: top + 'px', width: (x1 - x0) * sc + 'px' } });
+    const el = h('div', 'grp fade hidden' + (gp.tone ? ' grp-' + gp.tone : ''), { style: { left: X(x0) + 'px', top: top + 'px', width: (x1 - x0) * sc + 'px' } });
     el.appendChild(h('span', null, { text: gp.label }));
     sim.appendChild(el);
     return { el, lanes: gp.lanes };

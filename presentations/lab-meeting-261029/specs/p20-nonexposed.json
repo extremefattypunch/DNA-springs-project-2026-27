@@ -1,261 +1,263 @@
 {
-  "id": "p20-nonexposed",
-  "image": "gels/p20-nonexposed.jpg",
-  "size": [
-    431,
+ "id": "p20-nonexposed",
+ "image": "gels/p20-nonexposed.jpg",
+ "size": [
+  431,
+  113
+ ],
+ "style": "mid",
+ "alt": "Protein gel of 2-tet pp2a+PEG after TCO resin at four resin:sample ratios, beside 1-tet pp2a+PEG and pp2a reference lanes",
+ "gel": {
+  "poly": [
+   [
+    138,
+    0
+   ],
+   [
+    298,
+    0
+   ],
+   [
+    298,
     113
+   ],
+   [
+    138,
+    113
+   ]
   ],
-  "style": "mid",
-  "alt": "Protein gel of 2-tet pp2a+PEG after TCO resin at four resin:sample ratios, beside 1-tet pp2a+PEG and pp2a reference lanes",
-  "gel": {
-    "poly": [
-      [
-        138,
-        0
-      ],
-      [
-        298,
-        0
-      ],
-      [
-        298,
-        113
-      ],
-      [
-        138,
-        113
-      ]
-    ],
-    "wellY": 2,
-    "tilt": 0
+  "wellY": 2,
+  "tilt": 0
+ },
+ "species": {
+  "protein": {
+   "name": "pp2a only",
+   "note": "no PEG · runs fastest",
+   "cls": "protein",
+   "icon": {
+    "k": "protein",
+    "tet": 0
+   }
   },
-  "species": {
-    "protein": {
-      "name": "pp2a only",
-      "note": "no PEG · runs fastest",
-      "cls": "protein",
-      "icon": {
-        "k": "protein",
-        "tet": 0
-      }
-    },
-    "peg1": {
-      "name": "1 tet pp2a + PEG",
-      "note": "one tet site PEG-capped",
-      "cls": "other",
-      "icon": {
-        "k": "pegp",
-        "tet": 1
-      }
-    },
-    "peg2": {
-      "name": "2 tet pp2a + PEG",
-      "note": "both tet sites PEG-capped",
-      "cls": "other",
-      "icon": {
-        "k": "pegp",
-        "tet": 2
-      }
-    },
-    "imp": {
-      "cls": "impurity"
-    }
+  "peg1": {
+   "name": "1 tet pp2a + PEG",
+   "note": "one tet site PEG-capped",
+   "cls": "other",
+   "icon": {
+    "k": "pegp",
+    "tet": 1
+   }
   },
-  "lanes": [
+  "peg2": {
+   "name": "2 tet pp2a + PEG",
+   "note": "both tet sites PEG-capped",
+   "cls": "other",
+   "icon": {
+    "k": "pegp",
+    "tet": 2
+   }
+  },
+  "imp": {
+   "cls": "impurity"
+  }
+ },
+ "lanes": [
+  {
+   "id": "L1",
+   "x": 158,
+   "w": 19,
+   "label": "1:1",
+   "bands": [
     {
-      "id": "L1",
-      "x": 158,
-      "w": 19,
-      "label": "1:1",
-      "bands": [
-        {
-          "y": 72,
-          "h": 7,
-          "i": 0.4,
-          "sp": "peg2"
-        }
-      ]
-    },
-    {
-      "id": "L2",
-      "x": 182.5,
-      "w": 20,
-      "label": "1:2",
-      "bands": [
-        {
-          "y": 74,
-          "h": 8,
-          "i": 0.6,
-          "sp": "peg2"
-        },
-        {
-          "y": 81,
-          "h": 6,
-          "i": 0.07,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L3",
-      "x": 206,
-      "w": 21,
-      "label": "1:3",
-      "bands": [
-        {
-          "y": 76.5,
-          "h": 10,
-          "i": 0.74,
-          "sp": "peg2"
-        },
-        {
-          "y": 83,
-          "h": 5,
-          "i": 0.15,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L4",
-      "x": 231,
-      "w": 21,
-      "label": "1:4",
-      "bands": [
-        {
-          "y": 77,
-          "h": 10,
-          "i": 0.76,
-          "sp": "peg2"
-        },
-        {
-          "y": 62.5,
-          "h": 17,
-          "i": 0.6,
-          "sp": "peg2",
-          "blur": 1.5
-        },
-        {
-          "y": 84,
-          "h": 5,
-          "i": 0.2,
-          "sp": "imp"
-        },
-        {
-          "y": 97,
-          "h": 6,
-          "i": 0.07,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L5",
-      "x": 254.5,
-      "w": 21,
-      "label": "1tet",
-      "bands": [
-        {
-          "y": 88.5,
-          "h": 12,
-          "i": 0.95,
-          "sp": "peg1"
-        },
-        {
-          "y": 98,
-          "h": 5,
-          "i": 0.2,
-          "sp": "imp"
-        },
-        {
-          "y": 74,
-          "h": 5,
-          "i": 0.15,
-          "sp": "imp"
-        }
-      ]
-    },
-    {
-      "id": "L6",
-      "x": 281,
-      "w": 24,
-      "label": "pp2a",
-      "bands": [
-        {
-          "y": 101,
-          "h": 10,
-          "i": 1.0,
-          "sp": "protein"
-        },
-        {
-          "y": 74,
-          "h": 4,
-          "i": 0.1,
-          "sp": "imp"
-        }
-      ]
+     "y": 72,
+     "h": 7,
+     "i": 0.4,
+     "sp": "peg2"
     }
-  ],
-  "groups": [
+   ]
+  },
+  {
+   "id": "L2",
+   "x": 182.5,
+   "w": 20,
+   "label": "1:2",
+   "bands": [
     {
-      "label": "2 tet + PEG",
-      "lanes": [
-        "L1",
-        "L2",
-        "L3",
-        "L4"
-      ]
+     "y": 74,
+     "h": 8,
+     "i": 0.6,
+     "sp": "peg2"
     },
     {
-      "label": "controls",
-      "lanes": [
-        "L5",
-        "L6"
-      ]
+     "y": 81,
+     "h": 6,
+     "i": 0.07,
+     "sp": "imp"
     }
-  ],
-  "arrows": [],
-  "blank": "Blank gel: resin flow-through lanes and two reference lanes",
-  "steps": [
+   ]
+  },
+  {
+   "id": "L3",
+   "x": 206,
+   "w": 21,
+   "label": "1:3",
+   "bands": [
     {
-      "lanes": [
-        "L6"
-      ],
-      "say": "<b>pp2a alone</b>: with no PEG it runs fastest and sets the reference"
+     "y": 76.5,
+     "h": 10,
+     "i": 0.74,
+     "sp": "peg2"
     },
     {
-      "lanes": [
-        "L5"
-      ],
-      "say": "<b>1 tet pp2a + PEG</b>: one PEG cap slows the protein a little"
-    },
-    {
-      "lanes": [
-        "L1"
-      ],
-      "say": "<b>2 tet + PEG at 1:1</b>: the PEG-capped protein passes through the resin"
-    },
-    {
-      "lanes": [
-        "L2"
-      ],
-      "say": "<b>1:2</b>: more sample per 25 µL of packed resin, more protein recovered"
-    },
-    {
-      "lanes": [
-        "L3"
-      ],
-      "say": "<b>1:3</b>: the flow-through band keeps getting stronger"
-    },
-    {
-      "lanes": [
-        "L4"
-      ],
-      "say": "<b>1:4</b>: most protein recovered; capped (non-exposed) tet is not trapped"
-    },
-    {
-      "real": true,
-      "say": "Real gel, as imaged"
+     "y": 83,
+     "h": 5,
+     "i": 0.15,
+     "sp": "imp"
     }
-  ]
+   ]
+  },
+  {
+   "id": "L4",
+   "x": 231,
+   "w": 21,
+   "label": "1:4",
+   "bands": [
+    {
+     "y": 77,
+     "h": 10,
+     "i": 0.76,
+     "sp": "peg2"
+    },
+    {
+     "y": 62.5,
+     "h": 17,
+     "i": 0.6,
+     "sp": "peg2",
+     "blur": 1.5
+    },
+    {
+     "y": 84,
+     "h": 5,
+     "i": 0.2,
+     "sp": "imp"
+    },
+    {
+     "y": 97,
+     "h": 6,
+     "i": 0.07,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L5",
+   "x": 254.5,
+   "w": 21,
+   "label": "1tet",
+   "bands": [
+    {
+     "y": 88.5,
+     "h": 12,
+     "i": 0.95,
+     "sp": "peg1"
+    },
+    {
+     "y": 98,
+     "h": 5,
+     "i": 0.2,
+     "sp": "imp"
+    },
+    {
+     "y": 74,
+     "h": 5,
+     "i": 0.15,
+     "sp": "imp"
+    }
+   ]
+  },
+  {
+   "id": "L6",
+   "x": 281,
+   "w": 24,
+   "label": "pp2a",
+   "bands": [
+    {
+     "y": 101,
+     "h": 10,
+     "i": 1.0,
+     "sp": "protein"
+    },
+    {
+     "y": 74,
+     "h": 4,
+     "i": 0.1,
+     "sp": "imp"
+    }
+   ]
+  }
+ ],
+ "groups": [
+  {
+   "label": "through TCO resin",
+   "lanes": [
+    "L1",
+    "L2",
+    "L3",
+    "L4"
+   ],
+   "tone": "resin"
+  },
+  {
+   "label": "NOT through resin",
+   "lanes": [
+    "L5",
+    "L6"
+   ],
+   "tone": "noresin"
+  }
+ ],
+ "arrows": [],
+ "blank": "Blank gel: resin flow-through lanes and two reference lanes",
+ "steps": [
+  {
+   "lanes": [
+    "L6"
+   ],
+   "say": "<b>pp2a alone</b>: with no PEG it runs fastest and sets the reference"
+  },
+  {
+   "lanes": [
+    "L5"
+   ],
+   "say": "<b>1 tet pp2a + PEG</b>: one PEG cap slows the protein a little"
+  },
+  {
+   "lanes": [
+    "L1"
+   ],
+   "say": "<b>2 tet + PEG at 1:1</b>: the PEG-capped protein passes through the resin"
+  },
+  {
+   "lanes": [
+    "L2"
+   ],
+   "say": "<b>1:2</b>: more sample per 25 µL of packed resin, more protein recovered"
+  },
+  {
+   "lanes": [
+    "L3"
+   ],
+   "say": "<b>1:3</b>: the flow-through band keeps getting stronger"
+  },
+  {
+   "lanes": [
+    "L4"
+   ],
+   "say": "<b>1:4</b>: most protein recovered; capped (non-exposed) tet is not trapped"
+  },
+  {
+   "real": true,
+   "say": "Real gel, as imaged"
+  }
+ ]
 }
