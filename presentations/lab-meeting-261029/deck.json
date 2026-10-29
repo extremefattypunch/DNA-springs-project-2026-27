@@ -1074,6 +1074,58 @@
    ]
   },
   {
+   "kind": "media",
+   "page": "12g",
+   "section": "md",
+   "figW": 1100,
+   "exH": 600,
+   "title": "sfGFP: why fluorometry saw no change across ss, ds and nicked",
+   "q": "Excitation/emission wavelengths and band ratio barely moved. Does the MD explain it?",
+   "items": [
+    {
+     "video": "md/sfgfp/S3_spring27_chromophore.mp4",
+     "poster": "md/sfgfp/S3_spring27_chromophore_still.png",
+     "cap": "Chromophore (green) inside the barrel with the 27 bp spring attached; dashed: its three key H-bonds"
+    },
+    {
+     "img": "md/sfgfp/fig3_chromophore_hbonds.png",
+     "w": 1703,
+     "h": 1331,
+     "cap": "Occupancy of each chromophore H-bond, per system (ticks = replicates, filled = mean)"
+    }
+   ],
+   "explain": [
+    {
+     "item": 0,
+     "text": "<b>What sets the colour and brightness.</b> The chromophore (CRO 66) is buried in the β-barrel and held flat by a <dfn>hydrogen-bond network</dfn>: Thr203 and His148 to the phenolate oxygen, Arg96 and Gln94 to the imidazolinone carbonyl. Its <dfn>excitation/emission wavelengths</dfn> depend on this electrostatic environment and its protonation state; its <dfn>brightness</dfn> drops if it can twist about the two bonds of the methine bridge (a free chromophore is essentially dark). His148 sits between the two attachment sites, the mechanical path from the spring to the fluorophore."
+    },
+    {
+     "item": 1,
+     "text": "Each row is one hydrogen bond around the chromophore; x-axis: <dfn>occupancy</dfn>, the % of frames in which the bond is formed (H···acceptor &lt; 2.5 Å and angle &gt; 120°). Ticks are individual replicates, filled symbols the means; one colour per system (WT, 2× Tet2-Et, clicked no DNA, 27 / 40 / 40-nicked bp springs). If a spring were prising the barrel open near the chromophore, the load-bearing bonds would fall."
+    }
+   ],
+   "points": [
+    {
+     "text": "Load-bearing bonds hold in <b>every</b> system: Arg96 100 %, Thr203 96–97 %, Gln94 92–97 %",
+     "hl": 1
+    },
+    {
+     "text": "His148 → phenolate: 72 % (WT) vs 72–82 % with springs, inside its own 39–92 % replicate scatter",
+     "hl": 1
+    },
+    {
+     "text": "Chromophore planarity unchanged: bridge twists τ 5.1–5.6°, φ 6.0–6.5° in all systems; cavity water 9–11 molecules",
+     "hl": 0
+    },
+    {
+     "text": "The barrel is stiff: RMSF ≈ 0.4 Å on the strands, κ ≈ 350 k<sub>B</sub>T nm⁻², so even ~30 pN moves the sites by &lt; 0.1 Å (slides 15–16)"
+    },
+    {
+     "text": "<b>Answer</b>: the springs never deform the chromophore’s environment, so no wavelength shift or band-ratio change is expected; seeing one would need a softer site or far stronger force"
+    }
+   ]
+  },
+  {
    "kind": "image",
    "page": 13,
    "src": "slides/p-13.jpg",
