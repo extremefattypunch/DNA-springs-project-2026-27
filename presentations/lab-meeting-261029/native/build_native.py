@@ -65,7 +65,7 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
 RESIN = {'kind': 'media', 'page': '19b', 'section': 'synthesis', 'title': 'How the TCO resin test works', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Is the new band a circular product? A resin that grabs any free Tet group can tell',
   'items': [{'iframe': 'interactive/resin.html', 'title': 'TCO resin capture', 'cap': 'Schematic of TCO resin capture (not to scale)'}],
-  'points': [{'text': t, 'msg': {'step': i + 1}} for i, t in enumerate([
+  'points': [{'text': t, 'msg': {'step': i}} for i, t in enumerate([
     '<b>TCO resin</b>: beads coated with TCO groups, which click onto Tet, the same chemistry that attaches our DNA',
     'A protein with an <b>exposed Tet</b> clicks onto the beads and is <b>trapped</b>: nothing comes out in the flow-through',
     '<b>Excess TCO-PEG</b> caps every Tet on 2-tet pp2a, leaving none exposed',
@@ -254,7 +254,7 @@ for s in deck['slides']:
     for parent, child in ((1, '1b'), (1, '1c'), (29, '29b'), (30, '30b')):
         if pg == parent and child in ('1b', '1c'):   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
-INTRO = {11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
+INTRO = {'19b': 'But we haven’t asked: is this new band <b>truly a circular product</b>?<br><br>The most definitive answer is to run a <b>TCO resin test</b>.', 11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
 for x in out:
     if x.get('page') in INTRO: x['intro'] = INTRO[x['page']]
     if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)
