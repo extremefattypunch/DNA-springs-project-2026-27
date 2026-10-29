@@ -383,7 +383,7 @@
      "x": 96,
      "y": 820,
      "w": 1728,
-     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum: concentration-independent up to 8 µM (previous slide), and every reading here is ≤ 10 µM. Concentrations under each bar, in chronological order. <b>*</b> Attempt 1 is only an estimate: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled."
+     "html": "<b>Band ratio</b> = I(400) / I(peak) on the lamp-corrected excitation spectrum: concentration-independent up to 8 µM, and every reading here is ≤ 10 µM. Concentrations under each bar, in chronological order. <b>Attempt 1’s concentrations (≈ 4 µM) are only estimates</b>, not measured: we had no accurate BCA or NanoDrop readings yet and trusted a 40 µM stock that turned out to be mislabelled. Its band ratios themselves are real measurements."
     }
    ]
   },
@@ -408,7 +408,10 @@
      "html": "<b>Band ratio</b> = I(400) / I(peak). All three constructs (ssDNA, dsDNA, nicked dsDNA chimeras) at <b>10 µM</b> in both attempts, inside the range where the ratio is concentration-independent."
     }
    ],
-   "top": 220
+   "top": 220,
+   "banner": {
+    "html": "<span class=\"ttl\">Headline result</span>The band ratio is <b>roughly the same for ssDNA, dsDNA and nicked dsDNA</b> chimeras in both attempts (≈ 0.11–0.13).<br><br><b>No meaningful trend</b> with spring force, unlike the clear drop seen for tet quenching."
+   }
   },
   {
    "kind": "media",

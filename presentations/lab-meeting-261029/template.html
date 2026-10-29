@@ -1143,6 +1143,11 @@ function buildSlide(cfg, idx) {
       S.panels.push(G);
       spec.steps.forEach((st, k) => S.steps.push({ panel: pi, k: k + 1 }));
     });
+    if (cfg.banner) {                    // headline banner overlay as the slide's last step
+      const bn = h('div', 'm-banner', { html: cfg.banner.html }); el.appendChild(bn);
+      S.panels.push({ kind: 'media', apply(k) { bn.classList.toggle('on', k > 0); } });
+      S.steps.push({ panel: S.panels.length - 1, k: 1 });
+    }
     for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
   }
   slides.push(S);

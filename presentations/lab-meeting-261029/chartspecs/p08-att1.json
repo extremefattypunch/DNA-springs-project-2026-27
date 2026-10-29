@@ -5,7 +5,7 @@
   856,
   527
  ],
- "title": "Attempt 1 · 2026-08-12",
+ "title": "Attempt 1 · 2026-08-12 · concentrations estimated",
  "sub": "lamp-corrected excitation (S1÷R1) · mean ±1 SD · dots are replicates",
  "zero": 478.5,
  "ppu": 2044,
@@ -31,7 +31,7 @@
     0.1545
    ],
    "x": 194,
-   "sub": "4 µM*"
+   "sub": "≈ 4 µM (est.)"
   },
   {
    "label": "1-tet",
@@ -42,7 +42,7 @@
     0.1196
    ],
    "x": 329,
-   "sub": "4 µM*"
+   "sub": "≈ 4 µM (est.)"
   },
   {
    "label": "2-tet",
@@ -52,7 +52,7 @@
     0.1088,
     0.109
    ],
-   "sub": "4 µM*",
+   "sub": "≈ 4 µM (est.)",
    "x": 463
   }
  ],
