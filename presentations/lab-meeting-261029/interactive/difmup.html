@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DiFMUP phosphatase assay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* DiFMUP assay as run by Day et al. 2025 (Fig. S4D): 20 nM AC core with excess (200 nM) B56γ, DiFMUP
+   2-128 µM in triplicate; initial velocity from a linear fit of fluorescence vs time; Michaelis-Menten fit.
+   Aα: KM 25.6 µM, Vmax 60.1 fluorescence/s; Aβ: KM 34.9 µM, Vmax 56.8. Molecule drawing is schematic. */
+const sv = document.getElementById('sv');
+const MM = [{ name: 'Aα–B56γ–C', km: 25.6, vm: 60.1, col: '#e5484d' }, { name: 'Aβ–B56γ–C', km: 34.9, vm: 56.8, col: '#9aa3ae' }];
+const v = (s, S0) => s.vm * S0 / (s.km + S0);
+/* left: the well */
+S('rect', { x: 40, y: 90, width: 420, height: 470, rx: 18, fill: 'rgba(79,209,232,.05)', stroke: '#3a424d', 'stroke-width': 2 }, sv);
+S('text', { x: 250, y: 74, 'text-anchor': 'middle', 'font-size': 17, class: 'mut', text: 'one well of the plate' }, sv);
+const well = S('g', {}, sv);
+const enzymes = [[150, 220], [330, 300], [190, 430], [360, 480]];
+const hash = n => { const x = Math.sin(n) * 43758.5453; return x - Math.floor(x); };
+const subs = Array.from({ length: 34 }, (_, i) => ({ x: 75 + hash(i * 12.9898 + 1) * 350, y: 125 + hash(i * 78.233 + 7) * 410, ph: hash(i * 3.17) }));
+const legend = S('g', {}, sv);
+/* right: plots */
+const R = S('g', {}, sv);
+const A = { x0: 540, x1: 1140, y0: 300, y1: 70 }, Bx = { x0: 540, x1: 1140, y0: 590, y1: 360 };
+function axes(g, a, xl, yl, ticksX) {
+  S('line', { x1: a.x0, y1: a.y0, x2: a.x1, y2: a.y0, stroke: C.grid }, g); S('line', { x1: a.x0, y1: a.y0, x2: a.x0, y2: a.y1, stroke: C.grid }, g);
+  S('text', { x: (a.x0 + a.x1) / 2, y: a.y0 + 34, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: xl }, g);
+  S('text', { x: a.x0 - 6, y: a.y1 - 10, 'font-size': 15, class: 'mut', text: yl }, g);
+  (ticksX || []).forEach(([v, x]) => S('text', { x, y: a.y0 + 17, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: v }, g));
+}
+const g1 = S('g', {}, R), g2 = S('g', {}, R);
+axes(g1, A, 'time (min)', 'DiFMU fluorescence', []);
+const tr = S('path', { class: 'w', stroke: '#6fa8ff', 'stroke-width': 3 }, g1), slope = S('g', {}, g1);
+const sx = S0 => Bx.x0 + (Bx.x1 - Bx.x0) * S0 / 135, vy = val => Bx.y0 - (Bx.y0 - Bx.y1) * val / 65;
+axes(g2, Bx, '[DiFMUP] (µM)', 'velocity v (fluorescence/s)', [[0, sx(0)], [32, sx(32)], [64, sx(64)], [96, sx(96)], [128, sx(128)]]);
+[0, 20, 40, 60].forEach(t => S('text', { x: Bx.x0 - 8, y: vy(t) + 4, 'text-anchor': 'end', 'font-size': 12, class: 'mut', text: t }, g2));
+const mm = S('g', {}, g2);
+const foot = S('text', { x: 590, y: 668, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 700, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+const CONCS = [2, 4, 8, 16, 32, 64, 128];
+const TX = [
+  ['The enzyme: assembled PP2A holoenzyme, 20 nM AC core + excess B56γ', 'each holoenzyme is one A–B56γ–C complex (red A, blue B56γ, orange C)'],
+  ['Add DiFMUP: a phosphate-carrying substrate that is NOT fluorescent', 'PP2A removes the phosphate (P) → DiFMU, which glows blue (excite 358 nm, emit 455 nm)'],
+  ['A plate reader follows the blue fluorescence over time', 'the initial slope = reaction velocity v at this substrate concentration'],
+  ['Repeat at [DiFMUP] = 2–128 µM, in triplicate', 'v rises, then saturates: fit v = V_max[S] / (K_M + [S])'],
+  ['Aα and Aβ holoenzymes: virtually the same curve', 'K_M 25.6 vs 34.9 µM, V_max 60.1 vs 56.8 fluorescence/s: same activity, yet different B56 binding (BLI)']
+];
+const T = TX.map((_, k) => ({ k }));
+let ph = 0;
+Cryo.init(T, (P, t, dt) => {
+  ph += Math.max(0, dt || 0);
+  const k = Math.round(P.k);
+  well.innerHTML = ''; legend.innerHTML = '';
+  enzymes.forEach(([x, y]) => { S('path', { d: `M${x - 26},${y + 8} Q${x},${y - 22} ${x + 26},${y + 8}`, class: 'w', stroke: '#e5484d', 'stroke-width': 9, 'stroke-linecap': 'round' }, well);
+    S('circle', { cx: x - 12, cy: y - 18, r: 13, fill: '#3b82f6' }, well); S('circle', { cx: x + 14, cy: y - 14, r: 11, fill: '#f2a33a' }, well); });
+  if (k >= 1) subs.forEach((s, i) => {
+    const conv = Cryo.static ? (i % 3 === 0) : ((ph * 0.25 + s.ph) % 1) < (k >= 2 ? 0.55 : 0.35);
+    S('circle', { cx: s.x, cy: s.y, r: 8, fill: conv ? '#7cb8ff' : '#5b6470', opacity: conv ? 1 : .9 }, well);
+    if (conv) S('circle', { cx: s.x, cy: s.y, r: 14, fill: '#7cb8ff', opacity: .25 }, well);
+    else S('text', { x: s.x + 10, y: s.y - 6, 'font-size': 12, 'font-weight': 700, fill: '#ffd166', text: 'P' }, well); });
+  if (k >= 1) { [['#5b6470', 'DiFMUP (with phosphate P): dark'], ['#7cb8ff', 'DiFMU (phosphate removed): fluorescent']].forEach(([c, n], i) => {
+      S('circle', { cx: 70, cy: 590 + i * 26, r: 8, fill: c }, legend); S('text', { x: 86, y: 595 + i * 26, 'font-size': 15, fill: '#c9d1d9', text: n }, legend); }); }
+  // time trace
+  g1.setAttribute('opacity', k >= 2 ? 1 : .25);
+  let d = ''; const tmax = Cryo.static ? 1 : Math.min(1, (ph % 6) / 4);
+  for (let i = 0; i <= 100 * (k >= 2 ? (k === 2 ? tmax : 1) : 0); i++) { const u = i / 100; d += (i ? 'L' : 'M') + (A.x0 + (A.x1 - A.x0) * u).toFixed(1) + ',' + (A.y0 - (A.y0 - A.y1) * .9 * (1 - Math.exp(-u * 1.4)) / (1 - Math.exp(-1.4))).toFixed(1); }
+  tr.setAttribute('d', d || 'M0,0');
+  slope.innerHTML = '';
+  if (k >= 2) { S('line', { x1: A.x0, y1: A.y0, x2: A.x0 + 260, y2: A.y0 - 190, stroke: C.label, 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, slope);
+    S('text', { x: A.x0 + 200, y: A.y0 - 190, 'font-size': 17, 'font-weight': 700, fill: C.label, text: 'initial slope = v' }, slope); }
+  // MM plot
+  g2.setAttribute('opacity', k >= 3 ? 1 : .25);
+  mm.innerHTML = '';
+  if (k >= 3) MM.forEach((s, i) => { if (i === 1 && k < 4) return;
+    let dd = ''; for (let S0 = 0; S0 <= 130; S0 += 1) dd += (S0 ? 'L' : 'M') + sx(S0).toFixed(1) + ',' + vy(v(s, S0)).toFixed(1);
+    S('path', { d: dd, class: 'w', stroke: s.col, 'stroke-width': 3.2 }, mm);
+    CONCS.forEach(c => S('circle', { cx: sx(c), cy: vy(v(s, c)), r: 5.5, fill: s.col }, mm));
+    S('text', { x: sx(128) - 6, y: i ? vy(v(s, 128)) + 26 : vy(v(s, 128)) - 14, 'text-anchor': 'end', 'font-size': 15, 'font-weight': 700, fill: s.col, text: `${s.name}: K_M ${s.km} µM, V_max ${s.vm}` }, mm);
+    if (i === 0) { S('line', { x1: sx(0), x2: sx(130), y1: vy(s.vm), y2: vy(s.vm), stroke: s.col, 'stroke-dasharray': '4 5', opacity: .6 }, mm);
+      S('line', { x1: sx(s.km), x2: sx(s.km), y1: vy(0), y2: vy(s.vm / 2), stroke: s.col, 'stroke-dasharray': '4 5', opacity: .6 }, mm);
+      S('text', { x: sx(s.km) + 6, y: vy(4), 'font-size': 13, fill: s.col, text: 'K_M: half of V_max' }, mm); }
+  });
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>

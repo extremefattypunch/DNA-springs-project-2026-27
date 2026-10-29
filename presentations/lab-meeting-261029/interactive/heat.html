@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HEAT repeats</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* Schematic of the PP2A A subunit: 15 HEAT repeats (~39 residues each: helix A - turn - helix B)
+   stack into a horseshoe; flexible hinge around HEAT 11-12 (Day et al. 2025). Tet sites of our Aα construct:
+   D6X (N-terminus, before HEAT 1) and N552X (HEAT 14). Not to scale. */
+const sv = document.getElementById('sv');
+const g = S('g', {}, sv);
+function helix(p, x1, y1, x2, y2, w, col) {      // a helix drawn as a coiled ribbon
+  const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, nx = -uy, ny = ux, turns = L / 18;
+  let d = ''; for (let i = 0; i <= 80; i++) { const u = i / 80, s = Math.sin(u * turns * Math.PI * 2) * w;
+    d += (i ? 'L' : 'M') + (x1 + ux * L * u + nx * s).toFixed(1) + ',' + (y1 + uy * L * u + ny * s).toFixed(1); }
+  S('path', { d, class: 'w', stroke: col, 'stroke-width': 5, 'stroke-linecap': 'round' }, p);
+}
+function repeat(p, cx, cy, ang, sc, colA, colB, n) {   // one HEAT repeat: two antiparallel helices + turn
+  const c = Math.cos(ang), s = Math.sin(ang), h = 70 * sc, gap = 17 * sc;
+  const P = (dx, dy) => [cx + dx * c - dy * s, cy + dx * s + dy * c];
+  const [a1x, a1y] = P(-gap, h), [a2x, a2y] = P(-gap, -h), [b1x, b1y] = P(gap, -h), [b2x, b2y] = P(gap, h);
+  helix(p, a1x, a1y, a2x, a2y, 7 * sc, colA); helix(p, b1x, b1y, b2x, b2y, 7 * sc, colB);
+  S('path', { d: `M${a2x},${a2y} Q${P(0, -h - 22 * sc).join(',')} ${b1x},${b1y}`, class: 'w', stroke: '#c9d1d9', 'stroke-width': 3 }, p);
+  if (n) S('text', { x: P(0, h + 30 * sc)[0], y: P(0, h + 30 * sc)[1], 'text-anchor': 'middle', 'font-size': 14, class: 'mut', text: n }, p);
+}
+const foot = S('text', { x: 590, y: 676, 'text-anchor': 'middle', 'font-size': 23, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 708, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+const TX = [
+  ['One HEAT repeat: ≈ 39 residues folded into two antiparallel α-helices joined by a turn', 'named after proteins that have them: Huntingtin, Elongation factor 3, PP2A A subunit, TOR'],
+  ['Repeats pack side by side like the slats of a fence', 'neighbouring helices are held together by hydrophobic contacts, so the stack is continuous'],
+  ['15 repeats curve into a horseshoe: the PP2A A subunit (Aα, 589 residues)', 'B binds HEAT 1–10, C binds HEAT 11–15; a flexible hinge near HEAT 11–12 lets the arc open and close'],
+  ['Our construct: Aα with two Tet groups for the DNA spring', 'D6X at the N-terminus (before HEAT 1) and N552X in HEAT 14: the spring spans the whole horseshoe']
+];
+const T = TX.map((_, k) => ({ k, n: [1, 5, 15, 15][k], arc: k >= 2 ? 1 : 0 }));
+Cryo.init(T, P => {
+  g.innerHTML = '';
+  const k = Math.round(P.k), arc = P.arc, n = Math.round(P.n);
+  const sc = k === 0 ? 1.6 : k === 1 ? 1.15 : 0.62;
+  for (let i = 0; i < n; i++) {
+    const u = n === 1 ? .5 : i / 14;
+    // straight row (arc = 0) -> horseshoe (arc = 1)
+    const xs = 590 + (i - (n - 1) / 2) * (k === 1 ? 92 : 52), ys = 300;
+    const th = Math.PI * (1.12 - 1.24 * u), R = 260;
+    const xa = 590 + R * Math.cos(th), ya = 360 - R * Math.sin(th) * 0.9;
+    const x = k === 0 ? 590 : lerp(xs, xa, arc), y = k === 0 ? 300 : lerp(ys, ya, arc);
+    const ang = lerp(0, Math.PI / 2 - th, arc);
+    const hinge = k >= 2 && (i === 10 || i === 11);
+    repeat(g, x, y, ang, sc, hinge ? '#ffd166' : '#e5484d', hinge ? '#ffd166' : '#f28b8f', k >= 2 && (i === 0 || i === 14 || i === 10) ? 'HEAT ' + (i + 1) : (k === 1 ? 'HEAT ' + (i + 1) : ''));
+  }
+  if (k === 0) { S('text', { x: 470, y: 300, 'text-anchor': 'end', 'font-size': 20, fill: '#e5484d', text: 'helix A' }, g); S('text', { x: 710, y: 300, 'font-size': 20, fill: '#f28b8f', text: 'helix B' }, g);
+    S('text', { x: 590, y: 115, 'text-anchor': 'middle', 'font-size': 18, fill: '#c9d1d9', text: 'turn' }, g); }
+  if (k >= 2) { S('text', { x: 590, y: 370, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: '#e5484d', text: 'A subunit: 15 HEAT repeats' }, g);
+    S('text', { x: 860, y: 150, 'font-size': 17, fill: '#ffd166', text: 'flexible hinge (HEAT 11–12)' }, g); }
+  if (k === 3) { [[590 + 260 * Math.cos(Math.PI * 1.12) - 10, 360 - 260 * Math.sin(Math.PI * 1.12) * .9 + 70, 'D6X'], [590 + 260 * Math.cos(Math.PI * (1.12 - 1.24 * 13 / 14)), 360 - 260 * Math.sin(Math.PI * (1.12 - 1.24 * 13 / 14)) * .9 + 40, 'N552X']].forEach(([x, y, n]) => {
+      S('circle', { cx: x, cy: y, r: 13, fill: '#3fd9a0' }, g); S('text', { x, y: y + 36, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700, fill: '#3fd9a0', text: n + ' (Tet)' }, g); }); }
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biolayer interferometry</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* BLI as run by Day et al. 2025 (Structure 33:1688; STAR Methods, Fig. 5, S8): B56 immobilised on an
+   AR2G biosensor (amine coupling), AC core dimer as analyte, 1:1 binding fit. Rate constants: Fig. 5B,
+   B56α: AαC ka 2.62e5 /M/s, kd 6.73e-3 /s; AβC ka 1.13e5, kd 1.37e-2. Curves drawn at 125 nM analyte;
+   phase timings and the response scale are illustrative. */
+const sv = document.getElementById('sv');
+const CONC = 125e-9, RMAX = 1.0, TB = 60, TA = 300, TD = 300, TT = TB + TA + TD;
+const SYS = [{ name: 'AαC', ka: 2.62e5, kd: 6.73e-3, col: '#e5484d', kD: '25.7 nM' }, { name: 'AβC', ka: 1.13e5, kd: 1.37e-2, col: '#9aa3ae', kD: '119.9 nM' }];
+function resp(s, t) {
+  if (t < TB) return 0;
+  const kobs = CONC * s.ka + s.kd, req = RMAX * CONC * s.ka / kobs;
+  if (t < TB + TA) return req * (1 - Math.exp(-kobs * (t - TB)));
+  const r0 = req * (1 - Math.exp(-kobs * TA));
+  return r0 * Math.exp(-s.kd * (t - TB - TA));
+}
+/* left: wells and the biosensor tip */
+const L = S('g', {}, sv);
+const WELLS = [['buffer', 90], ['AC core dimer', 230], ['buffer', 370]];
+WELLS.forEach(([n, x], i) => { S('rect', { x: x - 55, y: 430, width: 110, height: 150, rx: 10, fill: i === 1 ? 'rgba(229,72,77,.14)' : 'rgba(79,209,232,.10)', stroke: '#3a424d', 'stroke-width': 2 }, L);
+  S('text', { x, y: 606, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: n }, L); });
+const wellDots = S('g', {}, L);
+for (let i = 0; i < 18; i++) { const x = 188 + ((i * 7919) % 71), y = 455 + ((i * 104729) % 101); S('circle', { cx: x, cy: y, r: 6, fill: '#e5484d' }, wellDots); S('circle', { cx: x + 8, cy: y - 5, r: 5, fill: '#f2a33a' }, wellDots); }
+const tip = S('g', {}, L);
+const tipT = S('text', { 'text-anchor': 'middle', 'font-size': 15, fill: '#c9d1d9' }, L);
+const light = S('g', {}, L);
+/* right: sensorgram */
+const X0 = 520, X1 = 1140, Y0 = 540, Y1 = 200;
+const tx = t => X0 + (X1 - X0) * t / TT, ry = r => Y0 - (Y0 - Y1) * r / 1.0;
+S('line', { x1: X0, y1: Y0, x2: X1, y2: Y0, stroke: C.grid }, sv); S('line', { x1: X0, y1: Y0, x2: X0, y2: Y1, stroke: C.grid }, sv);
+S('text', { x: (X0 + X1) / 2, y: Y0 + 34, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: 'time (s)' }, sv);
+S('text', { x: X0 - 12, y: Y1 - 16, 'font-size': 16, class: 'mut', text: 'response Δλ (nm): bound mass on the tip' }, sv);
+[0, 200, 400, 600].forEach(v => S('text', { x: tx(v), y: Y0 + 18, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: v }, sv));
+const phases = S('g', {}, sv);
+[[0, TB, 'baseline'], [TB, TB + TA, 'association: k_on'], [TB + TA, TT, 'dissociation: k_off']].forEach(([a, b, n], i) => {
+  S('rect', { x: tx(a), y: Y1, width: tx(b) - tx(a), height: Y0 - Y1, fill: i === 1 ? 'rgba(229,72,77,.06)' : 'rgba(79,209,232,.05)' }, phases);
+  S('text', { x: (tx(a) + tx(b)) / 2, y: Y1 + 22, 'text-anchor': 'middle', 'font-size': 15, class: 'mut', text: n }, phases); });
+const curves = SYS.map(s => S('path', { class: 'w', stroke: s.col, 'stroke-width': 3.5 }, sv));
+const clabs = SYS.map(s => S('text', { 'font-size': 17, 'font-weight': 700, fill: s.col }, sv));
+const fit = S('g', {}, sv);
+const foot = S('text', { x: 590, y: 668, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 700, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+const TX = [
+  ['The biosensor: an optical fibre tip coated with B56 (AR2G, amine coupling)', 'light reflected from the tip interferes; mass binding to the tip shifts the reflected wavelength by Δλ'],
+  ['Baseline: the tip sits in buffer, nothing binds', 'Δλ stays flat'],
+  ['Association: dip into AC core dimer (Aα–C here; 31–500 nM series)', 'AC binds the immobilised B56, mass builds up, Δλ rises; how fast sets k_on'],
+  ['Dissociation: back into buffer', 'AC falls off B56, Δλ decays; how fast sets k_off'],
+  ['Repeat with Aβ–C: less binds, and it falls off faster', 'a 1:1 binding fit gives k_on, k_off and K_D = k_off / k_on (B56α shown)']
+];
+const T = TX.map((_, k) => ({ k }));
+let clock = 0, lastK = -1;
+Cryo.init(T, (P, t, dt) => {
+  const k = Math.round(P.k);
+  if (k !== lastK) { clock = k <= 1 ? 0 : k === 2 ? TB : k === 3 ? TB + TA : 0; lastK = k; }
+  const stop = [0, TB, TB + TA, TT, TT][k];
+  clock = Cryo.static ? stop : Math.min(stop, clock + Math.max(0, dt || 0) * 90);
+  const tt = k === 4 ? TT : clock;
+  // tip position: which well
+  const well = k <= 1 ? 0 : (k === 2 || (k === 4 && false) ? 1 : 2), wx = k === 0 ? 230 : WELLS[well][1];
+  const dip = k === 0 ? 0 : 1, ty = 140 + dip * 330;
+  tip.innerHTML = '';
+  S('rect', { x: wx - 10, y: 40, width: 20, height: ty - 40, fill: '#c9d1d9' }, tip);
+  S('rect', { x: wx - 14, y: ty - 6, width: 28, height: 12, rx: 4, fill: '#3b82f6' }, tip);
+  const bound = k === 0 ? 0 : resp(SYS[0], tt);
+  for (let i = 0; i < 5; i++) { const x = wx - 12 + i * 6; S('circle', { cx: x, cy: ty + 10, r: 4.5, fill: '#3b82f6' }, tip);
+    if (i < Math.round(bound * 5)) { S('circle', { cx: x, cy: ty + 20, r: 4.5, fill: '#e5484d' }, tip); S('circle', { cx: x + 3, cy: ty + 27, r: 3.5, fill: '#f2a33a' }, tip); } }
+  tipT.setAttribute('x', wx + 70); tipT.setAttribute('y', 70); tipT.textContent = 'optical fibre';
+  light.innerHTML = '';
+  if (k === 0) { S('text', { x: wx + 30, y: ty + 4, 'font-size': 15, fill: '#3b82f6', text: '← B56 immobilised on the tip' }, light);
+    S('path', { d: `M${wx - 4},60 L${wx - 4},${ty - 10}`, class: 'w', stroke: '#ffd166', 'stroke-width': 3, 'stroke-dasharray': '8 6' }, light);
+    S('path', { d: `M${wx + 4},${ty - 10} L${wx + 4},60`, class: 'w', stroke: '#ffd166', 'stroke-width': 3, 'stroke-dasharray': '3 5' }, light);
+    S('text', { x: wx - 20, y: 100, 'text-anchor': 'end', 'font-size': 15, fill: '#ffd166', text: 'white light in, reflected out' }, light); }
+  wellDots.setAttribute('opacity', k >= 2 ? 1 : .35);
+  // sensorgram
+  SYS.forEach((s, i) => {
+    const show = i === 0 ? k >= 1 : k === 4;
+    if (!show) { curves[i].setAttribute('d', 'M0,0'); clabs[i].textContent = ''; return; }
+    let d = ''; for (let tq = 0; tq <= tt; tq += 2) d += (d ? 'L' : 'M') + tx(tq).toFixed(1) + ',' + ry(resp(s, tq)).toFixed(1);
+    curves[i].setAttribute('d', d);
+    clabs[i].setAttribute('x', tx(TB + TA) - 6); clabs[i].setAttribute('y', ry(resp(s, TB + TA)) - 12); clabs[i].setAttribute('text-anchor', 'end');
+    clabs[i].textContent = k >= 2 ? s.name : '';
+  });
+  fit.innerHTML = '';
+  if (k === 4) { const rows = [['', 'k_on (M⁻¹s⁻¹)', 'k_off (s⁻¹)', 'K_D'], ['AαC', '2.6 × 10⁵', '6.7 × 10⁻³', '25.7 nM'], ['AβC', '1.1 × 10⁵', '1.4 × 10⁻²', '119.9 nM']];
+    S('rect', { x: X1 - 410, y: 30, width: 400, height: 116, rx: 10, fill: '#1A1F27', stroke: C.grid }, fit);
+    rows.forEach((r, i) => r.forEach((c, j) => S('text', { x: X1 - 395 + [0, 70, 205, 315][j], y: 62 + i * 34, 'font-size': 16, 'font-weight': i === 0 || j === 3 ? 700 : 400,
+      fill: i === 1 ? '#e5484d' : i === 2 ? '#c9d1d9' : C.label, text: c }, fit))); }
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>

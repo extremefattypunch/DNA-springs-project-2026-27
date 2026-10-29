@@ -1810,94 +1810,422 @@
   },
   {
    "kind": "media",
-   "page": 23,
+   "page": "22a",
    "section": "assay",
-   "title": "[PENDING] PP2A assays",
-   "items": [],
-   "big": true,
-   "points": [
+   "title": "PP2A: what it does in the cell",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Protein phosphatase 2A: a serine/threonine phosphatase, the cell’s main “off switch”",
+   "items": [
     {
-     "text": "<span class=\"lead\"><b>Three planned assays</b>: phosphatase activity · substrate (B56) binding · holoenzyme formation (cryoEM)</span>"
-    },
-    {
-     "text": "<span class=\"lead\"><b>Template: Day et al., 2025, <i>Structure</i> 33:1688.</b> They compared PP2A built on the two A-subunit isoforms, <b>Aα vs Aβ</b> (87 % identical; Aβ carries a 12-residue N-terminal extension), each assembled with C and B56γ</span><ul class=\"sub\"><li><b>DiFMUP phosphatase assay</b>: virtually the <b>same activity</b> for both holoenzymes</li><li><b>BLI binding assay</b>: Aβ binds the B56 subunits <b>more weakly</b> (≈ 4.7× for B56α, 1.5× for B56γ)</li><li><b>cryoEM</b> (3.4 Å Aα, 3.2 Å Aβ): Aβ is more concave; HEAT repeats 3–6 shift by 2–3 Å</li></ul>"
-    },
-    {
-     "text": "<span class=\"lead\"><b>Our analogue</b>: instead of two isoforms, we compare <b>Aα vs Aα with a DNA spring attached</b>. The same three readouts ask whether the spring changes activity, B-subunit binding or holoenzyme structure</span>"
+     "iframe": "interactive/pp2afn.html",
+     "title": "PP2A: what it does in the cell",
+     "cap": "Schematic of kinase/phosphatase signalling"
     }
    ],
-   "aside": {
-    "w": 560,
-    "html": "<b>Why not just a direct phosphatase assay?</b><ul><li>An artificial substrate is not equivalent to the in-vivo substrate</li><li>It assumes proper assembly of the C catalytic unit with the A subunit, which is not always the case when the A subunit is perturbed</li><li>Day et al. show it directly: identical DiFMUP activity, yet up to 4.7× different B56 binding</li></ul>"
-   }
+   "points": [
+    {
+     "text": "Signalling proteins are switched by <b>phosphate groups</b> on serine/threonine residues",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "A <b>kinase</b> adds the phosphate (from ATP): <b>ON</b>",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>PP2A</b> removes it (dephosphorylation): <b>OFF</b>",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "PP2A and PP1 together carry out ≈ <b>90 %</b> of the cell’s Ser/Thr dephosphorylation",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "Targets include AKT, ERK, c-Myc, p53, tau and mitotic CDK substrates: growth, proliferation, cell cycle, neurons",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "A <b>tumour suppressor</b>: inactivated in many cancers (A-subunit hot spots P179, R183) and by viral oncoproteins (SV40 small t); hyperphosphorylated tau in Alzheimer’s",
+     "msg": {
+      "step": 6
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "22b",
+   "section": "assay",
+   "title": "PP2A architecture: A, C and B subunits",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "PP2A works as a three-subunit holoenzyme: scaffold A, catalytic C, regulatory B",
+   "items": [
+    {
+     "iframe": "interactive/pp2a.html",
+     "title": "PP2A architecture: A, C and B subunits",
+     "cap": "Schematic after Day et al. Fig. 1D and 2 (not to scale)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>A, scaffold</b> (PPP2R1A/B, ≈ 65 kDa): a horseshoe of 15 HEAT repeats with no activity of its own; it holds the other two in place",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>C, catalytic</b> (PPP2CA/B): the phosphatase itself; binds HEAT 11–15. A + C = the <b>AC core dimer</b>, which forms first. Its C-terminal tail (methylated at Leu309) helps B bind",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>B, regulatory</b>: binds the AC core on HEAT 1–10 to complete the <b>ABC holoenzyme</b>. 4 families (B55, B56, PR72, striatin), > 40 isoforms; B decides <b>which substrate</b> and <b>where</b> in the cell",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Is assembly needed?</b> Free C can dephosphorylate small artificial substrates (e.g. DiFMUP), but in cells it is kept scarce; physiological targeting needs the holoenzyme, with B docking the substrate (e.g. LxxIxE motifs on B56) next to C",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "22c",
+   "section": "assay",
+   "title": "HEAT repeats, and our Tet sites on Aα",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Why the A subunit is a flexible scaffold, and where the DNA spring attaches",
+   "items": [
+    {
+     "iframe": "interactive/heat.html",
+     "title": "HEAT repeats, and our Tet sites on Aα",
+     "cap": "Schematic of the HEAT-repeat fold (not to scale)"
+    }
+   ],
+   "points": [
+    {
+     "text": "A <b>HEAT repeat</b>: ≈ 39 residues forming two antiparallel α-helices joined by a turn (named after Huntingtin, EF3, PP2A A, TOR)",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "Repeats stack side by side through hydrophobic contacts into one continuous, spring-like <b>solenoid</b>",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "Aα: 15 repeats curve into a <b>horseshoe</b>. B binds HEAT 1–10, C binds HEAT 11–15; a hinge near HEAT 11–12 lets the arc flex, so it can fit > 40 different B subunits",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Our construct</b>: Aα with Tet groups at <b>D6X</b> (N-terminus) and <b>N552X</b> (HEAT 14), so the DNA spring spans the horseshoe",
+     "msg": {
+      "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "22d",
+   "section": "assay",
+   "title": "Isoforms: Aα vs Aβ, and B56α vs B56γ",
+   "figW": 760,
+   "q": "Which subunits we use, and what Day et al. compared",
+   "items": [
+    {
+     "img": "native/pp2a_tet_sites.png",
+     "w": 788,
+     "h": 788,
+     "cap": "<b>Our system</b>: Aα holoenzyme model (white A, tan B, lilac C) with the Tet sites D6X and N552X (green)"
+    },
+    {
+     "img": "native/day_fig1.png",
+     "w": 1520,
+     "h": 420,
+     "cap": "Day et al. Fig. 1C–D: Aβ’s N-terminus is mobile in MD and blocks the B56γ C-terminal helix"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Aα</b> (PPP2R1A): the dominant A isoform, high in all tissues; <b>the one we use</b>. <b>Aβ</b> (PPP2R1B): 87 % identical, lower and more variable expression, with a 12-residue N-terminal extension",
+     "hl": 0
+    },
+    {
+     "text": "Functional differences: SV40 small t binds only Aα; Aβ-specific dephosphorylation of RalA; Aβ monomer is less stable and aggregates (Day et al.)",
+     "hl": 1
+    },
+    {
+     "text": "<b>B56</b> family (PPP2R5): five isoforms α, β, γ, δ, ε, sharing a central core but differing at their N- and C-termini, which set localisation and partners",
+     "hl": 1
+    },
+    {
+     "text": "<b>B56α</b>: mostly cytoplasmic; targets e.g. c-Myc (Ser62). <b>B56γ</b>: mostly nuclear; targets e.g. p53 (Thr55), a tumour suppressor. Its C-terminal helix contacts the A N-terminus",
+     "hl": 1
+    },
+    {
+     "text": "<b>Day et al.</b>: Aβ binds B56α 4.7× and B56γ 1.5× more weakly than Aα. We compare Aα ± spring with the same B56 subunits",
+     "hl": 1
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": 23,
+   "section": "assay",
+   "title": "[PENDING] PP2A assays: following Day et al. 2025",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Template: Day et al., 2025, Structure 33:1688, which compared the two A-subunit isoforms",
+   "items": [
+    {
+     "iframe": "interactive/pp2a.html",
+     "title": "Aα vs Aβ vs Aα + spring",
+     "cap": "Schematic after Day et al. Fig. 1D and 2 (not to scale)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "<b>Three readouts</b>, as in Day et al.: activity (DiFMUP), B56 binding (BLI), structure (cryoEM). Activity alone is not enough: Day et al. found the same activity but up to 4.7× weaker binding",
+     "msg": {
+      "step": 6
+     }
+    }
+   ]
   },
   {
    "kind": "media",
    "page": 24,
    "section": "assay",
-   "title": "[Plans] Holoenzyme formation analysis",
-   "items": [],
-   "big": true,
-   "points": [
+   "title": "[Plans] Holoenzyme formation analysis (cryoEM)",
+   "figW": 1180,
+   "exH": 600,
+   "q": "Day et al. solved both holoenzymes by cryoEM; we would do the same for Aα ± spring",
+   "items": [
     {
-     "text": "<span class=\"lead\"><b>Structural deformation</b></span><ul class=\"sub\"><li>Align the A subunits on the conserved C-subunit-binding region (HEAT repeats 12–15), then measure centre-of-mass distances between HEAT repeats, WT vs spring attached</li><li><i>Day et al.</i>: Aβ vs Aα shifts up to ≈ 3 Å, largest at HEAT 3–6; HEAT 1-to-15 span 59.6 Å (Aβ) vs 62.7 Å (Aα)</li></ul>"
+     "img": "native/day_fig2.png",
+     "w": 1000,
+     "h": 725,
+     "cap": "Day et al. Fig. 2: cryoEM maps, Aα (red) and Aβ (grey) holoenzymes, B56γ blue, C orange"
     },
     {
-     "text": "<span class=\"lead\"><b>Ascertain spring attachment</b></span><ul class=\"sub\"><li>Run downstream analysis tools: determine the resolution level, use neural-network particle picking, refine and resolve to obtain the atomic model</li><li><i>Day et al.</i>: holoenzymes at 3.4 Å (Aα) and 3.2 Å (Aβ); maps sharpened with EMReady; 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail</li></ul>"
+     "img": "native/day_fig3.png",
+     "w": 930,
+     "h": 435,
+     "cap": "Day et al. Fig. 3A–B: A subunits superposed, and per-HEAT-repeat shift"
     }
    ],
-   "q": "cryoEM analysis, following Day et al., 2025, Structure 33:1688"
+   "explain": [
+    {
+     "item": 0,
+     "text": "<b>What cryoEM gives</b>: a 3D density map of the whole holoenzyme (A, B56γ, C), into which an atomic model is built. Day et al. reached <b>3.4 Å</b> (Aα) and <b>3.2 Å</b> (Aβ), maps sharpened with EMReady. <b>Right (6 Å low-pass)</b>: blurring the map reveals the thin B56γ C-terminal helix (blue, down to the A N-terminus) in Aα, but not in Aβ."
+    },
+    {
+     "item": 1,
+     "text": "<b>Measuring the deformation</b>: superpose the two A subunits on their C-binding end (HEAT 12–15), then compare the centre of mass of each HEAT repeat. <b>Left</b>: the horseshoes overlaid; Aβ spans 59.6 Å from HEAT 1 to 15 vs 62.7 Å for Aα (more concave). <b>Right</b>: the shift per repeat, largest at HEAT 1–8 (up to ≈ 3 Å), near zero at the aligned end."
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Structural deformation</b>: align on HEAT 12–15 and measure HEAT-repeat centre-of-mass shifts, WT vs spring attached",
+     "hl": 1
+    },
+    {
+     "text": "<b>Day et al.</b>: Aβ vs Aα shifts up to ≈ 3 Å; span 59.6 vs 62.7 Å",
+     "hl": 1
+    },
+    {
+     "text": "<b>Ascertain spring attachment</b>: resolution level, neural-network particle picking, refinement to an atomic model",
+     "hl": 0
+    },
+    {
+     "text": "<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail",
+     "hl": 0
+    }
+   ]
   },
   {
    "kind": "media",
    "page": 29,
    "section": "assay",
-   "title": "[Plans] Substrate binding assay (BLI)",
-   "items": [],
-   "big": true,
-   "points": [
+   "title": "[Plans] B56-binding assay: biolayer interferometry (BLI)",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Method of Day et al. 2025: does the A subunit change how tightly B56 binds the AC core?",
+   "items": [
     {
-     "text": "<span class=\"lead\"><b>Method (Day et al.)</b>: B56α or B56γ immobilised on AR2G biosensors (amine coupling) on an Octet R8; the AαC or AβC core dimer flows past as the analyte (31–500 nM); sensorgrams fit with a 1:1 binding model</span><ul class=\"sub\"><li>What binds here is the <b>regulatory B56 subunit</b> to the AC core, not a phosphatase substrate</li></ul>"
-    },
-    {
-     "text": "<span class=\"lead\">Binding and the dissociation constant:<span class=\"tex d\">AC + B \\;\\xrightleftharpoons[k_{\\mathrm{off}}]{\\;k_{\\mathrm{on}}\\;}\\; ABC, \\qquad K_D = \\frac{k_{\\mathrm{off}}}{k_{\\mathrm{on}}}</span></span>"
-    },
-    {
-     "text": "<span class=\"lead\"><b>Results (Day et al., Fig. 5, n = 2)</b><table class=\"tb\"><tr><th>Regulatory subunit</th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ relative to Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table></span>"
-    },
-    {
-     "text": "<span class=\"lead\"><b>Ours</b>: spring-attached Aα with C, against WT Aα, binding the same immobilised B56</span>"
+     "iframe": "interactive/bli.html",
+     "title": "[Plans] B56-binding assay: biolayer interferometry (BLI)",
+     "cap": "Schematic of BLI; curves computed from Day et al.’s fitted rate constants (Fig. 5B, B56α); timings illustrative"
     }
    ],
-   "q": "Method and results from Day et al., 2025, Structure 33:1688 (Aα vs Aβ); our version compares Aα vs Aα + DNA spring"
+   "points": [
+    {
+     "text": "<b>Biosensor</b>: an optical-fibre tip coated with B56 (AR2G tip, amine coupling). Bound mass shifts the reflected light by Δλ",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Baseline</b> in buffer: nothing binds",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Association</b>: dip into the AC core dimer (31–500 nM); AC binds B56 and Δλ rises, at a rate set by k<sub>on</sub>",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Dissociation</b>: back into buffer; AC falls off and Δλ decays, at a rate set by k<sub>off</sub>",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Fit</b> (1:1 binding):<span class=\"tex d\">AC + B \\;\\xrightleftharpoons[k_{\\mathrm{off}}]{\\;k_{\\mathrm{on}}\\;}\\; ABC, \\qquad K_D = \\frac{k_{\\mathrm{off}}}{k_{\\mathrm{on}}}</span>smaller K<sub>D</sub> = tighter binding",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "29b",
+   "section": "assay",
+   "title": "BLI results (Day et al.): Aβ binds B56 more weakly",
+   "figW": 900,
+   "q": "Day et al. Fig. 5 (n = 2): AαChimera and AβNT are their swap constructs",
+   "items": [
+    {
+     "img": "native/day_fig5.png",
+     "w": 785,
+     "h": 470,
+     "cap": "Day et al. Fig. 5A: K_D of AC core dimers for B56α and B56γ"
+    }
+   ],
+   "points": [
+    {
+     "text": "<table class=\"tb\"><tr><th></th><th>AαC K<sub>D</sub></th><th>AβC K<sub>D</sub></th><th>Aβ vs Aα</th></tr><tr><td>B56α</td><td>25.7 nM</td><td>119.9 nM</td><td>≈ 4.7× weaker</td></tr><tr><td>B56γ</td><td>9.2 nM</td><td>14.0 nM</td><td>≈ 1.5× weaker</td></tr></table>"
+    },
+    {
+     "text": "Moving the Aβ N-terminus onto Aα (AαChimera) barely changes binding; removing it from Aβ (AβNT) only partly restores B56α binding"
+    },
+    {
+     "text": "<b>Ours</b>: spring-attached Aα–C vs WT Aα–C against the same immobilised B56"
+    }
+   ]
   },
   {
    "kind": "media",
    "page": 30,
    "section": "assay",
-   "title": "[Plans] Phosphatase activity assay",
+   "title": "[Plans] Phosphatase activity assay (DiFMUP)",
+   "figW": 1180,
+   "msgChannel": "cryo",
+   "q": "Method of Day et al. 2025: is the assembled enzyme still active?",
+   "items": [
+    {
+     "iframe": "interactive/difmup.html",
+     "title": "[Plans] Phosphatase activity assay (DiFMUP)",
+     "cap": "Schematic of the assay; curves computed from Day et al.’s fitted K_M and V_max (Fig. S4D)"
+    }
+   ],
+   "points": [
+    {
+     "text": "<b>Enzyme</b>: assembled holoenzyme, 20 nM AC core with excess (200 nM) B56γ",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "<b>Substrate DiFMUP</b> is dark; PP2A removes its phosphate → <b>DiFMU</b>, which fluoresces blue",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "The <b>initial slope</b> of fluorescence vs time is the velocity v at that substrate concentration",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Repeat</b> at 2–128 µM (triplicate) and fit Michaelis–Menten:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span>",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<b>Day et al.</b>: Aα and Aβ give virtually the same curve. <b>Ours</b>: the same assay with and without the DNA spring",
+     "msg": {
+      "step": 5
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "30b",
+   "section": "assay",
+   "title": "DiFMUP results (Day et al.): same activity for Aα and Aβ",
+   "figW": 760,
+   "q": "Day et al. Fig. S4D, mean ± SD of 3 replicates",
    "items": [
     {
      "img": "native/difmup_kinetics.png",
      "w": 537,
      "h": 427,
-     "cap": "Day et al., Fig. S4D: velocity vs [DiFMUP], mean ± SD of 3 replicates"
+     "cap": "Day et al. Fig. S4D: velocity vs [DiFMUP]"
     }
    ],
-   "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\"><b>Method (Day et al., Fig. S4D)</b>: 20 nM AC core with excess (200 nM) B56γ; fluorogenic substrate DiFMUP at 2–128 µM, in triplicate; initial velocities fit with Michaelis–Menten:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span></span>"
+     "text": "<table class=\"tb\"><tr><th></th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 /s</td><td>56.8 ± 0.7 /s</td></tr></table>"
     },
     {
-     "text": "<span class=\"lead\"><b>Results (Day et al., mean ± SD, n = 3)</b>: virtually the same activity<table class=\"tb\"><tr><th>Measurement</th><th>Aα–B56γ–C</th><th>Aβ–B56γ–C</th></tr><tr><td>K<sub>M</sub></td><td>25.6 ± 3.7 µM</td><td>34.9 ± 3.1 µM</td></tr><tr><td>V<sub>max</sub></td><td>60.1 ± 3.5 fluorescence/s</td><td>56.8 ± 0.7 fluorescence/s</td></tr></table></span>"
+     "text": "V<sub>max</sub> within 6 %: once assembled, both holoenzymes are <b>equally active</b>"
     },
     {
-     "text": "<span class=\"lead\"><b>Ours</b>: the same assay on Aα–B56γ–C with and without the DNA spring</span>"
+     "text": "Yet B56 binding differs up to 4.7×: activity alone would have missed the difference, hence all three assays"
     }
-   ],
-   "q": "Method and results from Day et al., 2025, Structure 33:1688 (Aα vs Aβ); our version compares Aα vs Aα + DNA spring",
-   "figW": 700
+   ]
   },
   {
    "kind": "media",
@@ -1926,15 +2254,15 @@
    "kind": "media",
    "page": 33,
    "section": "background",
-   "title": "Why a cryoEM theory section instead of a CryoSPARC demo",
+   "title": "Setting up cryoEM downstream analysis (new to Hekstra lab)",
    "items": [],
    "big": true,
    "points": [
     {
-     "text": "<span class=\"lead\">Ideally I would have shown a <b>real CryoSPARC analysis on imaged sfGFP chimeras</b>. But the grid-screening session planned for 2 days ago was postponed: the cryoEM microscope broke down yet again 😢</span>"
+     "text": "<span class=\"lead\">Ideally I would have explained the theory <b>alongside a live CryoSPARC demo on imaged sfGFP chimeras</b>, had we had real screening time. But the grid-screening session planned for 2 days ago was postponed: the cryoEM microscope broke down yet again 😢</span>"
     },
     {
-     "text": "<span class=\"lead\">Still worth introducing: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while learning CryoSPARC, new to the lab</span>"
+     "text": "<span class=\"lead\">So instead: the <b>fundamental concepts that govern a cryoEM analysis workflow</b>, which I picked up while setting up and learning CryoSPARC, new to the lab</span>"
     },
     {
      "text": "<span class=\"lead\">A good starting point if we want to build our <b>own open-source or custom software</b>, as with careless and the other Hekstra-lab X-ray crystallography tools, since <b>CryoSPARC is paid software</b></span>"

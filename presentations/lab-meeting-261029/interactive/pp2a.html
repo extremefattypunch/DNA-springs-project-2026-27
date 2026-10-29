@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PP2A holoenzyme and the A-subunit comparison</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="cryo/cryo.css">
+</head>
+<body>
+<svg class="stage" viewBox="0 0 1180 740" preserveAspectRatio="xMidYMid meet" id="sv"></svg>
+<script src="cryo/cryo.js"></script>
+<script>
+/* Schematic (not to scale) of PP2A assembly following Day et al. 2025 (Structure 33:1688), Fig. 1D / 2:
+   A = scaffold of 15 HEAT repeats; C = catalytic subunit on HEAT 11-15; B56 = regulatory subunit on HEAT 1-10.
+   Aβ: 12-residue N-terminal extension, more concave, disrupts the B56γ C-terminal helix contact. */
+const sv = document.getElementById('sv');
+const g = S('g', {}, sv);
+const COL = { A: '#e5484d', Ab: '#8b939c', C: '#f2a33a', B: '#3b82f6', helix: '#a879e8', ext: '#3fb36b', dna: '#6fa8ff' };
+function blob(p, cx, cy, rx, ry, col, lab, sc, op) {
+  const d = `M${cx - rx},${cy} C${cx - rx},${cy - ry * 1.15} ${cx + rx * .9},${cy - ry * 1.2} ${cx + rx},${cy - ry * .1} C${cx + rx * 1.08},${cy + ry} ${cx - rx * .7},${cy + ry * 1.12} ${cx - rx},${cy} z`;
+  S('path', { d, fill: col, opacity: op, stroke: '#0e1116', 'stroke-width': 2 }, p);
+  if (lab) S('text', { x: cx, y: cy + 8 * sc, 'text-anchor': 'middle', 'font-size': 26 * sc, 'font-weight': 700, fill: '#0e1116', opacity: op, text: lab }, p);
+}
+/* draw one complex centred at (cx, cy) with scale sc. o: {C, B, beta, spring, labels} opacities/flags */
+function complex(cx, cy, sc, o) {
+  const p = S('g', {}, g);
+  const curv = o.beta ? 1.18 : 1.0;                         // Aβ more concave
+  const W = 400 * sc, depth = 95 * sc * curv;
+  const heat = i => { const u = i / 14 - .5; return [cx + u * W * (o.beta ? .95 : 1), cy + depth * (1 - 4 * u * u) * -1 + depth]; };
+  // A subunit: 15 HEAT repeats along a U
+  for (let i = 0; i < 15; i++) { const [x, y] = heat(i);
+    S('rect', { x: x - 13 * sc, y: y - 26 * sc, width: 26 * sc, height: 52 * sc, rx: 9 * sc, fill: o.beta ? COL.Ab : COL.A, stroke: '#0e1116', 'stroke-width': 1.5,
+      transform: `rotate(${(i / 14 - .5) * 70 * curv} ${x} ${y})` }, p);
+    if (o.labels && (i === 0 || i === 14)) S('text', { x, y: y + 52 * sc, 'text-anchor': 'middle', 'font-size': 17 * sc + 2, class: 'mut', text: 'HEAT ' + (i + 1) }, p);
+  }
+  if (o.labels && !o.small) S('text', { x: cx, y: cy + depth + 92 * sc, 'text-anchor': 'middle', 'font-size': 22 * sc + 3, 'font-weight': 700, fill: o.beta ? '#c9d1d9' : COL.A,
+    text: (o.beta ? 'Aβ' : 'Aα') + ' scaffold (15 HEAT repeats)' }, p);
+  // C on HEAT 11-15, B56 on HEAT 1-10
+  const [xc, yc] = heat(12), [xb, yb] = heat(4);
+  if (o.C > 0.01) blob(p, xc - 10 * sc, yc - 105 * sc, 78 * sc, 70 * sc, COL.C, 'C', sc, o.C);
+  if (o.B > 0.01) {
+    blob(p, xb + 10 * sc, yb - 120 * sc, 92 * sc, 80 * sc, COL.B, 'B56', sc, o.B);
+    const [x1, y1] = heat(0);
+    // B56γ C-terminal helix reaching down to the A N-terminus (Aα) or pushed off (Aβ)
+    const hx = o.beta ? x1 - 46 * sc : x1 - 6 * sc, hy = o.beta ? y1 - 60 * sc : y1 - 20 * sc;
+    S('path', { d: `M${xb - 60 * sc},${yb - 70 * sc} Q${x1 - 50 * sc},${y1 - 90 * sc} ${hx},${hy}`, class: 'w', stroke: COL.helix, 'stroke-width': 13 * sc, 'stroke-linecap': 'round', opacity: o.B }, p);
+  }
+  if (o.beta) { const [x1, y1] = heat(0); let d = `M${x1},${y1 + 18 * sc}`;
+    for (let i = 1; i <= 8; i++) d += ` q${-6 * sc},${(i % 2 ? 10 : -10) * sc} ${-9 * sc},${12 * sc}`;
+    S('path', { d, class: 'w', stroke: COL.ext, 'stroke-width': 7 * sc, 'stroke-linecap': 'round' }, p);
+    if (o.labels) S('text', { x: x1 - 70 * sc, y: y1 + 120 * sc, 'text-anchor': 'middle', 'font-size': 16 * sc + 3, fill: COL.ext, text: '+12-residue N-terminus' }, p); }
+  if (o.spring) { const [x1, y1] = heat(0), [x2, y2] = heat(13), h = 150 * sc; let d = '';
+    for (const off of [7, -7]) { d = ''; for (let i = 0; i <= 60; i++) { const u = i / 60, x = x1 + (x2 - x1) * u, y = y1 + (y2 - y1) * u + 4 * h * u * (1 - u) + 40 * sc;
+        d += (i ? 'L' : 'M') + (x + off * sc * Math.sin(u * Math.PI * 12)).toFixed(1) + ',' + (y + off * sc * Math.cos(u * Math.PI * 12)).toFixed(1); }
+      S('path', { d, class: 'w', stroke: COL.dna, 'stroke-width': 4 * sc + 1 }, p); }
+    [[x1, y1], [x2, y2]].forEach(([x, y]) => S('circle', { cx: x, cy: y + 40 * sc, r: 9 * sc, fill: '#ff5a4f' }, p));
+    if (o.labels) S('text', { x: (x1 + x2) / 2, y: y1 + 4 * h * .25 + 90 * sc, 'text-anchor': 'middle', 'font-size': 16 * sc + 3, fill: COL.dna, text: 'DNA spring (Asp7 ↔ Asn553)' }, p); }
+}
+const heads = S('g', {}, sv);
+const foot = S('text', { x: 590, y: 690, 'text-anchor': 'middle', 'font-size': 23, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 722, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+const TX = [
+  ['PP2A A subunit: a flexible scaffold of 15 HEAT repeats', 'it is the subunit we attach the DNA spring to'],
+  ['+ C, the catalytic subunit, binds HEAT 11–15: the AC core dimer', 'C does the dephosphorylation'],
+  ['+ B56, the regulatory subunit, binds HEAT 1–10: the ABC holoenzyme', 'its C-terminal helix (purple) reaches down to the A N-terminus'],
+  ['The B subunit picks the substrate: a short motif (LxxIxE) docks on B56', 'C, held next to it by the A scaffold, removes the substrate’s phosphate'],
+  ['Day et al. compared two natural A isoforms, Aα vs Aβ (87 % identical)', 'Aβ: 12 extra N-terminal residues (green) push the B56γ helix away; the scaffold is more concave'],
+  ['Our project: Aα vs Aα with a DNA spring across the scaffold', 'same question as Day et al.: does a perturbed A subunit change the enzyme?'],
+  ['Same three readouts as Day et al.', 'phosphatase activity (DiFMUP) · B56 binding (BLI) · holoenzyme structure (cryoEM)']
+];
+const T = TX.map((_, k) => ({ k, C: k >= 1 ? 1 : 0, B: k >= 2 ? 1 : 0, three: k >= 4 ? 1 : 0, sp: k >= 5 ? 1 : 0, ro: k >= 6 ? 1 : 0 }));
+let ph = 0;
+Cryo.init(T, (P, t, dt) => {
+  ph += Math.max(0, dt || 0);
+  g.innerHTML = ''; heads.innerHTML = '';
+  const k = Math.round(P.k), t3 = P.three;
+  if (t3 < 0.5) { complex(590, 330, 1.25, { C: P.C, B: P.B, beta: false, labels: true });
+    if (k === 3) { const u = Cryo.static ? 1 : Math.min(1, (ph % 4) / 2);
+      const sx = 230 + (395 - 230) * u, sy = 120 + (75 - 120) * u;
+      S('path', { d: `M${sx - 60},${sy} C${sx - 60},${sy - 50} ${sx + 55},${sy - 55} ${sx + 60},${sy - 4} C${sx + 64},${sy + 46} ${sx - 40},${sy + 52} ${sx - 60},${sy} z`, fill: '#5bd67a', stroke: '#0e1116', 'stroke-width': 2 }, g);
+      S('text', { x: sx, y: sy + 6, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 700, fill: '#0e1116', text: 'substrate' }, g);
+      S('text', { x: sx + 70, y: sy + 40, 'font-size': 15, fill: '#5bd67a', text: 'LxxIxE motif' }, g);
+      const pu = Cryo.static ? 1 : Math.max(0, Math.min(1, ((ph % 4) - 2.2) / 1.3)), px = sx + 50 + (740 - sx - 50) * pu, py = sy + 20 + (150 - sy - 20) * pu;
+      S('circle', { cx: px, cy: py, r: 15, fill: '#ffd166' }, g); S('text', { x: px, y: py + 6, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 700, fill: '#0e1116', text: 'P' }, g);
+      if (pu > .9) S('text', { x: 760, y: 120, 'font-size': 16, fill: '#ffd166', text: 'phosphate removed by C' }, g); } }
+  else {
+    const cols = [[205, 'Aα (WT)', false, false], [590, 'Aβ', true, false], [975, 'Aα + DNA spring', false, true]];
+    cols.forEach(([cx, name, beta, spring], i) => {
+      if (i === 2 && P.sp < 0.5) return;
+      complex(cx, 330, .78, { C: 1, B: 1, beta, spring, labels: true, small: true });
+      S('text', { x: cx, y: 120, 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 700, fill: i === 1 ? '#c9d1d9' : i === 2 ? COL.dna : COL.A, text: name }, heads);
+      S('text', { x: cx, y: 148, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: i === 2 ? 'this project' : 'Day et al. 2025' }, heads);
+    });
+    if (P.ro > 0.5) {
+      const R = [['DiFMUP activity', 'how fast it removes phosphate'], ['BLI binding', 'how tightly AC binds B56'], ['cryoEM', 'shape of the holoenzyme']];
+      R.forEach(([a, b], i) => { const x = 230 + i * 360;
+        S('rect', { x: x - 150, y: 560, width: 300, height: 80, rx: 12, fill: '#1A1F27', stroke: C.label, 'stroke-width': 2 }, heads);
+        S('text', { x, y: 594, 'text-anchor': 'middle', 'font-size': 21, 'font-weight': 700, fill: C.label, text: a }, heads);
+        S('text', { x, y: 622, 'text-anchor': 'middle', 'font-size': 16, class: 'mut', text: b }, heads); });
+    }
+  }
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+});
+</script>
+</body></html>
