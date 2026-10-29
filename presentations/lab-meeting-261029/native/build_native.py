@@ -95,16 +95,15 @@ PP_HEAT = anim('22c', 'HEAT repeats, and our Tet sites on Aα', 'heat.html', 'Wh
     'Aα: 15 repeats curve into a <b>horseshoe</b>. B binds HEAT 1–10, C binds HEAT 11–15; a hinge near HEAT 11–12 lets the arc flex, so it can fit > 40 different B subunits',
     '<b>Our construct</b>: Aα with Tet groups at <b>D6X</b> (N-terminus) and <b>N552X</b> (HEAT 14), so the DNA spring spans the horseshoe'])
 
-PP_ISO = {'kind': 'media', 'page': '22d', 'section': 'assay', 'title': 'Isoforms: Aα vs Aβ, and B56α vs B56γ', 'figW': 760,
+PP_ISO = {'kind': 'media', 'page': '22d', 'section': 'assay', 'title': 'Isoforms: Aα vs Aβ, and B56α vs B56γ', 'figW': 1100,
   'q': 'Which subunits we use, and what Day et al. compared',
   'items': [pic('pp2a_tet_sites.png', '<b>Our system</b>: Aα holoenzyme model (white A, tan B, lilac C) with the Tet sites D6X and N552X (green)'),
             pic('day_fig1.png', 'Day et al. Fig. 1C–D: Aβ’s N-terminus is mobile in MD and blocks the B56γ C-terminal helix')],
   'points': [{'text': t, 'hl': h} for t, h in [
-    ('<b>Aα</b> (PPP2R1A): the dominant A isoform, high in all tissues; <b>the one we use</b>. <b>Aβ</b> (PPP2R1B): 87 % identical, lower and more variable expression, with a 12-residue N-terminal extension', 0),
-    ('Functional differences: SV40 small t binds only Aα; Aβ-specific dephosphorylation of RalA; Aβ monomer is less stable and aggregates (Day et al.)', 1),
-    ('<b>B56</b> family (PPP2R5): five isoforms α, β, γ, δ, ε, sharing a central core but differing at their N- and C-termini, which set localisation and partners', 1),
-    ('<b>B56α</b>: mostly cytoplasmic; targets e.g. c-Myc (Ser62). <b>B56γ</b>: mostly nuclear; targets e.g. p53 (Thr55), a tumour suppressor. Its C-terminal helix contacts the A N-terminus', 1),
-    ('<b>Day et al.</b>: Aβ binds B56α 4.7× and B56γ 1.5× more weakly than Aα. We compare Aα ± spring with the same B56 subunits', 1)]]}
+    ('<b>Aα</b>: main A isoform, in all tissues; <b>ours</b>', 0),
+    ('<b>Aβ</b>: 87 % identical, +12 N-terminal residues, weaker B56 binding (Day et al.)', 1),
+    ('<b>B56α</b>: cytoplasmic; targets c-Myc', 1),
+    ('<b>B56γ</b>: nuclear; targets p53; C-terminal helix touches the A N-terminus', 1)]]}
 
 A24 = {'kind': 'media', 'page': 24, 'section': 'assay', 'title': '[Plans] Holoenzyme formation analysis (cryoEM)', 'figW': 1180, 'exH': 600,
   'q': 'Day et al. solved both holoenzymes by cryoEM; we would do the same for Aα ± spring',

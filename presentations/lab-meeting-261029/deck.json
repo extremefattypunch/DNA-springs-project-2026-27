@@ -1999,7 +1999,7 @@
    "page": "22d",
    "section": "assay",
    "title": "Isoforms: Aα vs Aβ, and B56α vs B56γ",
-   "figW": 760,
+   "figW": 1100,
    "q": "Which subunits we use, and what Day et al. compared",
    "items": [
     {
@@ -2017,23 +2017,19 @@
    ],
    "points": [
     {
-     "text": "<b>Aα</b> (PPP2R1A): the dominant A isoform, high in all tissues; <b>the one we use</b>. <b>Aβ</b> (PPP2R1B): 87 % identical, lower and more variable expression, with a 12-residue N-terminal extension",
+     "text": "<b>Aα</b>: main A isoform, in all tissues; <b>ours</b>",
      "hl": 0
     },
     {
-     "text": "Functional differences: SV40 small t binds only Aα; Aβ-specific dephosphorylation of RalA; Aβ monomer is less stable and aggregates (Day et al.)",
+     "text": "<b>Aβ</b>: 87 % identical, +12 N-terminal residues, weaker B56 binding (Day et al.)",
      "hl": 1
     },
     {
-     "text": "<b>B56</b> family (PPP2R5): five isoforms α, β, γ, δ, ε, sharing a central core but differing at their N- and C-termini, which set localisation and partners",
+     "text": "<b>B56α</b>: cytoplasmic; targets c-Myc",
      "hl": 1
     },
     {
-     "text": "<b>B56α</b>: mostly cytoplasmic; targets e.g. c-Myc (Ser62). <b>B56γ</b>: mostly nuclear; targets e.g. p53 (Thr55), a tumour suppressor. Its C-terminal helix contacts the A N-terminus",
-     "hl": 1
-    },
-    {
-     "text": "<b>Day et al.</b>: Aβ binds B56α 4.7× and B56γ 1.5× more weakly than Aα. We compare Aα ± spring with the same B56 subunits",
+     "text": "<b>B56γ</b>: nuclear; targets p53; C-terminal helix touches the A N-terminus",
      "hl": 1
     }
    ]
