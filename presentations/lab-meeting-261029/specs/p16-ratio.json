@@ -41,7 +41,7 @@
   },
   "p1d_ss": {
    "name": "pp2a + ssDNA",
-   "note": "1 : 1 chimera (slide: pp2a+DNA)",
+   "note": "1 : 1 product · what we want more of",
    "cls": "ss",
    "icon": {
     "k": "p1d",
@@ -49,11 +49,11 @@
    }
   },
   "p1d_ds": {
-   "name": "Circular pp2a + dsDNA",
-   "note": "new band · runs faster · product",
-   "cls": "circ",
+   "name": "pp2a + dsDNA",
+   "note": "1 : 1 product · shifts down like linear",
+   "cls": "ds",
    "icon": {
-    "k": "circ",
+    "k": "p1d",
     "ds": true
    }
   },
@@ -85,7 +85,7 @@
   },
   "ring_ds": {
    "name": "2 pp2a + 2 dsDNA ring",
-   "note": "dimer ring · runs slower (wrong product)",
+   "note": "2 : 2 dimer ring · runs slower",
    "cls": "ds",
    "icon": {
     "k": "p2d2circ",
@@ -982,71 +982,63 @@
     "L1",
     "L7"
    ],
-   "say": "<b>1:4 DNA:protein, ssDNA</b>: little DNA, so only faint chimera bands above pp2a"
+   "say": "<b>Yield here means</b>: more <b>1 pp2a + 1 DNA</b> product relative to <b>2 pp2a + 2 DNA</b> products; linear or circular does not matter yet. <b>1:4 DNA:protein</b>: faint bands"
   },
   {
    "lanes": [
     "L3",
     "L9"
    ],
-   "say": "<b>1:2 ssDNA</b>: more DNA, stronger pp2a + ssDNA and 2 pp2a bands"
+   "say": "<b>1:2 ssDNA</b>: more DNA, a stronger pp2a + ssDNA band"
   },
   {
    "lanes": [
     "L5",
     "L11"
    ],
-   "say": "<b>1:1 ssDNA</b>: the most chimera of the series, the best yield; 50 nt 2 pp2a rows brightest"
+   "say": "<b>1:1 ssDNA</b>: the strongest pp2a + ssDNA band of the series"
   },
   {
    "lanes": [
     "L2",
     "L8"
    ],
-   "say": "<b>1:4 + cDNA</b>: pp2a + DNA shifts down to the circle; the 2 pp2a ring shifts up"
+   "say": "<b>1:4 + cDNA</b>: the pp2a + DNA band shifts down (linear-like, as on the previous gel); the 2 pp2a ring shifts up"
   },
   {
    "lanes": [
     "L4",
     "L10"
    ],
-   "say": "<b>1:2 + cDNA</b>: the same shifts, with a stronger circular band"
+   "say": "<b>1:2 + cDNA</b>: the same shifts, with a stronger pp2a + dsDNA band"
   },
   {
    "lanes": [
     "L6",
     "L12"
    ],
-   "say": "<b>1:1 + cDNA</b>: the strongest circular pp2a + dsDNA band in both DNA lengths"
+   "say": "<b>1:1 + cDNA</b>: the strongest pp2a + dsDNA band"
   },
   {
    "glow": [
     [
-     "L2",
+     "L5",
      2
     ],
     [
-     "L4",
-     2
+     "L11",
+     0
     ],
     [
      "L6",
      2
     ],
     [
-     "L8",
-     0
-    ],
-    [
-     "L10",
-     0
-    ],
-    [
      "L12",
      0
     ]
    ],
-   "say": "<b>Circular pp2a + dsDNA</b>: the faster 1 : 1 circle, strongest at 1:1 DNA:protein"
+   "say": "<b>Best yield at 1:1 DNA:protein</b>: the most 1 pp2a + 1 DNA product (glowing) relative to 2 pp2a + 2 DNA, with or without cDNA"
   },
   {
    "real": true,

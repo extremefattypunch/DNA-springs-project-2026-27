@@ -107,7 +107,7 @@
   },
   "cl_ss": {
    "name": "2-tet pp2a + ssDNA",
-   "note": "circular or linear · same mass",
+   "note": "circular or linear?",
    "cls": "ss",
    "icon": {
     "k": "circlin"
@@ -419,14 +419,35 @@
    "lanes": [
     "L5"
    ],
-   "say": "<b>2-tet pp2a + ssDNA</b>: the same-mass band could be <b>circular or linear</b>"
+   "say": "<b>2-tet pp2a + ssDNA</b>: could this same-mass band be <b>circular or linear</b>?"
   },
   {
    "lanes": [
     "L3",
     "L6"
    ],
-   "say": "<b>+ cDNA</b>: in <b>both</b> 1-tet and 2-tet the pp2a + DNA band shifts <b>down</b> (linear behaviour); 2-tet shows <b>no new band</b> that 1-tet lacks"
+   "glow": [
+    [
+     "L2",
+     1
+    ],
+    [
+     "L3",
+     1
+    ],
+    [
+     "L5",
+     1
+    ],
+    [
+     "L6",
+     2
+    ]
+   ],
+   "cross": {
+    "cl_ss": "✗ linear only (as 1-tet)"
+   },
+   "say": "<b>+ cDNA</b>: the pp2a + DNA bands (glowing) shift <b>down</b> in <b>both</b> 1-tet and 2-tet, the same way: 2-tet shows no new band, so its band is <b>linear</b> too"
   },
   {
    "glow": [

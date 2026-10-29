@@ -277,6 +277,11 @@ body {
 .m-pt table.tb.big { font-size: 1em; margin: 4px 0 10px; }
 .m-pt table.tb.big th, .m-pt table.tb.big td { padding: 12px 40px 12px 0; }
 .chart-sub { position: absolute; transform: translateX(-50%); font: 600 19px var(--font-display); color: var(--ink-2); white-space: nowrap; z-index: 3; transition: opacity .3s; }
+.lbl.crossed .txt { position: relative; }
+.lbl.crossed .txt b, .lbl.crossed .txt span { text-decoration: line-through; text-decoration-color: #d8433b; text-decoration-thickness: 2.5px; }
+.lbl.crossed .ico { position: relative; }
+.lbl.crossed .ico::after { content: '✗'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 54px var(--font-display); color: #d8433b; }
+.lbl.crossed .txt::after { content: attr(data-cross); display: block; white-space: nowrap; font: 600 15px var(--font-display); color: #d8433b; margin-top: 2px; }
 .m-q { position: absolute; font-size: 22px; font-style: italic; color: var(--ink-3); }
 /* explain phase: one plot full-slide with axis notes, then the split answer view */
 .m-item { transition: left .6s cubic-bezier(.3,.7,.2,1), top .6s cubic-bezier(.3,.7,.2,1), width .6s cubic-bezier(.3,.7,.2,1), height .6s cubic-bezier(.3,.7,.2,1), opacity .4s ease; }
@@ -736,11 +741,12 @@ function buildPanel(slideEl, spec, P) {
 
 function panelState(spec, k) {
   // cumulative state after the first k steps (k=0: blank gel)
-  const st = { lanes: new Set(), glow: new Set(), real: false, last: null, newest: [] };
+  const st = { lanes: new Set(), glow: new Set(), cross: {}, real: false, last: null, newest: [] };
   for (let i = 0; i < k; i++) {
     const step = spec.steps[i];
     (step.lanes || []).forEach(l => st.lanes.add(l));
     (step.glow || []).forEach(g => st.glow.add(g[0] + ':' + g[1]));
+    Object.assign(st.cross, step.cross || {});   // cross out a species label: { species: 'reason' }
     if (step.real) st.real = true;
     st.last = step; st.newest = step.lanes || [];
   }
@@ -847,6 +853,8 @@ function applyPanel(G, k, animate) {
   layoutLabels(G, st);
   for (const key in G.labels) {
     const L = G.labels[key];
+    L.el.classList.toggle('crossed', key in st.cross);
+    { const tx = L.el.querySelector('.txt'); if (tx) tx.dataset.cross = st.cross[key] || ''; }
     const vis = !!(L.bands && L.bands.length);
     const wasVis = G.bandEls.some(b => b.sp === key && prev.lanes.has(b.lane));
     const glow = L.bands && L.bands.some(b => st.glow.has(b.lane + ':' + b.idx));
