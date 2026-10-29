@@ -139,13 +139,11 @@ RECON = [
 SLIDES = [
     dict(frame("c1", "cryoEM downstream analysis: how it differs from X-ray crystallography", "pipeline.html", "",
           DRAWN, [
-              "Both cryoEM and X-ray crystallography work with <b>diffracted waves</b> (an electron beam and X-ray photons, respectively) arriving at the detector from the protein",
-              "Both <b>reconstruct a 3D volume</b> from the 2D images collected:"
-              '<table class="tb cmp"><tr><th></th><th>X-ray</th><th>cryoEM</th></tr>'
-              '<tr><td>3D volume</td><td>electron density map</td><td>electron scattering (Coulomb) potential</td></tr>'
-              '<tr><td>Reconstruction takes place in</td><td><b>Fourier space</b> (spatial frequencies): diffraction spot intensities</td><td><b>real space</b> (x, y): projection images of single particles</td></tr>'
-              '<tr><td>Recovers during reconstruction</td><td>the missing <b>Fourier components</b> (their phases)</td><td>each particle’s <b>pose</b>: orientations in vitreous ice are random, unlike in a crystal</td></tr></table>',
-              "Once the volume is reconstructed, both <b>fit an atomic model</b> into it to obtain the final structure"]), final=True),
+              '<table class="tb cmp"><tr><th></th><th>X-ray crystallography</th><th>cryoEM</th></tr>'
+              '<tr><td>Radiation</td><td>Diffracted X-ray photons</td><td>Scattered and transmitted electron waves</td></tr>'
+              '<tr><td>3D reconstruction</td><td>Recover missing Fourier phases → <b>electron-density map</b></td><td>Recover particle orientations → <b>electrostatic-potential map</b></td></tr>'
+              '<tr><td>Refinement</td><td><b>Reciprocal space</b>: adjust atoms to match the measured diffraction intensities</td><td><b>Real space</b>: adjust atoms to fit the reconstructed 3D map</td></tr></table>'
+              '<p class="after">Both fit an <b>atomic model</b> into their reconstructed 3D maps.</p>']), final=True),
     frame("c2", "What does it mean to defocus a lens?", "lens.html",
           "Thin lens: 1/f = 1/s + 1/s′, with the object and the sensor fixed", DRAWN, [
               "<b>Stronger lens</b> (shorter f): the rays cross before the sensor and spread into a disc",
