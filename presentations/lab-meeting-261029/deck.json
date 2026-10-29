@@ -1238,45 +1238,51 @@
    ],
    "points": [
     {
-     "text": "<b>System</b>: DNA only, no protein, in a water box. A <dfn>duplex</dfn> is double-stranded DNA: two complementary strands base-paired into a helix, which is what our spring becomes after hybridisation (27 or 40 bp; “nicked” = one backbone break)",
+     "text": "<b>System</b>: bare dsDNA <dfn>duplex</dfn> (two base-paired strands) in water, <b>no protein</b>",
      "msg": {
       "step": 1
      }
     },
     {
-     "text": "The duplex’s two <b>ends</b> are where it would attach to the protein. <b>L</b> = contour length, along the helix (0.33 nm per bp: 89 Å for 27 bp)",
+     "text": "<b>L</b>: length along the helix, 89 Å (27 bp)",
      "msg": {
       "step": 2
      }
     },
     {
-     "text": "A <b>restraint</b> (a virtual spring, stiffness <b>k</b>) ties the two ends together, centred at <b>x₀</b> &lt; L, so the duplex must bend and pushes back",
+     "text": "<b>x₀</b>: rest length of a virtual spring on the ends, <b>set by us</b>; x₀ &lt; L forces a bend",
      "msg": {
       "step": 3
      }
     },
     {
-     "text": "The ends settle at <b>⟨x⟩</b>, ≈ 1 Å beyond x₀. The stretched restraint then pulls with exactly the duplex’s push: <b>f = k(⟨x⟩ − x₀)</b>",
+     "text": "<b>x(t)</b>: end-to-end distance now; jiggles ≈ ±1 Å by <b>thermal motion</b> at 300 K, not by any kick",
      "msg": {
       "step": 4
      }
     },
     {
-     "text": "Repeat at many x₀: each run is one point (⟨x⟩, f). So the <b>end-to-end distance is held (nearly) fixed and the force is measured</b>",
+     "text": "<b>⟨x⟩</b>: time average of x(t); the spring stretches to it, so <b>f = k(⟨x⟩ − x₀)</b>",
      "msg": {
       "step": 5
      }
     },
     {
-     "text": "Zocchi’s model predicts f(x) instead from <b>B</b>, the bending stiffness (≈ 200 pN nm²), and <b>τ<sub>c</sub></b>, the critical torque at which one base-pair step gives way (≈ 34 pN nm; 27 if nicked)",
+     "text": "<b>Fixed?</b> Yes per run (x within ≈ 1 Å); one run = one point (⟨x⟩, f)",
      "msg": {
       "step": 6
      }
     },
     {
-     "text": "If x drops below <b>x<sub>c</sub></b> the model kinks the duplex into two straight arms of length <b>R</b>, and the push drops to a few pN. Next slide: model vs MD",
+     "text": "<b>Zocchi</b>: predicts f(x) from <b>B</b> (bending stiffness) and <b>τ<sub>c</sub></b> (kink torque)",
      "msg": {
       "step": 7
+     }
+    },
+    {
+     "text": "Below <b>x<sub>c</sub></b> the model kinks: arms of length <b>R</b>, push of a few pN",
+     "msg": {
+      "step": 8
      }
     }
    ]

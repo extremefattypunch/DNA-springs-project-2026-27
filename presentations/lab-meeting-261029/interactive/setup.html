@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bare duplex force measurement</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="cryo/cryo.css">
 </head>
 <body>
@@ -9,54 +9,58 @@
 <script src="cryo/cryo.js"></script>
 <script>
 /* The MD set-up behind the force-vs-distance plots: a bare 27 bp dsDNA duplex in water,
-   its two end attachment points tied by a harmonic restraint, then Zocchi's variables.
-   Run data: fig6_force_extension.csv (27 bp). */
+   its two ends tied by a harmonic restraint of rest length x0. Thermal motion makes the
+   end-to-end distance x(t) fluctuate; its time average is <x>; f = k(<x> - x0).
+   Run data: fig6_force_extension.csv (27 bp, stiff restraint k = 200 kJ/mol/nm^2). */
 const sv = document.getElementById('sv');
-const LNM = 8.91, PX = 58, CX = 390, BY = 410;
-const STIFF = [[32.0, 32.59, 19.7], [38.0, 38.59, 19.6], [44.0, 44.72, 24.1], [50.0, 50.94, 31.1], [58.0, 59.01, 33.5], [64.0, 65.23, 41.0]];   // x0, <x> (Å), f (pN): one stiff-restraint run each
+const LNM = 8.91, PX = 58, CX = 390, BY = 330, GAPX = 4;     // drawing exaggerates (x - x0) by GAPX
+const STIFF = [[32.0, 32.59, 19.7], [38.0, 38.59, 19.6], [44.0, 44.72, 24.1], [50.0, 50.94, 31.1], [58.0, 59.01, 33.5], [64.0, 65.23, 41.0]];
 const RUNS = [[50.9,31.1],[50.9,30.3],[59.0,33.5],[59.2,38.2],[65.2,41.0],[65.1,37.6],[32.6,19.7],[37.0,27.4],[33.0,33.9],[36.9,26.6],[38.6,19.6],[42.3,23.5],[38.6,20.8],[42.4,24.0],[44.7,24.1],[48.7,26.0],[44.8,28.1],[49.7,31.1],[50.7,22.2],[54.4,24.0],[50.8,27.9],[55.7,31.4],[59.0,32.2],[58.6,20.0],[62.8,26.1]];
 const defs = S('defs', {}, sv);
 const mk = (id, col) => { const m = S('marker', { id, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4.5, markerHeight: 4.5, orient: 'auto-start-reverse' }, defs); S('path', { d: 'M0,0 L10,5 L0,10 z', fill: col }, m); };
-mk('ao', C.est); mk('ag', C.truth); mk('aw', '#c9d1d9');
-/* water box */
-const box = S('rect', { x: 24, y: 24, width: 740, height: 600, rx: 14, fill: 'rgba(79,209,232,.06)', stroke: '#2b5d6b', 'stroke-dasharray': '6 6' }, sv);
-const boxT = S('text', { x: 44, y: 56, 'font-size': 17, fill: C.obs, text: 'water box + ions (no protein)' }, sv);
-const W = S('g', {}, sv);
-for (let i = 0; i < 70; i++) { const x = 44 + ((i * 97) % 700), y = 80 + ((i * 53) % 520); S('circle', { cx: x, cy: y, r: 2.2, fill: C.obs, opacity: .25 }, W); }
-const dna = S('g', {}, sv);
-const lab = S('g', {}, sv);
-const ends = [S('circle', { r: 10, fill: C.red }, sv), S('circle', { r: 10, fill: C.red }, sv)];
+mk('ao', C.est); mk('ag', C.truth); mk('aw', '#e5ebf0');
+/* thermal fluctuation of x about <x> (Å, realistic size ~ +-1 Å): smooth pseudo-random */
+const wig = t => 0.55 * Math.sin(t * 2.3) + 0.35 * Math.sin(t * 5.1 + 1.3) + 0.25 * Math.sin(t * 9.7 + .4) + 0.15 * Math.sin(t * 17.3 + 2.1);
+/* left panel: water box */
+S('rect', { x: 24, y: 24, width: 740, height: 560, rx: 14, fill: 'rgba(79,209,232,.06)', stroke: '#2b5d6b', 'stroke-dasharray': '6 6' }, sv);
+S('text', { x: 44, y: 54, 'font-size': 17, fill: C.obs, text: 'water box + ions, 300 K (no protein)' }, sv);
+for (let i = 0; i < 70; i++) S('circle', { cx: 44 + ((i * 97) % 700), cy: 80 + ((i * 53) % 480), r: 2.2, fill: C.obs, opacity: .22 }, sv);
+const Lglow = S('path', { class: 'w', stroke: C.label, 'stroke-width': 26, 'stroke-linecap': 'round', opacity: 0 }, sv);
+const dna = S('g', {}, sv), lab = S('g', {}, sv);
 const spring = S('path', { class: 'w', stroke: C.truth, 'stroke-width': 3.5 }, sv);
-const sprT = S('text', { 'text-anchor': 'middle', 'font-size': 17, fill: C.truth }, sv);
-const push = [S('line', { stroke: C.est, 'stroke-width': 5, 'marker-end': 'url(#ao)' }, sv), S('line', { stroke: C.est, 'stroke-width': 5, 'marker-end': 'url(#ao)' }, sv)];
-const pull = [S('line', { stroke: C.truth, 'stroke-width': 5, 'marker-end': 'url(#ag)' }, sv), S('line', { stroke: C.truth, 'stroke-width': 5, 'marker-end': 'url(#ag)' }, sv)];
-const x0L = S('g', {}, sv), xL = S('g', {}, sv);
-function dim(g, xa, xb, y, col, txt) {
-  g.innerHTML = '';
-  S('line', { x1: xa, y1: y, x2: xb, y2: y, stroke: col, 'stroke-width': 2, 'marker-start': 'url(#aw)', 'marker-end': 'url(#aw)' }, g);
-  [xa, xb].forEach(x => S('line', { x1: x, y1: y - 10, x2: x, y2: y + 10, stroke: col, 'stroke-width': 2 }, g));
-  S('text', { x: (xa + xb) / 2, y: y + 30, 'text-anchor': 'middle', 'font-size': 19, 'font-weight': 600, fill: col, text: txt }, g);
+const ghost = S('g', {}, sv);
+const ends = [S('circle', { r: 10, fill: C.red }, sv), S('circle', { r: 10, fill: C.red }, sv)];
+const push = [0, 1].map(() => S('line', { stroke: C.est, 'stroke-width': 5, 'marker-end': 'url(#ao)' }, sv));
+const pull = [0, 1].map(() => S('line', { stroke: C.truth, 'stroke-width': 5, 'marker-end': 'url(#ag)' }, sv));
+const dims = S('g', {}, sv);
+function dim(xa, xb, y, col, txt, sub) {
+  S('line', { x1: xa, y1: y, x2: xb, y2: y, stroke: col, 'stroke-width': 2.2, 'marker-start': 'url(#aw)', 'marker-end': 'url(#aw)' }, dims);
+  [xa, xb].forEach(x => S('line', { x1: x, y1: y - 10, x2: x, y2: y + 10, stroke: col, 'stroke-width': 2.2 }, dims));
+  S('text', { x: (xa + xb) / 2, y: y + 28, 'text-anchor': 'middle', 'font-size': 19, 'font-weight': 700, fill: col, text: txt }, dims);
+  if (sub) S('text', { x: (xa + xb) / 2, y: y + 50, 'text-anchor': 'middle', 'font-size': 15, fill: col, opacity: .8, text: sub }, dims);
 }
-/* readout panel */
+/* right panel: time trace (steps 3-4) / runs plot (5) / model (6+) */
 const RX = 790;
-const rp = S('g', {}, sv);
-S('rect', { x: RX, y: 24, width: 366, height: 600, rx: 14, fill: C.panel, stroke: C.grid }, rp);
-const rT = [0, 1, 2, 3].map(i => S('text', { x: RX + 20, y: 64 + i * 34, 'font-size': 18 }, rp));
-/* mini plot of the runs */
-const MX0 = RX + 50, MX1 = RX + 340, MY0 = 590, MY1 = 300;
+S('rect', { x: RX, y: 24, width: 366, height: 560, rx: 14, fill: C.panel, stroke: C.grid }, sv);
+const head = S('text', { x: RX + 20, y: 58, 'font-size': 18, 'font-weight': 700 }, sv);
+const tr = S('g', {}, sv), runsG = S('g', {}, sv), modelG = S('g', {}, sv);
+const TX0 = RX + 56, TX1 = RX + 346, TY0 = 300, TY1 = 90;
+const trPath = S('path', { class: 'w', stroke: '#e5ebf0', 'stroke-width': 2 }, tr);
+const trAxes = S('g', {}, tr), trLab = S('g', {}, tr);
+const rT = [0, 1, 2].map(i => S('text', { x: RX + 20, y: 360 + i * 34, 'font-size': 18 }, sv));
+const MX0 = RX + 50, MX1 = RX + 340, MY0 = 540, MY1 = 220;
 const mx = x => MX0 + (MX1 - MX0) * (x - 30) / 40, my = f => MY0 - (MY0 - MY1) * f / 45;
-const mp = S('g', {}, sv);
-S('line', { x1: MX0, y1: MY0, x2: MX1, y2: MY0, stroke: C.grid }, mp); S('line', { x1: MX0, y1: MY0, x2: MX0, y2: MY1, stroke: C.grid }, mp);
-[30, 40, 50, 60, 70].forEach(v => S('text', { x: mx(v), y: MY0 + 20, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: v }, mp));
-[0, 20, 40].forEach(v => S('text', { x: MX0 - 8, y: my(v) + 4, 'text-anchor': 'end', 'font-size': 13, class: 'mut', text: v }, mp));
-S('text', { x: (MX0 + MX1) / 2, y: MY0 + 40, 'text-anchor': 'middle', 'font-size': 14, class: 'mut', text: '⟨x⟩, end-to-end distance (Å)' }, mp);
-S('text', { x: MX0 + 6, y: MY1 + 4, 'font-size': 14, class: 'mut', text: 'f (pN)' }, mp);
-const dots = RUNS.map(([x, f]) => S('circle', { cx: mx(x), cy: my(f), r: 5, fill: '#6fa8ff', opacity: 0 }, mp));
-const cur = S('circle', { r: 9, fill: 'none', stroke: C.est, 'stroke-width': 3 }, mp);
-const mpT = S('text', { x: RX + 20, y: 262, 'font-size': 16, 'font-weight': 600, text: 'one point per run (27 bp, 25 runs)' }, mp);
-const foot = S('text', { x: 590, y: 676, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
-const foot2 = S('text', { x: 590, y: 708, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
-/* shapes */
+S('line', { x1: MX0, y1: MY0, x2: MX1, y2: MY0, stroke: C.grid }, runsG); S('line', { x1: MX0, y1: MY0, x2: MX0, y2: MY1, stroke: C.grid }, runsG);
+[30, 40, 50, 60, 70].forEach(v => S('text', { x: mx(v), y: MY0 + 20, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: v }, runsG));
+[0, 20, 40].forEach(v => S('text', { x: MX0 - 8, y: my(v) + 4, 'text-anchor': 'end', 'font-size': 13, class: 'mut', text: v }, runsG));
+S('text', { x: (MX0 + MX1) / 2, y: MY0 + 38, 'text-anchor': 'middle', 'font-size': 14, class: 'mut', text: '⟨x⟩ of the run (Å)' }, runsG);
+S('text', { x: MX0 + 6, y: MY1 + 4, 'font-size': 14, class: 'mut', text: 'f (pN)' }, runsG);
+RUNS.forEach(([x, f]) => S('circle', { cx: mx(x), cy: my(f), r: 5, fill: '#6fa8ff' }, runsG));
+const cur = S('circle', { r: 9, fill: 'none', stroke: C.est, 'stroke-width': 3 }, runsG);
+const mlines = [0, 1, 2, 3, 4].map(i => S('text', { x: RX + 20, y: 110 + i * 34, 'font-size': 18 }, modelG));
+const foot = S('text', { x: 590, y: 636, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 600 }, sv);
+const foot2 = S('text', { x: 590, y: 670, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
+const foot3 = S('text', { x: 590, y: 700, 'text-anchor': 'middle', 'font-size': 18, class: 'mut' }, sv);
 function arc(x) {
   let th = Math.PI;
   for (let i = 0; i < 60; i++) { const f = 2 * Math.sin(th / 2) / th - x / LNM, d = (Math.cos(th / 2) * th - 2 * Math.sin(th / 2)) / (th * th); th -= f / d; }
@@ -74,64 +78,81 @@ function helix(g, pts) {
     S('line', { x1: p[0] + nx * w, y1: p[1] + ny * w, x2: p[0] - nx * w, y2: p[1] - ny * w, stroke: '#3d6fbf', 'stroke-width': 2.4 }, g); }
 }
 const TX = [
-  ['A bare 27 bp dsDNA duplex in water: no protein', 'duplex = two complementary DNA strands base-paired into a double helix (our spring after hybridisation)'],
-  ['Its two ends are where the spring would attach to the protein', 'contour length L = 0.33 nm per bp = 89 Å, measured along the helix'],
-  ['A restraint ties the two ends together, centred at x₀ shorter than L', 'the duplex must bend; it pushes its ends apart (orange) against the restraint (green)'],
-  ['The ends settle at ⟨x⟩, slightly beyond x₀: the restraint is stretched', 'its pull k(⟨x⟩ − x₀) then equals the duplex’s push f · gap drawn 4× larger than the real ≈ 1 Å'],
-  ['Repeat at many x₀: each run gives one point (⟨x⟩, f)', 'so the end-to-end distance is (nearly) fixed and the force is read off'],
-  ['Zocchi’s model predicts f(x) from two properties of the duplex', 'B: bending stiffness (≈ 200 pN nm²) · τc: torque at which one base-pair step gives way and the duplex kinks'],
-  ['If the bend becomes too sharp (x < x_c), the model kinks the duplex', 'R: length of each straight arm; the push drops to a few pN. Next slide: model vs MD']
+  ['A bare 27 bp dsDNA duplex in water: no protein', 'duplex = two complementary DNA strands base-paired into a double helix (our spring after hybridisation)', ''],
+  ['L: the duplex’s length measured along the helix (yellow)', '0.33 nm per base pair → L = 89 Å for 27 bp. The two red dots are its ends, where the protein would attach', ''],
+  ['x₀: rest length of a virtual spring tying the two ends (we choose it, here 50 Å)', 'x₀ < L, so the duplex is forced to bend: it pushes outward (orange), the spring pulls inward (green)', ''],
+  ['x(t): the actual end-to-end distance at each instant, and it is never still', 'Nothing is pulled out of equilibrium: at 300 K water molecules buffet the DNA, so x(t) jiggles by about ±1 Å', 'the trace (right) records x(t) during the 50 ns run'],
+  ['⟨x⟩: the time average of x(t) over the whole run', 'Because the duplex pushes, ⟨x⟩ sits slightly beyond x₀ (here 50.94 vs 50.00 Å): the spring is stretched by ⟨x⟩ − x₀', 'so its pull f = k(⟨x⟩ − x₀) equals the duplex’s push (k = 200 kJ mol⁻¹ nm⁻², very stiff)'],
+  ['Each run: x₀ fixed by us, x held within ~1 Å of ⟨x⟩ → one point (⟨x⟩, f)', 'repeating at x₀ = 32 … 64 Å maps how the push depends on the end-to-end distance', 'drawing: the gap ⟨x⟩ − x₀ and the jiggle are shown 4× larger than reality'],
+  ['Zocchi’s model predicts the same f(x) without any simulation', 'B: bending stiffness (≈ 200 pN nm²) · τc: torque at which one base-pair step gives way (≈ 34 pN nm)', ''],
+  ['If the bend becomes too sharp (x < x_c = 86 Å), the model kinks the duplex', 'two straight arms of length R meet at one broken step, and the push drops to a few pN. Next slide: model vs MD', '']
 ];
-const T = TX.map((_, k) => ({ k, kink: k === 6 ? 1 : 0, dots: k >= 4 ? 1 : 0 }));
+const T = TX.map((_, k) => ({ k, kink: k === 7 ? 1 : 0 }));
 let ph = 0;
 Cryo.init(T, (P, t, dt) => {
   ph += Math.max(0, dt || 0);
-  const k = Math.round(P.k);
-  // which run is shown: in step 4+ cycle through x0 values
+  const k = Math.round(P.k), md = k >= 2 && k <= 5;
   let run = STIFF[3], j = 3;
-  if (k === 4) { j = (Math.floor(ph / 1.8) % STIFF.length + STIFF.length) % STIFF.length; run = STIFF[j]; }
-  let x0 = run[0] / 10, xm = run[1] / 10;
-  const jit = k >= 3 ? 0.04 * Math.sin(ph * 5.3) + 0.03 * Math.sin(ph * 8.1) : 0;
-  const shown = k >= 3 && k < 5 ? xm + jit : (k === 2 ? x0 + 0.09 : 6.6);
-  const xd = k >= 3 && k < 5 ? x0 + (shown - x0) * 4 : shown;                     // exaggerate the gap for display
-  const p1 = arc(xd), p2 = kinked(xd);
-  helix(dna, p1.map((p, i) => [lerp(p[0], p2[i][0], P.kink), lerp(p[1], p2[i][1], P.kink)]));
+  if (k === 5) { j = (Math.floor(ph / 2.2) % STIFF.length + STIFF.length) % STIFF.length; run = STIFF[j]; }
+  const x0 = run[0], xm = run[1];
+  const jig = k >= 3 && k <= 5 ? wig(ph * 1.4) : 0;
+  const xNow = k >= 3 && k <= 5 ? xm + jig : (k === 2 ? x0 + 0.9 : 66);
+  const xd = (k >= 2 && k <= 5 ? x0 + (xNow - x0) * GAPX : xNow) / 10;
+  const p1 = arc(xd), p2 = kinked(xd), pts = p1.map((p, i) => [lerp(p[0], p2[i][0], P.kink), lerp(p[1], p2[i][1], P.kink)]);
+  helix(dna, pts);
+  Lglow.setAttribute('d', 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L'));
+  Lglow.setAttribute('opacity', k === 1 ? .45 : 0);
   const xl = CX - xd / 2 * PX, xr = CX + xd / 2 * PX;
   ends[0].setAttribute('cx', xl); ends[0].setAttribute('cy', BY); ends[1].setAttribute('cx', xr); ends[1].setAttribute('cy', BY);
-  [ends[0], ends[1]].forEach(e => e.setAttribute('opacity', k >= 1 ? 1 : 0.35));
-  // restraint spring (zigzag) under the ends
-  const sy = BY + 46; let d = `M${xl},${BY + 10} L${xl},${sy}`; const nz = 16;
+  const sy = BY + 44; let d = `M${xl},${BY + 10} L${xl},${sy}`; const nz = 16;
   for (let i = 1; i < nz; i++) d += ` L${xl + (xr - xl) * i / nz},${sy + (i % 2 ? -10 : 10)}`;
   d += ` L${xr},${sy} L${xr},${BY + 10}`;
-  spring.setAttribute('d', d); spring.setAttribute('opacity', k >= 2 && k < 5 ? 1 : 0);
-  sprT.setAttribute('x', CX); sprT.setAttribute('y', sy + 34); sprT.textContent = k >= 2 ? 'restraint U = ½ k (x − x₀)²' : ''; sprT.setAttribute('opacity', k >= 2 && k < 5 ? 1 : 0);
-  const showF = k >= 2 && k < 5 ? 1 : 0;
-  push[0].setAttribute('x1', xl - 14); push[0].setAttribute('y1', BY - 6); push[0].setAttribute('x2', xl - 80); push[0].setAttribute('y2', BY - 6);
-  push[1].setAttribute('x1', xr + 14); push[1].setAttribute('y1', BY - 6); push[1].setAttribute('x2', xr + 80); push[1].setAttribute('y2', BY - 6);
-  pull[0].setAttribute('x1', xl - 80); pull[0].setAttribute('y1', BY + 16); pull[0].setAttribute('x2', xl - 16); pull[0].setAttribute('y2', BY + 16);
-  pull[1].setAttribute('x1', xr + 80); pull[1].setAttribute('y1', BY + 16); pull[1].setAttribute('x2', xr + 16); pull[1].setAttribute('y2', BY + 16);
-  push.forEach(a => a.setAttribute('opacity', showF)); pull.forEach(a => a.setAttribute('opacity', showF));
-  // dimension lines
-  if (k >= 2 && k < 5) dim(x0L, CX - x0 / 2 * PX, CX + x0 / 2 * PX, BY + 96, C.truth, `x₀ = ${(x0 * 10).toFixed(0)} Å (restraint centre)`); else x0L.innerHTML = '';
-  if (k >= 3) dim(xL, xl, xr, BY + 150, '#c9d1d9', k >= 5 ? 'x: end-to-end distance' : `⟨x⟩ = ${(xm * 10).toFixed(0)} Å (where the ends sit)`); else xL.innerHTML = '';
-  // labels on the duplex
+  spring.setAttribute('d', d); spring.setAttribute('opacity', md ? 1 : 0);
+  ghost.innerHTML = '';
+  if (md) [CX - x0 / 20 * PX, CX + x0 / 20 * PX].forEach(x => S('line', { x1: x, y1: BY - 18, x2: x, y2: BY + 110, stroke: C.truth, 'stroke-width': 2, 'stroke-dasharray': '4 4' }, ghost));
+  [push, pull].forEach((arr, w) => arr.forEach((a, s) => {
+    const xe = s ? xr : xl, dir = s ? 1 : -1, y = w ? BY + 16 : BY - 6;
+    if (!w) { a.setAttribute('x1', xe + dir * 14); a.setAttribute('x2', xe + dir * 80); } else { a.setAttribute('x1', xe + dir * 80); a.setAttribute('x2', xe + dir * 16); }
+    a.setAttribute('y1', y); a.setAttribute('y2', y); a.setAttribute('opacity', md ? 1 : 0); }));
+  dims.innerHTML = '';
+  if (md) dim(CX - x0 / 20 * PX, CX + x0 / 20 * PX, BY + 110, C.truth, `x₀ = ${x0.toFixed(0)} Å`, 'spring rest length (we set it)');
+  if (k >= 3 && k <= 5) dim(xl, xr, BY + 190, '#e5ebf0', `x(t) = ${xNow.toFixed(1)} Å`, 'distance between the ends right now');
+  if (k >= 6) dim(xl, xr, BY + 120, '#e5ebf0', 'x: end-to-end distance', '');
   lab.innerHTML = '';
-  if (k === 0) S('text', { x: CX, y: 120, 'text-anchor': 'middle', 'font-size': 20, fill: '#9cc2ff', text: 'strand 1 + strand 2, 27 base pairs' }, lab);
-  if (k === 1) { S('text', { x: CX, y: 120, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'L = 89 Å along the helix' }, lab);
-    S('text', { x: xl - 10, y: BY + 40, 'text-anchor': 'end', 'font-size': 16, fill: C.red, text: 'end 1' }, lab); S('text', { x: xr + 10, y: BY + 40, 'font-size': 16, fill: C.red, text: 'end 2' }, lab); }
-  if (k === 5) { S('text', { x: CX, y: 110, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'B: how hard it resists bending' }, lab); }
-  if (k === 6) { const apex = p2[70]; S('text', { x: apex[0], y: apex[1] - 26, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: C.red, text: 'kink: torque reached τc' }, lab);
-    const m = p2[35]; S('text', { x: m[0] - 18, y: m[1] - 8, 'text-anchor': 'end', 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'R' }, lab);
-    const m2 = p2[105]; S('text', { x: m2[0] + 18, y: m2[1] - 8, 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'R' }, lab); }
-  // readout
-  const lines = k < 2 ? ['', '', '', ''] : k < 3 ? ['restraint centre x₀ = ' + (x0 * 10).toFixed(0) + ' Å', 'stiffness k = 200 kJ mol⁻¹ nm⁻²', '', '']
-    : k < 5 ? ['x₀ = ' + run[0].toFixed(0) + ' Å    ⟨x⟩ = ' + run[1].toFixed(1) + ' Å', 'stretch ⟨x⟩ − x₀ = ' + (run[1] - run[0]).toFixed(2) + ' Å', 'f = k (⟨x⟩ − x₀) = ' + run[2].toFixed(1) + ' pN', k === 4 ? 'run ' + (j + 1) + ' of 6 shown (stiff restraint)' : 'one real 27 bp run']
-    : ['Zocchi’s model (no simulation):', 'L = 89 Å, B ≈ 200 pN nm²,', 'τc ≈ 34 pN nm (27 if nicked)', k === 6 ? 'kinks below x_c = 86 Å' : ''];
-  rT.forEach((e, i) => { e.textContent = lines[i]; e.setAttribute('fill', i === 2 ? C.est : C.text); e.setAttribute('font-weight', i === 2 ? 700 : 400); });
-  dots.forEach((dd, i) => dd.setAttribute('opacity', (P.dots * (i < 25 ? 0.85 : 0)).toFixed(2)));
-  mp.setAttribute('opacity', P.dots.toFixed(2));
-  cur.setAttribute('cx', mx(run[1])); cur.setAttribute('cy', my(run[2])); cur.setAttribute('opacity', k === 4 ? 1 : 0);
-  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1];
+  if (k === 0) S('text', { x: CX, y: 110, 'text-anchor': 'middle', 'font-size': 20, fill: '#9cc2ff', text: 'strand 1 + strand 2, 27 base pairs' }, lab);
+  if (k === 1) { S('text', { x: CX, y: 100, 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 700, fill: C.label, text: 'L = 89 Å, measured along the helix' }, lab);
+    S('text', { x: xl - 14, y: BY + 34, 'text-anchor': 'end', 'font-size': 16, fill: C.red, text: 'end 1' }, lab); S('text', { x: xr + 14, y: BY + 34, 'font-size': 16, fill: C.red, text: 'end 2' }, lab); }
+  if (k === 6) S('text', { x: CX, y: 100, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'B: how hard the duplex resists bending' }, lab);
+  if (k === 7) { const apex = p2[70]; S('text', { x: apex[0], y: apex[1] - 26, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: C.red, text: 'kink: bending torque reached τc' }, lab);
+    const m = p2[35], m2 = p2[105]; S('text', { x: m[0] - 18, y: m[1] - 8, 'text-anchor': 'end', 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'R' }, lab);
+    S('text', { x: m2[0] + 18, y: m2[1] - 8, 'font-size': 22, 'font-weight': 700, fill: '#9cc2ff', text: 'R' }, lab); }
+  tr.setAttribute('opacity', k === 3 || k === 4 ? 1 : 0);
+  runsG.setAttribute('opacity', k === 5 ? 1 : 0); modelG.setAttribute('opacity', k >= 6 ? 1 : 0);
+  head.textContent = k <= 2 ? '' : k <= 4 ? 'x(t) during one run' : k === 5 ? 'one point per run (27 bp, 25 runs)' : 'Zocchi’s model (no simulation)';
+  if (k === 3 || k === 4) {
+    const lo = x0 - 1.5, hi = x0 + 3.0, tY = v => TY0 - (TY0 - TY1) * (v - lo) / (hi - lo);
+    trAxes.innerHTML = ''; trLab.innerHTML = '';
+    S('line', { x1: TX0, y1: TY0, x2: TX1, y2: TY0, stroke: C.grid }, trAxes); S('line', { x1: TX0, y1: TY0, x2: TX0, y2: TY1, stroke: C.grid }, trAxes);
+    S('text', { x: (TX0 + TX1) / 2, y: TY0 + 22, 'text-anchor': 'middle', 'font-size': 13, class: 'mut', text: 'time →' }, trAxes);
+    S('text', { x: TX0 - 6, y: TY1 - 8, 'font-size': 13, class: 'mut', text: 'x (Å)' }, trAxes);
+    for (let v = Math.ceil(lo); v <= hi; v++) S('text', { x: TX0 - 8, y: tY(v) + 4, 'text-anchor': 'end', 'font-size': 12, class: 'mut', text: v }, trAxes);
+    S('line', { x1: TX0, x2: TX1, y1: tY(x0), y2: tY(x0), stroke: C.truth, 'stroke-width': 2, 'stroke-dasharray': '6 5' }, trLab);
+    S('text', { x: TX1, y: tY(x0) + 18, 'text-anchor': 'end', 'font-size': 14, fill: C.truth, text: 'x₀ (rest length)' }, trLab);
+    if (k === 4) { S('line', { x1: TX0, x2: TX1, y1: tY(xm), y2: tY(xm), stroke: C.est, 'stroke-width': 3 }, trLab);
+      S('text', { x: TX1, y: tY(x0 + 2.75), 'text-anchor': 'end', 'font-size': 15, 'font-weight': 700, fill: C.est, text: '⟨x⟩ = average of x(t) (orange line)' }, trLab); }
+    let dd = ''; const N = 160;
+    for (let i = 0; i <= N; i++) { const tt = ph * 1.4 - (N - i) * 0.06; dd += (i ? 'L' : 'M') + (TX0 + (TX1 - TX0) * i / N).toFixed(1) + ',' + tY(xm + wig(tt)).toFixed(1); }
+    trPath.setAttribute('d', dd);
+  }
+  const L3 = k === 3 ? [`x₀ = ${x0.toFixed(0)} Å (set by us)`, `x(t) = ${xNow.toFixed(1)} Å (right now)`, '']
+    : k === 4 ? [`x₀ = ${x0.toFixed(2)} Å   ⟨x⟩ = ${xm.toFixed(2)} Å`, `stretch ⟨x⟩ − x₀ = ${(xm - x0).toFixed(2)} Å`, `f = k(⟨x⟩ − x₀) = ${run[2].toFixed(1)} pN`]
+    : k === 5 ? [`run ${j + 1}/6: x₀ = ${x0.toFixed(0)} Å, ⟨x⟩ = ${xm.toFixed(1)} Å`, `f = ${run[2].toFixed(1)} pN`, ''] : ['', '', ''];
+  rT.forEach((e, i) => { const hl = i === 2 || (k === 5 && i === 1); e.textContent = L3[i]; e.setAttribute('fill', hl ? C.est : C.text); e.setAttribute('font-weight', hl ? 700 : 400);
+    e.setAttribute('y', k === 5 ? 92 + i * 30 : 360 + i * 34); });
+  cur.setAttribute('cx', mx(xm)); cur.setAttribute('cy', my(run[2])); cur.setAttribute('opacity', k === 5 ? 1 : 0);
+  const ML = ['L = 89 Å (27 bp)', 'B ≈ 200 pN nm²', 'τc ≈ 34 pN nm (27 if nicked)', k === 7 ? 'kinks below x_c = 86 Å' : '', k === 7 ? 'arm length R ≈ L/2' : ''];
+  mlines.forEach((e, i) => e.textContent = ML[i]);
+  foot.textContent = TX[k][0]; foot2.textContent = TX[k][1]; foot3.textContent = TX[k][2];
 });
 </script>
 </body></html>
