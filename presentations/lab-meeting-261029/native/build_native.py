@@ -96,11 +96,10 @@ PP_FN = anim('22a', 'PP2A: what it does in the cell', 'pp2afn.html', 'Protein ph
     'A <b>tumour suppressor</b>: inactivated in many cancers (A-subunit hot spots P179, R183) and by viral oncoproteins (SV40 small t); hyperphosphorylated tau in Alzheimer’s'])
 
 PP_ABC = anim('22b', 'PP2A architecture: A, C and B subunits', 'pp2a.html', 'PP2A works as a three-subunit holoenzyme: scaffold A, catalytic C, regulatory B',
-    'Schematic after Day et al. Fig. 1D and 2 (not to scale)', [
+    'Schematic (not to scale)', [
     '<b>A, scaffold</b> (PPP2R1A/B, ≈ 65 kDa): a horseshoe of 15 HEAT repeats with no activity of its own; it holds the other two in place',
     '<b>C, catalytic</b> (PPP2CA/B): the phosphatase itself; binds HEAT 11–15. A + C = the <b>AC core dimer</b>, which forms first. Its C-terminal tail (methylated at Leu309) helps B bind',
-    '<b>B, regulatory</b>: binds the AC core on HEAT 1–10 to complete the <b>ABC holoenzyme</b>. 4 families (B55, B56, PR72, striatin), > 40 isoforms; B decides <b>which substrate</b> and <b>where</b> in the cell',
-    '<b>Is assembly needed?</b> <b>Artificial substrates</b> (e.g. DiFMUP): the <b>AC core</b> is enough, and even C alone shows activity. <b>In cells</b>: the full <b>ABC holoenzyme</b> is needed, because B docks the real substrate (e.g. LxxIxE motifs on B56) next to C and directs PP2A to the right place'])
+    '<b>B, regulatory</b>: binds the AC core on HEAT 1–10 to complete the <b>ABC holoenzyme</b>. 4 families (B55, B56, PR72, striatin), > 40 isoforms; B decides <b>which substrate</b> and <b>where</b> in the cell'])
 
 PP_HEAT = anim('22c', 'HEAT repeats, and our Tet sites on Aα', 'heat.html', 'Why the A subunit is a flexible scaffold, and where the DNA spring attaches',
     'Schematic of the HEAT-repeat fold (not to scale)', [
