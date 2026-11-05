@@ -27,6 +27,10 @@ canvas.im { position: absolute; width: 128px; height: 128px; border-radius: 6px;
 #card .txt { font-size: 19.5px; line-height: 1.4; }
 #card b { color: #ECEDEF; font-weight: 700; }
 #card .d math, #card .txt math { font-size: 1.1em; }
+#card .foot { margin-top: 4px; font: 17px/1.3 Archivo, sans-serif; color: #C9D1D9; }
+#card .foot math { font-size: 1.1em; }
+#card .foot .disp { text-align: center; margin: 0 0 4px; color: #ECEDEF; }
+#card .foot .disp math { font-size: 23px; }
 </style>
 </head>
 <body>
@@ -130,7 +134,8 @@ function applyStep(k) {
   b.classList.toggle('nUt', k === 10); b.classList.toggle('nUv', k === 10);
   const cd = DATA.card[Math.min(k, DATA.card.length - 1)], kc = COL[cd.key] || COL[''];
   const fill = () => { card.innerHTML = `<h3 style="color:${kc}">${cd.h}</h3>` + (cd.text ? `<div class="txt">${cd.text}</div>` :
-      '<div class="rows">' + cd.rows.map(([t, key, d]) => `<div class="t" style="color:${COL[key] || COL['']}">${t}</div><div class="d">${d}</div>`).join('') + '</div>');
+      '<div class="rows">' + cd.rows.map(([t, key, d]) => `<div class="t" style="color:${COL[key] || COL['']}">${t}</div><div class="d">${d}</div>`).join('') + '</div>')
+      + (cd.foot ? `<div class="foot">${cd.foot}</div>` : '');
     card.style.borderLeftColor = kc; card.style.opacity = 1; };
   if (Cryo.static || lastK < 0) fill(); else { card.style.opacity = 0; setTimeout(fill, 220); }
   lastK = k;

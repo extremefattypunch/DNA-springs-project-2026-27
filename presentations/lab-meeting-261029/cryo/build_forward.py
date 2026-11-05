@@ -53,8 +53,14 @@ CARD = [
         (r'(q_x,q_y,0)^{\mathsf T}', 'Q', 'the image’s frequencies: the plane $q_z = 0$, perpendicular to the beam ($^{\\mathsf T}$: transpose, a column vector)'),
         (r'R_i^{\mathsf T} = R_i^{-1}', 'R', 'tilts that plane into the molecule’s frame: $\\tilde V$ on it is a <b>central slice</b> (two slides on)')]),
     dict(h='5 · The microscope: contrast transfer function', key='C', rows=[
-        (r'C_i(\mathbf q)', 'C', 'the <b>CTF</b> of image $i$: $\\sin\\chi(q)$, with $\\chi(q) = \\pi\\lambda\\Delta f_i\\,q^2 - \\tfrac12\\pi C_s\\lambda^3 q^4$ (previous slides). '
-         'It <b>multiplies</b> each frequency: at its zeros the information is lost, in negative lobes the contrast reverses. In real space: fringes around the particle')]),
+        (r'C_i(\mathbf q)', 'C', 'the <b>CTF</b> of image $i$, a <b>transfer function</b>: it <b>multiplies</b> each frequency $\\mathbf q$. At its zeros the information is lost, '
+         'in negative lobes the contrast reverses. In real space: fringes around the particle'),
+        ], foot=(r'<div class="disp">$\displaystyle \textcolor{#F5A142}{H_i(\mathbf q)} = e^{-i\chi_i(q)} '
+                 r'= \exp\!\big({-i\pi\lambda\,\Delta f_i\,q^2} + \tfrac{i}{2}\pi C_s\lambda^3 q^4\big)'
+                 r'\qquad\Longrightarrow\qquad \textcolor{#F5A142}{C_i(\mathbf q)} = {-\operatorname{Im}\,H_i(\mathbf q)} = \sin\chi_i(q)$</div>'
+                 r'$H_i$: the lens as a transfer function on the electron <b>wave</b>, $\tilde\psi_{\text{image}} = H_i\,\tilde\psi_{\text{exit}}$. '
+                 r'The detector records <b>intensity</b>: for a weak phase object $(\psi_{\text{exit}} \approx 1 + i\sigma)$, '
+                 r'$\tilde I(\mathbf q) \approx \delta(\mathbf q) + 2\sin\chi_i(q)\,\tilde\sigma(\mathbf q)$, so only ${-\operatorname{Im}\,H_i}$ acts on the specimen')),
     dict(h='6 · Where the particle sits in its box', key='T', rows=[
         (r'\mathbf t_i = (t_x,t_y)', 'T', 'in-plane <b>translation</b>: particle $i$ is not exactly centred in its box'),
         (r'e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}', 'T', 'a shift by $\\mathbf t_i$ in real space is a <b>phase ramp</b> in Fourier space; the magnitude is unchanged. '
@@ -93,6 +99,7 @@ def inline(txt):
     return re.sub(r'\$(.+?)\$', sub, txt)
 for cd in CARD:
     if 'text' in cd: cd['text'] = inline(cd['text'])
+    if 'foot' in cd: cd['foot'] = inline(cd['foot'])
     cd['rows'] = [(need(t), k, inline(d)) for t, k, d in cd.get('rows', [])]
 TOP = [inline(t) for t in TOP]; BOT = [inline(t) for t in BOT]; OPS = [inline(t) for t in OPS]
 
@@ -132,6 +139,7 @@ ML = [classes(m) for m in out]
 fill = lambda s: re.sub(r'\{\{(\d+)\}\}', lambda m: ML[int(m.group(1))], s)
 for cd in CARD:
     if 'text' in cd: cd['text'] = fill(cd['text'])
+    if 'foot' in cd: cd['foot'] = fill(cd['foot'])
     cd['rows'] = [(ML[t], k, fill(d)) for t, k, d in cd['rows']]
 DATA = dict(eq41=ML[EQ[0]], eq42=ML[EQ[1]], card=CARD, top=[fill(t) for t in TOP], bot=[fill(t) for t in BOT],
             ops=[fill(t) for t in OPS], lab=LAB)
