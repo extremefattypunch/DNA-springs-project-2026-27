@@ -1142,7 +1142,8 @@ function buildMedia(el, cfg) {
       items.forEach((it, i) => place(i, boxes[i], it.over != null ? !alt : items.some(o => o.over === i) && alt));
       if (eqBox) eqBox.classList.toggle('on', alt);
     }
-    lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', !cfg.final && i === k - 1); });
+    // a banner point shows only on its own click (a mid-slide transition); bullets stay on once shown
+    lis.forEach((li, i) => { li.classList.toggle('on', pts[i].banner ? i === k - 1 : i < k); li.classList.toggle('now', !cfg.final && i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
     let msg = cfg.msg0 || null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;   // msg0: iframe state before the first point
     curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [], step: 0, static: STATIC_MEDIA || !!cfg.final }, msg || {});

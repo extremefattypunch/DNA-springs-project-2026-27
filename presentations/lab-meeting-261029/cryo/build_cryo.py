@@ -91,6 +91,20 @@ RECON = [
         (T(r"A_i"), "m × n matrix: rotate, project, shift and CTF-filter v"),
         (T(r"\Sigma_i,\ |\Sigma_i|"), "noise covariance of image i; its determinant"),
     ]),
+    {"kind": "media", "page": "c11a", "section": "cryoem", "title": "The forward model in Fourier space: CTF, shift and noise", "figW": 1120,
+     "msgChannel": "cryo", "q": "",
+     "items": [{"iframe": "interactive/cryo/fmterms.html", "title": "The CTF, shift and noise terms of the forward model",
+                "cap": DRAWN + "; images computed live"}],
+     "points": [
+         {"text": "Recall the forward model (42): every term is a function of the spatial frequency " + FM("Q", r"\mathbf q"), "msg": {"step": 1}},
+         {"text": "The <b>CTF</b> " + FM("C", r"C_i(\mathbf q)") + " is a simple <b>product</b> in Fourier space", "msg": {"step": 2}},
+         {"banner": True, "text": '<span class="ttl">Why Fourier space pays off</span>So now that we have expressed our 2D projection in <b>Fourier space</b>, '
+                                  'we can directly <b>multiply</b> it by the <b>CTF</b> C<sub>i</sub>(q), the term that carries the defocus <b>phase shift</b> χ(q).'},
+         {"text": "But how exactly do the <b>shift</b> " + FM("T", r"\mathbf t_i") + " and the <b>noise</b> " + FM("N", r"N_i(\mathbf q)") + " make sense here?", "msg": {"step": 3}},
+         {"text": "Two <b>Fourier properties</b> (previous slide): a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product", "msg": {"step": 4}},
+         {"text": FM("T", r"e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}") + " is just the in-plane <b>shift</b> " + FM("T", r"\mathbf t_i") + " of the particle in real space, written in Fourier space", "msg": {"step": 5}},
+         {"text": "So the <b>pose</b> " + FM("R", r"(R_i,\mathbf t_i)") + " says <b>where</b> exactly each particle is (" + FM("T", r"\mathbf t_i") + ") and how it is <b>oriented</b> relative to the beam (" + FM("R", "R_i") + ")", "msg": {"step": 6}},
+         {"text": '<span class="headline"><b>Noise</b> ' + FM("N", r"N_i(\mathbf q)") + " is taken to be <b>Gaussian</b>, as assumed throughout the literature</span>", "msg": {"step": 7}}]},
     eqslide("c11b", "Reconstruction, known poses (2/2): the normal equations",
             "Maximum likelihood: which map v makes all N images most probable?", [
         "The N images are independent given <b>v</b>, so the joint likelihood is a product:"

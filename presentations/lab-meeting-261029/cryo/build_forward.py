@@ -95,11 +95,39 @@ for cd in CARD:
     if 'text' in cd: cd['text'] = inline(cd['text'])
     cd['rows'] = [(need(t), k, inline(d)) for t, k, d in cd.get('rows', [])]
 TOP = [inline(t) for t in TOP]; BOT = [inline(t) for t in BOT]; OPS = [inline(t) for t in OPS]
+
+# ---- fmterms.html (slide c11a): the CTF, shift and noise terms of eq. (42) ----
+G, R_ = '#5BD67A', '#F2645A'
+T2 = dict(
+    q=r'$\mathbf q$',
+    ctfl=[r'$\tilde V$: the central slice', r'$C_i(\mathbf q)$: the CTF', r'$C_i\,\tilde V$: what the microscope passes'],
+    ctfs=r'Each frequency $\mathbf q$ of the projection is simply <b>multiplied</b> by its own CTF value: orange lobes pass it, '
+         r'blue lobes flip its sign, and the dark rings (zeros) erase it.',
+    ask=r'But how exactly do the <b style="color:%s">shift</b> <span style="color:%s">$\mathbf t_i$</span> and the '
+        r'<b style="color:%s">noise</b> <span style="color:%s">$N_i(\mathbf q)$</span> make sense here?' % (G, G, R_, R_),
+    shiftEq=r'$\mathcal F[g(\mathbf x-\mathbf t)](\mathbf q) = e^{-2\pi i\,\mathbf q\cdot\mathbf t}\,\tilde g(\mathbf q)$',
+    convEq=r'$\mathcal F[h * g](\mathbf q) = \tilde h(\mathbf q)\,\tilde g(\mathbf q)$',
+    shiftCap=r'Moving an image by $\mathbf t$ only multiplies its transform by a <b>phase ramp</b>: the magnitudes $|\tilde g|$ stay the same',
+    convCap=r'Blurring by the point-spread function $h$ in real space is a <b>product</b> in Fourier space, with $\tilde h = C_i$: '
+            r'that is why the CTF simply multiplies',
+    lg=[r'$g(\mathbf x)$', r'$g(\mathbf x-\mathbf t)$', r'$h(\mathbf x)$, the PSF', r'$h * g$'],
+    tline=r'So $e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}$ is the in-plane <b>shift</b> $\mathbf t_i$ of particle $i$ in real space, '
+          r'written in Fourier space: how far it sits from the centre of its box',
+    pose=(r'<div class="big">the pose $\;(\textcolor{#B48CF2}{R_i},\ \textcolor{#5BD67A}{\mathbf t_i})$</div>'
+          r'<div><span style="color:#B48CF2">$R_i$</span>: how particle $i$ is <b>oriented relative to the beam</b> (3 angles)</div>'
+          r'<div><span style="color:#5BD67A">$\mathbf t_i$</span>: <b>where</b> exactly it sits in its box (2 numbers)</div>'
+          r'<div style="margin-top:12px">Five numbers per particle. Together with the map $V$, they are what reconstruction has to find.</div>'),
+    noise=(r'<div class="big" style="color:#F2645A">$N_i(\mathbf q) \sim \mathcal N\big(0,\ \sigma_i^2(q)\big)$</div>'
+           r'<div>Zero-mean <b>Gaussian</b> noise, independent at every frequency $\mathbf q$, with a variance that may depend on $|\mathbf q|$: '
+           r'the standard assumption in the literature (e.g. RELION).</div>'
+           r'<div style="margin-top:12px">Why it is reasonable: each Fourier coefficient sums over many pixels, so its noise is close to Gaussian '
+           r'(central limit theorem), even though electron counts are Poisson.</div>'))
+for k_, v_ in T2.items(): T2[k_] = [inline(x) for x in v_] if isinstance(v_, list) else inline(v_)
 out = json.loads(subprocess.run(['node', str(ROOT / 'tools/tex.cjs')], input=json.dumps(jobs), capture_output=True, text=True, check=True).stdout)
 inv = {v: k for k, v in MARK.items()}
 def classes(ml):
     ml = re.sub(r'<annotation encoding="application/x-tex">.*?</annotation>', '', ml, flags=re.S)
-    return re.sub(r'mathcolor="(#[0-9a-f]{6})"', lambda m: 'class="%s"' % inv[m.group(1)], ml)
+    return re.sub(r'mathcolor="(#[0-9a-f]{6})"', lambda m: 'class="%s"' % inv[m.group(1)] if m.group(1) in inv else m.group(0), ml)
 ML = [classes(m) for m in out]
 fill = lambda s: re.sub(r'\{\{(\d+)\}\}', lambda m: ML[int(m.group(1))], s)
 for cd in CARD:
@@ -110,4 +138,8 @@ DATA = dict(eq41=ML[EQ[0]], eq42=ML[EQ[1]], card=CARD, top=[fill(t) for t in TOP
 
 src = (ROOT / 'cryo/forward_template.html').read_text()
 (ROOT / 'interactive/cryo/forward.html').write_text(src.replace('/*DATA*/null', json.dumps(DATA, ensure_ascii=False)))
-print('forward.html written:', len(MARK), 'term classes,', len(jobs), 'formulas')
+DATA2 = {k_: ([fill(x) for x in v_] if isinstance(v_, list) else fill(v_)) for k_, v_ in T2.items()}
+DATA2.update(eq42=ML[EQ[1]], lab=LAB)
+src = (ROOT / 'cryo/fmterms_template.html').read_text()
+(ROOT / 'interactive/cryo/fmterms.html').write_text(src.replace('/*DATA*/null', json.dumps(DATA2, ensure_ascii=False)))
+print('forward.html and fmterms.html written:', len(MARK), 'term classes,', len(jobs), 'formulas')

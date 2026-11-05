@@ -2766,6 +2766,70 @@
   },
   {
    "kind": "media",
+   "page": "c11a",
+   "section": "cryoem",
+   "title": "The forward model in Fourier space: CTF, shift and noise",
+   "figW": 1120,
+   "msgChannel": "cryo",
+   "q": "",
+   "items": [
+    {
+     "iframe": "interactive/cryo/fmterms.html",
+     "title": "The CTF, shift and noise terms of the forward model",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides; images computed live"
+    }
+   ],
+   "points": [
+    {
+     "text": "Recall the forward model (42): every term is a function of the spatial frequency <span class=\"fmQ\"><span class=\"tex\">\\mathbf q</span></span>",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "The <b>CTF</b> <span class=\"fmC\"><span class=\"tex\">C_i(\\mathbf q)</span></span> is a simple <b>product</b> in Fourier space",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "banner": true,
+     "text": "<span class=\"ttl\">Why Fourier space pays off</span>So now that we have expressed our 2D projection in <b>Fourier space</b>, we can directly <b>multiply</b> it by the <b>CTF</b> C<sub>i</sub>(q), the term that carries the defocus <b>phase shift</b> χ(q)."
+    },
+    {
+     "text": "But how exactly do the <b>shift</b> <span class=\"fmT\"><span class=\"tex\">\\mathbf t_i</span></span> and the <b>noise</b> <span class=\"fmN\"><span class=\"tex\">N_i(\\mathbf q)</span></span> make sense here?",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "Two <b>Fourier properties</b> (previous slide): a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "<span class=\"fmT\"><span class=\"tex\">e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i}</span></span> is just the in-plane <b>shift</b> <span class=\"fmT\"><span class=\"tex\">\\mathbf t_i</span></span> of the particle in real space, written in Fourier space",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "So the <b>pose</b> <span class=\"fmR\"><span class=\"tex\">(R_i,\\mathbf t_i)</span></span> says <b>where</b> exactly each particle is (<span class=\"fmT\"><span class=\"tex\">\\mathbf t_i</span></span>) and how it is <b>oriented</b> relative to the beam (<span class=\"fmR\"><span class=\"tex\">R_i</span></span>)",
+     "msg": {
+      "step": 6
+     }
+    },
+    {
+     "text": "<span class=\"headline\"><b>Noise</b> <span class=\"fmN\"><span class=\"tex\">N_i(\\mathbf q)</span></span> is taken to be <b>Gaussian</b>, as assumed throughout the literature</span>",
+     "msg": {
+      "step": 7
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": "c11b",
    "section": "cryoem",
    "items": [],
