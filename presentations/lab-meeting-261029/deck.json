@@ -2046,6 +2046,10 @@
      "msg": {
       "step": 6
      }
+    },
+    {
+     "banner": true,
+     "text": "<span class=\"ttl\">Their three assays</span>They performed <b>(1) cryoEM imaging</b>, <b>(2) BLI binding assays</b> and <b>(3) phosphatase activity assays</b>.<br><br>In the next 3 slides we briefly explain <b>how each one works</b> and <b>what we can learn</b> from it."
     }
    ],
    "msg0": {
@@ -2103,8 +2107,7 @@
      "text": "<span class=\"headline\"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>",
      "hl": 1
     }
-   ],
-   "final": true
+   ]
   },
   {
    "kind": "media",
@@ -2158,8 +2161,7 @@
       "step": 6
      }
     }
-   ],
-   "final": true
+   ]
   },
   {
    "kind": "media",
@@ -2213,8 +2215,30 @@
       "step": 6
      }
     }
-   ],
-   "final": true
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "30s",
+   "section": "assay",
+   "figW": 1180,
+   "title": "Summary: what each assay tells us about our DNA-spring chimeras",
+   "items": [],
+   "big": true,
+   "points": [
+    {
+     "text": "<table class=\"tb big cmp\"><tr><th style=\"width:10.5em\">Assay</th><th>What it can tell us about our DNA-spring chimeras</th></tr><tr><td><b>cryoEM</b></td><td>Ascertain <b>spring attachment</b>, and <b>quantify the structural deformation</b> physically</td></tr><tr><td><b>BLI binding</b></td><td>Investigate <b>holoenzyme formation</b> (AC core + B), which is required for <b>in vivo activity</b></td></tr><tr><td><b>Phosphatase activity</b><br>(DiFMUP)</td><td>Direct investigation of <b>physiological function</b>, using an <b>artificial substrate</b></td></tr></table>"
+    },
+    {
+     "text": "<b>Why isn’t the phosphatase activity assay enough? Why also run BLI?</b>"
+    },
+    {
+     "text": "DiFMUP only needs the <b>AC core</b> (A + C): <i>it does not require the B subunit</i>. It is also an <b>artificial substrate</b>, unlike the real substrates PP2A meets in vivo, which B docks next to C"
+    },
+    {
+     "text": "<span class=\"headline\">So DiFMUP measures the <b>raw dephosphorylation capacity</b> of our chimeras, independent of <b>regulation by the B subunit</b> as in real in vivo contexts. BLI covers that missing piece: does B still bind?</span>"
+    }
+   ]
   },
   {
    "kind": "media",

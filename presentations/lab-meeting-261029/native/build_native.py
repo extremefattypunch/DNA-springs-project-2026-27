@@ -60,7 +60,7 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
   'items': [{'iframe': 'interactive/pp2a.html', 'title': 'Aα vs Aβ vs Aα + spring', 'cap': 'Schematic after Day et al. Fig. 1D and 2 (not to scale)'}],
   'points': [{'text': t, 'msg': {'step': st}} for t, st in [
     ('<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave', 5),
-    ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 6)]], 'msg0': {'step': 4}}
+    ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 6)]] + [{'banner': True, 'text': '<span class="ttl">Their three assays</span>They performed <b>(1) cryoEM imaging</b>, <b>(2) BLI binding assays</b> and <b>(3) phosphatase activity assays</b>.<br><br>In the next 3 slides we briefly explain <b>how each one works</b> and <b>what we can learn</b> from it.'}], 'msg0': {'step': 4}}
 
 DTT = {'kind': 'media', 'page': '21b', 'section': 'synthesis', 'title': 'Why add DTT? Favouring the 1 : 1 circle', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Breaking disulfide bonds so each pp2a reacts on its own',
@@ -273,8 +273,7 @@ for x in out:
     if x.get('page') == '22b': x['introTtl'] = 'Next step'
     if x.get('page') == 33: x['introTtl'] = 'Bonus section'
     if x.get('page') == 23: x['introTtl'] = 'Choosing assays'
-    if x.get('page') in (24, 29, 30):   # static, no click-through (Ian's request; 23 animated again 2026-11-05)
-        x['final'] = True
+    # 23, 24, 29, 30 were static (final) at Ian's request; all animated again 2026-11-05
 deck['slides'] = out
 (ROOT / 'deck.json').write_text(json.dumps(deck, indent=1, ensure_ascii=False))
 print(len(out), 'slides;', sum(1 for s in out if s['kind'] == 'image'), 'image slides left')
