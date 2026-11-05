@@ -167,8 +167,11 @@ SLIDES = [
      "q": "Implication: the scattered wave is always 90° out of phase with the unscattered wave",
      "aside": {"w": 600, "html": "<b>Also implies</b> the amplitude of the exit wave after scattering at the protein remains at unity, so there is <b>no contrast</b> between the unscattered reference and the scattered wave: the detector only picks up <b>intensity</b>, not the phase difference!"
                + tex(r"I(x,y) = \big|e^{i\phi(x,y)}\big|^2 = 1", True)
-               + PHASOR + "<div style=\"text-align:center;font-size:17px;margin-top:2px\">To scale, φ = 0.2 rad: the resultant ends just outside the unit circle</div>"
-               + tex(r"I = |1 + i\phi|^2 = 1 + \phi^2 = 1.04 \approx 1", True)},
+               + PHASOR + "<div style=\"text-align:center;font-size:16px;color:var(--ink-3);margin-top:2px\">Drawn to scale for φ = 0.2 rad</div>"
+               + "<div style=\"margin-top:14px\">Intensity of the <b>exit wave</b> (what the detector records):</div>"
+               + tex(r"I_{\mathrm{exit}} = |1 + i\phi|^2 = (1 + i\phi)(1 - i\phi) = 1 + \phi^2 = 1.04", True)
+               + "<div style=\"margin-top:8px;padding:10px 14px;border-left:5px solid var(--amber);border-radius:6px;background:color-mix(in srgb, var(--amber) 13%, transparent);color:var(--ink)\">"
+                 "<b>I<sub>exit</sub> ≈ 1 = I<sub>unscattered</sub></b>: the exit wave is as bright as the unscattered reference, so the protein gives <b>no contrast</b></div>"},
      "points": [{"text": t} for t in [
          "Incident plane wave:" + tex(r"\Psi_{\mathrm{in}}(\mathbf r, z) = e^{ikz}, \qquad k = \frac{2\pi}{\lambda}", True),
          "Exit wave after the protein:" + tex(r"\Psi_{\mathrm{exit}}(x,y) = e^{i\phi(x,y)}", True)
