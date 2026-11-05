@@ -278,6 +278,13 @@ SLIDES = [
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
     if _s["page"] == "c1":
         _s["points"][-1]["msg"] = {"step": 4}
+        _s["points"].append({"banner": True, "text": '<span class="ttl">Key differences</span>'   # Ian, 2026-11-05
+            "Both X-ray crystallography and cryo-EM measure <b>intensities</b> rather than phases directly. However, unlike X-ray crystallography, "
+            "where Fourier <b>phase information is lost</b> from diffraction intensity measurements, cryo-EM exploits <b>electron-wave interference</b> "
+            "to encode phase information into detectable <b>image intensity contrast</b>.<br><br>"
+            "Furthermore, whereas proteins in X-ray crystals form an <b>ordered lattice</b>, individual proteins in cryo-EM are <b>randomly oriented</b> "
+            "in vitreous ice. Consequently, cryo-EM requires computational estimation of <b>particle orientations</b> to reconstruct a 3D structural map, "
+            "whereas X-ray crystallography primarily requires recovering <b>missing Fourier phases</b>."})
     if _s["page"] == "c5":    # opening banner (Ian, 2026-11-05): the two questions the WPOA answers
         _s["introTtl"] = "Two questions"
         _s["intro"] = ("We saw that when the beam passes through the protein its <b>phase shifts</b>, yet the protein is then "

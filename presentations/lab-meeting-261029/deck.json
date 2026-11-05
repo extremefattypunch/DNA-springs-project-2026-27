@@ -2324,6 +2324,10 @@
      "msg": {
       "step": 4
      }
+    },
+    {
+     "banner": true,
+     "text": "<span class=\"ttl\">Key differences</span>Both X-ray crystallography and cryo-EM measure <b>intensities</b> rather than phases directly. However, unlike X-ray crystallography, where Fourier <b>phase information is lost</b> from diffraction intensity measurements, cryo-EM exploits <b>electron-wave interference</b> to encode phase information into detectable <b>image intensity contrast</b>.<br><br>Furthermore, whereas proteins in X-ray crystals form an <b>ordered lattice</b>, individual proteins in cryo-EM are <b>randomly oriented</b> in vitreous ice. Consequently, cryo-EM requires computational estimation of <b>particle orientations</b> to reconstruct a 3D structural map, whereas X-ray crystallography primarily requires recovering <b>missing Fourier phases</b>."
     }
    ],
    "final": true
