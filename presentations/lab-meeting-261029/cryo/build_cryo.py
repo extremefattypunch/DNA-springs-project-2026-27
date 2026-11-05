@@ -281,7 +281,7 @@ SLIDES = [
      "items": [{"img": "cryo/cryosparc_j1_import.png", "w": 1903, "h": 1021, "cap": "J1, Import Particle Stack: 5,000 particle images, with no orientations yet"},
                {"img": "cryo/cryosparc_j2_abinitio.png", "w": 1961, "h": 1029, "cap": "J2, Ab-initio Reconstruction (1 class, C1): the 3D map taking shape"}],
      "points": [
-         {"text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found", "hl": 0},
+         {"text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found. It also imports each particle’s <b>CTF parameters</b> (defocus, amplitude contrast 0.1), so J2 can apply C<sub>i</sub>(q) during reconstruction", "hl": 0},
          {"text": "<b>J2</b>, ab-initio reconstruction, alternates pose and map steps from a random start (the loop of the previous slides). By iteration 900 a filament density emerges at ≈ 17 Å", "hl": 1},
          {"text": "Run on the <b>Hekstra lab cluster</b> from my home directory; the raw data are on <b>netscratch</b>"}]},
 ]

@@ -2986,7 +2986,7 @@
    ],
    "points": [
     {
-     "text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found",
+     "text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found. It also imports each particle’s <b>CTF parameters</b> (defocus, amplitude contrast 0.1), so J2 can apply C<sub>i</sub>(q) during reconstruction",
      "hl": 0
     },
     {
