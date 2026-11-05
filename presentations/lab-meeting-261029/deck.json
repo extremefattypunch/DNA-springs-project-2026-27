@@ -2667,7 +2667,9 @@
       "step": 10
      }
     }
-   ]
+   ],
+   "introTtl": "Next: the forward model",
+   "intro": "With an understanding of the basics of <b>image formation</b> in cryoEM, we now move on to the key theoretical model that governs <b>3D structure determination</b> from the <b>2D images</b> we obtain from the microscope."
   },
   {
    "kind": "media",

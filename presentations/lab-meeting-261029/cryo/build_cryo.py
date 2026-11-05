@@ -307,6 +307,10 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
             + _row("perpendicular", r"|1+i\phi|^2 = 1 + \phi^2 \approx 1", "var(--ink-3)")
             + "</table>Under the WPOA " + tex(r"\phi \ll 1") + ", so to first order " + tex(r"\phi^2 \approx 0") + " while " + tex(r"2\phi") + " is not: "
             "only the parallel and antiparallel cases move the intensity away from unity, giving <b>contrast</b>. At 90° (in focus) the change is second order: <b>invisible</b></div>"})
+    if _s["page"] == "c7b":   # opening banner (Ian, 2026-11-05)
+        _s["introTtl"] = "Next: the forward model"
+        _s["intro"] = ("With an understanding of the basics of <b>image formation</b> in cryoEM, we now move on to the key theoretical model "
+                       "that governs <b>3D structure determination</b> from the <b>2D images</b> we obtain from the microscope.")
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"
