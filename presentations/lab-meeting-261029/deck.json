@@ -2499,6 +2499,34 @@
   },
   {
    "kind": "media",
+   "page": "c6b",
+   "section": "cryoem",
+   "items": [],
+   "final": true,
+   "big": true,
+   "title": "Where the defocus phase comes from: the Fresnel propagator",
+   "q": "Why does defocus give each spatial frequency q its own extra phase?",
+   "aside": {
+    "w": 560,
+    "html": "<b>Terms</b><table class=\"gl\"><tr><td><span class=\"tex\">\\psi(\\mathbf r)</span></td><td>electron wavefunction (complex amplitude) at position <span class=\"tex\">\\mathbf r = (x, y, z)</span></td></tr><tr><td><span class=\"tex\">z;\\ x, y</span></td><td>optic axis (beam direction); transverse image-plane coordinates</td></tr><tr><td><span class=\"tex\">\\mathbf k = (k_x, k_y, k_z)</span></td><td>wavevector: points along the direction of travel</td></tr><tr><td><span class=\"tex\">\\mathbf k_\\perp,\\ k_z</span></td><td>transverse (tilt off the axis) and axial components of <span class=\"tex\">\\mathbf k</span></td></tr><tr><td><span class=\"tex\">k_0 = 2\\pi/\\lambda</span></td><td>wavenumber: length of <span class=\"tex\">\\mathbf k</span>, fixed by the beam energy</td></tr><tr><td><span class=\"tex\">\\lambda</span></td><td>electron wavelength (0.0197 Å at 300 kV, so λq ≪ 1 for q ≲ 0.5 Å⁻¹)</td></tr><tr><td><span class=\"tex\">\\mathbf q = (q_x, q_y),\\ q</span></td><td>2D spatial frequency of a specimen detail (Å⁻¹) and its magnitude</td></tr><tr><td><span class=\"tex\">H_z(q)</span></td><td>Fresnel propagator: phase picked up over a distance z</td></tr><tr><td><span class=\"tex\">\\Delta f</span></td><td>defocus (positive = underfocus); sign conventions differ between texts</td></tr><tr><td><span class=\"tex\">\\chi_{\\text{def}}(q)</span></td><td>extra phase from defocus</td></tr><tr><td><span class=\"tex\">C_s</span></td><td>spherical-aberration coefficient: adds <span class=\"tex\">-\\tfrac12\\pi C_s\\lambda^3 q^4</span></td></tr></table>"
+   },
+   "points": [
+    {
+     "text": "A <b>3D plane wave</b> of wavelength λ travels along its <b>wavevector</b> <span class=\"tex\">\\mathbf k</span>. Specimen detail of <b>spatial frequency</b> <span class=\"tex\">\\mathbf q</span> scatters it off the optic axis z, giving it a transverse part <span class=\"tex\">\\mathbf k_\\perp</span><span class=\"tex d\">\\psi(\\mathbf r) = e^{\\,i\\mathbf k\\cdot\\mathbf r} = e^{\\,i(k_x x + k_y y + k_z z)}, \\qquad \\mathbf k_\\perp = (k_x, k_y) = 2\\pi\\mathbf q</span>"
+    },
+    {
+     "text": "<b>Elastic</b> scattering keeps the energy, so <span class=\"tex\">|\\mathbf k| = k_0</span> is unchanged. Solve for <span class=\"tex\">k_z</span> and expand for small angles (<span class=\"tex\">\\lambda q \\ll 1</span>):<span class=\"tex d\">k_z^2 + |\\mathbf k_\\perp|^2 = k_0^2, \\qquad k_0 = \\frac{2\\pi}{\\lambda}</span><span class=\"tex d\">k_z = \\sqrt{k_0^2 - (2\\pi q)^2} = k_0\\sqrt{1 - \\lambda^2 q^2} \\;\\simeq\\; k_0 - \\tfrac12 k_0\\lambda^2 q^2 = k_0 - \\pi\\lambda q^2</span>"
+    },
+    {
+     "text": "Over a distance z the component gains <span class=\"tex\">e^{\\,i k_z z}</span>. Dropping the carrier phase <span class=\"tex\">e^{\\,i k_0 z}</span> shared by every component:<span class=\"tex d\">\\boxed{H_z(q) = e^{-i\\pi\\lambda z q^2}}</span>"
+    },
+    {
+     "text": "<b>Defocus</b> records the wave Δf from the in-focus plane (underfocus: z = −Δf), so every q gets its own extra phase, growing as q²:<span class=\"tex d\">\\chi_{\\text{def}}(q) = \\pi\\lambda\\,\\Delta f\\, q^2</span>Spherical aberration adds <span class=\"tex\">-\\tfrac12\\pi C_s\\lambda^3 q^4</span>, giving the χ(q) of the CTF (next slide)"
+    }
+   ]
+  },
+  {
+   "kind": "media",
    "page": "c7",
    "section": "cryoem",
    "title": "Each defocus value gives contrast to different spatial frequencies",

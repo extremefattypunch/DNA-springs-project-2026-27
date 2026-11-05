@@ -177,6 +177,32 @@ SLIDES = [
               "χ = 3π/2: <b>parallel</b>, so the particle is <b>bright</b> (contrast reversed)",
               "Contrast ≈ −2φ sin χ: <b>sin χ is the contrast transfer function</b>, largest at χ = π/2 + kπ",
               "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q"]), intro='<b>Key idea</b>: adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein.'),
+    eqslide("c6b", "Where the defocus phase comes from: the Fresnel propagator",
+            "Why does defocus give each spatial frequency q its own extra phase?", [
+        "A <b>3D plane wave</b> of wavelength λ travels along its <b>wavevector</b> " + T(r"\mathbf k") + ". Specimen detail of <b>spatial frequency</b> "
+        + T(r"\mathbf q") + " scatters it off the optic axis z, giving it a transverse part " + T(r"\mathbf k_\perp")
+        + D(r"\psi(\mathbf r) = e^{\,i\mathbf k\cdot\mathbf r} = e^{\,i(k_x x + k_y y + k_z z)}, \qquad \mathbf k_\perp = (k_x, k_y) = 2\pi\mathbf q"),
+        "<b>Elastic</b> scattering keeps the energy, so " + T(r"|\mathbf k| = k_0") + " is unchanged. Solve for " + T(r"k_z") + " and expand for small angles (" + T(r"\lambda q \ll 1") + "):"
+        + D(r"k_z^2 + |\mathbf k_\perp|^2 = k_0^2, \qquad k_0 = \frac{2\pi}{\lambda}")
+        + D(r"k_z = \sqrt{k_0^2 - (2\pi q)^2} = k_0\sqrt{1 - \lambda^2 q^2} \;\simeq\; k_0 - \tfrac12 k_0\lambda^2 q^2 = k_0 - \pi\lambda q^2"),
+        "Over a distance z the component gains " + T(r"e^{\,i k_z z}") + ". Dropping the carrier phase " + T(r"e^{\,i k_0 z}") + " shared by every component:"
+        + D(r"\boxed{H_z(q) = e^{-i\pi\lambda z q^2}}"),
+        "<b>Defocus</b> records the wave Δf from the in-focus plane (underfocus: z = −Δf), so every q gets its own extra phase, growing as q²:"
+        + D(r"\chi_{\text{def}}(q) = \pi\lambda\,\Delta f\, q^2")
+        + "Spherical aberration adds " + T(r"-\tfrac12\pi C_s\lambda^3 q^4") + ", giving the χ(q) of the CTF (next slide)",
+    ], [
+        (T(r"\psi(\mathbf r)"), "electron wavefunction (complex amplitude) at position " + T(r"\mathbf r = (x, y, z)")),
+        (T(r"z;\ x, y"), "optic axis (beam direction); transverse image-plane coordinates"),
+        (T(r"\mathbf k = (k_x, k_y, k_z)"), "wavevector: points along the direction of travel"),
+        (T(r"\mathbf k_\perp,\ k_z"), "transverse (tilt off the axis) and axial components of " + T(r"\mathbf k")),
+        (T(r"k_0 = 2\pi/\lambda"), "wavenumber: length of " + T(r"\mathbf k") + ", fixed by the beam energy"),
+        (T(r"\lambda"), "electron wavelength (0.0197 Å at 300 kV, so λq ≪ 1 for q ≲ 0.5 Å⁻¹)"),
+        (T(r"\mathbf q = (q_x, q_y),\ q"), "2D spatial frequency of a specimen detail (Å⁻¹) and its magnitude"),
+        (T(r"H_z(q)"), "Fresnel propagator: phase picked up over a distance z"),
+        (T(r"\Delta f"), "defocus (positive = underfocus); sign conventions differ between texts"),
+        (T(r"\chi_{\text{def}}(q)"), "extra phase from defocus"),
+        (T(r"C_s"), "spherical-aberration coefficient: adds " + T(r"-\tfrac12\pi C_s\lambda^3 q^4")),
+    ]),
     frame("c7", "Each defocus value gives contrast to different spatial frequencies", "ctf.html",
           "CTF(q) = sin χ(q), computed for 300 kV and Cₛ = 2.7 mm", DRAWN + "; CTF computed live", [
               "<b>Zeros</b>: the image carries no information at those q. <b>Negative lobes</b>: contrast reversed",
