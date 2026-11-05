@@ -655,6 +655,7 @@ function buildPanel(slideEl, spec, P) {
     if (!lane.label && !lane.chip && !lane.sub) return;
     const wx = laneX(lane, wellY);
     const el = h('div', 'lane-head fade', { style: { left: X(wx) + 'px', top: Y(wellAt(wx)) - 10 + 'px' } });
+    if (spec.headScale) Object.assign(el.style, { transform: `translate(-50%, -100%) scale(${spec.headScale})`, transformOrigin: '50% 100%' });   // tightly spaced lanes
     let html = '';
     if (lane.label) html += `<span class="${lane.chip ? 'chip ' + lane.chip : ''}">${lane.label}</span>`;
     if (lane.sub) html += `<span class="sub">${lane.sub}</span>`;

@@ -15,21 +15,21 @@
     "gst": {"name": "free GST", "note": "assumed: cut-off tag, every lane", "cls": "other", "icon": {"k": "gst"}}
   },
   "lanes": [
-    {"id": "L1", "x": 161, "w": 36, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L1", "x": 161, "w": 36, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 184, "h": 11, "i": 0.32, "sp": "p1d_ss"},
       {"y": 215, "h": 12, "i": 0.45, "sp": "protein"},
       {"y": 238, "h": 11, "i": 0.15, "sp": "imp"},
       {"y": 283, "h": 11, "i": 0.12, "sp": "imp"},
       {"y": 335, "h": 17, "i": 0.84, "sp": "gst"}
     ] },
-    {"id": "L2", "x": 203, "w": 33, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L2", "x": 203, "w": 33, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 184, "h": 10, "i": 0.26, "sp": "p1d_ss"},
       {"y": 213, "h": 11, "i": 0.4, "sp": "protein"},
       {"y": 238, "h": 11, "i": 0.09, "sp": "imp"},
       {"y": 280, "h": 12, "i": 0.14, "sp": "imp"},
       {"y": 331, "h": 17, "i": 0.83, "sp": "gst"}
     ] },
-    {"id": "L3", "x": 248, "w": 36, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L3", "x": 248, "w": 36, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 131, "h": 18, "i": 0.45, "sp": "p2d1_ss"},
       {"y": 182, "h": 11, "i": 0.22, "sp": "p1d_ss"},
       {"y": 212, "h": 11, "i": 0.28, "sp": "protein"},
@@ -37,7 +37,7 @@
       {"y": 243, "h": 10, "i": 0.15, "sp": "imp"},
       {"y": 334, "h": 17, "i": 0.96, "sp": "gst"}
     ] },
-    {"id": "L4", "x": 290, "w": 32, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L4", "x": 290, "w": 32, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 114, "h": 17, "i": 0.36, "sp": "p2d2_ss"},
       {"y": 181, "h": 10, "i": 0.21, "sp": "p1d_ss"},
       {"y": 194, "h": 8, "i": 0.13, "sp": "circ_ss"},

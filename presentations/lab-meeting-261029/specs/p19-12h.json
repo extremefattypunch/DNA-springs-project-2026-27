@@ -3,6 +3,7 @@
   "image": "gels/p19-12h.jpg",
   "size": [442, 395],
   "style": "dark",
+  "headScale": 0.8,
   "alt": "pp2a SDS-PAGE after a 12 h BCN incubation: 1-tet BCN, 2-tet BCN and 2-tet TCO reactions in duplicate lanes, then two pp2a-only lanes",
   "gel": {"poly": [[132, 96], [402, 96], [402, 394], [132, 394]], "wellY": 99, "tilt": 0},
   "species": {
@@ -15,7 +16,7 @@
     "gst": {"name": "free GST", "note": "assumed: cut-off tag, every lane", "cls": "other", "icon": {"k": "gst"}}
   },
   "lanes": [
-    {"id": "L1", "x": 158, "w": 32, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L1", "x": 158, "w": 32, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 174, "h": 8, "i": 0.13, "sp": "p2d1_ss"},
       {"y": 217, "h": 9, "i": 0.38, "sp": "p1d_ss"},
       {"y": 246, "h": 9, "i": 0.12, "sp": "protein"},
@@ -24,7 +25,7 @@
       {"y": 278, "h": 7, "i": 0.08, "sp": "imp"},
       {"y": 362, "h": 15, "i": 0.98, "sp": "gst"}
     ] },
-    {"id": "L2", "x": 193, "w": 30, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L2", "x": 193, "w": 30, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 176, "h": 8, "i": 0.14, "sp": "p2d1_ss"},
       {"y": 217, "h": 9, "i": 0.38, "sp": "p1d_ss"},
       {"y": 246, "h": 9, "i": 0.12, "sp": "protein"},
@@ -32,7 +33,7 @@
       {"y": 277, "h": 7, "i": 0.06, "sp": "imp"},
       {"y": 361, "h": 15, "i": 0.98, "sp": "gst"}
     ] },
-    {"id": "L3", "x": 227, "w": 28, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L3", "x": 227, "w": 28, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 173, "h": 10, "i": 0.84, "sp": "p2d1_ss"},
       {"y": 216, "h": 9, "i": 0.27, "sp": "p1d_ss"},
       {"y": 247, "h": 10, "i": 0.5, "sp": "protein"},
@@ -41,7 +42,7 @@
       {"y": 277, "h": 8, "i": 0.12, "sp": "imp"},
       {"y": 360, "h": 16, "i": 0.98, "sp": "gst"}
     ] },
-    {"id": "L4", "x": 254, "w": 24, "label": "ss", "chip": "ss", "sub": "BCN", "bands": [
+    {"id": "L4", "x": 254, "w": 24, "label": "BCN", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 163, "h": 10, "i": 0.72, "sp": "p2d2_ss"},
       {"y": 174, "h": 8, "i": 0.15, "sp": "p2d1_ss"},
       {"y": 213, "h": 8, "i": 0.24, "sp": "p1d_ss"},
@@ -52,7 +53,7 @@
       {"y": 267, "h": 8, "i": 0.2, "sp": "imp"},
       {"y": 360, "h": 16, "i": 0.99, "sp": "gst"}
     ] },
-    {"id": "L5", "x": 283, "w": 28, "label": "ss", "chip": "ss", "sub": "TCO", "bands": [
+    {"id": "L5", "x": 283, "w": 28, "label": "TCO", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 170, "h": 9, "i": 0.76, "sp": "p2d1_ss"},
       {"y": 214, "h": 9, "i": 0.27, "sp": "p1d_ss"},
       {"y": 249, "h": 8, "i": 0.1, "sp": "protein"},
@@ -61,7 +62,7 @@
       {"y": 277, "h": 8, "i": 0.13, "sp": "imp"},
       {"y": 361, "h": 15, "i": 0.99, "sp": "gst"}
     ] },
-    {"id": "L6", "x": 317, "w": 30, "label": "ss", "chip": "ss", "sub": "TCO", "bands": [
+    {"id": "L6", "x": 317, "w": 30, "label": "TCO", "chip": "ss", "sub": "ssDNA", "bands": [
       {"y": 159, "h": 10, "i": 0.5, "sp": "p2d2_ss"},
       {"y": 211, "h": 8, "i": 0.19, "sp": "p1d_ss"},
       {"y": 224, "h": 8, "i": 0.24, "sp": "circ_ss"},
@@ -70,13 +71,13 @@
       {"y": 280, "h": 8, "i": 0.08, "sp": "imp"},
       {"y": 360, "h": 15, "i": 1.0, "sp": "gst"}
     ] },
-    {"id": "L7", "x": 349, "w": 31, "label": "pp2a", "chip": "ctrl", "bands": [
+    {"id": "L7", "x": 349, "w": 31, "label": "pp2a", "chip": "ctrl", "sub": "only", "bands": [
       {"y": 249, "h": 12, "i": 0.92, "sp": "protein"},
       {"y": 271, "h": 8, "i": 0.14, "sp": "imp"},
       {"y": 277, "h": 7, "i": 0.09, "sp": "imp"},
       {"y": 361, "h": 15, "i": 0.7, "sp": "gst"}
     ] },
-    {"id": "L8", "x": 383, "w": 30, "label": "pp2a", "chip": "ctrl", "bands": [
+    {"id": "L8", "x": 383, "w": 30, "label": "pp2a", "chip": "ctrl", "sub": "only", "bands": [
       {"y": 250, "h": 11, "i": 0.83, "sp": "protein"},
       {"y": 273, "h": 8, "i": 0.1, "sp": "imp"},
       {"y": 280, "h": 7, "i": 0.09, "sp": "imp"},
