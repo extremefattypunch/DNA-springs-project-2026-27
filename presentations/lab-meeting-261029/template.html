@@ -26,6 +26,7 @@
   --dna-line: #15191d;
   --protein-stroke: #1b2026;
   --letterbox: #dfe4e9;
+  --fmV: #0b8aa1; --fmR: #7446cf; --fmP: #2c66cc; --fmQ: #9a7000; --fmC: #c0650b; --fmT: #23884a; --fmN: #c93e33; --fmY: #c2397a;
   --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
@@ -35,6 +36,7 @@
     --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
     --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e; --sec-cryoem: #5fc8e4;
     --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
+    --fmV: #4FD1E8; --fmR: #B48CF2; --fmP: #6FA8FF; --fmQ: #FFD166; --fmC: #F5A142; --fmT: #5BD67A; --fmN: #F2645A; --fmY: #FF7EB6;
     color-scheme: dark;
   }
 }
@@ -43,6 +45,7 @@
   --rule: #313d49; --violet: #a597ff; --teal: #5ed6c8; --amber: #ffb547;
   --sec-synthesis: #5fbf86; --sec-assay: #7ea8f5; --sec-md: #e486b2; --sec-background: #9aa6b1; --sec-status: #f07a6e; --sec-cryoem: #5fc8e4;
   --dna-line: #e5ebf0; --protein-stroke: #0b0f13; --letterbox: #070a0d;
+    --fmV: #4FD1E8; --fmR: #B48CF2; --fmP: #6FA8FF; --fmQ: #FFD166; --fmC: #F5A142; --fmT: #5BD67A; --fmN: #F2645A; --fmY: #FF7EB6;
   color-scheme: dark;
 }
 
@@ -243,6 +246,7 @@ body {
 .m-pt.on { opacity: 1; transform: none; }
 .m-pt.now { color: var(--ink); }
 .m-pt b { color: var(--ink); font-weight: 640; }
+.fmV { color: var(--fmV); } .fmR { color: var(--fmR); } .fmP { color: var(--fmP); } .fmQ { color: var(--fmQ); } .fmC { color: var(--fmC); } .fmT { color: var(--fmT); } .fmN { color: var(--fmN); } .fmY { color: var(--fmY); }
 .eq { font-family: "STIX Two Text", "Cambria Math", Georgia, serif; font-size: 1.12em; color: var(--ink); white-space: nowrap; }
 .eq i { font-style: italic; } .eq .kn { color: var(--sec-synthesis); } .eq .un { color: var(--sec-status); } .eq .nz { color: var(--ink-3); }
 .m-pt b.kn { color: var(--sec-synthesis); } .m-pt b.un { color: var(--sec-status); }

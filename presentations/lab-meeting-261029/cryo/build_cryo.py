@@ -62,6 +62,7 @@ def eqslide(page, title, q, pts, terms):
 
 
 T = lambda s: tex(s)
+FM = lambda k, s: f'<span class="fm{k}">{tex(s)}</span>'   # forward-model term, coloured as in forward.html
 # WPOA phasor diagram for slide c5 (static, drawn to scale with phi = 0.2 rad)
 PHASOR = '<svg viewBox="0 0 540 300" width="540" height="300" style="display:block;margin:14px auto 0;overflow:visible" font-family="STIX Two Text, Georgia, serif" font-size="22"> <defs> <marker id="wpA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--amber)"/></marker> <marker id="wpV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--violet)"/></marker> <marker id="wpT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--teal)"/></marker> </defs> <g style="stroke:var(--ink-3);fill:none" stroke-width="1.4"><path d="M26 236H506"/><path d="M46 266V116"/></g> <text x="490" y="264" style="fill:var(--ink-3)" font-style="italic">Re</text> <text x="38" y="108" style="fill:var(--ink-3)" font-style="italic">Im</text> <path d="M443.1 283.9A400 400 0 0 0 428.1 117.8" style="stroke:var(--ink-3);fill:none" stroke-width="1.6" stroke-dasharray="6 5"/> <text x="358.1" y="107.8" style="fill:var(--ink-3)" font-size="17" font-family="Archivo, sans-serif">unit circle, |z| = 1</text> <path d="M116 236A70 70 0 0 0 114.6 222.3" style="stroke:var(--teal);fill:none" stroke-width="1.6"/> <text x="124" y="232" style="fill:var(--teal)" font-style="italic" font-size="20">φ</text> <path d="M432 236V222H446" style="stroke:var(--ink-2);fill:none" stroke-width="1.4"/> <line x1="46" y1="236" x2="443" y2="236" style="stroke:var(--amber)" stroke-width="4" marker-end="url(#wpA)"/> <line x1="446" y1="236" x2="446" y2="159.0" style="stroke:var(--violet)" stroke-width="4" marker-end="url(#wpV)"/> <line x1="46" y1="236" x2="443.0" y2="156.6" style="stroke:var(--teal)" stroke-width="4" marker-end="url(#wpT)"/> <text x="246.0" y="266" text-anchor="middle" style="fill:var(--amber)"><tspan font-weight="700">1</tspan><tspan font-family="Archivo, sans-serif" font-size="17"> unscattered reference</tspan></text> <text x="458" y="178" style="fill:var(--violet)"><tspan font-style="italic">iφ</tspan><tspan x="458" dy="20" font-family="Archivo, sans-serif" font-size="16">scattered</tspan><tspan x="458" dy="18" font-family="Archivo, sans-serif" font-size="16">(+90°)</tspan></text> <text x="236.0" y="182.0" text-anchor="middle" transform="rotate(-11.31 236.0 182.0)" style="fill:var(--teal)"><tspan font-style="italic">1 + iφ ≈ e</tspan><tspan font-style="italic" dy="-9" font-size="15">iφ</tspan><tspan dy="9" font-family="Archivo, sans-serif" font-size="17"> exit wave</tspan></text> </svg>'
 D = lambda s: tex(s, True)
@@ -216,6 +217,19 @@ SLIDES = [
               "More defocus: stronger low-resolution contrast and faster oscillation",
               "Collecting over a <b>range of Δf</b> puts the zeros at different q, so every q is measured somewhere",
               "An envelope also damps high q: high resolution needs many averaged particles"]),
+    dict(frame("c7b", "The forward model: from the 3D molecule to each recorded image", "forward.html", "",
+          DRAWN + "; projection, CTF, shift and noise computed live", [
+              FM("V", r"V(\mathbf r)") + ": the molecule’s 3D <b>scattering potential</b>, at each position " + FM("V", r"\mathbf r"),
+              "Particle " + T("i") + " lies in the ice with its own <b>orientation</b> " + FM("R", "R_i"),
+              "<b>Projection</b> (41): the beam adds up " + FM("V", "V") + " along " + FM("P", "z") + ", giving the 2D image " + FM("P", r"P_{R_i}V"),
+              "<b>Fourier space</b> (42): that image is a <b>central slice</b> " + FM("V", r"\tilde V(R_i^{\mathsf T}\mathbf q)") + " of the 3D transform",
+              "The <b>CTF</b> " + FM("C", r"C_i(\mathbf q)") + " multiplies every spatial frequency " + FM("Q", r"\mathbf q"),
+              "A <b>shift</b> " + FM("T", r"\mathbf t_i") + " in the box is a <b>phase ramp</b> " + FM("T", r"e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}"),
+              "<b>Noise</b> " + FM("N", r"N_i(\mathbf q)") + " on top gives the recorded image " + FM("Y", r"Y_i(\mathbf q)"),
+              "So (42) models the <b>projection of the 3D volume</b> (scattering potential) onto the <b>2D images</b> we record",
+              "<b>Known</b>: " + FM("Y", "Y_i") + ", the Fourier transform of each raw 2D particle image, and " + FM("C", "C_i") + ", the CTF calculated at each q from χ(q)",
+              '<span class="headline"><b>Goal</b>: find the <b>pose</b> ' + FM("R", r"(R_i,\mathbf t_i)") + " of every particle and the <b>volume</b> " + FM("V", "V") + ", the electron scattering potential into which we fit <b>atomic models</b></span>"]),
+         figW=1120),
     clip("c8", "Projection and orientation: what one particle image records", "01_forward_model",
          "What does the beam record, and why does each image need its own orientation R?", MANIM.format(n="01"), [
              ("<b>Projection</b>: the beam integrates the 3D potential along z, so one view cannot fix depth", [0, 6.3]),
@@ -247,6 +261,13 @@ SLIDES = [
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
     if _s["page"] == "c1":
         _s["points"][-1]["msg"] = {"step": 4}
+    if _s["page"] == "c5":    # opening banner (Ian, 2026-11-05): the two questions the WPOA answers
+        _s["introTtl"] = "Two questions"
+        _s["intro"] = ("We saw that when the beam passes through the protein its <b>phase shifts</b>, yet the protein is then "
+                       "<b>not visible</b> on a detector that measures <b>intensity</b>.<br><br>"
+                       "<b>(1)</b> Why is that so?<br>"
+                       "<b>(2)</b> How much is the phase of each beam that passed through the protein (<b>scattered</b>) shifted, relative to the <b>unscattered</b> beam?<br><br>"
+                       "It turns out the analysis simplifies greatly once we know that this phase shift is <b>SMALL</b>.")
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"

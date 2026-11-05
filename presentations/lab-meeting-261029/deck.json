@@ -2468,7 +2468,9 @@
      "banner": true,
      "text": "<span class=\"ttl\">Under this approximation</span><b>1.</b> The scattered wave always differs in phase from the unscattered wave by <b>π/2</b>.<br><br><b>2.</b> Their sum, the exit wave, is <b>virtually indistinguishable in intensity</b> from a wave that never passed through a protein, so we <b>cannot see the protein</b> yet."
     }
-   ]
+   ],
+   "introTtl": "Two questions",
+   "intro": "We saw that when the beam passes through the protein its <b>phase shifts</b>, yet the protein is then <b>not visible</b> on a detector that measures <b>intensity</b>.<br><br><b>(1)</b> Why is that so?<br><b>(2)</b> How much is the phase of each beam that passed through the protein (<b>scattered</b>) shifted, relative to the <b>unscattered</b> beam?<br><br>It turns out the analysis simplifies greatly once we know that this phase shift is <b>SMALL</b>."
   },
   {
    "kind": "media",
@@ -2579,6 +2581,84 @@
      "text": "An envelope also damps high q: high resolution needs many averaged particles",
      "msg": {
       "step": 4
+     }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c7b",
+   "section": "cryoem",
+   "title": "The forward model: from the 3D molecule to each recorded image",
+   "figW": 1120,
+   "msgChannel": "cryo",
+   "q": "",
+   "items": [
+    {
+     "iframe": "interactive/cryo/forward.html",
+     "title": "The forward model: from the 3D molecule to each recorded image",
+     "cap": "Animation drawn for this deck from the content of the cryoEM slides; projection, CTF, shift and noise computed live"
+    }
+   ],
+   "points": [
+    {
+     "text": "<span class=\"fmV\"><span class=\"tex\">V(\\mathbf r)</span></span>: the molecule’s 3D <b>scattering potential</b>, at each position <span class=\"fmV\"><span class=\"tex\">\\mathbf r</span></span>",
+     "msg": {
+      "step": 1
+     }
+    },
+    {
+     "text": "Particle <span class=\"tex\">i</span> lies in the ice with its own <b>orientation</b> <span class=\"fmR\"><span class=\"tex\">R_i</span></span>",
+     "msg": {
+      "step": 2
+     }
+    },
+    {
+     "text": "<b>Projection</b> (41): the beam adds up <span class=\"fmV\"><span class=\"tex\">V</span></span> along <span class=\"fmP\"><span class=\"tex\">z</span></span>, giving the 2D image <span class=\"fmP\"><span class=\"tex\">P_{R_i}V</span></span>",
+     "msg": {
+      "step": 3
+     }
+    },
+    {
+     "text": "<b>Fourier space</b> (42): that image is a <b>central slice</b> <span class=\"fmV\"><span class=\"tex\">\\tilde V(R_i^{\\mathsf T}\\mathbf q)</span></span> of the 3D transform",
+     "msg": {
+      "step": 4
+     }
+    },
+    {
+     "text": "The <b>CTF</b> <span class=\"fmC\"><span class=\"tex\">C_i(\\mathbf q)</span></span> multiplies every spatial frequency <span class=\"fmQ\"><span class=\"tex\">\\mathbf q</span></span>",
+     "msg": {
+      "step": 5
+     }
+    },
+    {
+     "text": "A <b>shift</b> <span class=\"fmT\"><span class=\"tex\">\\mathbf t_i</span></span> in the box is a <b>phase ramp</b> <span class=\"fmT\"><span class=\"tex\">e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i}</span></span>",
+     "msg": {
+      "step": 6
+     }
+    },
+    {
+     "text": "<b>Noise</b> <span class=\"fmN\"><span class=\"tex\">N_i(\\mathbf q)</span></span> on top gives the recorded image <span class=\"fmY\"><span class=\"tex\">Y_i(\\mathbf q)</span></span>",
+     "msg": {
+      "step": 7
+     }
+    },
+    {
+     "text": "So (42) models the <b>projection of the 3D volume</b> (scattering potential) onto the <b>2D images</b> we record",
+     "msg": {
+      "step": 8
+     }
+    },
+    {
+     "text": "<b>Known</b>: <span class=\"fmY\"><span class=\"tex\">Y_i</span></span>, the Fourier transform of each raw 2D particle image, and <span class=\"fmC\"><span class=\"tex\">C_i</span></span>, the CTF calculated at each q from χ(q)",
+     "msg": {
+      "step": 9
+     }
+    },
+    {
+     "text": "<span class=\"headline\"><b>Goal</b>: find the <b>pose</b> <span class=\"fmR\"><span class=\"tex\">(R_i,\\mathbf t_i)</span></span> of every particle and the <b>volume</b> <span class=\"fmV\"><span class=\"tex\">V</span></span>, the electron scattering potential into which we fit <b>atomic models</b></span>",
+     "msg": {
+      "step": 10
      }
     }
    ]
