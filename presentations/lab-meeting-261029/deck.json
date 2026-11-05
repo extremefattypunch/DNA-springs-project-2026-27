@@ -1735,11 +1735,21 @@
    "panels": [
     {
      "gel": "p18-protein",
-     "head": "Protein stain"
+     "head": "Protein stain",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     },
     {
      "gel": "p18-dna",
-     "head": "DNA stain"
+     "head": "DNA stain",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     }
    ]
   },
@@ -1752,11 +1762,21 @@
    "panels": [
     {
      "gel": "p19-2h",
-     "head": "2 h standard BCN incubation"
+     "head": "2 h standard BCN incubation",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     },
     {
      "gel": "p19-12h",
-     "head": "12 h BCN incubation"
+     "head": "12 h BCN incubation",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     }
    ]
   },
@@ -1841,11 +1861,21 @@
    "section": "synthesis",
    "panels": [
     {
-     "gel": "p21-sec"
+     "gel": "p21-sec",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     },
     {
      "gel": "p21-dilute",
-     "hideUntil": true
+     "hideUntil": true,
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     }
    ],
    "titleHidden": true,
@@ -1925,10 +1955,20 @@
    "section": "synthesis",
    "panels": [
     {
-     "gel": "p22-dtt-dye"
+     "gel": "p22-dtt-dye",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     },
     {
-     "gel": "p22-dtt-cdna"
+     "gel": "p22-dtt-cdna",
+     "rails": [
+      "left",
+      "right"
+     ],
+     "railW": 230
     }
    ],
    "top": 250,

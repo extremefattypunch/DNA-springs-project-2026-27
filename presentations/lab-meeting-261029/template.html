@@ -185,6 +185,11 @@ body {
 .lbl .ico { flex: none; width: 80px; height: 56px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1.6px solid var(--ink); border-radius: 3px; background: #fbfbfa; --dna-line: #15191d; --protein-stroke: #1b2026; }
 .lbl .ico svg { width: 74px; height: 50px; }
 .lbl .txt { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lblsm .lbl { gap: 8px; }
+.lblsm .lbl .ico { width: 62px; height: 44px; }
+.lblsm .lbl .ico svg { width: 58px; height: 40px; }
+.lblsm .lbl .txt b { font-size: 18px; }
+.lblsm .lbl .txt span { font-size: 14.5px; line-height: 1.15; }
 .lbl .txt b { font-size: 20px; font-weight: 620; line-height: 1.1; color: var(--ink); font-stretch: 92%; }
 .lbl .txt span { font-size: 16px; line-height: 1.2; color: var(--ink-2); }
 .lbl .sw { display: inline-block; vertical-align: 1px; width: 22px; height: 11px; margin: 0 7px; border-radius: 3px; background: #10151a; position: relative; overflow: hidden; }
@@ -531,7 +536,8 @@ function buildPanel(slideEl, spec, P) {
   const rails = P.rails || ['left', 'right'];
   const headH = spec.noHead ? 24 : HEAD;
   // largest scale at which [rail | gel | rail] and the whole real image both fit the panel
-  const RW = RAIL + RAILGAP;
+  const RAILW = P.railW || RAIL;   // P.railW: narrower rails (compact labels), e.g. two gels side by side with both rails
+  const RW = RAILW + RAILGAP;
   const need = sc => ({
     l: Math.max(rails.includes('left') ? RW : 0, gx0 * sc),
     r: Math.max(rails.includes('right') ? RW : 0, (iw - gx1) * sc),
@@ -564,7 +570,7 @@ function buildPanel(slideEl, spec, P) {
   const wellY = spec.gel.wellY != null ? spec.gel.wellY : gy0 + 6;
   const wellAt = x => wellY + (x - (gx0 + gx1) / 2) * tn;
 
-  const root = h('div', 'panel' + (P.bigLabels ? ' biglbl' : ''), { style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
+  const root = h('div', 'panel' + (P.bigLabels ? ' biglbl' : '') + (P.railW && P.railW < RAIL ? ' lblsm' : ''), { style: { left: '0px', top: '0px', width: '1920px', height: '1080px' } });
   const gel = h('div', 'gel ' + (spec.style || 'dark') + (TEST && MODE === 'overlay' ? ' mode-overlay' : ''));
   root.appendChild(gel);
   slideEl.appendChild(root);
@@ -728,7 +734,9 @@ function buildPanel(slideEl, spec, P) {
   Object.keys(spec.species).forEach(key => {
     const sp = spec.species[key];
     if (!sp.name || sp.cls === 'impurity') return;
-    let side = sp.side;
+    // ssDNA species always on the left rail, dsDNA species always on the right (Ian's rule: never mixed)
+    const dsKind = sp.cls === 'ds' || (sp.cls === 'circ' && sp.icon && sp.icon.ds), ssKind = sp.cls === 'ss' || (sp.cls === 'circ' && !dsKind);
+    let side = dsKind ? 'right' : ssKind ? 'left' : sp.side;
     if (!side) {
       const pref = ['ds', 'circ'].includes(sp.cls) ? 'right' : 'left', alt = pref === 'left' ? 'right' : 'left';
       side = rails.includes(alt) && crossCost(key, alt) < crossCost(key, pref) ? alt : pref;
@@ -739,7 +747,7 @@ function buildPanel(slideEl, spec, P) {
       ? `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b>${sp.name}</b><span><i class="sw"></i>${sp.note}</span></div>`
       : `<div class="ico">${chimera(sp.icon)}</div><div class="txt"><b><i class="sw"></i>${sp.name}</b></div>`;
     // bigLabels: same gel scale, labels widen into the free space beside the gel
-    const railW = !P.bigLabels ? RAIL : side === 'left' ? gl - RAILGAP - 22 : 1898 - (gl + gw + RAILGAP);
+    const railW = !P.bigLabels ? RAILW : side === 'left' ? gl - RAILGAP - 22 : 1898 - (gl + gw + RAILGAP);
     const railX0 = side === 'left' ? gl - RAILGAP - railW : gl + gw + RAILGAP;
     Object.assign(el.style, { left: railX0 + 'px', width: railW + 'px', justifyContent: side === 'left' ? 'flex-start' : 'flex-start' });
     sim.appendChild(el);
