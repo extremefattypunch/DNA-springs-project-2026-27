@@ -2738,34 +2738,6 @@
   },
   {
    "kind": "media",
-   "page": "c11",
-   "section": "cryoem",
-   "items": [],
-   "final": true,
-   "big": true,
-   "title": "Reconstruction, known poses (1/2): a linear Gaussian model",
-   "q": "If every pose (Rᵢ, tᵢ) were known, how would we recover the map V?",
-   "aside": {
-    "w": 560,
-    "html": "<b>Terms</b><table class=\"gl\"><tr><td><span class=\"tex\">Y_i(\\mathbf q),\\ \\mathbf y_i</span></td><td>particle image i in Fourier space / real space (m pixels)</td></tr><tr><td><span class=\"tex\">\\mathbf q = (q_x,q_y)</span></td><td>2D spatial frequency in the image</td></tr><tr><td><span class=\"tex\">V,\\ \\mathbf v</span></td><td>3D Coulomb potential (the map); <b>v</b> = its n voxels as one vector</td></tr><tr><td><span class=\"tex\">\\tilde V</span></td><td>3D Fourier transform of V</td></tr><tr><td><span class=\"tex\">R_i,\\ \\mathbf t_i</span></td><td>pose of particle i: rotation in SO(3) and in-plane shift</td></tr><tr><td><span class=\"tex\">C_i(\\mathbf q)</span></td><td>CTF of image i (from its fitted defocus)</td></tr><tr><td><span class=\"tex\">N_i,\\ \\boldsymbol\\varepsilon_i</span></td><td>noise in Fourier / real space</td></tr><tr><td><span class=\"tex\">\\mathcal F,\\ \\mathcal F_2^{-1}</span></td><td>Fourier transform; inverse 2D transform</td></tr><tr><td><span class=\"tex\">A_i</span></td><td>m × n matrix: rotate, project, shift and CTF-filter v</td></tr><tr><td><span class=\"tex\">\\Sigma_i,\\ |\\Sigma_i|</span></td><td>noise covariance of image i; its determinant</td></tr></table>"
-   },
-   "points": [
-    {
-     "text": "Start from the forward model, with each pose now <b>known</b>:<span class=\"tex d\">Y_i(\\mathbf q) = C_i(\\mathbf q)\\,\\tilde V\\big(R_i^{\\mathsf T}[q_x,q_y,0]^{\\mathsf T}\\big)\\,e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i} + N_i(\\mathbf q)</span>"
-    },
-    {
-     "text": "Two Fourier rules make every step <b>linear</b> in V: a shift becomes a phase factor, and the CTF blur (a convolution) becomes a product<span class=\"tex d\">\\mathcal F[g(\\mathbf x-\\mathbf t)](\\mathbf q) = e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t}\\,\\tilde g(\\mathbf q), \\qquad \\mathcal F[h*g](\\mathbf q) = \\tilde h(\\mathbf q)\\,\\tilde g(\\mathbf q)</span>"
-    },
-    {
-     "text": "Write it in <b>real space</b> (inverse 2D transform), with the voxels of V stacked into one vector <b>v</b>:<span class=\"tex d\">\\underbrace{\\mathbf y_i}_{\\mathcal F_2^{-1}[Y_i]} \\;=\\; \\underbrace{A_i\\,\\mathbf v}_{\\mathcal F_2^{-1}\\left[C_i\\,\\tilde V(R_i^{\\mathsf T}[q_x,q_y,0]^{\\mathsf T})\\,e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i}\\right]} \\;+\\; \\underbrace{\\boldsymbol\\varepsilon_i}_{\\mathcal F_2^{-1}[N_i]}</span>With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>"
-    },
-    {
-     "text": "The noise is Gaussian, <span class=\"tex\">\\boldsymbol\\varepsilon_i \\sim \\mathcal N(\\mathbf 0, \\Sigma_i)</span>, so each image is Gaussian about its prediction A<sub>i</sub><b>v</b> (the multi-pixel form of <span class=\"tex\">p(y\\mid\\mu,\\sigma^2) = e^{-(y-\\mu)^2/2\\sigma^2}/\\sqrt{2\\pi\\sigma^2}</span>):<span class=\"tex d\">p(\\mathbf y_i\\mid\\mathbf v) = \\frac{1}{(2\\pi)^{m/2}\\,|\\Sigma_i|^{1/2}}\\exp\\!\\Big[-\\tfrac12\\,(\\mathbf y_i-A_i\\mathbf v)^{\\mathsf T}\\,\\Sigma_i^{-1}\\,(\\mathbf y_i-A_i\\mathbf v)\\Big]</span>"
-    }
-   ]
-  },
-  {
-   "kind": "media",
    "page": "c11a",
    "section": "cryoem",
    "title": "The forward model in Fourier space: CTF, shift and noise",
@@ -2803,7 +2775,7 @@
      }
     },
     {
-     "text": "Two <b>Fourier properties</b> (previous slide): a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product",
+     "text": "Two <b>Fourier properties</b>: a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product",
      "msg": {
       "step": 4
      }
@@ -2825,6 +2797,34 @@
      "msg": {
       "step": 7
      }
+    }
+   ]
+  },
+  {
+   "kind": "media",
+   "page": "c11",
+   "section": "cryoem",
+   "items": [],
+   "final": true,
+   "big": true,
+   "title": "Reconstruction, known poses (1/2): a linear Gaussian model",
+   "q": "If every pose (Rᵢ, tᵢ) were known, how would we recover the map V?",
+   "aside": {
+    "w": 560,
+    "html": "<b>Terms</b><table class=\"gl\"><tr><td><span class=\"tex\">Y_i(\\mathbf q),\\ \\mathbf y_i</span></td><td>particle image i in Fourier space / real space (m pixels)</td></tr><tr><td><span class=\"tex\">\\mathbf q = (q_x,q_y)</span></td><td>2D spatial frequency in the image</td></tr><tr><td><span class=\"tex\">V,\\ \\mathbf v</span></td><td>3D Coulomb potential (the map); <b>v</b> = its n voxels as one vector</td></tr><tr><td><span class=\"tex\">\\tilde V</span></td><td>3D Fourier transform of V</td></tr><tr><td><span class=\"tex\">R_i,\\ \\mathbf t_i</span></td><td>pose of particle i: rotation in SO(3) and in-plane shift</td></tr><tr><td><span class=\"tex\">C_i(\\mathbf q)</span></td><td>CTF of image i (from its fitted defocus)</td></tr><tr><td><span class=\"tex\">N_i,\\ \\boldsymbol\\varepsilon_i</span></td><td>noise in Fourier / real space</td></tr><tr><td><span class=\"tex\">\\mathcal F,\\ \\mathcal F_2^{-1}</span></td><td>Fourier transform; inverse 2D transform</td></tr><tr><td><span class=\"tex\">A_i</span></td><td>m × n matrix: rotate, project, shift and CTF-filter v</td></tr><tr><td><span class=\"tex\">\\Sigma_i,\\ |\\Sigma_i|</span></td><td>noise covariance of image i; its determinant</td></tr></table>"
+   },
+   "points": [
+    {
+     "text": "Start from the forward model, with each pose now <b>known</b>:<span class=\"tex d\">Y_i(\\mathbf q) = C_i(\\mathbf q)\\,\\tilde V\\big(R_i^{\\mathsf T}[q_x,q_y,0]^{\\mathsf T}\\big)\\,e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i} + N_i(\\mathbf q)</span>"
+    },
+    {
+     "text": "Two Fourier rules make every step <b>linear</b> in V: a shift becomes a phase factor, and the CTF blur (a convolution) becomes a product<span class=\"tex d\">\\mathcal F[g(\\mathbf x-\\mathbf t)](\\mathbf q) = e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t}\\,\\tilde g(\\mathbf q), \\qquad \\mathcal F[h*g](\\mathbf q) = \\tilde h(\\mathbf q)\\,\\tilde g(\\mathbf q)</span>"
+    },
+    {
+     "text": "Write it in <b>real space</b> (inverse 2D transform), with the voxels of V stacked into one vector <b>v</b>:<span class=\"tex d\">\\underbrace{\\mathbf y_i}_{\\mathcal F_2^{-1}[Y_i]} \\;=\\; \\underbrace{A_i\\,\\mathbf v}_{\\mathcal F_2^{-1}\\left[C_i\\,\\tilde V(R_i^{\\mathsf T}[q_x,q_y,0]^{\\mathsf T})\\,e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i}\\right]} \\;+\\; \\underbrace{\\boldsymbol\\varepsilon_i}_{\\mathcal F_2^{-1}[N_i]}</span>With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>"
+    },
+    {
+     "text": "The noise is Gaussian, <span class=\"tex\">\\boldsymbol\\varepsilon_i \\sim \\mathcal N(\\mathbf 0, \\Sigma_i)</span>, so each image is Gaussian about its prediction A<sub>i</sub><b>v</b> (the multi-pixel form of <span class=\"tex\">p(y\\mid\\mu,\\sigma^2) = e^{-(y-\\mu)^2/2\\sigma^2}/\\sqrt{2\\pi\\sigma^2}</span>):<span class=\"tex d\">p(\\mathbf y_i\\mid\\mathbf v) = \\frac{1}{(2\\pi)^{m/2}\\,|\\Sigma_i|^{1/2}}\\exp\\!\\Big[-\\tfrac12\\,(\\mathbf y_i-A_i\\mathbf v)^{\\mathsf T}\\,\\Sigma_i^{-1}\\,(\\mathbf y_i-A_i\\mathbf v)\\Big]</span>"
     }
    ]
   },

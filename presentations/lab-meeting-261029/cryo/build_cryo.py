@@ -67,6 +67,20 @@ FM = lambda k, s: f'<span class="fm{k}">{tex(s)}</span>'   # forward-model term,
 PHASOR = '<svg viewBox="0 0 540 300" width="540" height="300" style="display:block;margin:14px auto 0;overflow:visible" font-family="STIX Two Text, Georgia, serif" font-size="22"> <defs> <marker id="wpA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--amber)"/></marker> <marker id="wpV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--violet)"/></marker> <marker id="wpT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--teal)"/></marker> </defs> <g style="stroke:var(--ink-3);fill:none" stroke-width="1.4"><path d="M26 236H506"/><path d="M46 266V116"/></g> <text x="490" y="264" style="fill:var(--ink-3)" font-style="italic">Re</text> <text x="38" y="108" style="fill:var(--ink-3)" font-style="italic">Im</text> <path d="M443.1 283.9A400 400 0 0 0 428.1 117.8" style="stroke:var(--ink-3);fill:none" stroke-width="1.6" stroke-dasharray="6 5"/> <text x="358.1" y="107.8" style="fill:var(--ink-3)" font-size="17" font-family="Archivo, sans-serif">unit circle, |z| = 1</text> <path d="M116 236A70 70 0 0 0 114.6 222.3" style="stroke:var(--teal);fill:none" stroke-width="1.6"/> <text x="124" y="232" style="fill:var(--teal)" font-style="italic" font-size="20">φ</text> <path d="M432 236V222H446" style="stroke:var(--ink-2);fill:none" stroke-width="1.4"/> <line x1="46" y1="236" x2="443" y2="236" style="stroke:var(--amber)" stroke-width="4" marker-end="url(#wpA)"/> <line x1="446" y1="236" x2="446" y2="159.0" style="stroke:var(--violet)" stroke-width="4" marker-end="url(#wpV)"/> <line x1="46" y1="236" x2="443.0" y2="156.6" style="stroke:var(--teal)" stroke-width="4" marker-end="url(#wpT)"/> <text x="246.0" y="266" text-anchor="middle" style="fill:var(--amber)"><tspan font-weight="700">1</tspan><tspan font-family="Archivo, sans-serif" font-size="17"> unscattered reference</tspan></text> <text x="458" y="178" style="fill:var(--violet)"><tspan font-style="italic">iφ</tspan><tspan x="458" dy="20" font-family="Archivo, sans-serif" font-size="16">scattered</tspan><tspan x="458" dy="18" font-family="Archivo, sans-serif" font-size="16">(+90°)</tspan></text> <text x="236.0" y="182.0" text-anchor="middle" transform="rotate(-11.31 236.0 182.0)" style="fill:var(--teal)"><tspan font-style="italic">1 + iφ ≈ e</tspan><tspan font-style="italic" dy="-9" font-size="15">iφ</tspan><tspan dy="9" font-family="Archivo, sans-serif" font-size="17"> exit wave</tspan></text> </svg>'
 D = lambda s: tex(s, True)
 RECON = [
+    {"kind": "media", "page": "c11a", "section": "cryoem", "title": "The forward model in Fourier space: CTF, shift and noise", "figW": 1120,
+     "msgChannel": "cryo", "q": "",
+     "items": [{"iframe": "interactive/cryo/fmterms.html", "title": "The CTF, shift and noise terms of the forward model",
+                "cap": DRAWN + "; images computed live"}],
+     "points": [
+         {"text": "Recall the forward model (42): every term is a function of the spatial frequency " + FM("Q", r"\mathbf q"), "msg": {"step": 1}},
+         {"text": "The <b>CTF</b> " + FM("C", r"C_i(\mathbf q)") + " is a simple <b>product</b> in Fourier space", "msg": {"step": 2}},
+         {"banner": True, "text": '<span class="ttl">Why Fourier space pays off</span>So now that we have expressed our 2D projection in <b>Fourier space</b>, '
+                                  'we can directly <b>multiply</b> it by the <b>CTF</b> C<sub>i</sub>(q), the term that carries the defocus <b>phase shift</b> χ(q).'},
+         {"text": "But how exactly do the <b>shift</b> " + FM("T", r"\mathbf t_i") + " and the <b>noise</b> " + FM("N", r"N_i(\mathbf q)") + " make sense here?", "msg": {"step": 3}},
+         {"text": "Two <b>Fourier properties</b>: a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product", "msg": {"step": 4}},
+         {"text": FM("T", r"e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}") + " is just the in-plane <b>shift</b> " + FM("T", r"\mathbf t_i") + " of the particle in real space, written in Fourier space", "msg": {"step": 5}},
+         {"text": "So the <b>pose</b> " + FM("R", r"(R_i,\mathbf t_i)") + " says <b>where</b> exactly each particle is (" + FM("T", r"\mathbf t_i") + ") and how it is <b>oriented</b> relative to the beam (" + FM("R", "R_i") + ")", "msg": {"step": 6}},
+         {"text": '<span class="headline"><b>Noise</b> ' + FM("N", r"N_i(\mathbf q)") + " is taken to be <b>Gaussian</b>, as assumed throughout the literature</span>", "msg": {"step": 7}}]},
     eqslide("c11", "Reconstruction, known poses (1/2): a linear Gaussian model",
             "If every pose (Rᵢ, tᵢ) were known, how would we recover the map V?", [
         "Start from the forward model, with each pose now <b>known</b>:"
@@ -91,20 +105,6 @@ RECON = [
         (T(r"A_i"), "m × n matrix: rotate, project, shift and CTF-filter v"),
         (T(r"\Sigma_i,\ |\Sigma_i|"), "noise covariance of image i; its determinant"),
     ]),
-    {"kind": "media", "page": "c11a", "section": "cryoem", "title": "The forward model in Fourier space: CTF, shift and noise", "figW": 1120,
-     "msgChannel": "cryo", "q": "",
-     "items": [{"iframe": "interactive/cryo/fmterms.html", "title": "The CTF, shift and noise terms of the forward model",
-                "cap": DRAWN + "; images computed live"}],
-     "points": [
-         {"text": "Recall the forward model (42): every term is a function of the spatial frequency " + FM("Q", r"\mathbf q"), "msg": {"step": 1}},
-         {"text": "The <b>CTF</b> " + FM("C", r"C_i(\mathbf q)") + " is a simple <b>product</b> in Fourier space", "msg": {"step": 2}},
-         {"banner": True, "text": '<span class="ttl">Why Fourier space pays off</span>So now that we have expressed our 2D projection in <b>Fourier space</b>, '
-                                  'we can directly <b>multiply</b> it by the <b>CTF</b> C<sub>i</sub>(q), the term that carries the defocus <b>phase shift</b> χ(q).'},
-         {"text": "But how exactly do the <b>shift</b> " + FM("T", r"\mathbf t_i") + " and the <b>noise</b> " + FM("N", r"N_i(\mathbf q)") + " make sense here?", "msg": {"step": 3}},
-         {"text": "Two <b>Fourier properties</b> (previous slide): a <b>shift</b> becomes a phase factor, a <b>convolution</b> becomes a product", "msg": {"step": 4}},
-         {"text": FM("T", r"e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}") + " is just the in-plane <b>shift</b> " + FM("T", r"\mathbf t_i") + " of the particle in real space, written in Fourier space", "msg": {"step": 5}},
-         {"text": "So the <b>pose</b> " + FM("R", r"(R_i,\mathbf t_i)") + " says <b>where</b> exactly each particle is (" + FM("T", r"\mathbf t_i") + ") and how it is <b>oriented</b> relative to the beam (" + FM("R", "R_i") + ")", "msg": {"step": 6}},
-         {"text": '<span class="headline"><b>Noise</b> ' + FM("N", r"N_i(\mathbf q)") + " is taken to be <b>Gaussian</b>, as assumed throughout the literature</span>", "msg": {"step": 7}}]},
     eqslide("c11b", "Reconstruction, known poses (2/2): the normal equations",
             "Maximum likelihood: which map v makes all N images most probable?", [
         "The N images are independent given <b>v</b>, so the joint likelihood is a product:"
