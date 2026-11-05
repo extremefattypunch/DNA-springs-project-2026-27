@@ -1981,7 +1981,9 @@
      "w": 1728,
      "html": "<b>Protocol</b>: pp2a is first incubated in <b>DTT</b> to reduce its disulfide bonds; the DTT is then <b>desalted away</b> before the DNA is added and clicks onto the Tet groups. <b>Problem</b>: click chemistry is still inhibited even after desalting (right gel). <b>Left gel</b>: find the <b>minimum DTT</b> that still reduces all or most disulfide bonds, so as little DTT as possible is carried over."
     }
-   ]
+   ],
+   "intro": "However, we realised that <b>DTT also inhibits click chemistry</b> (right gel).<br><br>So we ran an experiment to find the <b>minimum DTT</b> we could add (and then desalt) so that any DTT left in the pp2a mixture does not affect the click chemistry, i.e. <b>attaching the DNA</b>, afterwards.",
+   "introTtl": "A catch"
   },
   {
    "kind": "media",
