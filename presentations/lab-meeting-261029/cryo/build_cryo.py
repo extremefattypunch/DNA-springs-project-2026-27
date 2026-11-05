@@ -81,30 +81,33 @@ RECON = [
          {"text": FM("T", r"e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}") + " is just the in-plane <b>shift</b> " + FM("T", r"\mathbf t_i") + " of the particle in real space, written in Fourier space", "msg": {"step": 5}},
          {"text": "So the <b>pose</b> " + FM("R", r"(R_i,\mathbf t_i)") + " says <b>where</b> exactly each particle is (" + FM("T", r"\mathbf t_i") + ") and how it is <b>oriented</b> relative to the beam (" + FM("R", "R_i") + ")", "msg": {"step": 6}},
          {"text": '<span class="headline"><b>Noise</b> ' + FM("N", r"N_i(\mathbf q)") + " is taken to be <b>Gaussian</b>, as assumed throughout the literature</span>", "msg": {"step": 7}}]},
-    eqslide("c11", "Reconstruction, known poses (1/2): a linear Gaussian model",
+    dict(eqslide("c11", "Reconstruction, known poses (1/2): a linear Gaussian model",
             "If every pose (Rᵢ, tᵢ) were known, how would we recover the map V?", [
-        "Start from the forward model, with each pose now <b>known</b>:"
-        + D(r"Y_i(\mathbf q) = C_i(\mathbf q)\,\tilde V\big(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T}\big)\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i} + N_i(\mathbf q)"),
-        "Two Fourier rules make every step <b>linear</b> in V: a shift becomes a phase factor, and the CTF blur (a convolution) becomes a product"
-        + D(r"\mathcal F[g(\mathbf x-\mathbf t)](\mathbf q) = e^{-2\pi i\,\mathbf q\cdot\mathbf t}\,\tilde g(\mathbf q), \qquad \mathcal F[h*g](\mathbf q) = \tilde h(\mathbf q)\,\tilde g(\mathbf q)"),
-        "Write it in <b>real space</b> (inverse 2D transform), with the voxels of V stacked into one vector <b>v</b>:"
-        + D(r"\underbrace{\mathbf y_i}_{\mathcal F_2^{-1}[Y_i]} \;=\; \underbrace{A_i\,\mathbf v}_{\mathcal F_2^{-1}\left[C_i\,\tilde V(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T})\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}\right]} \;+\; \underbrace{\boldsymbol\varepsilon_i}_{\mathcal F_2^{-1}[N_i]}")
-        + "With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>",
-        "The noise is Gaussian, " + T(r"\boldsymbol\varepsilon_i \sim \mathcal N(\mathbf 0, \Sigma_i)") + ", so each image is Gaussian about its prediction A<sub>i</sub><b>v</b> (the multi-pixel form of "
-        + T(r"p(y\mid\mu,\sigma^2) = e^{-(y-\mu)^2/2\sigma^2}/\sqrt{2\pi\sigma^2}") + "):"
-        + D(r"p(\mathbf y_i\mid\mathbf v) = \frac{1}{(2\pi)^{m/2}\,|\Sigma_i|^{1/2}}\exp\!\Big[-\tfrac12\,(\mathbf y_i-A_i\mathbf v)^{\mathsf T}\,\Sigma_i^{-1}\,(\mathbf y_i-A_i\mathbf v)\Big]"),
+        "With every pose <b>known</b>, the forward model in <b>real space</b> (the voxels of V stacked into one vector <b>v</b>) is <b>linear</b>: "
+        + T(r"\mathbf y_i = A_i\,\mathbf v + \boldsymbol\varepsilon_i") + ", where A<sub>i</sub> (rotate, project, shift, CTF-filter) is a fixed matrix",
+        "<b>The residual</b> " + T(r"\mathbf y_i - A_i\mathbf v") + " is the recorded image minus its <b>prediction</b> " + T(r"A_i\mathbf v") + ". If <b>v</b> is the true map, the residual is exactly the noise:"
+        + D(r"\mathbf y_i - A_i\mathbf v = \boldsymbol\varepsilon_i, \qquad \boldsymbol\varepsilon_i \sim \mathcal N(\mathbf 0, \Sigma_i)"),
+        "<b>One pixel</b>: the noise " + T(r"\varepsilon \sim \mathcal N(0,\sigma^2)") + " has the standard Gaussian density. A measurement " + T(r"y = \mu + \varepsilon") + " is then as probable as its noise, so evaluate that density at the residual " + T(r"y - \mu") + ":"
+        + D(r"p(\varepsilon) = \frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-\varepsilon^2/2\sigma^2} \quad\Longrightarrow\quad p(y\mid\mu) = \frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-(y-\mu)^2/2\sigma^2}"),
+        "<b>m pixels</b>, independent noise " + T(r"\Sigma = \mathrm{diag}(\sigma_1^2,\dots,\sigma_m^2)") + ": multiply the m one-pixel densities. The normalisers multiply to " + T(r"(2\pi)^{m/2}|\Sigma|^{1/2}") + " and the exponents add:"
+        + D(r"p(\mathbf y\mid\boldsymbol\mu) = \prod_{j=1}^{m}\frac{e^{-(y_j-\mu_j)^2/2\sigma_j^2}}{\sqrt{2\pi\sigma_j^2}} = \frac{1}{(2\pi)^{m/2}|\Sigma|^{1/2}}\exp\Big[-\tfrac12\sum_{j=1}^{m}\frac{(y_j-\mu_j)^2}{\sigma_j^2}\Big]")
+        + "and the sum is " + T(r"(\mathbf y-\boldsymbol\mu)^{\mathsf T}\Sigma^{-1}(\mathbf y-\boldsymbol\mu)") + ", which also covers correlated pixels (any Σ)",
+        "<b>Set μ = A<sub>i</sub>v</b>, the prediction, to get the likelihood of image i given the map:"
+        + D(r"\boxed{\;p(\mathbf y_i\mid\mathbf v) = \frac{1}{(2\pi)^{m/2}|\Sigma_i|^{1/2}}\exp\Big[-\tfrac12\,(\mathbf y_i-A_i\mathbf v)^{\mathsf T}\,\Sigma_i^{-1}\,(\mathbf y_i-A_i\mathbf v)\Big]\;}")
+        + "The exponent is the <b>noise-weighted squared residual</b>, and <b>v</b> enters only through it: the closer the prediction is to the image, the more probable the image",
     ], [
-        (T(r"Y_i(\mathbf q),\ \mathbf y_i"), "particle image i in Fourier space / real space (m pixels)"),
-        (T(r"\mathbf q = (q_x,q_y)"), "2D spatial frequency in the image"),
+        (T(r"\mathbf y_i,\ Y_i"), "particle image i in real space (m pixels) / Fourier space"),
         (T(r"V,\ \mathbf v"), "3D Coulomb potential (the map); <b>v</b> = its n voxels as one vector"),
-        (T(r"\tilde V"), "3D Fourier transform of V"),
-        (T(r"R_i,\ \mathbf t_i"), "pose of particle i: rotation in SO(3) and in-plane shift"),
-        (T(r"C_i(\mathbf q)"), "CTF of image i (from its fitted defocus)"),
-        (T(r"N_i,\ \boldsymbol\varepsilon_i"), "noise in Fourier / real space"),
-        (T(r"\mathcal F,\ \mathcal F_2^{-1}"), "Fourier transform; inverse 2D transform"),
         (T(r"A_i"), "m × n matrix: rotate, project, shift and CTF-filter v"),
-        (T(r"\Sigma_i,\ |\Sigma_i|"), "noise covariance of image i; its determinant"),
-    ]),
+        (T(r"A_i\mathbf v"), "the <b>prediction</b>: image i without noise"),
+        (T(r"\mathbf y_i - A_i\mathbf v"), "the <b>residual</b>: what the prediction does not explain"),
+        (T(r"\boldsymbol\varepsilon_i,\ N_i"), "noise in real / Fourier space"),
+        (T(r"\mathcal N(\boldsymbol\mu,\Sigma)"), "Gaussian with mean <b>μ</b> and covariance Σ"),
+        (T(r"\mu,\ \sigma^2"), "mean and variance of one pixel’s Gaussian"),
+        (T(r"m,\ j"), "number of pixels in an image; pixel index"),
+        (T(r"\Sigma_i,\ |\Sigma_i|,\ \Sigma_i^{-1}"), "noise covariance of image i; its determinant; its inverse"),
+        (T(r"p(\mathbf y_i\mid\mathbf v)"), "likelihood: probability of image i if the map were <b>v</b>"),
+    ]), big=False),
     eqslide("c11b", "Reconstruction, known poses (2/2): the normal equations",
             "Maximum likelihood: which map v makes all N images most probable?", [
         "The N images are independent given <b>v</b>, so the joint likelihood is a product:"
