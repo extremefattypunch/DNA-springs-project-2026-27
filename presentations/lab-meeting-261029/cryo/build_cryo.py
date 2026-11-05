@@ -282,6 +282,9 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
                        "<b>(1)</b> Why is that so?<br>"
                        "<b>(2)</b> How much is the phase of each beam that passed through the protein (<b>scattered</b>) shifted, relative to the <b>unscattered</b> beam?<br><br>"
                        "It turns out the analysis simplifies greatly once we know that this phase shift is <b>SMALL</b>.")
+    if _s["page"] == "c8":    # opening banner (Ian, 2026-11-05)
+        _s["intro"] = ("So what is the <b>projection</b> " + tex(r"P_{R}V") + ", and why do we include the <b>orientation</b> "
+                       + tex("R") + " in our model?")
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"

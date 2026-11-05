@@ -2704,7 +2704,8 @@
      "text": "In a real sample, particles sit in the ice in <b>every orientation</b>, so the beam effectively strikes each one from a different direction: each image needs its own R",
      "alt": true
     }
-   ]
+   ],
+   "intro": "So what is the <b>projection</b> <span class=\"tex\">P_{R}V</span>, and why do we include the <b>orientation</b> <span class=\"tex\">R</span> in our model?"
   },
   {
    "kind": "media",
