@@ -1039,9 +1039,11 @@ function buildMedia(el, cfg) {
     var ptBox = { x: 64, y: top + (cfg.q ? (cfg.qH || 60) : 6), w: 1792 - (aw ? aw + 56 : 0) };
     if (aw) el.appendChild(h('div', 'm-aside', { html: cfg.aside.html, style: { left: (64 + 1792 - aw) + 'px', top: (top + 6) + 'px', width: aw + 'px' } }));
   } else if (cfg.layout === 'row') {
-    const n = items.length, gap = 24, w = (1792 - (n - 1) * gap) / n;
+    // items with over: j are alternates of item j (e.g. zoomed crops for the explain phase): they share its box
+    const n = items.filter(it => it.over == null).length, gap = 24, w = (1792 - (n - 1) * gap) / n;
     const h = Math.min(w / (cfg.aspect || 1.29) + 60, cfg.rowH || 520);
-    items.forEach((_, i) => boxes.push({ x: 64 + i * (w + gap), y: top, w, h }));
+    let j = 0; items.forEach(it => boxes.push(it.over != null ? null : { x: 64 + (j++) * (w + gap), y: top, w, h }));
+    items.forEach((it, i) => { if (it.over != null) boxes[i] = boxes[it.over]; });
     var ptBox = { x: 64, y: top + h + 30, w: 1792, cols: true };
   } else {
     // items with over: j share item j's box (an alternate figure shown by points with alt: true)
@@ -1199,7 +1201,7 @@ function buildSlide(cfg, idx) {
     el.appendChild(foot); S.dots = foot.querySelector('.dots');
     const Mo = buildMedia(el, cfg); S.panels.push(Mo);
     if (cfg.intro) addIntro(el, S);
-    if (cfg.intro && cfg.final) S.steps.push({ panel: 0, hold: true });   // finished-state slide: after the intro, a click with just the slide, before any banner
+    if (cfg.intro && (cfg.final || cfg.introHold)) S.steps.push({ panel: 0, hold: true });   // after the intro, a click showing the slide's opening state again (finished-state slides, or introHold)
     for (let k = 1; k <= Mo.n; k++) S.steps.push({ panel: 0, k });
     for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
   } else if (cfg.kind === 'image') {

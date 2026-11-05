@@ -2967,6 +2967,9 @@
    "layout": "row",
    "aspect": 1.86,
    "rowH": 540,
+   "top": 150,
+   "exH": 730,
+   "introHold": true,
    "q": "",
    "introTtl": "In practice",
    "intro": "Altogether, in <b>CryoSPARC</b> it looks something like this: a past project of mine, recovering <b>3D maps</b> from particle images of <b>actin filaments</b>, essentially a proxy for <b>force-transducing DNA strands</b>.",
@@ -2975,22 +2978,224 @@
      "img": "cryo/cryosparc_j1_import.png",
      "w": 1903,
      "h": 1021,
-     "cap": "J1, Import Particle Stack: 5,000 particle images, with no orientations yet"
+     "cap": "J1, Import Particle Stack"
     },
     {
      "img": "cryo/cryosparc_j2_abinitio.png",
      "w": 1961,
      "h": 1029,
-     "cap": "J2, Ab-initio Reconstruction (1 class, C1): the 3D map taking shape"
+     "cap": "J2, Ab-initio Reconstruction"
+    },
+    {
+     "img": "cryo/cs_j1_overview.png",
+     "w": 1520,
+     "h": 650,
+     "over": 0,
+     "cap": "J1, Import Particle Stack: dashboard (zoomed)",
+     "anns": {
+      "grid": [
+       0.427,
+       0.694
+      ],
+      "out": [
+       0.899,
+       0.486
+      ]
+     }
+    },
+    {
+     "img": "cryo/cs_j1_meta.png",
+     "w": 1300,
+     "h": 461,
+     "over": 0,
+     "cap": "J1: warnings (top) and event log (bottom), zoomed",
+     "anns": {
+      "warn": [
+       0.29,
+       0.245
+      ],
+      "ctf": [
+       0.175,
+       0.464
+      ],
+      "px": [
+       0.175,
+       0.555
+      ],
+      "box": [
+       0.186,
+       0.599
+      ]
+     }
+    },
+    {
+     "img": "cryo/cs_j2_overview.png",
+     "w": 1310,
+     "h": 505,
+     "over": 1,
+     "cap": "J2, Ab-initio Reconstruction: dashboard (zoomed)",
+     "anns": {
+      "n": [
+       0.04,
+       0.109
+      ],
+      "cls": [
+       0.189,
+       0.109
+      ],
+      "sym": [
+       0.36,
+       0.109
+      ],
+      "it": [
+       0.666,
+       0.43
+      ]
+     }
+    },
+    {
+     "img": "cryo/cs_j2_result.png",
+     "w": 1310,
+     "h": 454,
+     "over": 1,
+     "cap": "J2: map slices and volume at iteration 900 (top), event log (bottom), zoomed",
+     "anns": {
+      "sl": [
+       0.369,
+       0.185
+      ],
+      "vol": [
+       0.751,
+       0.192
+      ],
+      "res": [
+       0.356,
+       0.641
+      ],
+      "kill": [
+       0.076,
+       0.824
+      ]
+     }
+    }
+   ],
+   "explain": [
+    {
+     "item": 2,
+     "text": "<b>J1, Import Particle Stack</b> loads the particle images from a .star file: <b>5,000 particles</b> in one output group (right). The low-pass filtered previews (centre) show straight filament segments lying in every in-plane direction.",
+     "marks": [
+      {
+       "a": "grid",
+       "t": "low-pass filtered particles",
+       "dx": 300,
+       "dy": -175
+      },
+      {
+       "a": "out",
+       "t": "5,000 particles",
+       "dx": -40,
+       "dy": 40
+      }
+     ]
+    },
+    {
+     "item": 3,
+     "text": "The warnings say the file has <b>no orientations</b> (no rlnAngleRot, Tilt, Psi): the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are what must be found. The log lists what each particle does carry: a <b>160 × 160 px</b> box at <b>5.76 Å/px</b>, and its <b>CTF parameters</b> (defocus, amplitude contrast 0.1), so J2 can apply C<sub>i</sub>(q).",
+     "marks": [
+      {
+       "a": "warn",
+       "t": "no orientations",
+       "dx": 40,
+       "dy": 34
+      },
+      {
+       "a": "ctf",
+       "t": "CTF: amplitude contrast 0.1",
+       "dx": 60,
+       "dy": -30
+      },
+      {
+       "a": "px",
+       "t": "5.76 Å/px",
+       "dx": 60,
+       "dy": -16
+      },
+      {
+       "a": "box",
+       "t": "160 × 160 px box",
+       "dx": 60,
+       "dy": 14
+      }
+     ]
+    },
+    {
+     "item": 4,
+     "text": "<b>J2, Ab-initio Reconstruction</b> uses all <b>5,000 particles</b>, <b>1 class</b> and no assumed symmetry (<b>C1</b>). It starts from a random map and alternates pose and map steps, the loop of the previous slides; the slider shows <b>iteration 900</b>.",
+     "marks": [
+      {
+       "a": "n",
+       "t": "5,000 particles",
+       "dx": 26,
+       "dy": 36
+      },
+      {
+       "a": "cls",
+       "t": "1 class",
+       "dx": 26,
+       "dy": 36
+      },
+      {
+       "a": "sym",
+       "t": "C1: no symmetry",
+       "dx": 26,
+       "dy": 36
+      },
+      {
+       "a": "it",
+       "t": "iteration 900",
+       "dx": -30,
+       "dy": -46
+      }
+     ]
+    },
+    {
+     "item": 5,
+     "text": "By <b>iteration 900</b>, three central slices through the map and the volume preview (top) show a <b>filament</b>; the log reports a resolution of <b>≈ 17 Å</b>. I stopped the job after 8 min 17 s: enough for a first map.",
+     "marks": [
+      {
+       "a": "sl",
+       "t": "central slices of the map",
+       "dx": -40,
+       "dy": -50
+      },
+      {
+       "a": "vol",
+       "t": "volume, class 0",
+       "dx": 60,
+       "dy": -30
+      },
+      {
+       "a": "res",
+       "t": "resolution ≈ 17 Å",
+       "dx": 150,
+       "dy": -44
+      },
+      {
+       "a": "kill",
+       "t": "stopped here",
+       "dx": 330,
+       "dy": -16
+      }
+     ]
     }
    ],
    "points": [
     {
-     "text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found. It also imports each particle’s <b>CTF parameters</b> (defocus, amplitude contrast 0.1), so J2 can apply C<sub>i</sub>(q) during reconstruction",
+     "text": "<b>J1</b>: 5,000 particles in, with their CTF parameters but <b>no orientations</b>",
      "hl": 0
     },
     {
-     "text": "<b>J2</b>, ab-initio reconstruction, alternates pose and map steps from a random start (the loop of the previous slides). By iteration 900 a filament density emerges at ≈ 17 Å",
+     "text": "<b>J2</b>: ab-initio alternates poses and map; a <b>≈ 17 Å</b> filament map after 900 iterations",
      "hl": 1
     },
     {
