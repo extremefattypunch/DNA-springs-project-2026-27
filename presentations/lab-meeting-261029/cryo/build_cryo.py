@@ -311,7 +311,7 @@ SLIDES = [
     {"kind": "media", "page": "c15", "section": "status", "title": "Acknowledgements", "items": [], "big": True, "final": True, "q": "",
      "points": [{"text": t} for t in [
          "Four months ago, I arrived in the US for the <b>first time in my life</b>, with practically no relevant wet-lab experience, "
-         "and practically a whole globe circumference in distance away from my home country, <b>Singapore</b>",
+         "and almost a whole globe circumference in distance away from my home country, <b>Singapore</b>",
          "I went from learning how to <b>pipette</b> to purifying proteins with <b>resins</b> and <b>size-exclusion columns</b>, preparing <b>cryoEM grids</b>, "
          "running <b>fluorometry</b> experiments, making <b>gels</b>, and growing <b>cell cultures</b> for plasmid transformation, and other assays, etc.",
          "None of this would have been possible without the kind guidance of everyone in the <b>Hekstra lab</b>, so thank you, everyone, "
