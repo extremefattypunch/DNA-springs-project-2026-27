@@ -201,7 +201,7 @@ SLIDES = [
               "Extra phase χ = π/2: the scattered wave becomes <b>antiparallel</b> to the reference, so the particle is <b>dark</b>",
               "χ = 3π/2: <b>parallel</b>, so the particle is <b>bright</b> (contrast reversed)",
               "Contrast ≈ −2φ sin χ: <b>sin χ is the contrast transfer function</b>, largest at χ = π/2 + kπ",
-              "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q"]), intro='<b>Key idea</b>: adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein.'),
+              "Defocus supplies χ(q) = πλΔf q² − ½πC<sub>s</sub>λ³q⁴: a different extra phase for every spatial frequency q"]), introTtl='Key idea', intro='Adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein.'),
     eqslide("c6b", "Where the defocus phase comes from: the Fresnel propagator",
             "Why does defocus give each spatial frequency q its own extra phase?", [
         "A <b>3D plane wave</b> of wavelength λ travels along its <b>wavevector</b> " + T(r"\mathbf k") + ". Specimen detail of <b>spatial frequency</b> "
@@ -333,9 +333,9 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
             "whereas X-ray crystallography primarily requires recovering <b>missing Fourier phases</b>."})
     if _s["page"] == "c5":    # opening banner (Ian, 2026-11-05): the two questions the WPOA answers
         _s["introTtl"] = "Two questions"
-        _s["intro"] = ("We saw that when the beam passes through the protein its <b>phase shifts</b>, yet the protein is then "
+        _s["intro"] = ("We saw that when the beam passes through the protein its <b>phase shifts</b>, the protein is then "
                        "<b>not visible</b> on a detector that measures <b>intensity</b>.<br><br>"
-                       "<b>(1)</b> Why is that so?<br>"
+                       "<b>(1)</b> How is that so?<br>"
                        "<b>(2)</b> How much is the phase of each beam that passed through the protein (<b>scattered</b>) shifted, relative to the <b>unscattered</b> beam?<br><br>"
                        "It turns out the analysis simplifies greatly once we know that this phase shift is <b>SMALL</b>.")
     if _s["page"] == "c8":    # opening banner (Ian, 2026-11-05)
