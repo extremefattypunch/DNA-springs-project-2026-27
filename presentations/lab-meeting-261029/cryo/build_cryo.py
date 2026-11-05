@@ -308,6 +308,15 @@ SLIDES = [
          {"text": "<b>J1</b>: 5,000 particles in, with their CTF parameters but <b>no orientations</b>", "hl": 0},
          {"text": "<b>J2</b>: ab-initio alternates poses and map; a <b>≈ 17 Å</b> filament map after 900 iterations", "hl": 1},
          {"text": "Run on the <b>Hekstra lab cluster</b> from my home directory; the raw data are on <b>netscratch</b>"}]},
+    {"kind": "media", "page": "c15", "section": "status", "title": "Acknowledgements", "items": [], "big": True, "final": True, "q": "",
+     "points": [{"text": t} for t in [
+         "Four months ago, I arrived in the US for the <b>first time in my life</b>, with practically no relevant wet-lab experience, "
+         "and a whole world away from my home country, <b>Singapore</b>",
+         "I went from learning how to <b>pipette</b> to purifying proteins with <b>resins</b> and <b>size-exclusion columns</b>, preparing <b>cryoEM grids</b>, "
+         "running <b>fluorometry</b> experiments, making <b>gels</b>, and growing <b>cell cultures</b> for plasmid transformation",
+         "None of this would have been possible without the kind guidance of everyone in the <b>Hekstra lab</b>, so thank you, everyone, "
+         "and especially <b>Micheal</b> and <b>Doeke</b>!",
+         '<span class="headline">Hopefully more promising <b>PP2A</b> results follow in the year to come!</span>']]},
 ]
 
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
