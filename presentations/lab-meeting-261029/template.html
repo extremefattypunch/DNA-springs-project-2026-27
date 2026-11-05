@@ -246,6 +246,8 @@ body {
 .m-pt.on { opacity: 1; transform: none; }
 .m-pt.now { color: var(--ink); }
 .m-pt b { color: var(--ink); font-weight: 640; }
+.m-pt:has(.nobullet) { padding-left: 0; } .m-pt:has(.nobullet)::before { display: none; }   /* a point that is not a bullet (e.g. a closing line) */
+.m-pt .thanks { display: block; margin-top: 70px; text-align: center; font: 700 132px/1.05 var(--font-display); letter-spacing: -.01em; color: var(--ink); }
 .fmV { color: var(--fmV); } .fmR { color: var(--fmR); } .fmP { color: var(--fmP); } .fmQ { color: var(--fmQ); } .fmC { color: var(--fmC); } .fmT { color: var(--fmT); } .fmN { color: var(--fmN); } .fmY { color: var(--fmY); }
 .eq { font-family: "STIX Two Text", "Cambria Math", Georgia, serif; font-size: 1.12em; color: var(--ink); white-space: nowrap; }
 .eq i { font-style: italic; } .eq .kn { color: var(--sec-synthesis); } .eq .un { color: var(--sec-status); } .eq .nz { color: var(--ink-3); }

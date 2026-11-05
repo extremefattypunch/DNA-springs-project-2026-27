@@ -317,7 +317,8 @@ SLIDES = [
          "None of this would have been possible without the kind guidance of everyone in the <b>Hekstra lab</b>, so thank you, everyone, "
          "and especially <b>Micheal</b> and <b>Doeke</b>!",
          "It is my pleasure to be able to achieve new milestones in this <b>DNA-spring chimera</b> project so far, in such a relatively short time",
-         '<span class="headline">Hopefully more promising <b>PP2A</b> results follow in the year to come!</span>']]},
+         '<span class="headline">Hopefully more promising <b>PP2A</b> results follow in the year to come!</span>',
+         '<span class="nobullet thanks">Thank you!</span>']]},
 ]
 
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
