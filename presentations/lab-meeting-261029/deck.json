@@ -2511,6 +2511,12 @@
      "msg": {
       "step": 4
      }
+    },
+    {
+     "msg": {
+      "step": 4
+     },
+     "text": "<div style=\"padding:12px 16px;border-left:5px solid var(--amber);border-radius:8px;background:color-mix(in srgb, var(--amber) 10%, transparent);color:var(--ink)\"><b>Exit-wave intensity</b>, scattered wave along the reference or at 90°:<table style=\"border-collapse:collapse;margin:8px 0 8px;font-size:.95em\"><tr><td style=\"padding:3px 14px 3px 0;white-space:nowrap;color:var(--sec-status)\"><b style=\"color:var(--sec-status)\">antiparallel</b></td><td style=\"padding:3px 0\"><span class=\"tex\">(1-\\phi)^2 = 1 - 2\\phi + \\phi^2 \\approx 1 - 2\\phi</span></td></tr><tr><td style=\"padding:3px 14px 3px 0;white-space:nowrap;color:var(--sec-synthesis)\"><b style=\"color:var(--sec-synthesis)\">parallel</b></td><td style=\"padding:3px 0\"><span class=\"tex\">(1+\\phi)^2 = 1 + 2\\phi + \\phi^2 \\approx 1 + 2\\phi</span></td></tr><tr><td style=\"padding:3px 14px 3px 0;white-space:nowrap;color:var(--ink-3)\"><b style=\"color:var(--ink-3)\">perpendicular</b></td><td style=\"padding:3px 0\"><span class=\"tex\">|1+i\\phi|^2 = 1 + \\phi^2 \\approx 1</span></td></tr></table>Under the WPOA <span class=\"tex\">\\phi \\ll 1</span>, so to first order <span class=\"tex\">\\phi^2 \\approx 0</span> while <span class=\"tex\">2\\phi</span> is not: only the parallel and antiparallel cases move the intensity away from unity, giving <b>contrast</b>. At 90° (in focus) the change is second order: <b>invisible</b></div>"
     }
    ],
    "intro": "<b>Key idea</b>: adjusting the <b>defocus</b> changes the <b>relative phase shift</b> between the scattered and unscattered waves.<br><br>That is what creates the <b>image contrast</b> we need to see our protein."

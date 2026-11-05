@@ -295,6 +295,18 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
                        "Expressing the forward equation in <b>real space</b> (inverse 2D transform " + tex(r"\mathcal F_2^{-1}") + ", with the voxels of V stacked into one vector <b>v</b>), we have:"
                        + tex(r"\underbrace{\mathbf y_i}_{\mathcal F_2^{-1}[Y_i]} \;=\; \underbrace{A_i\,\mathbf v}_{\mathcal F_2^{-1}\left[C_i\,\tilde V(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T})\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}\right]} \;+\; \underbrace{\boldsymbol\varepsilon_i}_{\mathcal F_2^{-1}[N_i]}", True)
                        + "With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>.")
+    if _s["page"] == "c6":    # Ian, 2026-11-05: why only parallel / antiparallel scattering gives first-order contrast
+        _row = lambda lab, src, col: (f'<tr><td style="padding:3px 14px 3px 0;white-space:nowrap;color:{col}"><b style="color:{col}">{lab}</b></td>'
+                                      f'<td style="padding:3px 0">{tex(src)}</td></tr>')
+        _s["points"].append({"msg": {"step": 4}, "text":
+            '<div style="padding:12px 16px;border-left:5px solid var(--amber);border-radius:8px;background:color-mix(in srgb, var(--amber) 10%, transparent);color:var(--ink)">'
+            "<b>Exit-wave intensity</b>, scattered wave along the reference or at 90°:"
+            '<table style="border-collapse:collapse;margin:8px 0 8px;font-size:.95em">'
+            + _row("antiparallel", r"(1-\phi)^2 = 1 - 2\phi + \phi^2 \approx 1 - 2\phi", "var(--sec-status)")
+            + _row("parallel", r"(1+\phi)^2 = 1 + 2\phi + \phi^2 \approx 1 + 2\phi", "var(--sec-synthesis)")
+            + _row("perpendicular", r"|1+i\phi|^2 = 1 + \phi^2 \approx 1", "var(--ink-3)")
+            + "</table>Under the WPOA " + tex(r"\phi \ll 1") + ", so to first order " + tex(r"\phi^2 \approx 0") + " while " + tex(r"2\phi") + " is not: "
+            "only the parallel and antiparallel cases move the intensity away from unity, giving <b>contrast</b>. At 90° (in focus) the change is second order: <b>invisible</b></div>"})
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"
