@@ -311,6 +311,12 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
         _s["introTtl"] = "Next: the forward model"
         _s["intro"] = ("With an understanding of the basics of <b>image formation</b> in cryoEM, we now move on to the key theoretical model "
                        "that governs <b>3D structure determination</b> from the <b>2D images</b> we obtain from the microscope.")
+    if _s["page"] == "c2":    # opening banner (Ian, 2026-11-05): what the cryoEM theory section is for
+        _s["introTtl"] = "From 2D images to a 3D map"
+        _s["intro"] = ("I will now try to explain the <b>CryoSPARC downstream analysis</b> in a hopefully <b>intuitive</b> way, as that is the software "
+                       "I have mainly been working with: essentially, <b>how we get from 2D images to a 3D density map</b>.<br><br>"
+                       "Crystallographers can hopefully draw parallels with <b>reconstruction in X-ray crystallography</b>, as some concepts are common "
+                       "to the two workflows: <b>diffraction</b>, and its connection to <b>Fourier space</b>.")
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"

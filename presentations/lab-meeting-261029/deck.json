@@ -2362,7 +2362,9 @@
       "step": 3
      }
     }
-   ]
+   ],
+   "introTtl": "From 2D images to a 3D map",
+   "intro": "I will now try to explain the <b>CryoSPARC downstream analysis</b> in a hopefully <b>intuitive</b> way, as that is the software I have mainly been working with: essentially, <b>how we get from 2D images to a 3D density map</b>.<br><br>Crystallographers can hopefully draw parallels with <b>reconstruction in X-ray crystallography</b>, as some concepts are common to the two workflows: <b>diffraction</b>, and its connection to <b>Fourier space</b>."
   },
   {
    "kind": "media",
