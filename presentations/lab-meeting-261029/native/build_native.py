@@ -59,12 +59,8 @@ A23 = {'kind': 'media', 'page': 23, 'section': 'assay', 'title': '[PENDING] PP2A
   'q': 'Template: Day et al., 2025, Structure 33:1688, which compared the two A-subunit isoforms',
   'items': [{'iframe': 'interactive/pp2a.html', 'title': 'Aα vs Aβ vs Aα + spring', 'cap': 'Schematic after Day et al. Fig. 1D and 2 (not to scale)'}],
   'points': [{'text': t, 'msg': {'step': st}} for t, st in [
-    ('<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave', 4),
-    ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 5),
-    ('<b>Why three assays, not just a phosphatase assay?</b><ul class="sub">'
-     '<li><b>DiFMUP activity</b>: an artificial substrate in vitro, which does not need the full holoenzyme the way real substrates do in vivo, so it can miss assembly defects</li>'
-     '<li><b>BLI binding</b>: therefore tests how well the AC core binds the B subunit (Day et al.: same activity, yet up to 4.7× weaker binding)</li>'
-     '<li><b>cryoEM</b>: shows how the structure deforms under the spring, and lets us see that the spring is attached</li></ul>', 6)]]}
+    ('<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave', 5),
+    ('<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question', 6)]], 'msg0': {'step': 4}}
 
 DTT = {'kind': 'media', 'page': '21b', 'section': 'synthesis', 'title': 'Why add DTT? Favouring the 1 : 1 circle', 'figW': 1180, 'msgChannel': 'cryo',
   'q': 'Breaking disulfide bonds so each pp2a reacts on its own',
@@ -271,12 +267,13 @@ for s in deck['slides']:
     for parent, child in ((1, '1b'), (1, '1c'), (29, '29b'), (30, '30b')):
         if pg == parent and child in ('1b', '1c'):   # 29b/30b result slides dropped at Ian's request
             out.append(SLIDES[child])
-INTRO = {33: 'New <b>structural biology workflow</b> development for the <b>Hekstra lab</b>?', '22b': 'Now that our gels give at least some evidence of a <b>circular product</b>, it makes sense to start thinking about the next step: designing <b>assays that test the physiological function of PP2A</b> under spring attachment.<br><br>Before that, we first need to understand the <b>key features of PP2A</b>.', '19b': 'But we haven’t asked: is this new band <b>truly a circular product</b>?<br><br>The most definitive answer is to run a <b>TCO resin test</b>.', 11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
+INTRO = {23: 'Regarding the <b>choice of assays</b>, it turns out we can take inspiration from a study that also asked how a <b>different form of the A subunit</b> of PP2A (Aβ instead of Aα) affects PP2A’s <b>physiological activity</b>.', 33: 'New <b>structural biology workflow</b> development for the <b>Hekstra lab</b>?', '22b': 'Now that our gels give at least some evidence of a <b>circular product</b>, it makes sense to start thinking about the next step: designing <b>assays that test the physiological function of PP2A</b> under spring attachment.<br><br>Before that, we first need to understand the <b>key features of PP2A</b>.', '19b': 'But we haven’t asked: is this new band <b>truly a circular product</b>?<br><br>The most definitive answer is to run a <b>TCO resin test</b>.', 11: 'So now we want to perform <b>MD analysis on sfGFP</b>. But what exactly are we looking for in such an analysis?'}
 for x in out:
     if x.get('page') in INTRO: x['intro'] = INTRO[x['page']]
     if x.get('page') == '22b': x['introTtl'] = 'Next step'
     if x.get('page') == 33: x['introTtl'] = 'Bonus section'
-    if x.get('page') in (23, 24, 29, 30):   # static, no click-through (Ian's request)
+    if x.get('page') == 23: x['introTtl'] = 'Choosing assays'
+    if x.get('page') in (24, 29, 30):   # static, no click-through (Ian's request; 23 animated again 2026-11-05)
         x['final'] = True
 deck['slides'] = out
 (ROOT / 'deck.json').write_text(json.dumps(deck, indent=1, ensure_ascii=False))

@@ -2038,23 +2038,21 @@
     {
      "text": "<b>Day et al.</b>: Aα vs Aβ holoenzymes. Aβ’s extra 12 N-terminal residues push the B56γ helix away; its scaffold is more concave",
      "msg": {
-      "step": 4
+      "step": 5
      }
     },
     {
      "text": "<b>Ours</b>: Aα vs Aα <b>with a DNA spring attached</b>: a perturbed A subunit, the same question",
      "msg": {
-      "step": 5
-     }
-    },
-    {
-     "text": "<b>Why three assays, not just a phosphatase assay?</b><ul class=\"sub\"><li><b>DiFMUP activity</b>: an artificial substrate in vitro, which does not need the full holoenzyme the way real substrates do in vivo, so it can miss assembly defects</li><li><b>BLI binding</b>: therefore tests how well the AC core binds the B subunit (Day et al.: same activity, yet up to 4.7× weaker binding)</li><li><b>cryoEM</b>: shows how the structure deforms under the spring, and lets us see that the spring is attached</li></ul>",
-     "msg": {
       "step": 6
      }
     }
    ],
-   "final": true
+   "msg0": {
+    "step": 4
+   },
+   "intro": "Regarding the <b>choice of assays</b>, it turns out we can take inspiration from a study that also asked how a <b>different form of the A subunit</b> of PP2A (Aβ instead of Aα) affects PP2A’s <b>physiological activity</b>.",
+   "introTtl": "Choosing assays"
   },
   {
    "kind": "media",

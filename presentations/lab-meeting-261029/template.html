@@ -1140,7 +1140,7 @@ function buildMedia(el, cfg) {
     }
     lis.forEach((li, i) => { li.classList.toggle('on', i < k); li.classList.toggle('now', !cfg.final && i === k - 1); });
     const hl = k > 0 ? pts[k - 1].hl : null;
-    let msg = null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;
+    let msg = cfg.msg0 || null; for (let i = 0; i < k; i++) if (pts[i].msg) msg = pts[i].msg;   // msg0: iframe state before the first point
     curMsg = Object.assign({ deck: cfg.msgChannel || 'band-ratio', preset: true, ann: [], step: 0, static: STATIC_MEDIA || !!cfg.final }, msg || {});
     frames.forEach(f => { try { f.contentWindow.postMessage(curMsg, '*'); } catch (e) {} });
     els.forEach((e, i) => e.classList.toggle('mhl', Array.isArray(hl) ? hl.includes(i) : hl === i));
