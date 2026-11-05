@@ -288,6 +288,13 @@ for _s in SLIDES:   # slide c1 is static: open the flow charts on their last sta
     if _s["page"] == "c8":    # opening banner (Ian, 2026-11-05)
         _s["intro"] = ("So what is the <b>projection</b> " + tex(r"P_{R}V") + ", and why do we include the <b>orientation</b> "
                        + tex("R") + " in our model?")
+    if _s["page"] == "c11":   # opening banner (Ian, 2026-11-05): the real-space form of the forward model, in terms of its Fourier-space pieces
+        _s["introTtl"] = "Reconstruction in practice"
+        _s["intro"] = ("So how do we recover the 3D volume V (i.e. <b>reconstruction</b>) in practice? First, let us assume we know one of the two unknowns: "
+                       "the <b>pose</b> (R<sub>i</sub>, <b>t</b><sub>i</sub>).<br><br>"
+                       "Expressing the forward equation in <b>real space</b> (inverse 2D transform " + tex(r"\mathcal F_2^{-1}") + ", with the voxels of V stacked into one vector <b>v</b>), we have:"
+                       + tex(r"\underbrace{\mathbf y_i}_{\mathcal F_2^{-1}[Y_i]} \;=\; \underbrace{A_i\,\mathbf v}_{\mathcal F_2^{-1}\left[C_i\,\tilde V(R_i^{\mathsf T}[q_x,q_y,0]^{\mathsf T})\,e^{-2\pi i\,\mathbf q\cdot\mathbf t_i}\right]} \;+\; \underbrace{\boldsymbol\varepsilon_i}_{\mathcal F_2^{-1}[N_i]}", True)
+                       + "With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>.")
     if _s["page"] == "c10":   # opening banner: why the projection is now written in Fourier space
         _s["introTtl"] = "Why Fourier space?"
         _s["intro"] = ("Here we want to express our projected 2D image in <b>reciprocal (Fourier) space</b>.<br><br>"

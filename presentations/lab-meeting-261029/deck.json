@@ -2830,7 +2830,9 @@
     {
      "text": "<b>Set μ = A<sub>i</sub>v</b>, the prediction, to get the likelihood of image i given the map:<span class=\"tex d\">\\boxed{\\;p(\\mathbf y_i\\mid\\mathbf v) = \\frac{1}{(2\\pi)^{m/2}|\\Sigma_i|^{1/2}}\\exp\\Big[-\\tfrac12\\,(\\mathbf y_i-A_i\\mathbf v)^{\\mathsf T}\\,\\Sigma_i^{-1}\\,(\\mathbf y_i-A_i\\mathbf v)\\Big]\\;}</span>The exponent is the <b>noise-weighted squared residual</b>, and <b>v</b> enters only through it: the closer the prediction is to the image, the more probable the image"
     }
-   ]
+   ],
+   "introTtl": "Reconstruction in practice",
+   "intro": "So how do we recover the 3D volume V (i.e. <b>reconstruction</b>) in practice? First, let us assume we know one of the two unknowns: the <b>pose</b> (R<sub>i</sub>, <b>t</b><sub>i</sub>).<br><br>Expressing the forward equation in <b>real space</b> (inverse 2D transform <span class=\"tex\">\\mathcal F_2^{-1}</span>, with the voxels of V stacked into one vector <b>v</b>), we have:<span class=\"tex d\">\\underbrace{\\mathbf y_i}_{\\mathcal F_2^{-1}[Y_i]} \\;=\\; \\underbrace{A_i\\,\\mathbf v}_{\\mathcal F_2^{-1}\\left[C_i\\,\\tilde V(R_i^{\\mathsf T}[q_x,q_y,0]^{\\mathsf T})\\,e^{-2\\pi i\\,\\mathbf q\\cdot\\mathbf t_i}\\right]} \\;+\\; \\underbrace{\\boldsymbol\\varepsilon_i}_{\\mathcal F_2^{-1}[N_i]}</span>With the pose and CTF known, A<sub>i</sub> is a fixed matrix: the problem is <b>linear</b> in <b>v</b>."
   },
   {
    "kind": "media",
