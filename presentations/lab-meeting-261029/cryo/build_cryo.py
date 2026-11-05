@@ -273,6 +273,17 @@ SLIDES = [
               "<b>Map step</b>: rotate the images back and average them → " + T(r"\mathbf v^{(1)}") + ". Already far clearer than any single image",
               "<b>Repeat</b>: a better map gives better poses, and better poses a better map. The mean pose error falls from 22° to ≈ 2° within two iterations",
               "<b>Compare with the truth</b>: the same object, up to an overall rotation that the images alone can never fix. A poor " + T(r"\mathbf v^{(0)}") + " can trap the loop in a local optimum"]),
+    {"kind": "media", "page": "c14", "section": "cryoem", "title": "In CryoSPARC: from particle images to a 3D map",
+     "layout": "row", "aspect": 1.86, "rowH": 540,
+     "q": "", "introTtl": "In practice",
+     "intro": "Altogether, in <b>CryoSPARC</b> it looks something like this: a past project of mine, recovering <b>3D maps</b> from particle images of "
+              "<b>actin filaments</b>, essentially a proxy for <b>force-transducing DNA strands</b>.",
+     "items": [{"img": "cryo/cryosparc_j1_import.png", "w": 1903, "h": 1021, "cap": "J1, Import Particle Stack: 5,000 particle images, with no orientations yet"},
+               {"img": "cryo/cryosparc_j2_abinitio.png", "w": 1961, "h": 1029, "cap": "J2, Ab-initio Reconstruction (1 class, C1): the 3D map taking shape"}],
+     "points": [
+         {"text": "<b>J1</b> imports 5,000 particles (160 × 160 px at 5.76 Å/px). Its warnings say the file carries <b>no orientations</b>: the poses (R<sub>i</sub>, <b>t</b><sub>i</sub>) are exactly what must be found", "hl": 0},
+         {"text": "<b>J2</b>, ab-initio reconstruction, alternates pose and map steps from a random start (the loop of the previous slides). By iteration 900 a filament density emerges at ≈ 17 Å", "hl": 1},
+         {"text": "Run on the <b>Hekstra lab cluster</b> from my home directory; the raw data are on <b>netscratch</b>"}]},
 ]
 
 for _s in SLIDES:   # slide c1 is static: open the flow charts on their last state (brackets + roadmap)
