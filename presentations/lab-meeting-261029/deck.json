@@ -2096,16 +2096,16 @@
      "hl": 1
     },
     {
-     "text": "<b>Ascertain spring attachment</b>: resolution level, neural-network particle picking, refinement to an atomic model",
-     "hl": 0
-    },
-    {
      "text": "<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail",
      "hl": 0
     },
     {
      "text": "<span class=\"headline\"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>",
      "hl": 1
+    },
+    {
+     "text": "<b>For us</b>: ascertain <b>spring attachment</b> (resolution level, neural-network particle picking, refinement to an atomic model)",
+     "hl": 0
     }
    ]
   },
@@ -2128,38 +2128,41 @@
     {
      "text": "<b>Biosensor</b>: an optical-fibre tip coated with B56 (AR2G tip, amine coupling). Bound mass shifts the reflected light by Δλ",
      "msg": {
-      "step": 1
+      "step": 0
      }
     },
     {
      "text": "<b>Baseline</b> in buffer: nothing binds",
      "msg": {
-      "step": 2
+      "step": 1
      }
     },
     {
      "text": "<b>Association</b>: dip into the AC core dimer (31–500 nM); AC binds B56 and Δλ rises, at a rate set by k<sub>on</sub>",
      "msg": {
-      "step": 3
+      "step": 2
      }
     },
     {
      "text": "<b>Dissociation</b>: back into buffer; AC falls off and Δλ decays, at a rate set by k<sub>off</sub>",
      "msg": {
-      "step": 4
+      "step": 3
      }
     },
     {
      "text": "<b>Fit</b> (1:1 binding):<span class=\"tex d\">AC + B \\;\\xrightleftharpoons[k_{\\mathrm{off}}]{\\;k_{\\mathrm{on}}\\;}\\; ABC, \\qquad K_D = \\frac{k_{\\mathrm{off}}}{k_{\\mathrm{on}}}</span>smaller K<sub>D</sub> = tighter binding",
      "msg": {
-      "step": 5
+      "step": 3
      }
     },
     {
      "text": "<span class=\"headline\"><b>Day et al. result</b>: Aβ binds B56 more weakly than Aα, K<sub>D</sub> 119.9 vs 25.7 nM for B56α (≈ 4.7×) and 14.0 vs 9.2 nM for B56γ (≈ 1.5×)</span>",
      "msg": {
-      "step": 6
+      "step": 4
      }
+    },
+    {
+     "text": "<b>For us</b>: measure K<sub>D</sub> for B56 binding to the <b>Aα(+ spring)–C</b> core vs the WT Aα–C core: does the spring weaken <b>holoenzyme formation</b>?"
     }
    ]
   },
@@ -2182,38 +2185,35 @@
     {
      "text": "<b>Enzyme</b>: assembled holoenzyme, 20 nM AC core with excess (200 nM) B56γ",
      "msg": {
-      "step": 1
+      "step": 0
      }
     },
     {
      "text": "<b>Substrate DiFMUP</b> is dark; PP2A removes its phosphate → <b>DiFMU</b>, which fluoresces blue",
      "msg": {
-      "step": 2
+      "step": 1
      }
     },
     {
      "text": "The <b>initial slope</b> of fluorescence vs time is the velocity v at that substrate concentration",
      "msg": {
-      "step": 3
+      "step": 2
      }
     },
     {
      "text": "<b>Repeat</b> at 2–128 µM (triplicate) and fit Michaelis–Menten:<span class=\"tex d\">v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}</span>",
      "msg": {
-      "step": 4
-     }
-    },
-    {
-     "text": "<b>Ours</b>: the same assay with and without the DNA spring",
-     "msg": {
-      "step": 5
+      "step": 3
      }
     },
     {
      "text": "<span class=\"headline\"><b>Day et al. result</b>: same activity for Aα and Aβ, K<sub>M</sub> 25.6 vs 34.9 µM and V<sub>max</sub> 60.1 vs 56.8 fluorescence/s, despite their different B56 binding</span>",
      "msg": {
-      "step": 6
+      "step": 4
      }
+    },
+    {
+     "text": "<b>For us</b>: the same assay on the Aα holoenzyme with and without the DNA spring: does the spring change its <b>raw dephosphorylation capacity</b>?"
     }
    ]
   },

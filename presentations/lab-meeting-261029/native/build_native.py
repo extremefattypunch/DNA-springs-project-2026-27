@@ -125,9 +125,9 @@ A24 = {'kind': 'media', 'page': 24, 'section': 'assay', 'title': '[Plans] Holoen
        '<b>Left</b>: the horseshoes overlaid; Aβ spans 59.6 Å from HEAT 1 to 15 vs 62.7 Å for Aα (more concave). <b>Right</b>: the shift per repeat, largest at HEAT 1–8 (up to ≈ 3 Å), near zero at the aligned end.'}],
   'points': [
     {'text': '<b>Structural deformation</b>: align on HEAT 12–15 and measure HEAT-repeat centre-of-mass shifts, WT vs spring attached', 'hl': 1},
-    {'text': '<b>Ascertain spring attachment</b>: resolution level, neural-network particle picking, refinement to an atomic model', 'hl': 0},
     {'text': '<b>Day et al.</b>: 3D classification resolved the B56γ C-terminal helix (Aα only) and the C-tail', 'hl': 0},
-    {'text': '<span class="headline"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>', 'hl': 1}]}
+    {'text': '<span class="headline"><b>Day et al. result</b>: the Aβ holoenzyme is <b>more concave</b> than Aα: HEAT 1-to-15 span 59.6 vs 62.7 Å, with HEAT 3–6 shifted by 2–3 Å</span>', 'hl': 1},
+    {'text': '<b>For us</b>: ascertain <b>spring attachment</b> (resolution level, neural-network particle picking, refinement to an atomic model)', 'hl': 0}]}
 
 A29 = anim(29, '[Plans] B56-binding assay: biolayer interferometry (BLI)', 'bli.html', 'Method of Day et al. 2025: does the A subunit change how tightly B56 binds the AC core?',
     'Schematic of BLI; curves computed from Day et al.’s fitted rate constants (Fig. 5B, B56α); timings illustrative', [
@@ -151,8 +151,11 @@ A30 = anim(30, '[Plans] Phosphatase activity assay (DiFMUP)', 'difmup.html', 'Me
     '<b>Substrate DiFMUP</b> is dark; PP2A removes its phosphate → <b>DiFMU</b>, which fluoresces blue',
     'The <b>initial slope</b> of fluorescence vs time is the velocity v at that substrate concentration',
     '<b>Repeat</b> at 2–128 µM (triplicate) and fit Michaelis–Menten:' + tex(r'v = \frac{V_{\max}\,[S]}{K_M + [S]}', True),
-    '<b>Ours</b>: the same assay with and without the DNA spring',
     '<span class="headline"><b>Day et al. result</b>: same activity for Aα and Aβ, K<sub>M</sub> 25.6 vs 34.9 µM and V<sub>max</sub> 60.1 vs 56.8 fluorescence/s, despite their different B56 binding</span>'])
+# 'For us' bullets last (Ian 2026-11-05); bullets aligned with the bli/difmup scenes (anim() would put scene k+1 on bullet k)
+for _a, _st, _us in ((A29, (0, 1, 2, 3, 3, 4), '<b>For us</b>: measure K<sub>D</sub> for B56 binding to the <b>Aα(+ spring)–C</b> core vs the WT Aα–C core: does the spring weaken <b>holoenzyme formation</b>?'), (A30, (0, 1, 2, 3, 4), '<b>For us</b>: the same assay on the Aα holoenzyme with and without the DNA spring: does the spring change its <b>raw dephosphorylation capacity</b>?')):
+    for _q, _k in zip(_a['points'], _st): _q['msg'] = {'step': _k}
+    _a['points'].append({'text': _us})
 A30b = {'kind': 'media', 'page': '30b', 'section': 'assay', 'title': 'DiFMUP results (Day et al.): same activity for Aα and Aβ', 'figW': 760,
   'q': 'Day et al. Fig. S4D, mean ± SD of 3 replicates',
   'items': [{'img': 'native/difmup_kinetics.png', 'w': 537, 'h': 427, 'cap': 'Day et al. Fig. S4D: velocity vs [DiFMUP]'}],
