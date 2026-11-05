@@ -1899,6 +1899,12 @@
      "title": true
     },
     {
+     "note": "Perhaps run the fraction volumes through a <b><span style=\"white-space:nowrap\">His-tag</span> column</b> (affinity column chromatography)? Protein concentrators may require some kind of <b>volume overhead</b>, which we don’t have?<br><i>Anyway…</i>",
+     "x": 1124,
+     "y": 648,
+     "w": 620
+    },
+    {
      "banner": "<span class=\"emoji\">😭</span>And that was so anticlimactic…<span style=\"display:block;font-size:30px;margin-top:20px;line-height:1.4\">So we head back to <b>optimizing the yield</b> of our circular product. Before debugging the SEC, we can first look at <b>disulfide (cysteine) bond re-formation</b>, which links pp2a molecules together.</span>",
      "big": true
     }

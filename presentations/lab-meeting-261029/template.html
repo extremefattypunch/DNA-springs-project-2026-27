@@ -281,6 +281,10 @@ menclose[notation~="box"] { border: 2px solid currentColor; padding: 6px 12px; b
   background: var(--paper); border: 3px solid var(--amber); border-radius: 22px; padding: 44px 56px; box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--paper) 72%, transparent), 0 24px 60px rgba(0,0,0,.28);
   font-size: 36px; line-height: 1.4; color: var(--ink-2); transition: opacity .45s ease, transform .45s ease; }
 .m-banner.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.g-note { position: absolute; z-index: 3; box-sizing: border-box; background: var(--paper); border: 3px solid var(--amber); border-radius: 14px; padding: 20px 26px;
+  font-size: 26px; line-height: 1.4; color: var(--ink-2); box-shadow: 0 16px 40px rgba(0,0,0,.32); opacity: 0; transform: translateY(12px); transition: opacity .4s ease, transform .4s ease; pointer-events: none; }
+.g-note.on { opacity: 1; transform: none; }
+.g-note b { color: var(--ink); }
 .m-banner.big { text-align: center; font-size: 48px; }
 .m-banner .emoji { display: block; font-size: 150px; line-height: 1.1; margin-bottom: 10px; }
 .m-banner.intro { top: 540px; }
@@ -1237,10 +1241,14 @@ function buildSlide(cfg, idx) {
     });
     // seq: explicit order of panel steps and temporary banners, e.g.
     // [{panel: 0}, {banner: '...'}, {banner: '...', title: true}, {panel: 1}, {banner: '...'}]
-    S.banners = [];
+    // {note: html, x, y, w}: a small text box laid over the gel from its own click onward
+    S.banners = []; S.notes = [];
     (cfg.seq || panelSteps.map((_, i) => ({ panel: i }))).forEach(it => {
       if (it.panel != null) (panelSteps[it.panel] || []).forEach((st, j) => S.steps.push(j === 0 && it.title ? Object.assign({ title: true }, st) : st));
-      else {
+      else if (it.note != null) {
+        const nb = h('div', 'g-note', { html: it.note, style: { left: it.x + 'px', top: it.y + 'px', width: (it.w || 520) + 'px' } }); el.appendChild(nb);
+        S.steps.push({ intro: true }); S.notes.push({ el: nb, at: S.steps.length - 1 });
+      } else {
         const bn = h('div', 'm-banner' + (it.big ? ' big' : ''), { html: it.banner }); el.appendChild(bn);
         S.banners.push(bn); S.steps.push({ intro: true, banner: S.banners.length - 1, title: !!it.title });
       }
@@ -1283,6 +1291,7 @@ function show(si, k, animate) {
   for (let i = 1; i <= k; i++) if (!S.steps[i].intro && !S.steps[i].hold) counts[S.steps[i].panel]++;
   if (S.introEl) S.introEl.classList.toggle('on', k === 1);
   if (S.banners) S.banners.forEach((bn, j) => bn.classList.toggle('on', S.steps[k] && S.steps[k].banner === j));
+  if (S.notes) S.notes.forEach(n => n.el.classList.toggle('on', k >= n.at));
   if (S.titleEl) { let t = false; for (let i = 1; i <= k; i++) if (S.steps[i].title) t = true; S.titleEl.style.opacity = t ? 1 : 0; }
   S.panels.forEach((G, pi) => G.kind === 'media' ? G.apply(counts[pi]) : (G.kind === 'chart' ? applyChart : applyPanel)(G, counts[pi], animate && si === cur.s && counts[pi] === G.k + 1));
   S.panels.forEach((G, pi) => { if (G.hideUntil && G.root) G.root.style.visibility = counts[pi] > 0 ? '' : 'hidden'; });
