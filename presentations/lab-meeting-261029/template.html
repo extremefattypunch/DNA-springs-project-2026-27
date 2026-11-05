@@ -1198,6 +1198,7 @@ function buildSlide(cfg, idx) {
     el.appendChild(foot); S.dots = foot.querySelector('.dots');
     const Mo = buildMedia(el, cfg); S.panels.push(Mo);
     if (cfg.intro) addIntro(el, S);
+    if (cfg.intro && cfg.final) S.steps.push({ panel: 0, hold: true });   // finished-state slide: after the intro, a click with just the slide, before any banner
     for (let k = 1; k <= Mo.n; k++) S.steps.push({ panel: 0, k });
     for (let i = 0; i < S.steps.length; i++) S.dots.appendChild(h('i'));
   } else if (cfg.kind === 'image') {
@@ -1274,7 +1275,7 @@ function show(si, k, animate) {
   slides.forEach((x, i) => x.el.classList.toggle('on', i === si));
   // per-panel step counts at slide step k
   const counts = S.panels.map(() => 0);
-  for (let i = 1; i <= k; i++) if (!S.steps[i].intro) counts[S.steps[i].panel]++;
+  for (let i = 1; i <= k; i++) if (!S.steps[i].intro && !S.steps[i].hold) counts[S.steps[i].panel]++;
   if (S.introEl) S.introEl.classList.toggle('on', k === 1);
   if (S.banners) S.banners.forEach((bn, j) => bn.classList.toggle('on', S.steps[k] && S.steps[k].banner === j));
   if (S.titleEl) { let t = false; for (let i = 1; i <= k; i++) if (S.steps[i].title) t = true; S.titleEl.style.opacity = t ? 1 : 0; }
