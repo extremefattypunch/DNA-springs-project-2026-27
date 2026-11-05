@@ -1713,7 +1713,9 @@
     {
      "gel": "p16-ratio"
     }
-   ]
+   ],
+   "intro": "Before trying anything else to get a circular product, I first tried to shift the yield of products (circular or linear) away from the <b>2 protein + 2 DNA</b> bands towards the <b>1 protein + 1 DNA</b> bands.<br><br>Those are the bands of interest: ultimately we want a <b>1 : 1 circular product</b>.",
+   "introTtl": "First step"
   },
   {
    "kind": "gel",
