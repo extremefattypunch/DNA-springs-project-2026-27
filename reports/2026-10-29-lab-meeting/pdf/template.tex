@@ -1,0 +1,95 @@
+% Pandoc template for REPORT.pdf, built on Ian's "report" LaTeX template
+% (annotation.sty + latex-screenshot.sty, copied from the Obsidian template set).
+% Do not edit report.tex: it is regenerated from ../REPORT.md by build.py.
+\documentclass{article}
+\usepackage{annotation}
+\usepackage{latex-screenshot}
+\usetikzlibrary{patterns}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}%center table column elements
+\hfuzz=80pt
+\hbadness=100000000
+
+% ---------------- report-specific additions ----------------
+\usepackage{newunicodechar}
+\usepackage{upgreek}
+\usepackage[section]{placeins}   % figures stay inside their section (\FloatBarrier per heading)
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, margin=0.6cm}
+\setcounter{secnumdepth}{0}      % headings already carry their own numbers
+\setcounter{tocdepth}{2}
+\renewcommand{\annomaxpages}{400}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+\AtBeginEnvironment{longtable}{\small\setstretch{1.1}}
+\renewcommand{\arraystretch}{1.15}
+\lhead{\small DNA-spring chimeras: four-month progress report}
+\rhead{\textbf{Ian Poon}}
+\hypersetup{pdftitle={DNA-spring protein chimeras: sfGFP and PP2A A-alpha. A four-month progress report}, pdfauthor={Ian Poon}}
+
+% boxes for the report's notes, in the template's own box styles
+\newenvironment{reportbox}[2]{%
+  \begin{mdframed}[style=#1, nobreak=false, frametitle={#2}, frametitlefont=\sffamily\bfseries, frametitleaboveskip=4pt]%
+}{\end{mdframed}}
+
+% characters typed directly in the markdown
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{÷}{\ensuremath{\div}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{°}{\ensuremath{^\circ}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{µ}{\ensuremath{\upmu}}
+\newunicodechar{α}{\ensuremath{\upalpha}}
+\newunicodechar{β}{\ensuremath{\upbeta}}
+\newunicodechar{γ}{\ensuremath{\upgamma}}
+\newunicodechar{κ}{\ensuremath{\upkappa}}
+\newunicodechar{λ}{\ensuremath{\uplambda}}
+\newunicodechar{τ}{\ensuremath{\uptau}}
+\newunicodechar{φ}{\ensuremath{\upphi}}
+\newunicodechar{ψ}{\ensuremath{\uppsi}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{⁻}{\textsuperscript{\ensuremath{-}}}
+\newunicodechar{⁺}{\textsuperscript{\ensuremath{+}}}
+\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{₂}{\textsubscript{2}}
+
+\begin{document}
+
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{0.05\textheight}
+  {\Large\textsc{Lab meeting report} \par}
+  \vspace{0.9cm}
+  {\LARGE DNA-spring protein chimeras \par}
+  \vspace{0.45cm}
+  {\large sfGFP and PP2A A\ensuremath{\upalpha}: a four-month progress report \par}
+  \vfill
+  \includegraphics[width=0.88\textwidth]{spring_types.pdf}\par
+  \vspace{0.3cm}
+  {\small\itshape The three DNA-spring chimeras used throughout: ssDNA, dsDNA and nicked dsDNA\par}
+  \vfill
+  {\large Ian Poon\par}
+  \vspace{0.3cm}
+  {\normalsize Hekstra lab, Harvard University\par}
+  \vspace{0.3cm}
+  {\normalsize Covers the lab meeting of 29 October 2026 \textperiodcentered{} compiled November 2026\par}
+  \vspace{0.6cm}
+\end{center}
+\newpage
+
+\tableofcontents
+\newpage
+
+$body$
+
+\end{document}

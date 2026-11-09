@@ -1,12 +1,13 @@
 # DNA-spring protein chimeras: sfGFP and PP2A Aα. A four-month progress report
 
-**Author:** Ian Poon, Hekstra lab, Harvard University
-**Period covered:** my first ≈ 4 months in the lab, from arrival to the lab meeting of **29 October 2026**
+**Author:** Ian Poon, Hekstra lab, Harvard University\
+**Period covered:** my first ≈ 4 months in the lab, from arrival to the lab meeting of **29 October 2026**\
 **Mentors:** Micheal Schnebly and Doeke Hekstra
 
 **How this report was made.** It documents everything I presented at my lab meeting "Lab Meeting 261029" [S1]. That deck has 61 slides and lives as a private interactive deck at <https://claude.ai/artifact/3WwWoCorh1GgpnCWQCaTWn>.
 
 The report draws on:
+
 - the slide text;
 - the animation scripts of the gel and fluorometry slides, which record how I read each lane and bar;
 - my original draft slides, used for a few results that I cut from the final deck (marked *draft deck*).
@@ -24,6 +25,7 @@ I worked on **DNA-spring protein chimeras**: proteins with a short DNA strand at
 Over four months I worked on two proteins.
 
 **Superfolder GFP (sfGFP).**
+
 - I produced a large, high-purity batch of the circular sfGFP–dsDNA chimera.
 - I built a fluorometry assay around a concentration-independent metric, the excitation band ratio $I(400)/I(\text{peak})$, and validated its range against the inner filter effect.
 - With it, I reproduced the quenching of sfGFP fluorescence by the tetrazine groups. I found no meaningful change in fluorescence between the ssDNA, dsDNA and nicked-dsDNA springs.
@@ -31,6 +33,7 @@ Over four months I worked on two proteins.
 - The MD also showed that the force field and Zocchi's DNA-spring model disagree five-fold only because the model assumes the DNA kinks. With kinking removed, the two agree within 1.1–1.2×.
 
 **PP2A scaffold subunit Aα.** No circular product had been seen in the lab before. Through a chain of optimisations I synthesised the **first circular PP2A–DNA chimera in the Hekstra lab** and proved it was circular with a TCO-resin capture test. The optimisations were:
+
 - the DNA:protein ratio;
 - removing the GST tag with thrombin;
 - a longer BCN incubation.
@@ -58,6 +61,7 @@ Purification by size-exclusion chromatography and disulfide reduction with DTT a
 ### 1.1 Why attach DNA springs to proteins? [S2]
 
 Existing methods each give only half of the picture:
+
 - **Single-molecule force methods** (optical and magnetic tweezers, AFM) apply and measure force. But they read out only one end-to-end distance, not the structure.
 - **Structural methods** (cryoEM, X-ray crystallography) give atomic structures, but only of proteins at rest, with no force applied.
 
@@ -90,6 +94,7 @@ Existing methods each give only half of the picture:
 The work follows the lab's ubiquitin chimera preprint (Boral, Schnebly *et al.*, bioRxiv 2026.07.05, *Conformational changes induced in ubiquitin by circular protein–DNA chimeras*).
 
 **Constructs:**
+
 - **Tetrazine (Tet) sites.** The protein carries the unnatural amino acid **Tet2-Et**, a tetrazine-bearing phenylalanine, at one site (**1-tet**) or two sites (**2-tet**).
   - 1-tet can only form *linear* chimeras, so it is the built-in control.
   - 2-tet can close a *circle*.
@@ -97,6 +102,7 @@ The work follows the lab's ubiquitin chimera preprint (Boral, Schnebly *et al.*,
 - **Spring.** Adding the complementary strand (**cDNA**, "+cDNA", "hybridised") turns the attached ssDNA into the stiff dsDNA spring.
 
 **Species on an SDS-PAGE gel.** From slow (large, top) to fast:
+
 1. multi-protein / multi-DNA species: 2 protein + 2 DNA (chain or dimeric ring), 2 protein + 1 DNA (one strand bridging two proteins);
 2. the linear 1 protein + 1 DNA chimera;
 3. the circular 1 protein + 1 DNA chimera (2-tet only);
@@ -104,12 +110,14 @@ The work follows the lab's ubiquitin chimera preprint (Boral, Schnebly *et al.*,
 5. unreacted protein.
 
 **Two key gel signatures:**
+
 - **Linear and circular 1 : 1 ssDNA chimeras have the same mass**, so weight alone cannot tell them apart [S6].
 - **Hybridisation separates them.**
   - *sfGFP:* with cDNA, the linear chimera runs faster (shifts down) while the circular chimera runs slower (shifts up) [S6].
   - *PP2A:* the 1 : 1 circular pp2a + dsDNA band appears *just below* the linear pp2a + DNA band, as in the preprint's Fig. 2. The up-shifted band is the 2 pp2a + 2 dsDNA dimer ring, which is the unwanted product [S26, S29, S33].
 
 **How the gel figures were built.** In the deck, every gel was first drawn as an animated schematic. Lanes were revealed in a fixed order:
+
 1. controls;
 2. 1-tet;
 3. 2-tet;
@@ -199,6 +207,7 @@ The product of interest was highlighted, and then the real gel image was shown. 
   Because both come from one spectrum, concentration cancels. The ratio stayed at **0.097–0.105 from 2 to 8 µM**.
 
 ![Excitation and emission spectra across the concentration series](figures/fluorometry/band_ratio_spectra.png)
+
 ![Same data on a log axis](figures/fluorometry/band_ratio_spectra_log.png)
 
 #### Experiment F-1. Concentration ladder: the inner filter effect [S10]
@@ -242,7 +251,9 @@ The product of interest was highlighted, and then the real gel image was shown. 
 - **What it led to.** This **reproduced the known tet-quenching result** [S24]. It also showed that tet chemistry alone shifts the metric, so force comparisons have to be made between chimeras that share the same chemistry.
 
 ![Tet quenching, attempt 1](figures/fluorometry/p08-att1.jpg)
+
 ![Tet quenching, attempt 2](figures/fluorometry/p08-att2.jpg)
+
 ![Tet quenching, attempt 3](figures/fluorometry/p08-att3.jpg)
 
 #### Experiment F-3. Does spring force change fluorescence? [S12]
@@ -262,6 +273,7 @@ The product of interest was highlighted, and then the real gel image was shown. 
 - **What it led to.** I wanted to know *why* the fluorescence barely moves. That question motivated the MD below; Section 2.4.11 gives the answer.
 
 ![Force application, attempt 1](figures/fluorometry/p10-bb1.jpg)
+
 ![Force application, attempt 2](figures/fluorometry/p10-bb2.jpg)
 
 ### 2.4 Molecular dynamics of the sfGFP chimeras [S13–S23]
@@ -276,6 +288,7 @@ The product of interest was highlighted, and then the real gel image was shown. 
 | DNA dynamics | Is the DNA kinked or coiled (under torsion), which would change the force it applies? Does it interact with the protein in other ways? |
 
 The overall MD goals were:
+
 - **force modelling**, to make the system reproducible and transferable to other proteins;
 - **suitability testing** of candidate proteins for study under a DNA spring.
 
@@ -296,9 +309,11 @@ The overall MD goals were:
 - **Scale.** **4,050 ns of production, 81 replicates across 17 systems.** The animations show the 27 bp spring chimera over 50 ns.
 
 ![sfGFP structure with the 27 bp spring](figures/md/structure_27bp.png)
+
 ![27 bp spring chimera, overview frame](figures/md/S3_spring27_overview_still.png)
 
 > **Methods detail from the project repository, not shown on the slides** (`MD simulations/sfGFP/README.md`):
+>
 > - **Engine and force field:** OpenMM with ff14SB, DNA.OL15, TIP3P water, Joung–Cheatham ions, and Li/Merz 12-6 Mg²⁺.
 > - **Conditions:** 150 mM NaCl, ≈ 5 mM MgCl₂ in the DNA systems, 300 K.
 > - **Structure and sites:** PDB 2B3P (sfGFP, 1.40 Å). Tet2-Et is introduced at two amber (TAG) codons.
@@ -329,10 +344,11 @@ The overall MD goals were:
   - The β-barrel stays uniformly rigid, **≈ 0.4 Å RMSF on the strands**, in every system, including WT with no force at all. The traces overlie each other; only the loops and tethers move. The tallest peak is residues 189–194 (≈ 1.5 Å), then 155–158 and 211–212.
   - With no force, the site distance is **31.61 ± 0.07 Å**.
   - Going from 0 to 20 pN moves it by only **0.14 Å** (to 31.75 Å). The dip at 4 pN is replicate noise.
-  - The compliance is 0.0105 ± 0.0057 Å/pN, which includes zero, so the site-to-site stiffness is **κ > 107 k_BT nm⁻²**.
+  - The compliance is 0.0105 ± 0.0057 Å/pN, which includes zero, so the site-to-site stiffness is **κ > 107 $k_BT$ nm⁻²**.
 - **Interpretation.** The sfGFP backbone is already extremely rigid without force, and force barely changes it.
 
 ![Cα RMSF by system](figures/md/fig2_rmsf.png)
+
 ![Axial force clamp](figures/md/fig1_clamp_only.png)
 
 #### 2.4.5 How much force does the spring apply? Force field vs Zocchi's model [S17]
@@ -348,6 +364,7 @@ The overall MD goals were:
 | 40 bp nicked dsDNA | 13.2 ± 1.3 pN | 2.3–2.5 pN | ≈ 5–6× |
 
   MD values are mean ± sem of 25, 10 and 10 runs.
+
 - **Interpretation.** At first sight they disagree: the force field gives about **5× more force** than Zocchi's model for every spring. Sections 2.4.6–2.4.10 explain why.
 
 #### 2.4.6 Kinked vs unkinked DNA: the shape sets the force [S18]
@@ -386,6 +403,7 @@ The system is a bare 27 bp dsDNA duplex in water and ions at 300 K, with no prot
 - **Interpretation.** No kink and no coiling: the DNA bends smoothly and lies against the protein.
 
 ![Axis bend per base-pair step in MD](figures/md/fig4_dna_bend_md.png)
+
 ![MD bend profiles with a kinked duplex overlaid](figures/md/fig4_dna_bend_kink.png)
 
 #### 2.4.9 Why Zocchi's model puts our springs in the kinked regime [S21]
@@ -393,11 +411,13 @@ The system is a bare 27 bp dsDNA duplex in water and ions at 300 K, with no prot
 I evaluated Zocchi's equations with our MD geometry, where the ends sit $x_{MD}$ = 63–73 Å apart and the duplex bends 4.8–5.2°/bp.
 
 **Inputs:**
+
 - $L = 0.33\,\text{nm}\times N_{bp}$, i.e. 8.91 nm for 27 bp and 13.2 nm for 40 bp;
 - $B = k_BT\,\ell_p \approx 200$ pN nm²;
 - $\tau_c$ = 34 pN nm (intact) or 27 pN nm (nicked).
 
 **Calculation:**
+
 1. **Kink parameter.** $\gamma = L\tau_c/2B$ = **0.76** (27 bp) and **1.12** (40 bp).
 2. **Critical distance.** $x_c = L(1-\gamma^2/15)$ = **86 Å** (27 bp) and **121 Å** (40 bp). Both exceed $x_{MD}$ = 63–73 Å, so the model is in the **kinked regime**.
 3. **Same conclusion from curvature.** Kinking starts when the bending torque $B\kappa$ reaches $\tau_c$. That gives $\kappa_c = \tau_c/B$, which is **3.2°/bp** (2.6°/bp nicked). That is less than the 4.8–5.2°/bp in the MD.
@@ -406,6 +426,7 @@ I evaluated Zocchi's equations with our MD geometry, where the ends sit $x_{MD}$
    This gives **5.5–6.8 pN** (27 bp) and **3.0–3.2 pN** (40 bp).
 
 **Main idea.**
+
 - Zocchi's model has a threshold torque $\tau_c$. Once bending exceeds it, the DNA must kink and the push collapses to a few pN.
 - The MD force field has **no such threshold**. A kink could only appear by base pairs actually breaking, and that did not happen at 4.8–5.2°/bp.
 - So the simulated duplex stays unkinked and keeps pushing at tens of pN.
@@ -413,6 +434,7 @@ I evaluated Zocchi's equations with our MD geometry, where the ends sit $x_{MD}$
 #### 2.4.10 Kinked vs unkinked regime, and the force field [S22]
 
 **Zocchi's force against end-to-end distance:**
+
 - **Kinked branch** ($x < x_c$): the kink takes up the bending and the push collapses to a few pN (5–7 pN for 27 bp, ≈ 3 pN for 40 bp).
 - **Unkinked branch:** the push stays near the Euler load, $\pi^2 B/L^2 \approx 10B/L^2$. That is **24.9 pN** (27 bp) and **11.3 pN** (40 bp), almost independent of $x$.
 - **Our chimeras** sit well inside the model's kinked regime: 5× less force than an unkinked rod would give.
@@ -426,10 +448,12 @@ I evaluated Zocchi's equations with our MD geometry, where the ends sit $x_{MD}$
 | 40 bp nicked | 11.9 pN | 13.2 pN | 2.3 pN |
 
 **Takeaway.**
+
 - The force field does not contradict Zocchi's spring. Its duplex never kinks, so it follows his **unkinked** branch, and there the two agree **within 1.1–1.2×**.
 - The only disagreement is whether DNA kinks at 4.8–5.2°/bp. That is a physical question for experiment, not an inconsistency in the simulations.
 
 ![Zocchi's model, both branches, with the chimera range](figures/md/zocchi_regimes.png)
+
 ![Zocchi recomputed at the force field's distances vs MD](figures/md/zocchi_unkinked_vs_ff.png)
 
 #### 2.4.11 Why fluorometry saw no change across ss, ds and nicked [S23]
@@ -448,6 +472,7 @@ I evaluated Zocchi's equations with our MD geometry, where the ends sit $x_{MD}$
 - **Interpretation.** The springs never deform the chromophore's environment, so **no wavelength shift or band-ratio change is expected**. This agrees with my fluorometry (F-3). Seeing a change would need a softer attachment site or a far stronger force.
 
 ![Chromophore (green) inside the barrel with the 27 bp spring; dashed lines are its key H-bonds](figures/md/S3_spring27_chromophore_still.png)
+
 ![Chromophore hydrogen-bond occupancy by system](figures/md/fig3_chromophore_hbonds.png)
 
 ### 2.5 sfGFP: where I am now [S24]
@@ -515,6 +540,7 @@ Each experiment in this chain answered the question raised by the one before.
 Lane 15 was the ladder.
 
 ![Ratio-optimisation conditions](figures/gels/p16-conditions-table.png)
+
 ![Ratio-optimisation gel](figures/gels/p16-ratio.jpg)
 
 #### Experiment P-3. Cleaving the GST tag [S28]
@@ -544,6 +570,7 @@ Lane 15 was the ladder.
 > Note: on the DNA-stain image, the drawn boxes read "2 tet" (left) and "1 tet" (middle), with the new band in the middle box. On the protein stain of the same layout, the middle box is 2-tet. Check the lane assignment against the notebook before publishing.
 
 ![GST cleavage, protein stain](figures/gels/p18-protein.jpg)
+
 ![GST cleavage, DNA stain](figures/gels/p18-dna.jpg)
 
 #### Experiment P-5. Finding 3: a longer BCN incubation raises the circular yield [S30]
@@ -557,6 +584,7 @@ Lane 15 was the ladder.
 - **What it led to.** I adopted the 12 h BCN incubation. That gave enough of the new band to test its identity.
 
 ![2 h BCN incubation](figures/gels/p19-2h.jpg)
+
 ![12 h BCN incubation](figures/gels/p19-12h.jpg)
 
 #### Experiment P-6. The TCO resin test: principle and validation [S31, S32]
@@ -564,6 +592,7 @@ Lane 15 was the ladder.
 **Why.** Is the new band *truly* circular? The most definitive test is a **TCO resin**.
 
 **Principle [S31]:**
+
 - The beads are coated with TCO, which clicks onto Tet: the same chemistry that attaches our DNA.
 - Any protein with an **exposed Tet** clicks onto the beads and is **trapped**, so it never reaches the flow-through.
 - A **1 : 1 circular product** uses both of its Tet groups for its DNA, so it **passes through**. Linear products keep a free Tet and are trapped.
@@ -579,11 +608,13 @@ Lane 15 was the ladder.
 - **Practical finding.** The more sample per packed resin, the less unnecessary sample loss.
 
 ![Resin validation, capped (non-exposed) Tet](figures/gels/p20-nonexposed.jpg)
+
 ![Resin validation, exposed Tet](figures/gels/p20-exposed.jpg)
 
 #### Experiment P-7. Proof of circular product, then SEC purification [S33]
 
 **TCO resin on the reaction products:**
+
 - **What I did.** I ran the input reaction (pp2a + ssDNA, and + cDNA), and then the same samples after TCO resin, next to pp2a alone.
 - **Result:**
   - Two low bands also appear in pp2a alone, so they are not chimeras.
@@ -594,6 +625,7 @@ Lane 15 was the ladder.
 > **Milestone.** For the first time, this is **proof of circular product synthesis of a PP2A spring chimera in the Hekstra lab**.
 
 **Size-exclusion chromatography (SEC):**
+
 - **Why.** I needed to purify the circular product for the assays.
 - **What I did.** I ran the resin-treated products on SEC and checked fractions F1–F6 on a gel against the pre-SEC sample.
 - **Result.** The products spread over the fractions and were **too dilute to see**. This result was anticlimactic.
@@ -601,11 +633,13 @@ Lane 15 was the ladder.
 - **What it led to.** Before debugging the SEC, I returned to **raising the yield of the circular product**, starting with **disulfide (cysteine) bond re-formation**, which links pp2a molecules together.
 
 ![Input vs TCO resin flow-through](figures/gels/p21-sec.jpg)
+
 ![SEC fractions: too dilute](figures/gels/p21-dilute.jpg)
 
 #### Experiment P-8. Why add DTT? Favouring the 1 : 1 circle [S34]
 
 **Rationale:**
+
 - **Without DTT**, cysteines on neighbouring pp2a molecules form **disulfide (S–S) bonds**, so the proteins stick together.
 - A DNA strand can then click **across two proteins** (intermolecular), giving 2 pp2a + 2 DNA products.
 - **DTT** reduces each S–S bond to two free –SH groups, so the proteins separate.
@@ -618,6 +652,7 @@ Lane 15 was the ladder.
 - **The catch.** **Click chemistry is still inhibited even after desalting** (right-hand gel). So I ran an experiment to find the **minimum DTT** that still reduces all or most disulfide bonds, so that as little DTT as possible is carried over into the click step.
 
 **Left gel: how much DTT reduces the disulfides?**
+
 - **What I did.** I ran pp2a in 6× loading dye with 0, 0.01, 0.1, 1 or 10 mM DTT, against a fully reduced reference in BME 2× loading dye.
 - **Result:**
   - BME 2× dye gives one tight band.
@@ -626,6 +661,7 @@ Lane 15 was the ladder.
   - At 1 mM the smear shrinks to a short haze. At **10 mM** the band is tight, close to the BME reference.
 
 **Right gel: does carried-over DTT block the click?**
+
 - **What I did.** I ran pp2a + DNA + cDNA after 0, 8, 16 or 20 mM DTT, plus a no-DTT, no-cDNA control.
 - **Result:**
   - With no DTT and no cDNA: pp2a + ssDNA and a bright 2 pp2a + 2 DNA band.
@@ -635,6 +671,7 @@ Lane 15 was the ladder.
   - 20 mM: the weakest pp2a + DNA band, mostly unreacted pp2a.
 
 **Interpretation.**
+
 - The circular pp2a + dsDNA forms without DTT, barely at 8 mM, and **not at 16–20 mM**.
 - Disulfide reduction needs roughly 1–10 mM in the dye test, so the useful window is narrow.
 - The DTT carried over after desalting inhibits the click.
@@ -642,6 +679,7 @@ Lane 15 was the ladder.
 **Status: [PENDING].** Find the minimum effective DTT and/or improve its removal.
 
 ![DTT titration: disulfide reduction](figures/gels/p22-dtt-dye.jpg)
+
 ![DTT titration: effect on click chemistry](figures/gels/p22-dtt-cdna.jpg)
 
 ### 3.3 Planning the PP2A assays [S36–S41]
@@ -651,6 +689,7 @@ With at least some evidence of a circular product, the next step is to design as
 #### 3.3.1 PP2A architecture [S36]
 
 PP2A works as a three-subunit **holoenzyme**:
+
 - **A, the scaffold** (PPP2R1A/B, ≈ 65 kDa). A horseshoe of **15 HEAT repeats** with no activity of its own; it holds the other two subunits in place. **This is the subunit we attach the DNA spring to.**
 - **C, the catalytic subunit** (PPP2CA/B). The phosphatase itself, which binds HEAT 11–15. A + C form the **AC core dimer**, which assembles first. Its C-terminal tail, methylated at Leu309, helps B bind.
 - **B, the regulatory subunit.** Binds the AC core on HEAT 1–10 to complete the **ABC holoenzyme**.
@@ -687,6 +726,7 @@ The draft deck framed it as "instead of different isoforms, we will use Aα WT v
 **Question.** Does the A subunit change how tightly B56 binds the AC core?
 
 **Method (Day et al.):**
+
 1. **Load.** An optical-fibre biosensor tip (AR2G, amine coupling) is coated with B56. Bound mass shifts the reflected light by Δλ.
 2. **Baseline.** The tip sits in buffer; nothing binds.
 3. **Association.** The tip is dipped into the AC core dimer (31–500 nM). AC binds B56, and Δλ rises at a rate set by $k_{on}$.
@@ -704,6 +744,7 @@ A smaller $K_D$ means tighter binding.
 | B56γ | 9.2 nM | 14.0 nM | ≈ 1.5× weaker |
 
 The rate constants I used to draw the BLI curves give the same $K_D$:
+
 - Aα: $k_{on}$ ≈ 2.62 × 10⁵ M⁻¹ s⁻¹ and $k_{off}$ ≈ 6.73 × 10⁻³ s⁻¹;
 - Aβ: 1.13 × 10⁵ M⁻¹ s⁻¹ and 1.37 × 10⁻² s⁻¹.
 
@@ -714,6 +755,7 @@ The rate constants I used to draw the BLI curves give the same $K_D$:
 **Question.** Is the assembled enzyme still active?
 
 **Method (Day et al.):**
+
 1. **Enzyme:** the assembled holoenzyme, 20 nM AC core with excess (200 nM) B56γ.
 2. **Substrate:** **DiFMUP**, which is dark. PP2A removes its phosphate to give **DiFMU**, which fluoresces blue (excitation 358 nm, emission 455 nm).
 3. **Velocity:** the initial slope of fluorescence against time, in a plate reader, gives $v$ at that substrate concentration.
@@ -721,6 +763,7 @@ The rate constants I used to draw the BLI curves give the same $K_D$:
    $$v = \frac{V_{\max}[S]}{K_M + [S]}$$
 
 **What Day et al. found.** Aα and Aβ have the **same activity**, despite their different B56 binding:
+
 - $K_M$ = 25.6 ± 3.7 µM vs 34.9 ± 3.1 µM;
 - $V_{\max}$ = 60.1 ± 3.5 vs 56.8 ± 0.7 fluorescence/s.
 
@@ -735,6 +778,7 @@ The rate constants I used to draw the BLI curves give the same $K_D$:
 | Phosphatase activity (DiFMUP) | Directly probe physiological function, using an artificial substrate |
 
 **Why isn't the phosphatase assay enough? Why also run BLI?**
+
 - DiFMUP only needs the AC core (A + C); it does **not require the B subunit**.
 - It is also an **artificial substrate**, unlike the real substrates PP2A meets in vivo, which B docks next to C.
 - So DiFMUP measures the **raw dephosphorylation capacity** of our chimeras, independent of regulation by B. BLI covers the missing piece: **does B still bind?**
@@ -755,12 +799,14 @@ The rate constants I used to draw the BLI curves give the same $K_D$:
 ### 4.1 Why, and what is already running [S43]
 
 cryoEM data analysis is **new to the Hekstra lab**, and both of my assay routes need it:
+
 - sfGFP grids are already prepared;
 - the PP2A holoenzyme assay depends on it.
 
 I had planned to explain the theory alongside a live CryoSPARC demo on the imaged sfGFP chimeras. That plan fell through: the grid-screening session planned for two days before the meeting was postponed when the microscope broke down again. Instead, I presented the fundamental concepts behind a cryoEM analysis workflow, which I learned while setting up CryoSPARC.
 
 The material has two further uses:
+
 - It is a starting point if the lab wants to build its own open-source or custom tools, as it did with *careless* and its other X-ray crystallography software. CryoSPARC is paid software.
 - It is a general introduction to cryoEM workflows.
 
@@ -783,6 +829,7 @@ The material has two further uses:
 I also produced RELION 3.1 local-resolution maps (3.0–5.0 Å), as in their Fig. S5.
 
 *Step 2: density map to atomic model.* I reproduced:
+
 - the Fig. 2A maps, coloured by subunit at the EMDB contour;
 - the Fig. 2B 6 Å low-pass half-map averages showing the B56γ C-terminal helix (9MIP B402–436).
 
@@ -799,7 +846,9 @@ For our project, the same comparison looks for **spring attachment** rather than
 The relevance for us: instead of two isoforms, compare **Aα WT vs Aα with a 50 nt spring attached**.
 
 ![Reproduction, step 1: quality control](figures/cryoem/repro_step1_quality_control.jpg)
+
 ![Reproduction, step 2: maps and the B56γ helix](figures/cryoem/repro_step2_maps.jpg)
+
 ![Reproduction, step 3: HEAT-repeat deformation](figures/cryoem/repro_step3_deformation.jpg)
 
 ### 4.2 How cryoEM analysis differs from X-ray crystallography [S44]
@@ -813,10 +862,12 @@ The relevance for us: instead of two isoforms, compare **Aα WT vs Aα with a 50
 Both methods end by fitting an atomic model into a reconstructed 3D map.
 
 The draft deck laid the two pipelines side by side:
+
 - **X-ray:** diffraction images → spot finding → indexing and integration → scaling and merging → phasing → electron-density map → atomic model building → reciprocal-space refinement → validation.
 - **cryoEM:** electron movies → motion and CTF correction → particle picking → 2D classification → 3D reconstruction → 3D classification and refinement (CryoSPARC, TOPAZ) → 3D density map → atomic model building → real-space refinement → validation (RELION, EMReady, COOT).
 
 **Key differences.**
+
 - *Phases.* Both techniques measure intensities, not phases. In X-ray crystallography the Fourier phase information is lost in the diffraction intensities. cryoEM instead uses **electron-wave interference to encode phase information into image intensity contrast**.
 - *Orientations.* Proteins in X-ray crystals form an ordered lattice, while individual proteins in cryoEM lie in **random orientations in vitreous ice**. So cryoEM must computationally **estimate particle orientations** to reconstruct a 3D map, whereas X-ray crystallography mainly needs to recover the missing Fourier phases.
 
@@ -825,24 +876,29 @@ The aim of the theory section was to explain, intuitively, how CryoSPARC gets fr
 ### 4.3 Image formation: how an almost invisible protein gives contrast
 
 #### Defocus [S45]
+
 - In a thin lens, $1/f = 1/s + 1/s'$, with the object and sensor fixed.
 - A stronger lens (shorter $f$) makes the rays cross before the sensor and spread into a disc.
 - A weaker lens (longer $f$) makes them meet beyond the sensor, again giving a disc. In the TEM this is **underfocus**.
 - The objective-lens current sets $f$, so the focus knob moves the focus by $\Delta f$. cryoEM images are taken **deliberately ≈ 0.5–3 µm out of focus**.
 
 #### Effect 1: phase and amplitude [S46]
+
 - An **amplitude object** absorbs electrons, so the image is darker there.
 - A **phase object** keeps the amplitude but delays the wave by $\phi$.
 - A protein in ice is made of light atoms (C, N, O, H). It is almost a pure phase object, barely absorbing 300 keV electrons, so the detector records $|\psi|^2 = |e^{i\phi}|^2 = 1$. **In focus, the protein is nearly invisible.**
 
 #### Effect 2: scattering, i.e. diffraction [S47]
+
 - A repeat of spacing $d$ scatters the wave by $\alpha \approx \lambda/d$ (Bragg: $2d\sin\theta = \lambda$, with $\alpha = 2\theta$).
 - Finer detail scatters further, so the direction encodes the **spatial frequency $q = 1/d$**.
 - The objective lens sends each direction to one point of its back focal plane, so fine detail lands far from the centre.
 - At 300 kV ($\lambda$ = 0.0197 Å), even 3 Å detail scatters by only ≈ 0.4°.
 
 #### The weak phase object approximation (WPOA) [S48]
+
 We saw that a phase shift makes the protein invisible to an intensity detector. Two questions follow: *how is that so*, and *how much is the scattered wave shifted relative to the unscattered wave*? The analysis simplifies greatly once we know the shift is **small**.
+
 - Incident plane wave: $\Psi_{in}(\mathbf r, z) = e^{ikz}$, with $k = 2\pi/\lambda$.
 - Exit wave: $\Psi_{exit}(x,y) = e^{i\phi(x,y)}$. With $|\phi| \ll 1$,
   $$\Psi_{exit} \approx 1 + i\phi(x,y)$$
@@ -867,6 +923,7 @@ $$\chi(q) = \pi\lambda\Delta f\,q^2 - \tfrac12\pi C_s\lambda^3q^4$$
 which is a different extra phase for every spatial frequency.
 
 #### Where the defocus phase comes from: the Fresnel propagator [S50]
+
 1. **Scattering tilts the wave.** A plane wave $\psi(\mathbf r) = e^{i\mathbf k\cdot\mathbf r}$ scattered by detail of frequency $\mathbf q$ gains a transverse wavevector $\mathbf k_\perp = 2\pi\mathbf q$.
 2. **Elastic scattering keeps $|\mathbf k| = k_0 = 2\pi/\lambda$.** For small angles ($\lambda q \ll 1$):
    $$k_z = \sqrt{k_0^2 - (2\pi q)^2} \simeq k_0 - \pi\lambda q^2$$
@@ -877,7 +934,9 @@ which is a different extra phase for every spatial frequency.
 Positive $\Delta f$ means underfocus here; sign conventions differ between texts.
 
 #### The CTF in practice [S51]
+
 These points use CTF$(q) = \sin\chi(q)$, computed for 300 kV and $C_s$ = 2.7 mm:
+
 - **Zeros:** the image carries no information at those $q$.
 - **Negative lobes:** contrast is reversed.
 - At $q \to 0$ the CTF → 0 too, so the particle's overall shape is weak.
@@ -921,6 +980,7 @@ The detector records *intensity*. For a weak phase object, $\tilde I(\mathbf q) 
   - the map $V$, into which atomic models are fitted.
 
 #### Projection and orientation [S53]
+
 - The beam integrates the 3D potential along $z$, so **one view cannot fix depth**.
 - For a beam from another direction, the detector frame rotates to $x', y', z'$. The rotation $R$ turns the particle so that we always integrate along the beam.
 - In a real sample, particles sit in the ice in every orientation. The beam effectively strikes each one from a different direction, so **each image needs its own $R$**.
@@ -928,6 +988,7 @@ The detector records *intensity*. For a weak phase object, $\tilde I(\mathbf q) 
 This slide used my own Manim animation and the CryoSPARC guide's orientation animation.
 
 #### Central slice theorem [S54]
+
 Why work in Fourier space? Because the CTF adds a different phase shift at each spatial frequency.
 
 1. **Projection.** $(P_RV)(x,y) = \int V\big(R^{\mathsf T}(x,y,z)^{\mathsf T}\big)\,dz$
@@ -938,11 +999,13 @@ Why work in Fourier space? Because the CTF adds a different phase shift at each 
    $$\mathcal F_2\{P_RV\}(\mathbf q) = \tilde V\big(R^{\mathsf T}(q_x,q_y,0)^{\mathsf T}\big)$$
 
 **Consequence.**
+
 - Every particle image fills one **central plane** of $\tilde V$.
 - Many orientations fill the 3D Fourier volume, and an inverse 3D transform returns $V$.
 - Orientations clustered around one axis leave a **missing cone**, and the map stretches along the missing direction (**preferred orientation**).
 
 #### The CTF, shift and noise terms [S55]
+
 - **CTF.** In Fourier space the projection is simply **multiplied** by $C_i(\mathbf q)$:
   - positive lobes pass a frequency;
   - negative lobes flip its sign;
@@ -981,6 +1044,7 @@ The exponent is the noise-weighted squared residual, and $\mathbf v$ enters only
 $$\Big(\sum_{i=1}^{N}A_i^{\mathsf T}\Sigma_i^{-1}A_i\Big)\hat{\mathbf v} = \sum_{i=1}^{N}A_i^{\mathsf T}\Sigma_i^{-1}\mathbf y_i$$
 
 How to read them:
+
 - **Right-hand side:** every image back-projected into 3D ($A_i^{\mathsf T}$), weighted by its noise.
 - **Left-hand side:** how often each part of $\mathbf v$ was measured.
 
@@ -991,6 +1055,7 @@ Solving divides one by the other. One image measures a single central line or pl
 Now both the map and every pose $\phi_i = (R_i,\mathbf t_i)$ are unknown:
 $$\min_{\mathbf v,\phi_1..\phi_N}\ \tfrac12\sum_i\big\|\mathbf y_i - A(\phi_i)\mathbf v\big\|^2_{\Sigma_i^{-1}}$$
 $A(\phi)$ is nonlinear in the pose, so there is no closed-form solution. Instead:
+
 1. **Start** from an initial volume $\mathbf v^{(0)}$: ab initio, or a low-pass filtered reference.
 2. **Pose step.** Hold the map and give each image its best pose, $\phi_i^{(k)} = \arg\min_{\phi\in SO(3)\times\mathbb R^2}\|\mathbf y_i - A(\phi)\mathbf v^{(k)}\|^2$.
 3. **Map step.** Hold the poses and solve the known-pose normal equations for $\mathbf v^{(k+1)}$.
@@ -1001,6 +1066,7 @@ Neither step can raise $L$, so the loop converges, but only to a **local optimum
 #### The loop in action [S59]
 
 I demonstrated the loop with a 2D toy: 100 simulated images of one object, each rotated by an unknown angle and buried in heavy noise, with alignment computed live.
+
 1. Start from a blurred blob.
 2. **Pose step:** compare each image with the map rotated through every angle in 5° steps; the best match is its pose.
 3. **Map step:** rotate the images back and average them. The new map is already far clearer than any single image.
@@ -1013,6 +1079,7 @@ The result matches the truth up to an overall rotation, which the images alone c
 To show the whole workflow end to end, I used a past project of mine: recovering 3D maps from **real micrograph particle images of actin filaments**. Actin filaments are a natural proxy for force-transducing DNA strands.
 
 **Job J1, Import Particle Stack:**
+
 - Loaded **5,000 particles** from a `.star` file into one output group. The low-pass filtered previews show straight filament segments lying in every in-plane direction.
 - The warnings say the file has **no orientations** (no rlnAngleRot/Tilt/Psi). The poses $(R_i,\mathbf t_i)$ are exactly what must be found.
 - The log lists what each particle does carry:
@@ -1020,6 +1087,7 @@ To show the whole workflow end to end, I used a past project of mine: recovering
   - its **CTF parameters** (defocus, amplitude contrast 0.1), so the next job can apply $C_i(\mathbf q)$.
 
 **Job J2, Ab-initio Reconstruction:**
+
 - Used all 5,000 particles, **1 class**, and **no assumed symmetry (C1)**.
 - It starts from a random map and alternates pose and map steps, i.e. the loop above.
 - By **iteration 900**, the three central slices and the volume preview show a filament, and the log reports a **resolution of ≈ 17 Å**. I stopped the job after **8 min 17 s**, which was enough for a first map.
@@ -1027,8 +1095,11 @@ To show the whole workflow end to end, I used a past project of mine: recovering
 **Where it ran.** On the **Hekstra lab cluster** from my home directory, with the raw data on netscratch.
 
 ![CryoSPARC J1, Import Particle Stack](figures/cryoem/cryosparc_j1_import.png)
+
 ![J1 warnings and event log (no orientations; CTF parameters; 5.76 Å/px; 160 px box)](figures/cryoem/cs_j1_meta.png)
+
 ![CryoSPARC J2, Ab-initio Reconstruction](figures/cryoem/cryosparc_j2_abinitio.png)
+
 ![J2 map slices and volume at iteration 900; ≈ 17 Å](figures/cryoem/cs_j2_result.png)
 
 ---
@@ -1040,6 +1111,7 @@ To show the whole workflow end to end, I used a past project of mine: recovering
 Four months before this meeting I arrived in the US for the first time in my life. I had practically no relevant wet-lab experience, and was almost a whole globe's circumference away from my home country, Singapore.
 
 I went from learning how to pipette to:
+
 - purifying proteins with resins and size-exclusion columns;
 - preparing cryoEM grids;
 - running fluorometry experiments;
@@ -1111,6 +1183,7 @@ Dates come from the chart titles and slide text. The synthesis and MD work is no
 - **Communication:** a 61-slide lab-meeting presentation with animated gel walkthroughs, theory explainers and my own Manim animation.
 
 My draft deck also listed three techniques new to the lab that I troubleshot independently:
+
 - the MD set-up for DNA-spring chimeras;
 - fluorometry data collection;
 - downstream cryoEM analysis in CryoSPARC.
@@ -1126,6 +1199,7 @@ None of this would have been possible without the kind guidance of everyone in t
 ## 6. Open problems and next steps
 
 **PP2A synthesis and purification**
+
 1. **SEC dilution.** The circular product spreads over the SEC fractions and becomes too dilute to see [S33]. Next:
    - concentrate the fractions on a His-tag (affinity) column;
    - or find a concentrator compatible with our small volumes.
@@ -1135,21 +1209,26 @@ None of this would have been possible without the kind guidance of everyone in t
 3. **Scale-up** to a purified batch big enough for all three assays [S42].
 
 **PP2A assays**, once a purified batch exists [S38–S42]:
+
 - **BLI:** $K_D$ of B56 for Aα(+spring)–C vs WT Aα–C.
 - **DiFMUP:** $K_M$ and $V_{\max}$ of the holoenzyme with vs without the spring.
 - **cryoEM:** confirm spring attachment, and measure HEAT-repeat centre-of-mass shifts after aligning on HEAT 12–15, using the pipeline I have already validated on Day et al.'s maps.
 
 **PP2A MD** [S42]
+
 - Build the tet-TCO/BCN pp2a chimera systems. pp2a is expected to respond far more to spring force than sfGFP.
 
 **sfGFP** [S23, S42, S43]
+
 - Image the sfGFP grids once the microscope is repaired, and run the CryoSPARC workflow live on our own chimera data.
 - At these forces sfGFP is not force-sensitive. Seeing an effect would need a softer attachment site or a far stronger spring.
 
 **Open physics question** [S22]
+
 - Does a bent DNA duplex kink at 4.8–5.2°/bp? Zocchi's model says yes, so a few pN would reach the protein. The force field says no, so tens of pN would. Experiment has to decide which force our springs really deliver.
 
 **Tools and documentation** [S43]
+
 - Publish the CryoSPARC set-up tutorial on GitHub.
 - Consider open-source or custom cryoEM tools in the spirit of the lab's X-ray software.
 
