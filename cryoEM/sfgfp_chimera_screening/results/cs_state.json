@@ -96,12 +96,14 @@
    "lane": "Cannon-test",
    "walltime": "04:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "P0 2D (100 classes, 12 A, marginalised, batch 200/class)",
    "parents": [
     "J6"
    ],
-   "created": "2026-11-13T13:27:15"
+   "created": "2026-11-13T13:27:15",
+   "finished": "2026-11-13T15:24:16",
+   "run_s": 6696.751
   },
   "W1_import": {
    "uid": "J8",
@@ -148,18 +150,18 @@
    "created": "2026-11-13T14:35:35"
   },
   "W1_motion_1": {
-   "uid": "J11",
+   "uid": "J12",
    "type": "patch_motion_correction_multi",
    "ws": "W1",
    "lane": "Cannon-test",
    "walltime": "09:00:00",
    "num_gpu": 1,
-   "status": "created",
+   "status": "queued",
    "title": "W1 patch motion half 1 (F-crop 1/2 -> 1.42 A/px)",
    "parents": [
     "J9"
    ],
-   "created": "2026-11-13T14:35:42"
+   "created": "2026-11-13T15:00:59"
   }
  },
  "paid_gpu_h": 0.0

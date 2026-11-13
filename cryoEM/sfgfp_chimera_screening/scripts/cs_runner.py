@@ -237,6 +237,16 @@ def run(cs, state, key, ws, jtype, connections=None, params=None, title="", lane
             return wait(cs, puid, rec["uid"], key, state) if block else job
         if job.status == "completed":
             return wait(cs, puid, rec["uid"], key, state)
+        if job.status == "building" and queue:
+            # created by a driver that died before queueing it: queue that job rather than orphaning it
+            print(f"[{key}] {rec['uid']} was created but never queued; queueing it now", flush=True)
+            guard(state, lane, walltime, est_gpu_h, key)
+            if lane == FREE_LANE and (num_gpu or 0) > 0:
+                wait_gpu_test_slot(key)
+            job.queue(lane=lane, cluster_vars={"walltime": walltime})
+            rec["status"] = "queued"
+            save_state(state)
+            return wait(cs, puid, rec["uid"], key, state) if block else job
         print(f"[{key}] previous attempt {rec['uid']} is {job.status}; creating a fresh job", flush=True)
     validate(cs, jtype, params, connections)
     guard(state, lane, walltime, est_gpu_h, key)
