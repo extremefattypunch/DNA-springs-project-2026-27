@@ -47,6 +47,8 @@ class H(BaseHTTPRequestHandler):
         m = re.fullmatch(r"/img/(m\d\d_(?:dn|lp)\.jpg)", p)
         if m:
             return self._send(200, open(os.path.join(IMG, m.group(1)), "rb").read(), "image/jpeg")
+        if p == "/guide.png":
+            return self._send(200, open(os.path.join(REPO, "figures", "qc", "label_guide.png"), "rb").read(), "image/png")
         if p == "/labels":
             docs = {}
             if os.path.isdir(OUT):

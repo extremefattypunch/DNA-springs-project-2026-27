@@ -61,6 +61,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
       <span class="chip" id="split">—</span>
       <span class="chip mono" id="meta">—</span>
       <span style="flex:1"></span>
+      <a href="guide.png" target="_blank" rel="noopener"><button type="button" title="What each species looks like at this scale">Guide</button></a>
       <button id="prev" title="Previous micrograph (P)">◀ Prev</button>
       <button id="next" title="Next micrograph (N)">Next ▶</button>
     </div>
@@ -80,7 +81,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
 
   <aside class="rail">
     <div class="card">
-      <h2>Label (keys 1–6)</h2>
+      <h2>Label (keys 1, 2, 5)</h2>
       <div class="labels" id="labels"></div>
     </div>
     <div class="card">
@@ -90,21 +91,18 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
     </div>
     <div class="card">
       <h2>How to label</h2>
-      <p class="help">Click the <b>centre of the object</b> to place the current label; click an existing mark to remove it. Label <b>every</b> DNA-bearing object of types 1–5 on the micrograph, then press <kbd>D</kbd>. Isolated sfGFP dots need no label: they are counted automatically. Type 6 is optional.</p>
+      <p class="help">Only mark objects you are <b>confident</b> about; skip anything ambiguous. sfGFP is a compact dark blob (9–15 px); DNA is a long thread of constant ~7 px width. A short dark oval is a side-on sfGFP, not DNA. Click the centre of the object to place the current label; click a mark to remove it. When you have looked over the whole micrograph, press <kbd>D</kbd>, including when you marked nothing (a "none seen" micrograph is useful data).</p>
       <p class="help">Scale: 1 display px = 2.84 Å; the yellow bar is 100 Å (35 px). A closed loop is ~86–100 Å across (~30–35 px) with one dark dot on its rim; free 50 bp DNA is a ~170 Å thread (~60 px).</p>
-      <p class="help"><kbd>1</kbd>–<kbd>6</kbd> label · <kbd>V</kbd> view · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>N</kbd>/<kbd>P</kbd> next/prev · <kbd>D</kbd> done</p>
+      <p class="help"><kbd>1</kbd> <kbd>2</kbd> <kbd>5</kbd> label · <kbd>V</kbd> view · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>N</kbd>/<kbd>P</kbd> next/prev · <kbd>D</kbd> done</p>
     </div>
   </aside>
 </div>
 
 <script>
 const LABELS = [
-  { k: "R", key: "1", name: "Closed ring", hint: "~9 nm loop of DNA, dot on the rim", v: "--ring" },
-  { k: "L", key: "2", name: "Dot + long tail", hint: "dot with a ≥150 Å straight thread (open / lollipop)", v: "--long" },
-  { k: "S", key: "3", name: "Dot + short rod", hint: "dot with a ≤120 Å rod (edge-on ring?)", v: "--short" },
-  { k: "P", key: "4", name: "Two dots + thread", hint: "two dots joined by DNA (dumbbell)", v: "--pair" },
-  { k: "D", key: "5", name: "Free DNA", hint: "thread with no dot attached", v: "--dna" },
-  { k: "T", key: "6", name: "Touching dots (optional)", hint: "two dots in contact, ~40 Å apart", v: "--touch" },
+  { k: "R", key: "1", name: "Closed ring", hint: "horseshoe/ring ~30–35 px across with a dark dot on it (Guide col. 1–2)", v: "--ring" },
+  { k: "L", key: "2", name: "Dot + long tail", hint: "dark dot with a straight thread ≥ ~50 px leaving it (Guide col. 4)", v: "--long" },
+  { k: "D", key: "5", name: "Free DNA bar", hint: "uniform ~7 px-wide straight bar ~60 px long, no dot (Guide col. 5)", v: "--dna" },
 ];
 const state = { mics: [], i: 0, label: "R", view: "dn", zoom: 1, docs: {}, imgs: {}, canWrite: true };
 const $ = (id) => document.getElementById(id);
