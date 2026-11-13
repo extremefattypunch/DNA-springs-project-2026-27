@@ -1,0 +1,15 @@
+{
+ "type": "exposure_sets",
+ "lane": "Cannon-test",
+ "walltime": "00:30:00",
+ "connections": {
+  "exposures_A": [
+   "J8",
+   "imported_movies"
+  ]
+ },
+ "params": {
+  "set_operation": "split",
+  "set_split_num": 2
+ }
+}

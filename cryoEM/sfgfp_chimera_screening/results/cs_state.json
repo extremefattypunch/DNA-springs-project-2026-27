@@ -48,12 +48,118 @@
    "lane": "Cannon-test",
    "walltime": "02:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "P0 patch CTF",
    "parents": [
     "J3"
    ],
-   "created": "2026-11-13T13:03:09"
+   "created": "2026-11-13T13:03:09",
+   "finished": "2026-11-13T13:17:51",
+   "run_s": 846.241
+  },
+  "P0_blob": {
+   "uid": "J5",
+   "type": "blob_picker_gpu",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "P0 blob pick 80-140 A (circle + ellipse)",
+   "parents": [
+    "J4"
+   ],
+   "created": "2026-11-13T13:17:52",
+   "finished": "2026-11-13T13:19:32",
+   "run_s": 84.631
+  },
+  "P0_extract": {
+   "uid": "J6",
+   "type": "extract_micrographs_multi",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "P0 extract 256 @1.42 A -> F-crop 128 (2.84 A/px)",
+   "parents": [
+    "J5"
+   ],
+   "created": "2026-11-13T13:19:33",
+   "finished": "2026-11-13T13:27:15",
+   "run_s": 108.382
+  },
+  "P0_2D": {
+   "uid": "J7",
+   "type": "class_2D_new",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "P0 2D (100 classes, 12 A, marginalised, batch 200/class)",
+   "parents": [
+    "J6"
+   ],
+   "created": "2026-11-13T13:27:15"
+  },
+  "W1_import": {
+   "uid": "J8",
+   "type": "import_movies",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": null,
+   "status": "completed",
+   "title": "W1 import all movies (gain, EPU xml beam shifts)",
+   "parents": [],
+   "created": "2026-11-13T14:28:57",
+   "finished": "2026-11-13T14:34:34",
+   "run_s": 304.605
+  },
+  "W1_split": {
+   "uid": "J9",
+   "type": "exposure_sets",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "00:30:00",
+   "num_gpu": null,
+   "status": "completed",
+   "title": "W1 split movies into 2 halves (one per free MIG slot)",
+   "parents": [
+    "J8"
+   ],
+   "created": "2026-11-13T14:34:35",
+   "finished": "2026-11-13T14:35:35",
+   "run_s": 1.316
+  },
+  "W1_motion_0": {
+   "uid": "J10",
+   "type": "patch_motion_correction_multi",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "09:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "W1 patch motion half 0 (F-crop 1/2 -> 1.42 A/px)",
+   "parents": [
+    "J9"
+   ],
+   "created": "2026-11-13T14:35:35"
+  },
+  "W1_motion_1": {
+   "uid": "J11",
+   "type": "patch_motion_correction_multi",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "09:00:00",
+   "num_gpu": 1,
+   "status": "created",
+   "title": "W1 patch motion half 1 (F-crop 1/2 -> 1.42 A/px)",
+   "parents": [
+    "J9"
+   ],
+   "created": "2026-11-13T14:35:42"
   }
  },
  "paid_gpu_h": 0.0

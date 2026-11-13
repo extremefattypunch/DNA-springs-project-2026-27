@@ -54,12 +54,25 @@ def load_state():
 
 
 def save_state(state):
+    """Merge-save: several drivers (e.g. pilot + preprocess) may run at once, so re-read the file under a lock,
+    overlay this process's job records (newer 'finished'/status wins) and write atomically."""
     os.makedirs(os.path.dirname(STATE), exist_ok=True)
-    tmp = STATE + ".tmp"
-    with open(tmp, "w") as fh:
-        fcntl.flock(fh, fcntl.LOCK_EX)
-        json.dump(state, fh, indent=1, default=str)
-    os.replace(tmp, STATE)
+    with open(STATE + ".lock", "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        disk = load_state()
+        for k, v in disk.get("jobs", {}).items():
+            mine = state["jobs"].get(k)
+            if mine is None or (mine.get("uid") == v.get("uid") and v.get("status") == "completed"
+                                and mine.get("status") != "completed"):
+                state["jobs"][k] = v
+        for k, v in disk.get("workspaces", {}).items():
+            state["workspaces"].setdefault(k, v)
+        state["project"] = state.get("project") or disk.get("project")
+        state["paid_gpu_h"] = round(sum(j.get("paid_gpu_h", 0.0) for j in state["jobs"].values()), 3)
+        tmp = STATE + f".tmp{os.getpid()}"
+        with open(tmp, "w") as fh:
+            json.dump(state, fh, indent=1, default=str)
+        os.replace(tmp, STATE)
     os.makedirs(os.path.dirname(STATE_MIRROR), exist_ok=True)
     with open(STATE_MIRROR, "w") as fh:
         json.dump(state, fh, indent=1, default=str)
@@ -140,6 +153,23 @@ def guard(state, lane, walltime, est_gpu_h, key):
               f"ledger {state.get('paid_gpu_h', 0.0):.1f} -> {proj:.1f} / cap {PAID_GPU_H_CAP:.0f} GPU-h", flush=True)
         if proj > PAID_GPU_H_CAP:
             raise SystemExit(f"[{key}] would exceed the paid cap ({proj:.1f} > {PAID_GPU_H_CAP} GPU-h) - ask Ian")
+
+
+GPU_TEST_QOS_MAX = 2   # gpu_test QOS: 2 jobs per user, submitted OR running; a 3rd is rejected at sbatch
+
+
+def wait_gpu_test_slot(key, poll=30):
+    """Block until fewer than GPU_TEST_QOS_MAX of Ian's jobs (any project) sit in gpu_test."""
+    told = False
+    while True:
+        out = subprocess.run(["squeue", "-u", os.environ.get("USER", "ianpoon"), "-h", "-p", "gpu_test", "-o", "%i"],
+                             capture_output=True, text=True).stdout.split()
+        if len(out) < GPU_TEST_QOS_MAX:
+            return
+        if not told:
+            print(f"[{key}] waiting for a gpu_test slot ({len(out)}/{GPU_TEST_QOS_MAX} in use)", flush=True)
+            told = True
+        time.sleep(poll)
 
 
 # ------------------------------------------------------------- running --
@@ -233,7 +263,16 @@ def run(cs, state, key, ws, jtype, connections=None, params=None, title="", lane
     if not queue:
         print(f"[{key}] created {puid} {job.uid} ({jtype}) - not queued (interactive/manual)", flush=True)
         return job
+    if lane == FREE_LANE and (num_gpu or 0) > 0:
+        wait_gpu_test_slot(key)
     job.queue(lane=lane, cluster_vars={"walltime": walltime})
+    if lane == FREE_LANE and (num_gpu or 0) > 0:
+        # CryoSPARC calls sbatch a few seconds after queue(); wait until it has, so the next slot check sees it
+        for _ in range(60):
+            job.refresh()
+            if job.status != "queued":
+                break
+            time.sleep(5)
     state["jobs"][key]["status"] = "queued"
     save_state(state)
     print(f"[{key}] created + queued {puid} {wuid} {job.uid} ({jtype}) on {lane}, walltime {walltime}", flush=True)
