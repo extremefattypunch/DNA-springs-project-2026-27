@@ -289,6 +289,30 @@ def run(cs, state, key, ws, jtype, connections=None, params=None, title="", lane
     return wait(cs, puid, job.uid, key, state) if block else job
 
 
+def save_subset(cs, state, key, ws, sources, mask_fn, dtype, name, title, extra=None):
+    """Scripted replacement for an interactive selection: load one or more (job_key, output) datasets, append them,
+    keep rows where mask_fn(dataset) is True, and save the result as an External job (all slots, no passthrough).
+    Idempotent via cs_state.json. `extra` is a dict recorded with the job (thresholds, counts)."""
+    from cryosparc.dataset import Dataset
+    rec = state["jobs"].get(key)
+    if rec and rec.get("status") == "completed":
+        print(f"[{key}] already saved: {rec['uid']}", flush=True)
+        return cs.find_job(state["project"], rec["uid"])
+    parts = [cs.find_job(state["project"], state["jobs"][k]["uid"]).load_output(o) for k, o in sources]
+    ds = Dataset.append(*parts) if len(parts) > 1 else parts[0]
+    keep = mask_fn(ds)
+    sub = ds.mask(keep)
+    juid = cs.find_project(state["project"]).save_external_result(
+        state["workspaces"][ws], sub, dtype, name=name, title=title)
+    state["jobs"][key] = {"uid": juid, "type": "external", "ws": ws, "status": "completed", "title": title,
+                          "parents": [state["jobs"][k]["uid"] for k, _ in sources],
+                          "rows_in": int(len(ds)), "rows_out": int(len(sub)), **(extra or {}),
+                          "finished": dt.datetime.now().isoformat(timespec="seconds")}
+    save_state(state)
+    print(f"[{key}] {len(sub)}/{len(ds)} rows kept -> External {juid}", flush=True)
+    return cs.find_job(state["project"], juid)
+
+
 def session():
     cs, cfg = connect()
     state = load_state()

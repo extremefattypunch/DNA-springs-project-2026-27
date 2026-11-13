@@ -162,6 +162,32 @@
     "J9"
    ],
    "created": "2026-11-13T15:00:59"
+  },
+  "P0_curated": {
+   "uid": "J13",
+   "type": "external",
+   "ws": "P0",
+   "status": "completed",
+   "title": "P0 curated exposures (S0 thresholds test)",
+   "parents": [
+    "J4"
+   ],
+   "rows_in": 300,
+   "rows_out": 281,
+   "finished": "2026-11-13T16:33:42"
+  },
+  "P0_power": {
+   "uid": "J14",
+   "type": "external",
+   "ws": "P0",
+   "status": "completed",
+   "title": "P0 blob picks, power filter (test)",
+   "parents": [
+    "J5"
+   ],
+   "rows_in": 165638,
+   "rows_out": 103120,
+   "finished": "2026-11-13T16:33:45"
   }
  },
  "paid_gpu_h": 0.0
