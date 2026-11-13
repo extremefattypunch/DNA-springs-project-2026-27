@@ -1,0 +1,60 @@
+{
+ "project": "P6",
+ "workspaces": {
+  "W1": "W1",
+  "W2": "W2",
+  "W3": "W3",
+  "W4": "W4",
+  "W5": "W5",
+  "W6": "W6",
+  "W7": "W7",
+  "P0": "W8"
+ },
+ "jobs": {
+  "P0_import": {
+   "uid": "J2",
+   "type": "import_movies",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "01:00:00",
+   "num_gpu": null,
+   "status": "completed",
+   "title": "P0 import GridSquare_12363290",
+   "parents": [],
+   "created": "2026-11-13T12:42:23",
+   "finished": "2026-11-13T12:44:03",
+   "run_s": 44.122
+  },
+  "P0_motion": {
+   "uid": "J3",
+   "type": "patch_motion_correction_multi",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "P0 patch motion (300 movies, F-crop 1/2 -> 1.42 A/px)",
+   "parents": [
+    "J2"
+   ],
+   "created": "2026-11-13T12:44:05",
+   "finished": "2026-11-13T13:03:08",
+   "run_s": 1102.375
+  },
+  "P0_ctf": {
+   "uid": "J4",
+   "type": "patch_ctf_estimation_multi",
+   "ws": "P0",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "P0 patch CTF",
+   "parents": [
+    "J3"
+   ],
+   "created": "2026-11-13T13:03:09"
+  }
+ },
+ "paid_gpu_h": 0.0
+}

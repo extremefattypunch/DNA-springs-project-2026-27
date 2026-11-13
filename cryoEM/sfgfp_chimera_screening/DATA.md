@@ -4,7 +4,7 @@
 |---|---|---|---|
 | Raw EPU session (movies, gain, xml, square/hole images; **no** per-movie preview .mrc) | `/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/` | ~1.11 TB | **~2027-02-10** (rsync keeps the facility mtimes, 2026-11-12/13) |
 | Facility listing + inventory | `.../sfgfp_chimera_screening_20261112/raw_inventory/listing.txt` | 5 MB | ~2027-02-11 |
-| CryoSPARC project | `/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-sfgfp-chimera-screening/` | grows | 90 d after each job's last write |
+| CryoSPARC project | `/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/` (project **P6**) | grows | 90 d after each job's last write |
 | Exports for figures | `.../sfgfp_chimera_screening_20261112/exports/` | small | 90 d |
 
 Source: `rsync://em00000013@10.245.3.142/em00000013` (password in `~/.config/rsync/em00000013.pass`, mode 600,
