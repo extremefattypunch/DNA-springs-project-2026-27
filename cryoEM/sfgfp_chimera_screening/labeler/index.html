@@ -82,7 +82,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
 
   <aside class="rail">
     <div class="card">
-      <h2>Label (keys 1, 2, 5)</h2>
+      <h2>Label (keys 1–6)</h2>
       <div class="labels" id="labels"></div>
     </div>
     <div class="card">
@@ -94,7 +94,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
       <h2>How to label</h2>
       <p class="help">Only mark objects you are <b>confident</b> about; skip anything ambiguous. sfGFP is a compact dark blob (9–15 px); DNA is a long thread of constant ~7 px width. A short dark oval is a side-on sfGFP, not DNA. Click the centre of the object to place the current label; click a mark to remove it. When you have looked over the whole micrograph, press <kbd>D</kbd>, including when you marked nothing (a "none seen" micrograph is useful data).</p>
       <p class="help">Scale: 1 display px = 2.84 Å; the yellow bar is 100 Å (35 px). A closed loop is ~86–100 Å across (~30–35 px) with one dark dot on its rim; free 50 bp DNA is a ~170 Å thread (~60 px).</p>
-      <p class="help"><kbd>1</kbd> <kbd>2</kbd> <kbd>5</kbd> label · <kbd>V</kbd> view · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>N</kbd>/<kbd>P</kbd> next/prev · <kbd>D</kbd> done</p>
+      <p class="help"><kbd>1</kbd>–<kbd>6</kbd> label · <kbd>V</kbd> view · <kbd>+</kbd>/<kbd>−</kbd> zoom · <kbd>N</kbd>/<kbd>P</kbd> next/prev · <kbd>D</kbd> done</p>
     </div>
   </aside>
 </div>
@@ -103,7 +103,10 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
 const LABELS = [
   { k: "R", key: "1", name: "Closed ring", hint: "horseshoe/ring ~30–35 px across with a dark dot on it (Guide col. 1–2)", v: "--ring" },
   { k: "L", key: "2", name: "Dot + long tail", hint: "dark dot with a straight thread ≥ ~50 px leaving it (Guide col. 4)", v: "--long" },
+  { k: "S", key: "3", name: "Dot + short rod", hint: "dot with a ≤ ~40 px (≤120 Å) rod: possible edge-on ring (Guide col. 3)", v: "--short" },
+  { k: "P", key: "4", name: "Two dots + thread", hint: "two dots joined by a DNA thread (dumbbell)", v: "--pair" },
   { k: "D", key: "5", name: "Free DNA bar", hint: "uniform ~7 px-wide straight bar ~60 px long, no dot (Guide col. 5)", v: "--dna" },
+  { k: "T", key: "6", name: "Touching dots (optional)", hint: "two dots in contact, ~12–14 px (~35–40 Å) apart", v: "--touch" },
 ];
 const state = { mics: [], i: 0, label: "R", view: "dn", zoom: 1, docs: {}, imgs: {}, canWrite: true };
 const $ = (id) => document.getElementById(id);
