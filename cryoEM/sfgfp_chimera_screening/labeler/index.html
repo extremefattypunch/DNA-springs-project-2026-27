@@ -60,6 +60,7 @@ kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); 
       <span class="chip mono" id="micName">—</span>
       <span class="chip" id="split">—</span>
       <span class="chip mono" id="meta">—</span>
+      <span class="chip mono" title="Same for every image: 165,000x nominal magnification = 0.71 A per detector pixel, shown binned 2x">1 screen px = 2.84 Å · image 291 nm wide · 165,000×</span>
       <span style="flex:1"></span>
       <a href="guide.png" target="_blank" rel="noopener"><button type="button" title="What each species looks like at this scale">Guide</button></a>
       <button id="prev" title="Previous micrograph (P)">◀ Prev</button>
@@ -180,9 +181,9 @@ async function draw() {
 }
 function header() {
   const m = state.mics[state.i];
-  $("micName").textContent = `${m.mic_id}  (${state.i + 1}/${state.mics.length})`;
-  const s = $("split"); s.textContent = m.split === "test" ? "held-out test" : "training"; s.classList.toggle("test", m.split === "test");
-  $("meta").textContent = `${m.square.replace("GridSquare_", "sq ")} · target ${m.target_defocus_um.toFixed(1)} µm`;
+  $("micName").textContent = `Micrograph ${m.mic_id} · ${state.i + 1} of ${state.mics.length}`;
+  const s = $("split"); s.textContent = m.split === "test" ? "Check set (held out)" : "Training set"; s.classList.toggle("test", m.split === "test");
+  $("meta").textContent = `Grid square ${m.square.replace("GridSquare_", "")} · defocus setting ${m.target_defocus_um.toFixed(1)} µm`;
   $("doneBtn").setAttribute("aria-pressed", String(!!cur().done));
   $("doneBtn").textContent = cur().done ? "Done ✓" : "Mark done";
   $("zoomLbl").textContent = `${state.zoom.toFixed(1)}×`;
