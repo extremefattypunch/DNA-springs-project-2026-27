@@ -46,19 +46,24 @@ KV, CS_MM, AMP = 200.0, 2.7, 0.10
 LOWPASS_A = 15.0
 DOT_SIGMA_A = 12.0          # LoG scale: blob radius ~ sigma*sqrt2 ~ 17 A, i.e. a ~3.4 nm dot
 NMS_A = 20.0                # minimum dot separation
+MIN_ROUND = 0.2             # l2/l1 Hessian roundness at the dot scale: drops thread segments (rare at k=4.5)
 EDGE_PX = 52                # 50 px requested, rounded up to a multiple of the bin-4 mask grid
 BIN = 4                     # mask grid (5.68 A)
 RIDGE_SIGMA_A = 7.0
 ARM_R_A = (25.0, 120.0)
 ARM_DR_A = 2.5
 ARM_NTH = 72                # 5 deg angular bins
-ARM_INNER_A = 35.0          # an arm must start at r <= this (touches the dot)
-ARM_MIN_EXTENT_A = 30.0     # and run outward at least this far
-ARM_CLOSE_MIN_R_A = 60.0    # two inner branches joined beyond this radius -> converging (loop candidate)
-ARM_MIN_SEP_DEG = 60.0      # inner branches must leave the dot >= 60 deg apart
+ARM_SHORT_A = 60.0          # an arm = a ridge path from r = 25 A (touching the dot) out to 60 A
+ARM_PEN = 0.3               # DP penalty (ridge noise units) per 5-deg lateral step (paths may curve <= 2 deg/A)
+ARM_NMS_DEG = 45.0          # distinct arms leave the dot >= 45 deg apart and their 25-60 A paths never meet
+ARM_CLOSE_MIN_R_A = 60.0    # two arms whose full (25-120 A) paths meet (<= 10 deg) at r >= 60 A -> converging
+ARM_MIN_SEP_DEG = 60.0      # ... and which leave the dot >= 60 deg apart -> "two_arm_closed" (loop candidate)
+DOT_EXCL_A = 22.0           # ridge zeroed within 22 A of every detected dot (neighbour-dot halos are not arms)
+JITTER_A = 200.0            # null (c): each dot displaced uniformly within a 200 A disk (keeps >~0.5 um clustering)
 R_MAX_A, R_BIN_A = 300.0, 5.0
 DF_BINS_UM = [0.0, 1.0, 1.5, 2.0, 10.0]
-WINDOWS = {"touching_35_50A": (35.0, 50.0), "two_dot_110_130A": (110.0, 130.0)}
+WINDOWS = {"touching_35_50A": (35.0, 50.0), "two_dot_110_130A": (110.0, 130.0),
+           "posthoc_contact_30_40A": (30.0, 40.0)}   # added after the 8-micrograph test showed a 30-40 A bump
 
 
 # ----------------------------------------------------------------------------------------------- image processing
@@ -136,8 +141,16 @@ def detect_dots(pos, mask_full, k):
     mn = ndi.minimum_filter(z, size=2 * half + 1, mode="nearest")
     neg = (z == mn) & mask_full & (z < -k)
     n_mirror = int(neg.sum())
+    # roundness at the dot scale: Hessian eigenvalue ratio l2/l1 (1 = round blob, ~0 = thread segment)
+    hyy = ndi.gaussian_filter(pos, sig, order=(2, 0))[yy, xx]
+    hxx = ndi.gaussian_filter(pos, sig, order=(0, 2))[yy, xx]
+    hxy = ndi.gaussian_filter(pos, sig, order=(1, 1))[yy, xx]
+    tr, dd = 0.5 * (hxx + hyy), np.sqrt((0.5 * (hxx - hyy)) ** 2 + hxy ** 2)
+    rnd = np.clip((tr + dd) / np.minimum(tr - dd, -1e-12), -1, 1)
+    ok = rnd >= MIN_ROUND
+    xx, yy, zz, rnd = xx[ok], yy[ok], zz[ok], rnd[ok]
     keep = greedy_nms(np.c_[xx, yy].astype(float), zz, NMS_A / APIX)
-    return xx[keep], yy[keep], zz[keep], R[yy[keep], xx[keep]], n_mirror, z
+    return xx[keep], yy[keep], zz[keep], R[yy[keep], xx[keep]], n_mirror, z, rnd[keep]
 
 
 def greedy_nms(xy, strength, r):
@@ -166,9 +179,11 @@ def ridge_map(pos, mask_full):
     tr = 0.5 * (hxx + hyy)
     d = np.sqrt((0.5 * (hxx - hyy)) ** 2 + hxy ** 2)
     l1, l2 = tr - d, tr + d
-    rid = (s ** 2) * np.maximum(0.0, -l1 - np.abs(l2))
-    z, _, _ = robust_z(rid, mask_full)
-    return z.astype(np.float32)
+    rid = np.maximum(0.0, -l1 - np.abs(l2))
+    # noise unit = robust SD of the second-derivative filter output (hxx) over the valid area
+    v = hxx[mask_full][::7]
+    unit = 1.4826 * np.median(np.abs(v - np.median(v)))
+    return (rid / unit).astype(np.float32)
 
 
 RADII_A = np.arange(ARM_R_A[0], ARM_R_A[1] + 1e-6, ARM_DR_A)
@@ -183,82 +198,76 @@ def polar_samples(rz, x, y):
     return v.reshape(len(x), len(RADII_A), ARM_NTH)
 
 
-def _circ_runs(occ):
-    """Runs of True in a circular boolean vector -> list of (start, length)."""
-    n = len(occ)
-    if occ.all():
-        return [(0, n)]
-    if not occ.any():
-        return []
-    s = int(np.argmin(occ))             # start scanning at a False
-    runs, cur = [], None
-    for j in range(1, n + 1):
-        i = (s + j) % n
-        if occ[i]:
-            cur = (i, 1) if cur is None else (cur[0], cur[1] + 1)
-        elif cur is not None:
-            runs.append(cur)
-            cur = None
-    if cur is not None:
-        runs.append(cur)
-    return runs
-
-
-N_INNER = int(np.sum(RADII_A <= ARM_INNER_A))
-MIN_EXT_BINS = int(round(ARM_MIN_EXTENT_A / ARM_DR_A))
+N_SHORT = int(np.sum(RADII_A <= ARM_SHORT_A))
 CLOSE_R_IDX = int(np.searchsorted(RADII_A, ARM_CLOSE_MIN_R_A))
 
 
+def dp_paths(P, r1, pen=ARM_PEN):
+    """Backward dynamic programming over rings 0..r1-1: for every start angle at r = 25 A, the outward path (<= 1
+    angular bin per radial step, penalty pen per lateral step) maximising the summed ridge score. Returns the
+    mean score per start angle and the successor table for tracing."""
+    nt = P.shape[1]
+    B = P[r1 - 1].astype(float).copy()
+    succ = np.zeros((r1, nt), int)
+    steps = np.array([-1, 0, 1])
+    for r in range(r1 - 2, -1, -1):
+        c = np.stack([np.roll(B, 1) - pen, B, np.roll(B, -1) - pen])   # value of moving to theta-1, theta, theta+1
+        k = np.argmax(c, axis=0)
+        succ[r] = (np.arange(nt) + steps[k]) % nt
+        B = P[r] + c[k, np.arange(nt)]
+    return B / r1, succ
+
+
+def trace(succ, t0, r1):
+    path = [t0]
+    for r in range(r1 - 1):
+        path.append(succ[r, path[-1]])
+    return np.array(path)
+
+
+def _adist(a, b, n=ARM_NTH):
+    d = np.abs(np.asarray(a) - np.asarray(b)) % n
+    return np.minimum(d, n - d)
+
+
 def classify_arms(P, thr):
-    """P: (nr, ntheta) ridge z on rings. Arms = connected (8-conn, periodic in theta) supra-threshold components
-    that start at r <= ARM_INNER_A and extend >= ARM_MIN_EXTENT_A outward; each separate angular run of such a
-    component within the inner rings is one arm leaving the dot. A component with >= 2 inner runs >= 60 deg apart
-    that is connected beyond 60 A = two arms converging (loop candidate)."""
-    B = P > thr
-    lab, n = ndi.label(B, structure=np.ones((3, 3)))
+    """P: (n_rings, n_theta) ridge score on rings 25-120 A around one position.
+    arms: start angles whose best 25-60 A path has mean ridge > thr, greedy by score, >= 45 deg apart at the start,
+    and whose 25-60 A paths never come within 1 bin of an already accepted arm's path (else the same thread).
+    two_arm_closed: a pair of arms leaving >= 60 deg apart whose best full-range (25-120 A) paths come within
+    2 bins (10 deg) of each other at r >= 60 A (two strands converging on the far side, as a ~43 A-radius loop
+    with the dot on its rim would: far point at ~86 A)."""
+    ms, ss = dp_paths(P, N_SHORT)
+    nms = int(round(ARM_NMS_DEG / (360.0 / ARM_NTH)))
+    arms, paths = [], []
+    for t0 in np.argsort(-ms):
+        if ms[t0] <= thr:
+            break
+        if any(_adist(t0, a) < nms for a in arms):
+            continue
+        pth = trace(ss, t0, N_SHORT)
+        if any((_adist(pth, q) <= 1).any() for q in paths):
+            continue
+        arms.append(int(t0))
+        paths.append(pth)
+    n = len(arms)
+    closed = False
+    if n >= 2:
+        _, sf = dp_paths(P, len(RADII_A))
+        full = {a: trace(sf, a, len(RADII_A)) for a in arms}
+        sep_min = ARM_MIN_SEP_DEG / (360.0 / ARM_NTH)
+        for ia in range(n):
+            for ib in range(ia + 1, n):
+                a, b = arms[ia], arms[ib]
+                if _adist(a, b) < sep_min:
+                    continue
+                if (_adist(full[a][CLOSE_R_IDX:], full[b][CLOSE_R_IDX:]) <= 2).any():
+                    closed = True
     if n == 0:
         return 0, "bare"
-    nth = P.shape[1]
-    parent = np.arange(n + 1)
-
-    def find(u):
-        while parent[u] != u:
-            parent[u] = parent[parent[u]]
-            u = parent[u]
-        return u
-    nr = B.shape[0]
-    for r in range(nr):                 # periodic theta: join the last column to the first (8-connectivity)
-        if not B[r, 0]:
-            continue
-        for rr in (r - 1, r, r + 1):
-            if 0 <= rr < nr and B[rr, nth - 1]:
-                ra, rb = find(lab[r, 0]), find(lab[rr, nth - 1])
-                if ra != rb:
-                    parent[rb] = ra
-    roots = np.array([find(u) for u in range(n + 1)])
-    Lr = roots[lab] * (lab > 0)
-    arms, closed = 0, False
-    for c in np.unique(Lr[Lr > 0]):
-        cm = Lr == c
-        rows = np.nonzero(cm.any(axis=1))[0]
-        if rows.min() >= N_INNER or rows.max() - rows.min() < MIN_EXT_BINS:
-            continue
-        runs = _circ_runs(cm[:N_INNER].any(axis=0))
-        arms += len(runs)
-        if len(runs) >= 2 and rows.max() >= CLOSE_R_IDX:
-            cen = [(s + (l - 1) / 2.0) * 360.0 / nth for s, l in runs]
-            sep = max(min(abs(a - b) % 360, 360 - abs(a - b) % 360) for i, a in enumerate(cen) for b in cen[i + 1:])
-            if sep >= ARM_MIN_SEP_DEG:
-                closed = True
-    if arms == 0:
-        cls = "bare"
-    elif arms == 1:
-        cls = "one_arm"
-    elif closed:
-        cls = "two_arm_closed"
-    else:
-        cls = "two_arm_open"
-    return arms, cls
+    if n == 1:
+        return 1, "one_arm"
+    return n, ("two_arm_closed" if closed else "two_arm_open")
 
 
 CLASSES = ["bare", "one_arm", "two_arm_open", "two_arm_closed"]
@@ -291,8 +300,16 @@ def process(args):
     pos, raw_lp = load_and_filter(path, df1, df2, ang)
     m4, frac_bad = valid_mask(pos)
     mfull = np.repeat(np.repeat(m4, BIN, axis=0), BIN, axis=1)
-    x, y, zz, resp, n_mirror, zmap = detect_dots(pos, mfull, k)
+    x, y, zz, resp, n_mirror, zmap, rnd = detect_dots(pos, mfull, k)
     rz = ridge_map(pos, mfull)
+    if len(x):   # zero the ridge map within 22 A of every dot: halos of neighbouring dots must not count as arms
+        r_ex = int(np.ceil(DOT_EXCL_A / APIX))
+        yy_, xx_ = np.mgrid[-r_ex:r_ex + 1, -r_ex:r_ex + 1]
+        disk = (xx_ ** 2 + yy_ ** 2) <= (DOT_EXCL_A / APIX) ** 2
+        dm = np.zeros(rz.shape, bool)
+        dm[y, x] = True
+        dm = ndi.binary_dilation(dm, structure=disk)
+        rz[dm] = 0.0
     arms = np.zeros(len(x), int)
     cls = np.empty(len(x), object)
     if len(x):
@@ -317,7 +334,7 @@ def process(args):
     # sign check: phase-flipped protein-positive image should anti-correlate with the unflipped image
     sl = (slice(200, -200), slice(200, -200))
     cc = float(np.corrcoef(pos[sl].ravel()[::7], raw_lp[sl].ravel()[::7])[0, 1])
-    out = dict(i=i, x=x.astype(np.int32), y=y.astype(np.int32), z=zz.astype(np.float32),
+    out = dict(i=i, x=x.astype(np.int32), y=y.astype(np.int32), z=zz.astype(np.float32), rnd=rnd.astype(np.float32),
                resp=resp.astype(np.float32), arms=arms, cls=cls, ctrl_cls=np.array(ctrl_cls, object),
                m4=m4, area_px=float(m4.sum() * BIN * BIN), frac_contam=frac_bad, n_mirror=n_mirror,
                gamma=gamma, cc_flip_vs_raw=cc, sec=time.time() - t0)
@@ -418,18 +435,44 @@ def toro_null_one(i, rng):
     return nn_hist(d), pair_counts(ta, tb, False)
 
 
+def jitter_null_one(i, rng):
+    """Local-displacement null for micrograph i: each real dot moved uniformly within a 200 A disk (rejected moves
+    outside the valid mask or inside the 20 A hard core are redrawn), so density variations on scales >~ 0.5 um
+    (thickness gradients, aggregates' surroundings) are kept but structure at the 40-120 A scale is destroyed."""
+    xy0 = G["xy"][i]
+    m4 = G["masks"][i]
+    n = len(xy0)
+    rmax = JITTER_A / APIX
+    cur = np.full((n, 2), np.nan)
+    todo = np.arange(n)
+    for _ in range(20):
+        if len(todo) == 0:
+            break
+        rr = rmax * np.sqrt(rng.random(len(todo)))
+        th = rng.random(len(todo)) * 2 * np.pi
+        prop = xy0[todo] + np.c_[rr * np.cos(th), rr * np.sin(th)]
+        okb = (prop[:, 0] >= 0) & (prop[:, 0] < 2048) & (prop[:, 1] >= 0) & (prop[:, 1] < 2048)
+        okb[okb] = in_mask(m4, prop[okb])
+        cur[todo[okb]] = prop[okb]
+        have = np.nonzero(np.isfinite(cur[:, 0]))[0]
+        pri = rng.random(len(have)) + 2.0 * ~np.isin(have, todo)       # previously placed dots win conflicts
+        keep = have[greedy_nms(cur[have], pri, G["r_hc_px"])]
+        drop = np.setdiff1d(have, keep)
+        cur[drop] = np.nan
+        todo = np.nonzero(~np.isfinite(cur[:, 0]))[0]
+    return obs_stats(cur[np.isfinite(cur[:, 0])])[:2]
+
+
 def null_worker(args):
     rep, seed = args
     rng = np.random.default_rng(seed)
     nb = len(CENT_A)
-    out = np.zeros((4, nb))
+    out = np.zeros((6, nb))
     for i in G["active"]:
-        a = perm_null_one(i, rng)
-        b = toro_null_one(i, rng)
-        out[0] += a[0]
-        out[1] += a[1]
-        out[2] += b[0]
-        out[3] += b[1]
+        for k, fn in enumerate((perm_null_one, toro_null_one, jitter_null_one)):
+            h, pcs = fn(i, rng)
+            out[2 * k] += h
+            out[2 * k + 1] += pcs
     return out
 
 
@@ -439,7 +482,7 @@ def fig_examples(examples, rows, path):
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle
-    col = {"bare": "#1f77b4", "one_arm": "#ff7f0e", "two_arm_open": "#d62728", "two_arm_closed": "#2ca02c"}
+    col = {"bare": "#1f77b4", "one_arm": "#ff7f0e", "two_arm_open": "#d62728", "two_arm_closed": "#ff00ff"}
     n = len(examples)
     fig, axs = plt.subplots(2, n, figsize=(5.2 * n, 10.8), dpi=120)
     axs = np.atleast_2d(axs).reshape(2, n)
@@ -461,6 +504,9 @@ def fig_examples(examples, rows, path):
         axs[0, c].set_title(f"{row['short']}\ndf {row['df_um']:.2f} um, fit {row['fit_A']:.1f} A, "
                             f"{row['n_dots']} dots/mic", fontsize=9)
         axs[1, c].set_title(f"crop x{x0}-{x0 + 600}, y{y0}-{y0 + 600}: {int(sel.sum())} dots", fontsize=9)
+        for r in range(2):
+            axs[r, c].set_xlim(-0.5, 599.5)
+            axs[r, c].set_ylim(599.5, -0.5)
         axs[0, c].plot([20, 20 + 100 / APIX], [580, 580], "w-", lw=3)
         axs[0, c].text(20, 565, "10 nm", color="w", fontsize=8)
     handles = [plt.Line2D([], [], marker="o", ls="", mfc="none", mec=v, label=k) for k, v in col.items()]
@@ -481,14 +527,15 @@ def fig_nn(res, path):
     nn, g = res["nn"], res["g"]
     ax = axs[0]
     ax.step(x, nn["obs"], where="mid", color="k", lw=1.5, label="observed")
-    for key, c, lab in [("perm", "#1f77b4", "permutation null"), ("toro", "#d62728", "toroidal-shift null")]:
+    for key, c, lab in [("perm", "#1f77b4", "permutation null"), ("toro", "#d62728", "toroidal-shift null"),
+                        ("jitter", "#2ca02c", "200 A local-jitter null")]:
         ax.plot(x, nn[key]["mean"], color=c, lw=1, label=f"{lab} mean")
         ax.fill_between(x, nn[key]["lo"], nn[key]["hi"], color=c, alpha=0.25, lw=0, label=f"{lab} 95% band")
     ax.set_ylabel("dots per 5 A bin (NN distance)")
     ax.legend(fontsize=8)
     ax = axs[1]
     ax.plot(x, g["obs"], "k-", lw=1.5, label="observed g(r)")
-    for key, c in [("perm", "#1f77b4"), ("toro", "#d62728")]:
+    for key, c in [("perm", "#1f77b4"), ("toro", "#d62728"), ("jitter", "#2ca02c")]:
         ax.plot(x, g[key]["mean"], color=c, lw=1)
         ax.fill_between(x, g[key]["lo"], g[key]["hi"], color=c, alpha=0.25, lw=0)
     ax.axhline(1, color="0.5", lw=0.5)
@@ -496,7 +543,7 @@ def fig_nn(res, path):
     ax.set_ylim(0, max(1.6, np.nanmax(g["obs"][x > 25]) * 1.1))
     ax.legend(fontsize=8)
     ax = axs[2]
-    for key, c in [("perm", "#1f77b4"), ("toro", "#d62728")]:
+    for key, c in [("perm", "#1f77b4"), ("toro", "#d62728"), ("jitter", "#2ca02c")]:
         m = np.where(g[key]["mean"] > 0, g[key]["mean"], np.nan)
         ax.plot(x, g["obs"] / m, color=c, lw=1.2, label=f"g_obs / g_{key} null")
         ax.fill_between(x, g[key]["lo"] / m, g[key]["hi"] / m, color=c, alpha=0.2, lw=0)
@@ -507,11 +554,11 @@ def fig_nn(res, path):
     ax.legend(fontsize=8)
     for a in axs:
         for lo, hi in WINDOWS.values():
-            a.axvspan(lo, hi, color="g", alpha=0.08)
+            a.axvspan(lo, hi, color="0.6", alpha=0.15)
         a.axvline(res["r_hc_A"], color="0.4", ls=":", lw=0.8)
     axs[0].set_title(f"G0 pilot: {res['n_dots']} dots on {res['n_mics']} micrographs; nulls from real coordinates "
-                     f"only ({res['n_rep']} reps); dotted = 20 A hard core; green = 35-50 / 110-130 A windows",
-                     fontsize=9)
+                     f"only ({res['n_rep']} reps)\ndotted = 20 A hard core; grey = 35-50 / 110-130 A pre-set windows "
+                     f"(+ 30-40 A post hoc)", fontsize=9)
     fig.tight_layout()
     fig.savefig(path)
     plt.close(fig)
@@ -538,8 +585,9 @@ def window_test(obs, null, lo, hi, n_dots):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=0, help="first N micrographs only (test)")
-    ap.add_argument("--k", type=float, default=4.0, help="dot threshold: median + k*MAD of the LoG response")
-    ap.add_argument("--ridge-thr", type=float, default=3.0, help="ridge robust-z threshold for arms")
+    ap.add_argument("--k", type=float, default=4.5, help="dot threshold: median + k*MAD of the LoG response")
+    ap.add_argument("--ridge-thr", type=float, default=2.5,
+                    help="arm threshold: mean ridge (noise units) along the best 25-60 A path")
     ap.add_argument("--nrep", type=int, default=200)
     ap.add_argument("--procs", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", 4)))
     ap.add_argument("--results", default=os.path.join(REPO, "results"))
@@ -605,10 +653,10 @@ def main():
     with Pool(a.procs) as pool:
         nulls = np.array(pool.map(null_worker, [(r, a.seed * 7 + r) for r in range(a.nrep)], chunksize=1))
     print(f"  nulls done ({time.time() - t0:.0f} s)", flush=True)
-    nn_perm, pc_perm, nn_toro, pc_toro = nulls[:, 0], nulls[:, 1], nulls[:, 2], nulls[:, 3]
+    nn_perm, pc_perm, nn_toro, pc_toro, nn_jit, pc_jit = (nulls[:, k] for k in range(6))
     g_obs = pc_obs / den
-    out_nn = dict(obs=nn_obs, perm=band(nn_perm), toro=band(nn_toro))
-    out_g = dict(obs=g_obs, perm=band(pc_perm / den), toro=band(pc_toro / den))
+    out_nn = dict(obs=nn_obs, perm=band(nn_perm), toro=band(nn_toro), jitter=band(nn_jit))
+    out_g = dict(obs=g_obs, perm=band(pc_perm / den), toro=band(pc_toro / den), jitter=band(pc_jit / den))
 
     tests = {}
     for name, (lo, hi) in WINDOWS.items():
@@ -616,15 +664,27 @@ def main():
             nn_vs_perm=window_test(nn_obs, nn_perm, lo, hi, n_dots),
             nn_vs_toro=window_test(nn_obs, nn_toro, lo, hi, n_dots),
             pairs_vs_perm=window_test(pc_obs, pc_perm, lo, hi, n_dots),
-            pairs_vs_toro=window_test(pc_obs, pc_toro, lo, hi, n_dots))
+            pairs_vs_toro=window_test(pc_obs, pc_toro, lo, hi, n_dots),
+            nn_vs_jitter=window_test(nn_obs, nn_jit, lo, hi, n_dots),
+            pairs_vs_jitter=window_test(pc_obs, pc_jit, lo, hi, n_dots))
         # ordered pair counts: excess ordered pairs / N = fraction of dots that have an extra partner there
     # local-peak check: is the window a bump (above both flanks) rather than part of a broad trend?
     for name, (lo, hi) in WINDOWS.items():
         w = (CENT_A > lo) & (CENT_A < hi)
         fl = ((CENT_A > lo - 20) & (CENT_A <= lo)) | ((CENT_A >= hi) & (CENT_A < hi + 20))
-        for key in ("perm", "toro"):
+        for key in ("perm", "toro", "jitter"):
             ratio = g_obs / out_g[key]["mean"]
             tests[name][f"g_ratio_window_vs_flanks_{key}"] = [float(np.nanmean(ratio[w])), float(np.nanmean(ratio[fl]))]
+
+    per_bin = []
+    for b, c in enumerate(CENT_A):
+        if c < 20 or c > 160:
+            continue
+        row = dict(r_A=float(c), nn_obs=float(nn_obs[b]), g_obs=float(g_obs[b]))
+        for key in ("perm", "toro", "jitter"):
+            row[f"nn_{key}"] = [float(out_nn[key][q][b]) for q in ("mean", "lo", "hi")]
+            row[f"g_{key}"] = [float(out_g[key][q][b]) for q in ("mean", "lo", "hi")]
+        per_bin.append(row)
 
     # arms
     cls_all = np.concatenate([r["cls"] for r in res]) if n_dots else np.zeros(0, object)
@@ -704,10 +764,13 @@ def main():
                       threshold_k_MAD=a.k, threshold="median + k*1.4826*MAD of LoG response over valid area",
                       nms_A=NMS_A, edge_px=EDGE_PX,
                       contamination_mask="bin-4 local (68 A Gaussian) mean |robust z|>5 or RMS robust z>5, dilated 57 A",
-                      ridge="sigma^2*max(0,-l1-|l2|) Hessian, sigma 7 A, robust z", ridge_thr_z=a.ridge_thr,
+                      ridge="max(0,-l1-|l2|) Hessian, sigma 7 A, in units of the robust SD of d2/dx2", arm_thr=a.ridge_thr,
                       arm_rings_A=[ARM_R_A[0], ARM_R_A[1], ARM_DR_A], arm_theta_bins=ARM_NTH,
-                      arm_rules=dict(inner_start_A=ARM_INNER_A, min_radial_extent_A=ARM_MIN_EXTENT_A,
-                                     closed_join_beyond_A=ARM_CLOSE_MIN_R_A, closed_min_branch_sep_deg=ARM_MIN_SEP_DEG),
+                      arm_rules=dict(method="DP ridge path from r=25 A, <=1 theta bin per 2.5 A ring, lateral penalty",
+                                     short_path_to_A=ARM_SHORT_A, lateral_penalty=ARM_PEN, arm_nms_deg=ARM_NMS_DEG,
+                                     closed_meet_beyond_A=ARM_CLOSE_MIN_R_A, closed_meet_tol_deg=10,
+                                     closed_min_start_sep_deg=ARM_MIN_SEP_DEG, dot_exclusion_A=DOT_EXCL_A),
+                      jitter_null_radius_A=JITTER_A,
                       n_null_reps=a.nrep, df_bins_um=DF_BINS_UM, hard_core_in_nulls_A=NMS_A),
         dots=dict(total=n_dots, per_mic_median=float(np.median(N)), per_mic_iqr=[float(np.percentile(N, 25)),
                   float(np.percentile(N, 75))], per_mic_min_max=[int(N.min()), int(N.max())],
@@ -718,8 +781,9 @@ def main():
                   flip_vs_raw_corr_median=float(np.median([r["cc_flip_vs_raw"] for r in res]))),
         density_by_defocus=by_bin,
         bins_A=dict(edges=EDGES_A, centres=CENT_A),
-        nn_hist=out_nn, g_r=out_g, pair_counts=dict(obs=pc_obs, perm_mean=pc_perm.mean(0), toro_mean=pc_toro.mean(0)),
-        window_tests=tests,
+        nn_hist=out_nn, g_r=out_g, pair_counts=dict(obs=pc_obs, perm_mean=pc_perm.mean(0), toro_mean=pc_toro.mean(0),
+                                                    jitter_mean=pc_jit.mean(0)),
+        window_tests=tests, per_bin_20_160A=per_bin,
         arms=dict(dots=arm_frac, random_background_positions=ctrl_frac, n_dots=int(len(cls_all)),
                   n_random=int(len(ctrl_all)), by_defocus=arm_by_bin),
         per_micrograph=per_mic, dots_csv=csv_path, example_micrographs=[rel[i] for i in ex_ids],
@@ -740,7 +804,7 @@ def main():
                 if s > best:
                     best, bxy = s, (x0, y0)
         exs.append(dict(pos=r["pos"], m4=r["m4"], x=r["x"], y=r["y"], cls=r["cls"], crop=bxy))
-        rws.append(dict(short=os.path.basename(rel[i]).split("_Fractions")[0][-30:], df_um=dfm[i], fit_A=fit[i],
+        rws.append(dict(short="FoilHole_" + os.path.basename(rel[i]).split("FoilHole_")[-1].split("_Fractions")[0], df_um=dfm[i], fit_A=fit[i],
                         n_dots=int(N[i])))
     fig_examples(exs, rws, os.path.join(a.figs, "G0_dot_detection_examples.png"))
     print(json.dumps(tolist(dict(dots=summary["dots"], window_tests=tests, arms=summary["arms"]["dots"],

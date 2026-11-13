@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+model/L6_loop50/tleap/system.*
+model/L6_loop50/tleap/leap.log
