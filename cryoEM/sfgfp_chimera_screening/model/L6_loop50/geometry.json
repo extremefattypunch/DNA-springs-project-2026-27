@@ -1,0 +1,152 @@
+{
+  "system": "L6_loop50",
+  "description": "sfGFP (2B3P numbering, D133/N149 -> Tet2-Et) clicked to a 50 bp duplex modified on ONE strand at both ends (5' DNL, 3' DNP); ideal B-DNA bent onto a circular arc; as-built, unminimised",
+  "use": "rigid-body fitting / validation only; NOT a cryo-EM picking or refinement reference",
+  "n_bp": 50,
+  "sequence_modified_strand": "GCTTGGATGGTACCGTGGACTCCTGCCAGCAACTCACGGTCTAGGCTCCA",
+  "target_anchor_span_A": 66.0,
+  "anchor_CB133_CB149_A": 31.33,
+  "dna_end_to_end": {
+    "anchor_span_P1_to_O3prime50_A": 65.99,
+    "basepair_centre_bp1_to_bp50_A": 83.35,
+    "arc_chord_from_fit_A": 79.66,
+    "note": "anchor span = the two atoms the linkers bond (same strand); arc chord = 2R sin(L/2R) for the fitted axis circle and the 49-step B-DNA contour"
+  },
+  "arc": {
+    "radius_fit_axis_A": 42.67,
+    "radius_fit_bp_centres_A": 43.75,
+    "radius_as_built_A": 43.76,
+    "circle_fit_rms_A": 0.02,
+    "out_of_plane_rms_A": 0.01,
+    "contour_length_A": 165.4,
+    "bend_angle_contour_over_R_deg": 222.0,
+    "end_tangent_angle_deg": 163.4,
+    "deg_per_bp_step": 4.53
+  },
+  "max_dimension_A": {
+    "solute": 113.9,
+    "protein": 71.0,
+    "dna": 108.6
+  },
+  "radius_of_gyration_A": {
+    "solute": 42.2,
+    "protein": 17.72,
+    "dna": 38.78,
+    "weighting": "atomic mass, atoms present in the PDB (heavy atoms + linker H)"
+  },
+  "atoms_in_pdb": {
+    "solute": 4000,
+    "protein": 1953,
+    "dna": 2047,
+    "hydrogens": 80
+  },
+  "covalent_junctions_A": {
+    "DNL.OL-P(nt1)": 1.613,
+    "DNP.P-O3'(nt50)": 1.61
+  },
+  "tether_reports": {
+    "133": {
+      "score": 21.808,
+      "dna_atom": "OL*",
+      "to_target_A": 1.614,
+      "bond_objective": 1.61,
+      "clash": 43.617,
+      "bond_length_A": 1.614,
+      "arm": "TDP + DNL"
+    },
+    "149": {
+      "score": 20.417,
+      "dna_atom": "P*",
+      "to_target_A": 1.61,
+      "bond_objective": 1.61,
+      "clash": 40.835,
+      "bond_length_A": 1.61,
+      "arm": "TDP + DNP"
+    }
+  },
+  "duplex_spin_deg": 75,
+  "protein_dna_contacts": {
+    "min_sfGFP_to_DNA_heavy_atom_A": 7.78,
+    "protein_heavy_atoms_within_2.5A_of_DNA": 0,
+    "within_3.0A": 0,
+    "nonbonded_heavy_pairs_1.85_to_2.2A": 5,
+    "nonbonded_pairs": [
+      [
+        1.92,
+        "A149TDP.CZ",
+        "A151TYR.CD1"
+      ],
+      [
+        1.95,
+        "A149TDP.CO6",
+        "A199HID.CA"
+      ],
+      [
+        2.04,
+        "A149TDP.CP3",
+        "A151TYR.CD1"
+      ],
+      [
+        2.19,
+        "A149TDP.CE1",
+        "A151TYR.CE1"
+      ],
+      [
+        2.2,
+        "A149TDP.NP2",
+        "A151TYR.CD1"
+      ]
+    ],
+    "cross_residue_bonds_under_1.85A": [
+      [
+        1.36,
+        "A149TDP.CN",
+        "C51DNP.N"
+      ],
+      [
+        1.36,
+        "A133TDP.CN",
+        "C0DNL.N"
+      ],
+      [
+        1.79,
+        "A64LEU.C",
+        "A66CRO.N1"
+      ],
+      [
+        1.82,
+        "A66CRO.C3",
+        "A68VAL.N"
+      ]
+    ]
+  },
+  "molecular_weight": {
+    "source": "tleap prmtop (all H, Amber protonation)",
+    "protein_plus_adducts_and_linkers_kDa": 26.79,
+    "dna_kDa": 30.74,
+    "total_kDa": 57.53
+  },
+  "covalent_loop": {
+    "closed": true,
+    "source": "build_system.py --expect-loop TDP (bond-graph cycle test on the tleap prmtop)",
+    "detail": {
+      "tested": true,
+      "residue": "TDP",
+      "residue_indices": [
+        130,
+        146
+      ],
+      "backbone_bonds_cut": 2,
+      "closed": true,
+      "atoms_reached": 1431,
+      "expected": "closed"
+    },
+    "tleap_problems": [],
+    "bonds_verified": [
+      "131@CN:232@N",
+      "147@CN:283@N"
+    ],
+    "net_charge_solvated": -3e-05,
+    "atoms_solvated": 141744
+  }
+}
