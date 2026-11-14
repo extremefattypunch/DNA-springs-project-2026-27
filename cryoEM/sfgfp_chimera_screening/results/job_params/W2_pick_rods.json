@@ -1,0 +1,20 @@
+{
+ "type": "blob_picker_gpu",
+ "lane": "Cannon-test",
+ "walltime": "03:00:00",
+ "connections": {
+  "micrographs": [
+   "J17",
+   "exposures"
+  ]
+ },
+ "params": {
+  "diameter": 20,
+  "diameter_max": 180,
+  "use_circle": 0,
+  "use_ellipse": 1,
+  "min_distance": 4.0,
+  "lowpass_res": 15,
+  "max_num_hits": 400
+ }
+}

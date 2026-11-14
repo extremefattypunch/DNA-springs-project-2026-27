@@ -142,12 +142,14 @@
    "lane": "Cannon-test",
    "walltime": "09:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W1 patch motion half 0 (F-crop 1/2 -> 1.42 A/px)",
    "parents": [
     "J9"
    ],
-   "created": "2026-11-13T14:35:35"
+   "created": "2026-11-13T14:35:35",
+   "finished": "2026-11-13T18:59:18",
+   "run_s": 15772.288
   },
   "W1_motion_1": {
    "uid": "J12",
@@ -156,12 +158,14 @@
    "lane": "Cannon-test",
    "walltime": "09:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W1 patch motion half 1 (F-crop 1/2 -> 1.42 A/px)",
    "parents": [
     "J9"
    ],
-   "created": "2026-11-13T15:00:59"
+   "created": "2026-11-13T15:00:59",
+   "finished": "2026-11-13T19:55:07",
+   "run_s": 16186.592
   },
   "P0_curated": {
    "uid": "J13",
@@ -188,6 +192,123 @@
    "rows_in": 165638,
    "rows_out": 103120,
    "finished": "2026-11-13T16:33:45"
+  },
+  "W1_ctf_0": {
+   "uid": "J15",
+   "type": "patch_ctf_estimation_multi",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W1 patch CTF half 0",
+   "parents": [
+    "J10"
+   ],
+   "created": "2026-11-13T19:55:08",
+   "finished": "2026-11-13T22:56:01",
+   "run_s": 10835.973
+  },
+  "W1_ctf_1": {
+   "uid": "J16",
+   "type": "patch_ctf_estimation_multi",
+   "ws": "W1",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W1 patch CTF half 1",
+   "parents": [
+    "J12"
+   ],
+   "created": "2026-11-13T19:55:19",
+   "finished": "2026-11-13T22:56:41",
+   "run_s": 10847.672
+  },
+  "W2_curated": {
+   "uid": "J17",
+   "type": "external",
+   "ws": "W1",
+   "status": "completed",
+   "title": "W1 curated exposures (selections/S0_exposures.json)",
+   "parents": [
+    "J15",
+    "J16"
+   ],
+   "rows_in": 9013,
+   "rows_out": 8036,
+   "thresholds": {
+    "note": "Exposure curation for W2 (plan T0e). Pilot (P0, 300 mics): CTF fit median 3.6 A / p90 5.3 A, defocus p10-p90 0.8-2.1 um, rel. ice median 1.06.",
+    "ctf_fit_to_A_max": 6.0,
+    "astig_A_max": 1000.0,
+    "defocus_A_min": 5000.0,
+    "defocus_A_max": 28000.0,
+    "ice_thickness_rel_max": 1.2
+   },
+   "finished": "2026-11-13T22:57:25"
+  },
+  "W2_pick_rods": {
+   "uid": "J18",
+   "type": "blob_picker_gpu",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "03:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 blob pick: rods",
+   "parents": [
+    "J17"
+   ],
+   "created": "2026-11-13T22:57:28",
+   "finished": "2026-11-13T23:58:45",
+   "run_s": 3616.753
+  },
+  "W2_pick_anchors": {
+   "uid": "J19",
+   "type": "blob_picker_gpu",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "03:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 blob pick: anchors",
+   "parents": [
+    "J17"
+   ],
+   "created": "2026-11-13T23:58:45",
+   "finished": "2026-11-14T00:36:42",
+   "run_s": 2220.128
+  },
+  "W2_power_rods": {
+   "uid": "J20",
+   "type": "external",
+   "ws": "W2",
+   "status": "completed",
+   "title": "W2 rods picks, local-power filter (selections/pick_power_filter.json)",
+   "parents": [
+    "J18"
+   ],
+   "rows_in": 1583293,
+   "rows_out": 19937,
+   "finished": "2026-11-14T00:36:54"
+  },
+  "W2_extract_rods": {
+   "uid": "J21",
+   "type": "extract_micrographs_multi",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 extract rods 256 -> 128 px",
+   "parents": [
+    "J17",
+    "J20"
+   ],
+   "created": "2026-11-14T00:36:55",
+   "finished": "2026-11-14T01:05:46",
+   "run_s": 1636.007,
+   "n_particles": 14454
   }
  },
  "paid_gpu_h": 0.0

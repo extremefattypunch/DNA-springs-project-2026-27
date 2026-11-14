@@ -32,27 +32,28 @@ def curate_mask(th):
     return f
 
 
-def power_mask(exps_ds, pf):
+def power_mask(exps_ds, keep_frac):
+    """Keep the top `keep_frac` of picks by local power WITHIN each 0.25 um defocus bin, computed on this stream's own
+    picks. (The pilot's absolute thresholds, selections/pick_power_filter.json, were calibrated on 80-140 A circular
+    blobs and do not transfer: the 20-180 A ellipse picker's power runs ~2.5x lower, so they kept only 1.3% of picks.)"""
     uid2df = dict(zip(exps_ds["uid"].tolist(), ((exps_ds["ctf/df1_A"] + exps_ds["ctf/df2_A"]) / 2e4).tolist()))
-    edges = [(float(k.split("-")[0]), float(k.split("-")[1]), v) for k, v in pf["bins"].items()]
-
-    def thr(df):
-        for lo, hi, v in edges:
-            if lo <= df < hi:
-                return v
-        return pf["fallback_global"]
 
     def f(ds):
         df = np.array([uid2df.get(u, np.nan) for u in ds["location/micrograph_uid"].tolist()])
-        t = np.array([thr(x) for x in df])
-        return ds["pick_stats/power"] > t
+        pw = np.asarray(ds["pick_stats/power"])
+        keep = np.zeros(len(pw), bool)
+        b = np.floor(df / 0.25)
+        for v in np.unique(b[np.isfinite(b)]):
+            s = b == v
+            keep[s] = pw[s] > np.quantile(pw[s], 1 - keep_frac)
+        return keep
     return f
 
 
 def main():
     cs, st = R.session()
     th = json.load(open(os.path.join(SEL, "S0_exposures.json")))
-    pf = json.load(open(os.path.join(SEL, "pick_power_filter.json")))
+    pf = json.load(open(os.path.join(SEL, "pick_power_filter_v2.json")))
     cur = R.save_subset(cs, st, "W2_curated", "W1", [("W1_ctf_0", "exposures"), ("W1_ctf_1", "exposures")],
                         curate_mask(th), "exposure", "exposures",
                         "W1 curated exposures (selections/S0_exposures.json)", extra={"thresholds": th})
@@ -80,8 +81,9 @@ def main():
                             title=f"W2 blob pick: {name}", walltime="03:00:00", num_gpu=1)
     for name, s in streams.items():
         filt = R.save_subset(cs, st, f"W2_power_{name}", "W2", [(f"W2_pick_{name}", "particles")],
-                             power_mask(exps, pf), "particle", "particles",
-                             f"W2 {name} picks, local-power filter (selections/pick_power_filter.json)")
+                             power_mask(exps, pf["keep_frac"][name]), "particle", "particles",
+                             f"W2 {name} picks, top {pf['keep_frac'][name]:.0%} local power per defocus bin",
+                             extra={"keep_frac": pf["keep_frac"][name]})
         if name == "anchors":   # census subset: random 25% of curated micrographs, fixed seed
             rng = np.random.default_rng(20261113)
             mics = np.array(sorted(set(exps["uid"].tolist())))

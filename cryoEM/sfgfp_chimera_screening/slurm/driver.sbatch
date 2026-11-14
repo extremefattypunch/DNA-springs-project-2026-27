@@ -4,7 +4,7 @@
 #   sbatch -J sfgfp-drv-11 slurm/driver.sbatch scripts/11_preprocess.py
 #SBATCH -p test
 #SBATCH -c 1
-#SBATCH --mem=2G
+#SBATCH --mem=32G
 #SBATCH -t 0-12:00
 #SBATCH -o /n/netscratch/hekstra_lab/Lab/ian_poon/logs/%x-%j.out
 #SBATCH -e /n/netscratch/hekstra_lab/Lab/ian_poon/logs/%x-%j.out
