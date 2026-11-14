@@ -1,0 +1,21 @@
+{
+ "type": "extract_micrographs_multi",
+ "lane": "Cannon-test",
+ "walltime": "06:00:00",
+ "connections": {
+  "micrographs": [
+   "J17",
+   "exposures"
+  ],
+  "particles": [
+   "J25",
+   "particles"
+  ]
+ },
+ "params": {
+  "box_size_pix": 192,
+  "bin_size_pix": 96,
+  "output_f16": 1,
+  "compute_num_gpus": 1
+ }
+}

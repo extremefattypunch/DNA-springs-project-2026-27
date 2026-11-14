@@ -279,7 +279,7 @@
    "finished": "2026-11-14T00:36:42",
    "run_s": 2220.128
   },
-  "W2_power_rods": {
+  "W2_power_rods_v1_superseded": {
    "uid": "J20",
    "type": "external",
    "ws": "W2",
@@ -290,9 +290,10 @@
    ],
    "rows_in": 1583293,
    "rows_out": 19937,
-   "finished": "2026-11-14T00:36:54"
+   "finished": "2026-11-14T00:36:54",
+   "note": "power filter v1 kept 1.3% of picks; superseded 2026-11-14"
   },
-  "W2_extract_rods": {
+  "W2_extract_rods_v1_superseded": {
    "uid": "J21",
    "type": "extract_micrographs_multi",
    "ws": "W2",
@@ -308,7 +309,84 @@
    "created": "2026-11-14T00:36:55",
    "finished": "2026-11-14T01:05:46",
    "run_s": 1636.007,
-   "n_particles": 14454
+   "n_particles": 14454,
+   "note": "power filter v1 kept 1.3% of picks; superseded 2026-11-14"
+  },
+  "W2_power_rods": {
+   "uid": "J22",
+   "type": "external",
+   "ws": "W2",
+   "status": "completed",
+   "title": "W2 rods picks, top 50% local power per defocus bin",
+   "parents": [
+    "J18"
+   ],
+   "rows_in": 1583293,
+   "rows_out": 791644,
+   "keep_frac": 0.5,
+   "finished": "2026-11-14T04:31:11"
+  },
+  "W2_extract_rods": {
+   "uid": "J23",
+   "type": "extract_micrographs_multi",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 extract rods 256 -> 128 px",
+   "parents": [
+    "J17",
+    "J22"
+   ],
+   "created": "2026-11-14T04:31:12",
+   "finished": "2026-11-14T05:17:52",
+   "run_s": 2760.288,
+   "n_particles": 606539
+  },
+  "W2_power_anchors": {
+   "uid": "J24",
+   "type": "external",
+   "ws": "W2",
+   "status": "completed",
+   "title": "W2 anchors picks, top 50% local power per defocus bin",
+   "parents": [
+    "J19"
+   ],
+   "rows_in": 6358457,
+   "rows_out": 3179227,
+   "keep_frac": 0.5,
+   "finished": "2026-11-14T05:18:38"
+  },
+  "W2_anchors_25pct": {
+   "uid": "J25",
+   "type": "external",
+   "ws": "W2",
+   "status": "completed",
+   "title": "W2 anchors on a random 25% of curated micrographs",
+   "parents": [
+    "J24"
+   ],
+   "rows_in": 3179227,
+   "rows_out": 791157,
+   "seed": 20261113,
+   "micrographs": 2009,
+   "finished": "2026-11-14T05:18:59"
+  },
+  "W2_extract_anchors": {
+   "uid": "J26",
+   "type": "extract_micrographs_multi",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "W2 extract anchors 192 -> 96 px",
+   "parents": [
+    "J17",
+    "J25"
+   ],
+   "created": "2026-11-14T05:18:59"
   }
  },
  "paid_gpu_h": 0.0
