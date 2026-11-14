@@ -422,6 +422,221 @@
    "created": "2026-11-14T05:30:32",
    "finished": "2026-11-14T12:29:34",
    "run_s": 14692.727
+  },
+  "W3_duplex_particles": {
+   "uid": "J29",
+   "type": "external",
+   "ws": "W3",
+   "status": "completed",
+   "title": "W3 rod-stream particles in 'duplex' 2D classes",
+   "parents": [
+    "J27"
+   ],
+   "rows_in": 546701,
+   "rows_out": 103028,
+   "classes": [
+    57,
+    58,
+    1,
+    170,
+    74,
+    189,
+    81,
+    154,
+    88,
+    141,
+    90,
+    11,
+    75,
+    104,
+    160,
+    46,
+    63,
+    117,
+    68,
+    173,
+    62
+   ],
+   "finished": "2026-11-14T13:03:20"
+  },
+  "W3_junk_particles": {
+   "uid": "J30",
+   "type": "external",
+   "ws": "W3",
+   "status": "completed",
+   "title": "W3 rod-stream particles in 'junk' 2D classes",
+   "parents": [
+    "J27"
+   ],
+   "rows_in": 546701,
+   "rows_out": 35149,
+   "classes": [
+    23,
+    66,
+    162,
+    39,
+    15,
+    10,
+    50,
+    153,
+    27,
+    97,
+    30,
+    150,
+    12,
+    167,
+    146,
+    26,
+    53,
+    174,
+    86,
+    77,
+    92,
+    111,
+    120,
+    96,
+    133,
+    156,
+    177,
+    0,
+    112,
+    102
+   ],
+   "finished": "2026-11-14T13:03:28"
+  },
+  "W3_ice_particles": {
+   "uid": "J31",
+   "type": "external",
+   "ws": "W3",
+   "status": "completed",
+   "title": "W3 rod-stream particles in 'ice' 2D classes",
+   "parents": [
+    "J27"
+   ],
+   "rows_in": 546701,
+   "rows_out": 108029,
+   "classes": [
+    44,
+    181,
+    142,
+    152,
+    118,
+    52,
+    8
+   ],
+   "finished": "2026-11-14T13:03:36"
+  },
+  "W3_pairs_particles": {
+   "uid": "J32",
+   "type": "external",
+   "ws": "W3",
+   "status": "completed",
+   "title": "W3 rod-stream particles in 'pairs' 2D classes",
+   "parents": [
+    "J27"
+   ],
+   "rows_in": 546701,
+   "rows_out": 37380,
+   "classes": [
+    199,
+    105
+   ],
+   "finished": "2026-11-14T13:03:44"
+  },
+  "W3_pooled_particles": {
+   "uid": "J33",
+   "type": "external",
+   "ws": "W3",
+   "status": "completed",
+   "title": "W3 pooled duplex + decoy-class particles for hetero refinement",
+   "parents": [
+    "J27"
+   ],
+   "rows_in": 546701,
+   "rows_out": 283586,
+   "finished": "2026-11-14T13:03:53"
+  },
+  "W3_abinit_duplex": {
+   "uid": "J34",
+   "type": "homo_abinit",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 ab initio K=1: duplex",
+   "parents": [
+    "J29"
+   ],
+   "created": "2026-11-14T13:03:55",
+   "finished": "2026-11-14T13:13:40",
+   "run_s": 511.053
+  },
+  "W3_abinit_junk": {
+   "uid": "J35",
+   "type": "homo_abinit",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 ab initio K=1: junk (decoy)",
+   "parents": [
+    "J30"
+   ],
+   "created": "2026-11-14T13:04:08",
+   "finished": "2026-11-14T13:13:40",
+   "run_s": 496.886
+  },
+  "W3_abinit_ice": {
+   "uid": "J36",
+   "type": "homo_abinit",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 ab initio K=1: ice (decoy)",
+   "parents": [
+    "J31"
+   ],
+   "created": "2026-11-14T13:04:19",
+   "finished": "2026-11-14T13:20:21",
+   "run_s": 355.285
+  },
+  "W3_abinit_pairs": {
+   "uid": "J37",
+   "type": "homo_abinit",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 ab initio K=1: pairs (decoy)",
+   "parents": [
+    "J32"
+   ],
+   "created": "2026-11-14T13:13:34",
+   "finished": "2026-11-14T13:22:42",
+   "run_s": 488.137
+  },
+  "W3_hetero": {
+   "uid": "J38",
+   "type": "hetero_refine",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "W3 hetero refine: duplex + 3 decoys (junk, ice, dot pairs)",
+   "parents": [
+    "J33",
+    "J34",
+    "J35",
+    "J36",
+    "J37"
+   ],
+   "created": "2026-11-14T13:22:43"
   }
  },
  "paid_gpu_h": 0.0

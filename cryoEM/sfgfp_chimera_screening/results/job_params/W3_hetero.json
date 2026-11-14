@@ -1,0 +1,33 @@
+{
+ "type": "hetero_refine",
+ "lane": "Cannon-test",
+ "walltime": "06:00:00",
+ "connections": {
+  "particles": [
+   "J33",
+   "particles"
+  ],
+  "volume": [
+   [
+    "J34",
+    "volume_class_0"
+   ],
+   [
+    "J35",
+    "volume_class_0"
+   ],
+   [
+    "J36",
+    "volume_class_0"
+   ],
+   [
+    "J37",
+    "volume_class_0"
+   ]
+  ]
+ },
+ "params": {
+  "multirefine_force_hard_class": 1,
+  "multirefine_res_init": 20
+ }
+}
