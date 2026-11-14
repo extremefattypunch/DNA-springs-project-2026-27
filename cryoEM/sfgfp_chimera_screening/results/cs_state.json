@@ -627,7 +627,7 @@
    "lane": "Cannon-test",
    "walltime": "06:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W3 hetero refine: duplex + 3 decoys (junk, ice, dot pairs)",
    "parents": [
     "J33",
@@ -636,7 +636,79 @@
     "J36",
     "J37"
    ],
-   "created": "2026-11-14T13:22:43"
+   "created": "2026-11-14T13:22:43",
+   "finished": "2026-11-14T14:00:55",
+   "run_s": 2247.418,
+   "class_counts": {
+    "particles_class_0": 64036,
+    "particles_class_1": 54847,
+    "particles_class_2": 100397,
+    "particles_class_3": 64306
+   }
+  },
+  "W3_nu_duplex": {
+   "uid": "J39",
+   "type": "nonuniform_refine_new",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 NU refine: free 50 bp duplex (control)",
+   "parents": [
+    "J38"
+   ],
+   "created": "2026-11-14T14:00:56",
+   "finished": "2026-11-14T14:06:44",
+   "run_s": 319.489
+  },
+  "W3_validation": {
+   "uid": "J40",
+   "type": "validation",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 validation: gold-standard FSC, fresh mask",
+   "parents": [
+    "J39"
+   ],
+   "created": "2026-11-14T14:06:44",
+   "finished": "2026-11-14T14:07:31",
+   "run_s": 20.448
+  },
+  "W3_orientdiag": {
+   "uid": "J41",
+   "type": "orientation_diagnostics",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 orientation diagnostics (cFAR, SCF)",
+   "parents": [
+    "J39"
+   ],
+   "created": "2026-11-14T14:07:32",
+   "finished": "2026-11-14T14:08:57",
+   "run_s": 41.994
+  },
+  "W3_locres": {
+   "uid": "J42",
+   "type": "local_resolution",
+   "ws": "W3",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W3 local resolution",
+   "parents": [
+    "J39"
+   ],
+   "created": "2026-11-14T14:08:59",
+   "finished": "2026-11-14T14:09:44",
+   "run_s": 29.166
   }
  },
  "paid_gpu_h": 0.0

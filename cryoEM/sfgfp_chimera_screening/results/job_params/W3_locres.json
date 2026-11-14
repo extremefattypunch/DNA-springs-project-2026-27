@@ -1,0 +1,16 @@
+{
+ "type": "local_resolution",
+ "lane": "Cannon-test",
+ "walltime": "02:00:00",
+ "connections": {
+  "volume": [
+   "J39",
+   "volume"
+  ],
+  "mask": [
+   "J39",
+   "mask"
+  ]
+ },
+ "params": {}
+}
