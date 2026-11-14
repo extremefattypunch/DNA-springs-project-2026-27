@@ -1,0 +1,672 @@
+{
+ "census": {
+  "W2_2D_rods": {
+   "dot_long_rod": {
+    "particles": 141427,
+    "fraction": 0.2614
+   },
+   "ice_contaminant": {
+    "particles": 108029,
+    "fraction": 0.1997
+   },
+   "rod_no_dot": {
+    "particles": 103028,
+    "fraction": 0.1904
+   },
+   "dot_pair_thread": {
+    "particles": 83949,
+    "fraction": 0.1552
+   },
+   "dot_pair": {
+    "particles": 37380,
+    "fraction": 0.0691
+   },
+   "noise_junk": {
+    "particles": 35149,
+    "fraction": 0.065
+   },
+   "unclear": {
+    "particles": 22065,
+    "fraction": 0.0408
+   },
+   "dot_short_rod": {
+    "particles": 10020,
+    "fraction": 0.0185
+   }
+  },
+  "W2_2D_anchors": {
+   "dot_pair": {
+    "particles": 373386,
+    "fraction": 0.6189
+   },
+   "single_dot": {
+    "particles": 107077,
+    "fraction": 0.1775
+   },
+   "dot_short_rod": {
+    "particles": 74327,
+    "fraction": 0.1232
+   },
+   "ice_contaminant": {
+    "particles": 27371,
+    "fraction": 0.0454
+   },
+   "dot_pair_thread": {
+    "particles": 21112,
+    "fraction": 0.035
+   }
+  }
+ },
+ "consensus": {
+  "W2_2D_rods:44": "ice_contaminant",
+  "W2_2D_rods:186": "dot_pair_thread",
+  "W2_2D_rods:101": "dot_pair_thread",
+  "W2_2D_rods:57": "rod_no_dot",
+  "W2_2D_rods:199": "dot_pair",
+  "W2_2D_rods:78": "dot_long_rod",
+  "W2_2D_rods:105": "dot_pair",
+  "W2_2D_rods:58": "rod_no_dot",
+  "W2_2D_rods:181": "ice_contaminant",
+  "W2_2D_rods:61": "dot_long_rod",
+  "W2_2D_rods:1": "rod_no_dot",
+  "W2_2D_rods:70": "unclear",
+  "W2_2D_rods:142": "ice_contaminant",
+  "W2_2D_rods:31": "dot_long_rod",
+  "W2_2D_rods:128": "dot_long_rod",
+  "W2_2D_rods:48": "dot_long_rod",
+  "W2_2D_rods:36": "dot_long_rod",
+  "W2_2D_rods:4": "dot_long_rod",
+  "W2_2D_rods:83": "dot_long_rod",
+  "W2_2D_rods:82": "dot_long_rod",
+  "W2_2D_rods:170": "rod_no_dot",
+  "W2_2D_rods:74": "rod_no_dot",
+  "W2_2D_rods:23": "noise_junk",
+  "W2_2D_rods:192": "dot_long_rod",
+  "W2_2D_rods:40": "dot_long_rod",
+  "W2_2D_rods:91": "dot_long_rod",
+  "W2_2D_rods:66": "noise_junk",
+  "W2_2D_rods:35": "dot_long_rod",
+  "W2_2D_rods:143": "dot_long_rod",
+  "W2_2D_rods:100": "dot_long_rod",
+  "W2_2D_rods:76": "unclear",
+  "W2_2D_rods:94": "dot_long_rod",
+  "W2_2D_rods:189": "rod_no_dot",
+  "W2_2D_rods:81": "rod_no_dot",
+  "W2_2D_rods:154": "rod_no_dot",
+  "W2_2D_rods:168": "dot_long_rod",
+  "W2_2D_rods:152": "ice_contaminant",
+  "W2_2D_rods:118": "ice_contaminant",
+  "W2_2D_rods:139": "dot_long_rod",
+  "W2_2D_rods:107": "unclear",
+  "W2_2D_rods:55": "dot_long_rod",
+  "W2_2D_rods:88": "rod_no_dot",
+  "W2_2D_rods:131": "dot_long_rod",
+  "W2_2D_rods:194": "dot_long_rod",
+  "W2_2D_rods:141": "rod_no_dot",
+  "W2_2D_rods:90": "rod_no_dot",
+  "W2_2D_rods:140": "dot_long_rod",
+  "W2_2D_rods:41": "dot_long_rod",
+  "W2_2D_rods:187": "dot_pair_thread",
+  "W2_2D_rods:108": "unclear",
+  "W2_2D_rods:11": "rod_no_dot",
+  "W2_2D_rods:75": "rod_no_dot",
+  "W2_2D_rods:104": "rod_no_dot",
+  "W2_2D_rods:175": "dot_short_rod",
+  "W2_2D_rods:160": "rod_no_dot",
+  "W2_2D_rods:46": "rod_no_dot",
+  "W2_2D_rods:63": "rod_no_dot",
+  "W2_2D_rods:136": "dot_long_rod",
+  "W2_2D_rods:117": "rod_no_dot",
+  "W2_2D_rods:52": "ice_contaminant",
+  "W2_2D_rods:68": "rod_no_dot",
+  "W2_2D_rods:173": "rod_no_dot",
+  "W2_2D_rods:62": "rod_no_dot",
+  "W2_2D_rods:162": "noise_junk",
+  "W2_2D_rods:39": "noise_junk",
+  "W2_2D_rods:149": "dot_short_rod",
+  "W2_2D_rods:147": "unclear",
+  "W2_2D_rods:15": "noise_junk",
+  "W2_2D_rods:10": "noise_junk",
+  "W2_2D_rods:50": "noise_junk",
+  "W2_2D_rods:153": "noise_junk",
+  "W2_2D_rods:73": "dot_short_rod",
+  "W2_2D_rods:27": "noise_junk",
+  "W2_2D_rods:97": "noise_junk",
+  "W2_2D_rods:30": "noise_junk",
+  "W2_2D_rods:43": "dot_short_rod",
+  "W2_2D_rods:150": "noise_junk",
+  "W2_2D_rods:12": "noise_junk",
+  "W2_2D_rods:167": "noise_junk",
+  "W2_2D_rods:8": "ice_contaminant",
+  "W2_2D_rods:196": "dot_pair_thread",
+  "W2_2D_rods:146": "noise_junk",
+  "W2_2D_rods:26": "noise_junk",
+  "W2_2D_rods:49": "dot_short_rod",
+  "W2_2D_rods:53": "noise_junk",
+  "W2_2D_rods:174": "noise_junk",
+  "W2_2D_rods:113": "unclear",
+  "W2_2D_rods:6": "dot_short_rod",
+  "W2_2D_rods:60": "dot_short_rod",
+  "W2_2D_rods:148": "dot_short_rod",
+  "W2_2D_rods:188": "dot_pair_thread",
+  "W2_2D_rods:86": "noise_junk",
+  "W2_2D_rods:77": "noise_junk",
+  "W2_2D_rods:92": "noise_junk",
+  "W2_2D_rods:120": "noise_junk",
+  "W2_2D_rods:111": "noise_junk",
+  "W2_2D_rods:96": "noise_junk",
+  "W2_2D_rods:133": "noise_junk",
+  "W2_2D_rods:156": "noise_junk",
+  "W2_2D_rods:177": "noise_junk",
+  "W2_2D_rods:0": "noise_junk",
+  "W2_2D_rods:112": "noise_junk",
+  "W2_2D_rods:65": "unclear",
+  "W2_2D_rods:102": "noise_junk",
+  "W2_2D_anchors:35": "dot_pair",
+  "W2_2D_anchors:30": "dot_pair",
+  "W2_2D_anchors:129": "dot_pair",
+  "W2_2D_anchors:83": "dot_pair",
+  "W2_2D_anchors:198": "dot_pair",
+  "W2_2D_anchors:93": "dot_pair",
+  "W2_2D_anchors:138": "dot_pair",
+  "W2_2D_anchors:5": "dot_pair_thread",
+  "W2_2D_anchors:62": "single_dot",
+  "W2_2D_anchors:184": "dot_pair",
+  "W2_2D_anchors:14": "dot_pair",
+  "W2_2D_anchors:144": "ice_contaminant",
+  "W2_2D_anchors:169": "dot_pair",
+  "W2_2D_anchors:155": "dot_pair",
+  "W2_2D_anchors:72": "dot_pair",
+  "W2_2D_anchors:31": "ice_contaminant",
+  "W2_2D_anchors:82": "dot_pair",
+  "W2_2D_anchors:96": "ice_contaminant",
+  "W2_2D_anchors:10": "single_dot",
+  "W2_2D_anchors:19": "dot_pair_thread",
+  "W2_2D_anchors:21": "ice_contaminant",
+  "W2_2D_anchors:92": "single_dot",
+  "W2_2D_anchors:97": "dot_pair",
+  "W2_2D_anchors:101": "dot_pair_thread",
+  "W2_2D_anchors:98": "single_dot",
+  "W2_2D_anchors:25": "dot_pair",
+  "W2_2D_anchors:151": "dot_pair",
+  "W2_2D_anchors:100": "dot_pair",
+  "W2_2D_anchors:11": "dot_pair",
+  "W2_2D_anchors:4": "dot_pair",
+  "W2_2D_anchors:71": "dot_pair",
+  "W2_2D_anchors:173": "single_dot",
+  "W2_2D_anchors:9": "ice_contaminant",
+  "W2_2D_anchors:175": "single_dot",
+  "W2_2D_anchors:34": "single_dot",
+  "W2_2D_anchors:189": "dot_pair",
+  "W2_2D_anchors:165": "dot_pair",
+  "W2_2D_anchors:22": "dot_pair",
+  "W2_2D_anchors:95": "dot_pair",
+  "W2_2D_anchors:135": "single_dot",
+  "W2_2D_anchors:33": "dot_pair_thread",
+  "W2_2D_anchors:185": "dot_pair",
+  "W2_2D_anchors:127": "single_dot",
+  "W2_2D_anchors:149": "dot_short_rod",
+  "W2_2D_anchors:107": "single_dot",
+  "W2_2D_anchors:174": "single_dot",
+  "W2_2D_anchors:26": "dot_pair",
+  "W2_2D_anchors:89": "single_dot",
+  "W2_2D_anchors:41": "single_dot",
+  "W2_2D_anchors:78": "dot_short_rod",
+  "W2_2D_anchors:63": "dot_pair",
+  "W2_2D_anchors:122": "dot_pair",
+  "W2_2D_anchors:166": "ice_contaminant",
+  "W2_2D_anchors:157": "dot_short_rod",
+  "W2_2D_anchors:178": "dot_pair",
+  "W2_2D_anchors:58": "single_dot",
+  "W2_2D_anchors:158": "dot_pair",
+  "W2_2D_anchors:55": "dot_pair",
+  "W2_2D_anchors:183": "dot_short_rod",
+  "W2_2D_anchors:38": "dot_short_rod",
+  "W2_2D_anchors:159": "dot_pair",
+  "W2_2D_anchors:140": "dot_short_rod",
+  "W2_2D_anchors:137": "single_dot",
+  "W2_2D_anchors:85": "dot_short_rod",
+  "W2_2D_anchors:186": "dot_short_rod",
+  "W2_2D_anchors:170": "dot_short_rod",
+  "W2_2D_anchors:40": "single_dot",
+  "W2_2D_anchors:179": "dot_short_rod",
+  "W2_2D_anchors:192": "single_dot",
+  "W2_2D_anchors:16": "dot_short_rod",
+  "W2_2D_anchors:196": "dot_short_rod",
+  "W2_2D_anchors:84": "dot_short_rod",
+  "W2_2D_anchors:141": "dot_short_rod",
+  "W2_2D_anchors:67": "single_dot",
+  "W2_2D_anchors:103": "single_dot",
+  "W2_2D_anchors:153": "dot_short_rod",
+  "W2_2D_anchors:59": "dot_pair_thread",
+  "W2_2D_anchors:3": "dot_short_rod",
+  "W2_2D_anchors:119": "dot_short_rod",
+  "W2_2D_anchors:45": "dot_pair",
+  "W2_2D_anchors:0": "dot_short_rod",
+  "W2_2D_anchors:56": "dot_short_rod",
+  "W2_2D_anchors:117": "dot_short_rod",
+  "W2_2D_anchors:133": "single_dot",
+  "W2_2D_anchors:130": "dot_short_rod",
+  "W2_2D_anchors:86": "dot_short_rod",
+  "W2_2D_anchors:66": "dot_pair",
+  "W2_2D_anchors:43": "dot_short_rod",
+  "W2_2D_anchors:197": "single_dot",
+  "W2_2D_anchors:57": "dot_pair",
+  "W2_2D_anchors:193": "dot_short_rod",
+  "W2_2D_anchors:69": "dot_short_rod",
+  "W2_2D_anchors:114": "single_dot",
+  "W2_2D_anchors:146": "dot_short_rod",
+  "W2_2D_anchors:81": "dot_short_rod",
+  "W2_2D_anchors:136": "ice_contaminant",
+  "W2_2D_anchors:6": "dot_short_rod",
+  "W2_2D_anchors:47": "dot_short_rod",
+  "W2_2D_anchors:118": "single_dot",
+  "W2_2D_anchors:32": "dot_short_rod",
+  "W2_2D_anchors:61": "dot_short_rod",
+  "W2_2D_anchors:181": "dot_pair",
+  "W2_2D_anchors:116": "dot_short_rod",
+  "W2_2D_anchors:194": "single_dot",
+  "W2_2D_anchors:70": "dot_short_rod",
+  "W2_2D_anchors:148": "single_dot",
+  "W2_2D_anchors:123": "single_dot",
+  "W2_2D_anchors:168": "dot_short_rod",
+  "W2_2D_anchors:163": "dot_short_rod",
+  "W2_2D_anchors:24": "dot_short_rod",
+  "W2_2D_anchors:52": "dot_pair",
+  "W2_2D_anchors:51": "single_dot",
+  "W2_2D_anchors:115": "single_dot",
+  "W2_2D_anchors:106": "single_dot",
+  "W2_2D_anchors:108": "single_dot",
+  "W2_2D_anchors:68": "dot_short_rod",
+  "W2_2D_anchors:177": "single_dot",
+  "W2_2D_anchors:50": "dot_short_rod",
+  "W2_2D_anchors:8": "dot_short_rod",
+  "W2_2D_anchors:39": "single_dot",
+  "W2_2D_anchors:132": "single_dot",
+  "W2_2D_anchors:187": "single_dot",
+  "W2_2D_anchors:167": "single_dot",
+  "W2_2D_anchors:77": "dot_short_rod",
+  "W2_2D_anchors:195": "dot_short_rod",
+  "W2_2D_anchors:156": "single_dot",
+  "W2_2D_anchors:128": "dot_short_rod",
+  "W2_2D_anchors:102": "single_dot",
+  "W2_2D_anchors:23": "single_dot",
+  "W2_2D_anchors:1": "single_dot",
+  "W2_2D_anchors:91": "dot_short_rod",
+  "W2_2D_anchors:20": "single_dot",
+  "W2_2D_anchors:94": "dot_short_rod",
+  "W2_2D_anchors:36": "dot_short_rod",
+  "W2_2D_anchors:53": "single_dot",
+  "W2_2D_anchors:88": "single_dot",
+  "W2_2D_anchors:13": "single_dot",
+  "W2_2D_anchors:139": "dot_short_rod",
+  "W2_2D_anchors:99": "single_dot",
+  "W2_2D_anchors:12": "dot_short_rod",
+  "W2_2D_anchors:154": "single_dot",
+  "W2_2D_anchors:164": "single_dot",
+  "W2_2D_anchors:182": "dot_short_rod",
+  "W2_2D_anchors:145": "single_dot",
+  "W2_2D_anchors:48": "single_dot",
+  "W2_2D_anchors:73": "single_dot",
+  "W2_2D_anchors:109": "single_dot",
+  "W2_2D_anchors:120": "dot_short_rod",
+  "W2_2D_anchors:126": "single_dot",
+  "W2_2D_anchors:49": "single_dot",
+  "W2_2D_anchors:2": "single_dot",
+  "W2_2D_anchors:161": "single_dot",
+  "W2_2D_anchors:188": "single_dot",
+  "W2_2D_anchors:125": "single_dot",
+  "W2_2D_anchors:90": "dot_short_rod",
+  "W2_2D_anchors:65": "dot_short_rod",
+  "W2_2D_anchors:74": "single_dot",
+  "W2_2D_anchors:17": "single_dot",
+  "W2_2D_anchors:46": "dot_short_rod",
+  "W2_2D_anchors:142": "single_dot",
+  "W2_2D_anchors:27": "dot_short_rod",
+  "W2_2D_anchors:172": "single_dot",
+  "W2_2D_anchors:171": "single_dot",
+  "W2_2D_anchors:162": "dot_short_rod",
+  "W2_2D_anchors:87": "single_dot",
+  "W2_2D_anchors:42": "single_dot",
+  "W2_2D_anchors:104": "single_dot",
+  "W2_2D_anchors:79": "dot_short_rod",
+  "W2_2D_anchors:191": "single_dot",
+  "W2_2D_anchors:160": "dot_short_rod",
+  "W2_2D_anchors:112": "single_dot",
+  "W2_2D_anchors:190": "single_dot",
+  "W2_2D_anchors:150": "single_dot",
+  "W2_2D_anchors:134": "single_dot",
+  "W2_2D_anchors:199": "single_dot",
+  "W2_2D_anchors:110": "single_dot",
+  "W2_2D_anchors:28": "single_dot",
+  "W2_2D_anchors:121": "single_dot",
+  "W2_2D_anchors:15": "single_dot",
+  "W2_2D_anchors:80": "dot_short_rod",
+  "W2_2D_anchors:176": "single_dot",
+  "W2_2D_anchors:54": "single_dot",
+  "W2_2D_anchors:111": "single_dot",
+  "W2_2D_anchors:29": "single_dot",
+  "W2_2D_anchors:180": "single_dot",
+  "W2_2D_anchors:44": "single_dot",
+  "W2_2D_anchors:113": "single_dot",
+  "W2_2D_anchors:76": "single_dot",
+  "W2_2D_anchors:124": "single_dot",
+  "W2_2D_anchors:131": "single_dot",
+  "W2_2D_anchors:75": "dot_short_rod",
+  "W2_2D_anchors:147": "single_dot",
+  "W2_2D_anchors:60": "single_dot",
+  "W2_2D_anchors:7": "dot_short_rod",
+  "W2_2D_anchors:143": "single_dot",
+  "W2_2D_anchors:105": "single_dot",
+  "W2_2D_anchors:64": "single_dot",
+  "W2_2D_anchors:152": "single_dot",
+  "W2_2D_anchors:18": "single_dot",
+  "W2_2D_anchors:37": "single_dot"
+ },
+ "disagreements": 81,
+ "disagreement_examples": [
+  {
+   "k": "W2_2D_rods:57",
+   "tally": {
+    "rod_no_dot": 2,
+    "dot_long_rod": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:199",
+   "tally": {
+    "dot_pair_thread": 1,
+    "dot_pair": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:78",
+   "tally": {
+    "dot_long_rod": 2,
+    "dot_pair_thread": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:23",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:66",
+   "tally": {
+    "dot_short_rod": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:100",
+   "tally": {
+    "dot_long_rod": 2,
+    "rod_no_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:76",
+   "tally": {
+    "unclear": 2,
+    "single_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:154",
+   "tally": {
+    "dot_long_rod": 1,
+    "rod_no_dot": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:118",
+   "tally": {
+    "dot_cluster": 1,
+    "ice_contaminant": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:107",
+   "tally": {
+    "unclear": 2,
+    "single_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:108",
+   "tally": {
+    "unclear": 2,
+    "single_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:75",
+   "tally": {
+    "dot_long_rod": 1,
+    "rod_no_dot": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:175",
+   "tally": {
+    "dot_short_rod": 2,
+    "unclear": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:160",
+   "tally": {
+    "dot_long_rod": 1,
+    "rod_no_dot": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:117",
+   "tally": {
+    "dot_long_rod": 1,
+    "rod_no_dot": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:162",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:39",
+   "tally": {
+    "unclear": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:147",
+   "tally": {
+    "dot_cluster": 1,
+    "unclear": 1,
+    "rod_no_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:15",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:10",
+   "tally": {
+    "unclear": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:50",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:153",
+   "tally": {
+    "dot_short_rod": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:27",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:97",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:30",
+   "tally": {
+    "ice_contaminant": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:43",
+   "tally": {
+    "dot_short_rod": 2,
+    "noise_junk": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:150",
+   "tally": {
+    "ice_contaminant": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:12",
+   "tally": {
+    "dot_short_rod": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:167",
+   "tally": {
+    "dot_short_rod": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:196",
+   "tally": {
+    "dot_pair_thread": 2,
+    "dot_long_rod": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:146",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:26",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:49",
+   "tally": {
+    "dot_short_rod": 2,
+    "noise_junk": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:53",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:174",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:113",
+   "tally": {
+    "dot_long_rod": 1,
+    "dot_short_rod": 1,
+    "rod_no_dot": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:60",
+   "tally": {
+    "dot_short_rod": 2,
+    "noise_junk": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:148",
+   "tally": {
+    "dot_short_rod": 2,
+    "dot_long_rod": 1
+   }
+  },
+  {
+   "k": "W2_2D_rods:86",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  },
+  {
+   "k": "W2_2D_rods:77",
+   "tally": {
+    "dot_cluster": 1,
+    "noise_junk": 2
+   }
+  }
+ ],
+ "loop_checks": [],
+ "conjugate_checks": [
+  {
+   "refuted": true,
+   "reasoning": "Verdict: refuted. The images show a reproducible dot-at-rod-end geometry, but they do not show it is covalent. The claim's main test, that chance neighbours would average into a smear, fails on this same dataset.\n\n1) Unlinked neighbours give sharp, reproducible two-object classes here. The anchor stream's biggest classes are two sharp, well-separated dots with no connecting density: 35 (68,840 particles), 30 (61,168), 129 (51,494), 83 (43,813), 198 (27,469), 93, 138, 169, 155, 72, 71 and others. Together they hold well over 300k particles, about half the anchor stream. The dots are about 85-100 \u00c5 apart. At about 4,500 dots per \u00b5m\u00b2 (rho = 4.5e-5 per \u00c5\u00b2), the expected nearest-neighbour distance is 0.5/sqrt(rho), about 75 \u00c5, with the most likely distance about 59 \u00c5. Crowding in thin ice also produces a preferred spacing. 2D classification with in-plane rotation sorts neighbour pairs by distance, so each class shows a sharp pair rather than a smear.\n\nThe rod stream shows the same thing. Class 105 (18k) is two separate dots. Classes 186 (57k), 199 (19k), 101 (22k), 187 and 188 have a bright centred dot plus a faint second dot or segment 70-100 \u00c5 away, with a gap or very faint density between them. A sharp, reproducible dot-plus-partner geometry therefore does not distinguish covalent attachment from crowded neighbours.\n\n2) The alignment centres on the bright dot. In most dot+rod classes the dot sits at the box centre and the rod extends outward, fading with distance (61, 83, 128, 131, 186, 31). This is what you expect when the alignment registers on the brightest feature while the partner's position varies. A flexible covalent tether would produce the same pattern, so it does not decide between them.\n\n3) Rod lengths do not fit a terminally attached sfGFP. If straight, a 170 \u00c5 duplex plus a 25-42 \u00c5 sfGFP beyond its end should measure about 190-210 \u00c5. The dot-at-end classes measure 100-176 \u00c5, median about 129 \u00c5, particle-weighted about 132 \u00c5. Examples: 48 is 114 \u00c5, 36 is 118, 4 is 119, 82 is 119, 35 is 115, 186 is 130. These are shorter than the clean rod-only classes (58 is 162 \u00c5, 1 is 153, 74 is 148, 189 is 146, 100 is 176, 141 is 196). The dot overlaps the rod end rather than extending it. That fits superposition or a blurred distal rod better than an appended protein, and it at least does not support covalent attachment.\n\n4) The dot is not exclusively at the end. Some classes have a bright blob mid-rod or a dot pair along the rod: 160, 141, 65, 101, and 78 with brightness at both ends. Rod-only classes also tend to have a brighter lower end (1, 74, 189). There are many free rods of the same length and beaded appearance, mostly 140-160 \u00c5 (58, 1, 170, 74, 189, 81, 90, 46, 63, 173, 88, 11, 75, 104, 62, 68; about 15% of the stream). There are also about 330 free sfGFP dots per micrograph, which the crude-mixture context explains. So there is a large pool for chance overlaps.\n\n5) Selection bias. The rod picker plus the filter keeping the top 50% by local power favours rod+dot overlaps, because they have higher power. The prior of about 0.09 per rod end (about 0.18 for either end) therefore underestimates how many overlaps were picked. In addition, 2D classification can collect the end-overlap subset into a handful of tidy classes out of 547k particles.\n\n6) Supporting points that remain: the dot-at-end classes are numerous and the dot is usually terminal. Dot+short-tail classes in the anchor stream (5, 101, 19, 25, 149, 183, 38, 140, 85, 146, 81, 70, 130, 117) are consistent with lollipops. But nothing in 2D at about 12 \u00c5 resolution separates a covalent link from a close neighbour. That would need, for example, a pair-distance or angle histogram per micrograph against a shuffled-position null, the same classification on a no-click control or a free-DNA plus free-sfGFP mixture at the same concentrations, or gel or mass-spec evidence of the conjugate.\n\nEstimated fraction of rod-stream particles in dot-at-rod-end classes: about 27% (148k of 546,701), from classes 57, 61, 31, 128, 48, 36, 4, 83, 82, 192, 40, 91, 35, 143, 100, 139, 94, 55, 131, 194, 41, 136, 196, 140, 154, 168. Adding the classes with a dot and a gapped faint distal fragment (186, 199, 187, 188; about 80k, 15%) gives an upper bound of about 42%. Rod-only classes are about 15%. Large ice or contaminant classes (44, 181, 142, 152, 52, 8, 118) are about 20%, and the rest are hazy multi-dot clusters or noise.\n\nNo closed loops: the morphology hole flag is 0 for every class, and I saw no rings or arcs."
+  },
+  {
+   "refuted": true,
+   "reasoning": "VERDICT: refuted (the evidence does not show the dot-rod classes are covalent). The claim's main test is that chance neighbours would average into a smear. This dataset shows that test fails. The images do not rule out covalent lollipops, but they do not show them either.\n\n1) Chance pairs give sharp averages here. About half of the anchor stream is two sharp dots with no connecting density: classes 35/30/129/83 (225k particles, 37% of anchors) and 198/93/138/169/155/72/71/4/82/184/14 and others. Every one of these classes has a single well-defined separation, but the separations step through a continuum: about 80-90 \u00c5 (35, 30, 129, 83), about 60 \u00c5 (198, 93, 138), about 45-50 \u00c5 (169, 155, 72, 4, 71) and touching at about 25-30 \u00c5 (184, 14, 82, 151). They cannot be dumbbells: a 50 bp DNA would hold the dots at least 170 \u00c5 apart, and rods of that kind are plainly visible elsewhere in this dataset. They are nearest-neighbour sfGFP pairs. At about 4,500 dots per \u00b5m\u00b2, the expected Poisson nearest-neighbour distance is about 75 \u00c5, which matches the largest classes. 2D classification sorts random neighbour arrangements into separation bins, and each bin averages into a sharp, repeatable geometry. The rod stream shows the same artefact: classes 186, 101, 199 and 105 (117k particles, 21% of the rod stream) are the same dot pairs. So a sharp, reproducible dot-rod geometry cannot tell a covalent attachment from a chance neighbour.\n\n2) Alignment locks onto the dot. In every dot-rod class (61, 31, 128, 48, 36, 4, 83, 82, 192, 40, 91, 35, 143, 139, 55, 131, 194, 140, 41, 136) the dot sits at the box centre and the rod hangs off it. The far end of the rod fades in 61, 131, 194, 128, 186 and 196, so the rod angle around the dot varies. The dot position is not perfectly terminal either: it is inset by about 20-30 \u00c5 in 40, 91, 4, 61 and 41, mid-rod in 160, and the rod is kinked or offset at the dot in 83. Several \"rod-only\" classes (57, 100, 141, 55) only brighten gradually toward one end. That looks like a continuum of overlap, not one discrete attached object.\n\n3) The lengths do not fit a dot added to the end of a DNA. The morphology CSV gives about 113-163 \u00c5 for dot-rod classes (median about 130 \u00c5). Rod-only classes with the same appearance are longer: 58 = 162, 1 = 153, 74 = 148, 100 = 176, 141 = 196 \u00c5 (median about 150 \u00c5). An sfGFP fixed to the end of a 170 \u00c5 duplex should add about 30-40 \u00c5, giving roughly 190-210 \u00c5. Instead the dot-rod objects come out shorter, which fits a dot lying over the rod end. Caveat: the length heuristic may cut off the faint far end of the rod.\n\n4) Selection bias explains why end dots are favoured. The picker looked for elongated 20-180 \u00c5 objects. A dot in line with a rod end still looks elongated and passes; a dot beside the middle of a rod makes a T or blob and is likely rejected. The per-defocus filter (top 50% local power) also favours rods that carry an extra bright dot. So having end-dot classes but almost no side-dot classes does not by itself show the attachment is specific.\n\nFair points in favour of the claim: end-dot classes (about 116k) outnumber clean rod-only classes (about 88k). That is more than the stated chance rate of about 0.09 per end (about 0.17 per rod) would give, even if the filter doubled it. Dots almost never sit beside the middle of a rod, and the rods with dots at both ends (78, 187, 188, 196 in the rod stream; 5, 101, 33, 38, 59 in the anchors) could be dumbbells. Given points 1-4, these are suggestive, not decisive. Real tests would be: compare with a free-DNA plus free-sfGFP mixed control; compare dot-rod frequency at different particle densities; or classify with a soft mask around the rod only and see whether a dot appears at a fixed end position in the rod-centred frame.\n\nFRACTION OF ROD-STREAM PARTICLES IN DOT-AT-ROD-END CLASSES: about 21% for the clear classes (about 115.6k of 546.7k). It is about 28% if the graded-end class 57 and the rod with dots at both ends (78) are included. For comparison: rod-only about 16% (about 88k), dot pairs about 21% (about 117k), ice/edges about 19% (about 105k), and the rest is aggregates and junk.\n\nLABELS, W2_2D_rods:\n- Sheet 1: 44 ice_contaminant; 186 dot_pair; 101 dot_pair; 57 rod_no_dot (brighter at one end, borderline); 199 dot_pair; 78 dot_pair_thread; 105 dot_pair; 58 rod_no_dot; 181 ice_contaminant; 61 dot_long_rod; 1 rod_no_dot; 70 unclear; 142 ice_contaminant; 31, 128, 48, 36, 4, 83, 82 dot_long_rod; 170 rod_no_dot; 74 rod_no_dot; 23 noise_junk; 192, 40, 91 dot_long_rod; 66 noise_junk; 35, 143 dot_long_rod; 100 rod_no_dot; 76 dot_cluster; 94 dot_long_rod; 189, 81, 154, 168 rod_no_dot; 152 ice_contaminant; 118 dot_cluster; 139 dot_long_rod; 107 dot_cluster.\n- Sheet 2: 55 dot_long_rod; 88 rod_no_dot; 131, 194 dot_long_rod; 141, 90 rod_no_dot; 140, 41 dot_long_rod; 187 dot_pair_thread; 108 dot_cluster; 11, 75, 104 rod_no_dot; 175 dot_cluster; 160 unclear (dot in the middle of the rod); 46, 63 rod_no_dot; 136 dot_long_rod; 117 rod_no_dot; 52 ice_contaminant; 68, 173, 62 rod_no_dot; 162, 39 dot_cluster; 149 dot_short_rod; 147, 15, 10, 50, 153 dot_cluster; 73 rod_no_dot; 27, 97 dot_cluster; 30 noise_junk; 43 dot_cluster; 150 noise_junk; 12, 167 dot_cluster; 8 ice_contaminant.\n- Sheet 3: 196 dot_pair_thread; 146, 26, 49, 53, 174 dot_cluster; 113, 6 dot_short_rod; 60, 148 dot_cluster; 188 dot_pair_thread; 86, 77, 92, 120, 111, 96, 133, 156, 177, 0, 112 dot_cluster; 65 dot_pair; 102 dot_cluster.\n\nLABELS, W2_2D_anchors:\n- Sheet 1: 35, 30, 129, 83, 198, 93, 138 dot_pair; 5 dot_pair_thread; 62 single_dot; 184, 14 dot_pair; 144 ice_contaminant; 169, 155, 72 dot_pair; 31 ice_contaminant; 82 dot_pair; 96 ice_contaminant; 10 single_dot; 19 dot_pair_thread; 21 ice_contaminant; 92 single_dot; 97 dot_pair; 101 dot_pair_thread; 98 single_dot; 25, 151, 100, 11, 4, 71 dot_pair; 173 single_dot; 9 ice_contaminant; 175 single_dot; 34 dot_short_rod; 189, 165, 22, 95 dot_pair; 135 dot_short_rod.\n- Sheet 2: 33 dot_pair_thread; 185 dot_pair; 127 single_dot; 149 dot_short_rod; 107, 174 single_dot; 26 dot_pair; 89, 41 single_dot; 78 dot_short_rod; 63, 122 dot_pair; 166 ice_contaminant; 157 dot_short_rod; 178 dot_pair; 58 single_dot; 158, 55 dot_pair; 183 dot_short_rod; 38 dot_pair_thread; 159 dot_pair; 140 dot_short_rod; 137 single_dot; 85, 186, 170 dot_short_rod; 40 single_dot; 179 dot_short_rod; 192 single_dot; 16, 196, 84, 141 dot_short_rod; 67, 103 single_dot; 153 dot_short_rod; 59 dot_pair_thread; 3, 119 dot_short_rod; 45 dot_pair.\n- Sheet 3: 0, 56, 117 dot_short_rod; 133 single_dot; 130, 86 dot_short_rod; 66 dot_pair; 43 dot_short_rod; 197 single_dot; 57 dot_pair; 193, 69 dot_short_rod; 114 single_dot; 146, 81 dot_short_rod; 136 ice_contaminant; 6, 47 dot_short_rod; 118 single_dot; 32, 61 dot_short_rod; 181 dot_pair; 116 dot_short_rod; 194 single_dot; 70 dot_short_rod; 148, 123 single_dot; 168, 163, 24 dot_short_rod; 52 dot_pair; 51, 115, 106, 108 single_dot; 68 dot_short_rod; 177 single_dot; 50, 8 dot_short_rod; 39 single_dot.\n- Sheet 4: 132, 187, 167 single_dot; 77, 195 dot_short_rod; 156 single_dot; 128 dot_short_rod; 102, 23, 1 single_dot; 91 dot_short_rod; 20 single_dot; 94 dot_short_rod; 36, 53, 88 single_dot; 13, 139 dot_short_rod; 99 single_dot; 12 dot_short_rod; 154, 164 single_dot; 182 dot_short_rod; 145 single_dot; 48 dot_pair; 73, 109 single_dot; 120 dot_short_rod; 126, 49, 2, 161, 188, 125 single_dot; 90 dot_short_rod; 65, 74, 17 single_dot; 46 dot_short_rod; 142 single_dot.\n- Sheet 5: 27, 172, 171 single_dot; 162 dot_short_rod; 87, 42, 104, 79, 191 single_dot; 160 dot_short_rod; 112, 190, 150, 134, 199, 110, 28, 121, 15 single_dot; 80 dot_short_rod; 176, 54, 111, 29, 180, 44, 113, 76, 124, 131 single_dot; 75 dot_short_rod; 147, 60 single_dot; 7 dot_short_rod; 143, 105, 64, 152, 18, 37 single_dot.\n\nNo class in either set shows an enclosed hole or a clear 80-110 \u00c5 arc, so none is labelled closed_loop. This agrees with hole = 0 for every class in both CSVs."
+  },
+  {
+   "refuted": true,
+   "reasoning": "VERDICT: REFUTED. The data do not show that these are covalent lollipops. The claim depends on the idea that a chance neighbour would average into a smear, and this dataset disproves that idea directly.\n\n1) The anchor stream shows that chance neighbours give sharp class averages. About 60% of anchor particles (~360k of 603k) fall in very sharp two-dot classes with NO connecting density: 35, 30, 129, 83, 198, 93, 138, 184, 14, 169, 155, 72, 82, 71, 4, 165, 22, 95, 158, 55, 66, 52, 45, 63, 122, 178 and others. Their dot spacings form a spread of discrete values (~25, 35, 65, 90 and 100 \u00c5), not one bond length. At ~4,500 dots per \u00b5m\u00b2 the mean nearest-neighbour spacing is 0.5/sqrt(density) \u2248 75 \u00c5. K=200 classification sorts particles by separation, and in-plane alignment removes the angle, so random neighbours come out as crisp, reproducible geometry. Sharpness therefore says nothing about covalent attachment here. The morphology CSV even reports n_blobs=1 for these pair classes, so that heuristic misses them. The in-plane pose histogram is flat (~44-55k per 30\u00b0 bin), so the shared class orientation is a classification frame, not a real alignment in the micrographs.\n\n2) Chance alone predicts about the observed rate. The 200 \u00c5 rod mask is expected to hold ~1.4 dots per particle. The chance that a dot centre lies within ~30 \u00c5 of either rod end is ~0.25. Picks were kept only if they were in the top 50% of local power, and a rod overlapping a dot has more power, so this filter favours overlaps and raises the chance figure further. The observed dot-at-end fraction is about the same as this chance figure.\n\n3) The dot is not reliably at the rod end.\n   - Dot inset from the end with rod overhanging past it: classes 40, 192 and 100.\n   - Dot in the middle of the rod: class 160.\n   - Dot beside the rod: anchor classes 25, 11 and 159.\n\n4) The lengths do not fit a dot on a 50 bp duplex.\n   - Dot plus rod classes are only ~114-140 \u00c5 long in total: 48 (114), 36 (118), 4 (119), 82 (119), 31 (130), 128 (132), 192 (133), 83 (136), 61 (139), 40 (139).\n   - Rod-only classes are 145-176 \u00c5: 58 (162), 1 (153), 74 (148), 143 (163), 100 (176), 189 (146).\n   - A dot attached to the end of a 170 \u00c5 duplex should total \u2265190 \u00c5. The distal rod often fades out (61, 83, 131, 186), which points to variable geometry rather than a fixed attachment.\n\n5) Rod-only classes with the same width and ~34 \u00c5 beading coexist: 58, 1, 170, 74, 189, 81, 154, 168, 88, 90, 11, 75, 104, 46, 63, 117, 68, 173, 62. Together they hold ~80k particles (14.7%).\n\n6) The dot-thread-dot classes are spaced too closely for a dumbbell. In classes 186, 101, 199, 187 and 188 the dots are ~80-100 \u00c5 apart, not ~190 \u00c5. That spacing matches the nearest-neighbour packing (or could be an edge-on loop).\n\nThe near-exclusive collinear end position is mildly suggestive of attachment, so some conjugates may well be present. To test it properly:\n   - Measure the anchor-pick to rod-end distance distribution in the raw micrographs against a randomised or rotated control.\n   - Image a no-click control grid (sfGFP + DNA with no azide).\n\nFRACTION: about 21% of rod-stream particles (115k of 547k) sit in clear dot-at-rod-end classes, rising to ~29% (160k) if weak or ambiguous ones (57, 91, 94, 143, 100, 55, 140) are counted. A further ~22% (121k) are in dot-pair or dot-thread-dot classes, and ~1% have the dot mid-rod.\n\nROD LABELS:\n   - ice_contaminant: 44, 181, 142, 152, 118, 52, 8\n   - dot_pair_thread: 186, 101, 199, 187, 188\n   - dot_pair: 105, 65\n   - dot_long_rod: 57, 78, 61, 31, 128, 48, 36, 4, 83, 82, 192, 40, 91, 35, 143, 100, 94, 139, 55, 131, 194, 140, 41, 196\n   - rod_no_dot: 58, 1, 170, 74, 189, 81, 154, 168, 88, 90, 11, 75, 104, 46, 63, 117, 68, 173, 62, 141\n   - dot_short_rod: 136, 149, 73, 113, 6, 148\n   - unclear: 160 (dot mid-rod)\n   - noise_junk: 23, 66, 10, 153, 30, 150\n   - dot_cluster: 70, 76, 107, 108, 175, 162, 39, 147, 15, 50, 27, 97, 43, 12, 167, 146, 26, 49, 53, 174, 60, 86, 77, 92, 120, 111, 96, 133, 156, 177, 0, 112, 102\n\nANCHOR LABELS:\n   - dot_pair: 35, 30, 129, 83, 198, 93, 138, 184, 14, 169, 155, 72, 82, 71, 4, 165, 22, 95, 158, 55, 66, 52, 45, 63, 122, 178, 26, 97, 151, 100, 185, 181\n   - ice_contaminant: 144, 31, 96, 21, 9, 166, 136\n   - dot_long_rod: 5, 101\n   - dot_short_rod (short or bent dot+tail): 19, 25, 11, 33, 149, 183, 38, 140, 85, 141, 3, 119, 59 and most sheet-3/4 elongated classes\n   - single_dot: 62, 10, 92, 98, 173, 175, 127, 107, 174, 89, 58, 137, 67, 103, 133, 114, 118, 41 and most sheet-4/5 classes\n   - closed_loop: no confident ring or hole in either stream"
+  }
+ ],
+ "reviewer_overall": [
+  "No closed loops: no class in either set shows an enclosed hole or a clear ~90-100 \u00c5 arc. A few rod classes (70, 76, 107, 108, 39) show a dot on the edge of a diffuse ~70 \u00c5 haze, but with no hole, so they are labelled unclear. In the rods set, the most common shape is a straight ~130-160 \u00c5 rod with a bright dot at one end, matching an open sfGFP-DNA lollipop. There are also many beaded rods with no dot (free DNA), several dot pairs about 80-95 \u00c5 apart joined by a faint thread, multi-dot aggregates, and ice or lattice junk. The anchors set is led by very bright dot pairs 50-110 \u00c5 apart with nothing visible between them (the four largest classes). It also has many single dots, dots with short tails, and a few ice classes.",
+  "No closed loops: no class shows an enclosed hole or a clear ~90 \u00c5 ring/arc, and every class has hole=0 in the shape table. Rods stream: mostly a dot at one end of a straight ~110-160 \u00c5 rod (lollipop-like), plus many free beaded DNA rods, a few dot pairs (some joined by a thread), ice discs, and a long tail of featureless/noise classes. Anchors stream: the most populated classes are two separate dots ~60-90 \u00c5 apart with no visible thread (about 250k particles). There are also many single dots, many dots with short <100 \u00c5 tails (a few bent or hooked but open, e.g. 16, 85, 130), a few dot pairs joined by a thread (5, 101, 59, 33) and ice. The fixed-spacing unthreaded dot pairs deserve follow-up.",
+  "I saw no closed loops. No class shows an enclosed hole or a clear ~90 \u00c5 arc (the hole metric is 0 for every class); a few small hooks (anchors 6, 116) are too small to be loops. The rods set is mostly straight DNA-like rods, beaded and about 130-160 \u00c5 long, with or without one bright end dot (lollipop-like, e.g. 31, 48, 82, 139). It also has two dots joined by a thread (186, 187, 188), large ice discs, and many textured junk blobs. The anchors set is dominated by well-separated dot pairs about 40-50 \u00c5 apart (the five biggest classes) and single dots. It also has some dot-plus-short-tail and thread-joined pairs (5, 101, 33), plus ice. One-end lollipops are present, not closed products."
+ ],
+ "missing": []
+}
