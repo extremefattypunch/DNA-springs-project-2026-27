@@ -380,13 +380,48 @@
    "lane": "Cannon-test",
    "walltime": "06:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W2 extract anchors 192 -> 96 px",
    "parents": [
     "J17",
     "J25"
    ],
-   "created": "2026-11-14T05:18:59"
+   "created": "2026-11-14T05:18:59",
+   "finished": "2026-11-14T05:30:26",
+   "run_s": 659.634,
+   "n_particles": 661162
+  },
+  "W2_2D_rods": {
+   "uid": "J27",
+   "type": "class_2D_new",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "11:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 2D round 1: rods (K 200, 12 A)",
+   "parents": [
+    "J23"
+   ],
+   "created": "2026-11-14T05:30:27",
+   "finished": "2026-11-14T12:29:33",
+   "run_s": 25099.635
+  },
+  "W2_2D_anchors": {
+   "uid": "J28",
+   "type": "class_2D_new",
+   "ws": "W2",
+   "lane": "Cannon-test",
+   "walltime": "11:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W2 2D round 1: anchors (K 200, 12 A)",
+   "parents": [
+    "J26"
+   ],
+   "created": "2026-11-14T05:30:32",
+   "finished": "2026-11-14T12:29:34",
+   "run_s": 14692.727
   }
  },
  "paid_gpu_h": 0.0
