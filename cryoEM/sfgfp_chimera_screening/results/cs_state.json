@@ -709,6 +709,33 @@
    "created": "2026-11-14T14:08:59",
    "finished": "2026-11-14T14:09:44",
    "run_s": 29.166
+  },
+  "A1_recentred": {
+   "uid": "J43",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "rows_out": 224312,
+   "by_label": {
+    "dot_long_rod": 124157,
+    "dot_short_rod": 8771,
+    "rod_no_dot": 91384
+   }
+  },
+  "A1_extract": {
+   "uid": "J44",
+   "type": "extract_micrographs_multi",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "A1 extract 320 px @1.42 -> 160 (454 A box), no shift recentring",
+   "parents": [
+    "J17",
+    "J43"
+   ],
+   "created": "2026-11-14T14:22:35"
   }
  },
  "paid_gpu_h": 0.0
