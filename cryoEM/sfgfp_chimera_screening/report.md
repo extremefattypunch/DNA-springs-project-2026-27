@@ -31,7 +31,7 @@ Data locations and purge dates: `DATA.md`.*
 
 | Question | Answer | Confidence | Section |
 |---|---|---|---|
-| Are closed DNA-loop chimeras (≈9 nm ring, sfGFP on the rim) on the grid? | **No intact, face-on or tilted rings** at anything near the abundance the gel implies; none of 304 2D classes from 1.14 M particles shows an enclosed hole | High for open rings (unanimous blind review; simulated rings are obvious in this ice); **not yet excluded:** rings seen edge-on, or dot-centred rings clipped by the 2D window into "dot + hook" shapes (a few hook classes exist, §8), both being tested | §8, §12, §13 |
+| Are closed DNA-loop chimeras (≈9 nm ring, sfGFP on the rim) on the grid? | **No intact, face-on or tilted rings** at anything near the abundance the gel implies; none of 304 2D classes from 1.14 M particles shows an enclosed hole | High for open rings (unanimous blind review; simulated rings are obvious in this ice). Edge-on rings: no ring-specific pair spacing and sub-duplex link density (A5, §13a), but a minority of ≤ ~12–32 % in the "two dots + thread" classes cannot be excluded. Not yet tested: dot-centred rings clipped by the 2D window into "dot + hook" shapes (§8) | §8, §12, §13 |
 | What *is* on the grid? | Free sfGFP (dense, crowded: ~330 per micrograph), straight DNA rods (~140 Å, some with the 34 Å B-DNA repeat), many "dot at one end of a rod" particles, ice/junk | High | §3, §8 |
 | Are the dot-on-rod-end particles covalent sfGFP–DNA conjugates? | **Not shown, not excluded.** Picking and 2D select dot-at-end configurations, so there is no selection-free test in these data | Wording set by the review judge after three lens-specific skeptics; one of them judged my original verdict did not survive (`results/rod_end_coloc_review.json`) | §9 |
 | Does the pipeline work on something rigid? | Yes: the "free DNA" control reconstructs to **7.9 Å** (RELION phase-randomised, tight mask; 8.7 Å loose), cFAR 0.27 | High | §10 |
@@ -123,7 +123,9 @@ from real coordinates):
   pilot's two-dot classes are therefore chance neighbours, not dumbbells.
 - **Touching pairs.** In a 30–40 Å window there is an excess of 1.3× the jitter null, about 4 % of dots. That
   window was chosen **after** seeing the data. The pre-registered 35–50 Å window gives only 1.08× (pairs) and
-  1.17× (nearest neighbour) against the jitter null, 2–3 % of dots. Touching pairs are likely real but modest.
+  1.17× (nearest neighbour) against the jitter null, 2–3 % of dots. Touching pairs are possibly real but modest.
+  A later analysis (A5, §13a) found the short-range (45–60 Å) pair excess grows with defocus, so part of it may
+  be a detector/CTF artefact.
 - **Automatic "two arms closing" loop candidates:** **0.38 % of dots vs 0.22 %** at random background spots,
   which is barely above background.
 
@@ -453,6 +455,49 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 - **A7: ice-thickness split.** Do thick-ice micrographs (less air–water interface) carry more DNA-attached sfGFP,
   longer DNA or ring-like averages (hypothesis 4)?
 - A5 and A7 are each implemented by one agent and checked by an independent skeptic.
+
+### 13a. Results so far (each implemented by one agent, then checked by an independent skeptic; wording below is the verifier's corrected statement)
+
+**A5: edge-on ring test. Hypothesis 5 not supported** (`scripts/43_A5_edge_on_ring_test.py`,
+`results/A5_edge_on.json`):
+- **No ring-specific pair spacing.** Across 1.50 M eligible dot centres (2.16 M detected), the shift-null pair
+  correlation is flat at ~1.015–1.026 from 75 to 160 Å, with **no excess at 85–110 Å** (window minus flanks
+  −0.001 [−0.004, +0.002]). A ring signal spread over 75–135 Å is limited to **≤ ~5–5.6k pairs**.
+- **The rod-stream "two dots + faint thread" classes are mostly not rings.** They sit mostly in the thinnest,
+  most crowded ice, and their link carries **0.25–0.64× a single duplex** of density, where an edge-on ring
+  predicts ≥ 2×.
+- **Caveat:** a class average is a population mean, so a **minority of up to ~12–32 % edge-on rings** with an
+  undetectable far rim cannot be excluded.
+- **The anchor "two dots + thread" classes** are 42–73 Å dumbbells with no density beyond the first dot, not
+  edge-on rings.
+- **New flag:** the 45–60 Å short-range pair excess grows with defocus. That suggests a detector/CTF artefact,
+  which weakens §3's touching-pair excess.
+
+![A5](figures/qc/A5_edge_on.png)
+
+**A7: ice-thickness split. Hypothesis 4 not supported, but the test has little leverage**
+(`scripts/44_A7_ice_tertiles.py`, `results/A7_ice_tertiles.json`):
+- **No rings in any tertile.** No per-tertile class average in either stream shows a strict hole; three lenient hits
+  are 23–32 Å gaps in junk/ice classes.
+- **No extra attachment in thick ice.** Dots at rod ends that 2D did not select on stay below chance in every
+  tertile, flat with ice after density matching (T3−T1 ratio −0.001 [−0.046, 0.044]). This also holds within each
+  shot position.
+- **The census changes strongly with ice, but this tracks crowding** (thin ice ~1.8× more dots).
+- **Two small effects point weakly toward hypothesis 4:**
+  - a dot-on-rod excess of +4.7 points in thick ice, largely offset by +3.7 for free rods
+  - the attached-DNA mask length rises 83 → 90 Å, but free rods also rise 3 Å and the median per-class change
+    is 0
+- **Why leverage is low:** the ice range is narrow (1.05–1.10), and thickness is confounded with CTF fit quality
+  (ρ 0.64), acquisition time, and **the third EPU shot position in each foil hole**. That position is thicker, has
+  fewer dots, a worse fit and more astigmatism, and supplies 61 % of the thick tertile.
+
+![A7](figures/qc/A7_ice_tertiles.png)
+
+**Net effect on §12:**
+- Edge-on rings (hypothesis 5) and air–water-interface opening (hypothesis 4) have no positive support, but
+  neither is strongly excluded.
+- The leading explanations remain incomplete/yielded loops (1) and linear adducts (2), which **A1 is designed to
+  separate**.
 
 **Why these three and not the panel's other proposals** (you chose from A1, A5, A7; the others were not offered or
 were deferred):

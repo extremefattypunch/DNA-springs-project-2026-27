@@ -784,8 +784,8 @@ def figure(res, avgs):
     import matplotlib.pyplot as plt
     permic = pd.read_csv(os.path.join(WORK, "permic.csv.gz"))
     cols = ["#4C72B0", "#55A868", "#C44E52", "#8172B2"]
-    fig = plt.figure(figsize=(24, 30), dpi=80)
-    sf = fig.subfigures(4, 1, height_ratios=[1.0, 1.05, 1.0, 2.2])
+    fig = plt.figure(figsize=(24, 34), dpi=80)
+    sf = fig.subfigures(4, 1, height_ratios=[1.0, 1.05, 1.05, 3.0])
     # row 1: ice distribution + confounds
     ax = sf[0].subplots(1, 4)
     ice = permic["ice"].values
@@ -825,7 +825,8 @@ def figure(res, avgs):
         a_.legend(fontsize=8)
 
     # row 3: dot density, dot_long_rod 2h, end-dot ratio / excess, crowding-matched contrasts
-    ax = sf[2].subplots(1, 6, gridspec_kw=dict(width_ratios=[1, 1, 1.2, 1, 1, 1.6]))
+    ax = sf[2].subplots(1, 6, gridspec_kw=dict(width_ratios=[1, 1, 1.3, 1, 1, 1.3]))
+    sf[2].subplots_adjust(left=0.04, right=0.99, wspace=0.55)
     D = res["dots"]["groups"]
     A = res["attached"]
 
@@ -890,16 +891,17 @@ def figure(res, avgs):
         if r_ is not None:
             ax[5].errorbar(r_["est"] * sc, i + 0.25, xerr=[[(r_["est"] - r_["lo95"]) * sc], [(r_["hi95"] - r_["est"]) * sc]],
                            fmt="s", color="0.6", capsize=2, label="raw" if i == 0 else None)
-        ks[i] = k + unit
+        ks[i] = k.replace("frac_", "").replace("_rods", " (rods)").replace("_anchors", " (anch.)") \
+            .replace("end_light_", "end ") + unit
     ax[5].axvline(0, color="r", lw=0.8)
     ax[5].set_yticks(range(len(ks)))
-    ax[5].set_yticklabels(ks, fontsize=8)
+    ax[5].set_yticklabels(ks, fontsize=7)
     ax[5].invert_yaxis()
     ax[5].legend(fontsize=8)
     ax[5].set_title("T3 (thick) - T1 (thin), raw vs within dot-density deciles", fontsize=9)
 
     # row 4: averages montage
-    sub = sf[3].subfigures(1, 2)
+    sub = sf[3].subfigures(2, 1)
     for sfi, st in zip(sub, ("rods", "anchors")):
         av = avgs[st]
         rows = av["rows"]
@@ -929,7 +931,7 @@ def figure(res, avgs):
                 a_.set_xlim(c, n - c)
                 a_.set_ylim(n - c, c)
                 if i == 0:
-                    a_.set_title(f"{k} {r['label']}\nn={r['n_all']}", fontsize=7)
+                    a_.set_title(f"{k} {r['label'].replace('_', ' ')}\nn={r['n_all']}", fontsize=7)
                 else:
                     g = GROUPS[i - 1]
                     d = r.get(g)

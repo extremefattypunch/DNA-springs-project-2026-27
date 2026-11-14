@@ -14,8 +14,11 @@ filed as "two dots + faint thread" = dot_pair_thread classes (rods 186, 101, 187
     the mapped A / B (B_dot != A_dot). Unique (A_dot, B_dot) pairs give the detected separation histogram
     (40-160 A, 5 A bins). Rotation null: B rotated about A by a uniform angle (20 replicates).
     Pair correlation g(r), 40-160 A, 5 A bins, for (i) ALL detected dots and (ii) the unique A dots of each class
-    group: neighbour counts around each centre divided by the counts around the same centre shifted 150-300 A in a
-    random direction on the same micrograph (shift null, 50 replicates; matches local density on the ~300 A scale).
+    group: neighbour counts around each centre divided by the counts around the same centre shifted 200-350 A in a
+    random direction on the same micrograph (shift null, 50 replicates; matches local density on the ~350 A scale;
+    the minimum shift exceeds 160 A so the source dot itself never enters a null annulus). Integer detector
+    positions are de-quantised once by a seeded uniform +/-0.5 px jitter, so observed distances do not alias
+    against the 5 A bins.
     Only centres whose whole 160 A disc lies inside the detector's valid mask (bin-4 EDT) are used, observed and
     null alike (redrawn up to 50 times), so no edge correction is needed. Uncertainty of g: bootstrap over
     micrographs (1,000 resamples). Edge-on rings predict a narrow excess at 85-110 A in g_all beyond chance; the
@@ -87,7 +90,7 @@ CENT = 0.5 * (EDGES[1:] + EDGES[:-1])
 RMAX_A = EDGES[-1]
 WIN = (85.0, 110.0)
 FLANKS = ((60.0, 85.0), (110.0, 135.0))
-SHIFT_A = (150.0, 300.0)
+SHIFT_A = (200.0, 350.0)    # > RMAX_A + 40 A so the source dot never falls in the null annuli
 NREP_SHIFT = 50
 NREP_ROT = 20
 NBOOT = 1000
@@ -460,6 +463,11 @@ def stage_run(a):
     conv = json.load(open(CONV_JSON))
     ycfg = {k: conv["micrograph_best"][k] for k in ("x", "y", "flipud", "fliplr")}
     paths, dx, dy, dz, dm, m4p = load_dots()
+    # the detector stores integer pixel positions; de-quantise once (seeded uniform +/-0.5 px) so that observed
+    # distances are not aliased against the 5 A bins (the null centres are continuous)
+    jr = np.random.default_rng(SEED - 1)
+    dx = dx + jr.uniform(-0.5, 0.5, len(dx))
+    dy = dy + jr.uniform(-0.5, 0.5, len(dy))
     nmic = len(paths)
     assert np.all(np.diff(dm) >= 0)
     mstart = np.searchsorted(dm, np.arange(nmic + 1))
@@ -737,6 +745,7 @@ def stage_run(a):
              NNULR=NNULR, groups=np.array(ng_all), ice=ice, n_elig=n_elig)
     print(f"wrote {OUT_JSON} ({time.time() - t0:.0f} s)", flush=True)
     make_figure()
+    add_verdict()
 
 
 # ------------------------------------------------------------------------------------------- figure
@@ -803,7 +812,7 @@ def make_figure():
     ax[0].axvspan(*WIN, color="C2", alpha=0.12)
     ax[0].axhline(1, color="0.6", lw=0.6)
     a_ = PC["all"]
-    ax[0].set_title(f"(a) pair correlation of ALL detected dots vs shift null (150-300 A)\n85-110 A: g = "
+    ax[0].set_title(f"(a) pair correlation of ALL detected dots vs shift null (200-350 A)\n85-110 A: g = "
                     f"{a_['g_window']:.3f} [{a_['g_window_ci95'][0]:.3f}, {a_['g_window_ci95'][1]:.3f}]; window - flanks "
                     f"= {a_['bump_window_minus_flanks']:+.3f} [{a_['bump_ci95'][0]:+.3f}, {a_['bump_ci95'][1]:+.3f}]",
                     fontsize=9)
@@ -819,8 +828,8 @@ def make_figure():
         ax[1].fill_between(CENT, g["g_boot_lo"], g["g_boot_hi"], color=col, alpha=0.18, lw=0)
     ax[1].axvspan(*WIN, color="C2", alpha=0.12)
     ax[1].axhline(1, color="0.6", lw=0.6)
-    ax[1].set_title("(b) neighbour density around the class-mapped A dot vs shift null\n(class selection makes these "
-                    "peaks; compare with (a) for whether the population carries an excess)", fontsize=9)
+    ax[1].set_title("(b) g(r) around the class-mapped A dots vs shift null\n(peaks here are made by class "
+                    "selection; (a) shows whether the population has an excess)", fontsize=9)
     ax[1].set_xlabel("distance from A dot (A)")
     ax[1].legend(fontsize=7)
     SH = R["separation_histograms"]
@@ -833,11 +842,12 @@ def make_figure():
                    label=f"{gname}: B rotated about A (null)")
     ax[2].axvspan(*WIN, color="C2", alpha=0.12)
     B = R["pair_budget"]
-    ax[2].set_title(f"(c) unique detected A-B dot pairs per A of separation\nglobal excess pairs at 85-110 A: "
+    ax[2].set_title(f"(c) unique detected A-B pairs per A of separation\nwhole-set excess pairs at 85-110 A: "
                     f"{B['excess_pairs_all_dots_window']:,.0f} [{B['excess_pairs_all_dots_window_ci95'][0]:,.0f}, "
-                    f"{B['excess_pairs_all_dots_window_ci95'][1]:,.0f}] vs dot_pair_thread pairs there: rods "
-                    f"{B['rods_dpt']['unique_detected_pairs_window']:,}, anchors "
-                    f"{B['anchors_dpt']['unique_detected_pairs_window']:,}", fontsize=9)
+                    f"{B['excess_pairs_all_dots_window_ci95'][1]:,.0f}]\nclass pairs there: rod dpt "
+                    f"{B['rods_dpt']['unique_detected_pairs_window']:,}, anchor dpt "
+                    f"{B['anchors_dpt']['unique_detected_pairs_window']:,}, anchor dot_pair "
+                    f"{B['anchors_dot_pair']['unique_detected_pairs_window']:,}", fontsize=9)
     ax[2].set_xlabel("detected A-B separation (A)")
     ax[2].set_ylabel("pairs per A")
     ax[2].set_yscale("log")
@@ -902,22 +912,61 @@ def make_figure():
     ax[2].axvspan(30, 38, color="C2", alpha=0.12)
     ax[2].set_xlabel("period (A)")
     ax[2].set_ylabel("sinusoid amplitude / on-axis level")
-    ax[2].set_title("(f) on-axis periodicity (34 A B-DNA repeat band shaded); thread middles are only ~30-90 A long",
-                    fontsize=9)
+    ax[2].set_title("(f) on-axis periodicity, 34 A band shaded. The duplex reference itself shows no 34 A peak at\n"
+                    "5.68 A/px, so this readout does not discriminate; thread middles are only 9-43 A long", fontsize=9)
     ax[2].legend(fontsize=7)
     fig.savefig(FIG)
     plt.close(fig)
     print(f"wrote {FIG}", flush=True)
 
 
+# ------------------------------------------------------------------------------------------- verdict
+def add_verdict():
+    R = json.load(open(OUT_JSON))
+    a = R["pair_correlation"]["all"]
+    B = R["pair_budget"]
+    nullp = B["null_pairs_all_dots_window"]
+    narrow_ub = max(a["bump_ci95"][1], 0.0) * nullp
+    rd = R["thread_density"]["rods"]["thread"]
+    an = R["thread_density"]["anchors"]["thread"]
+    r_strip = {k: t["ratio_to_duplex"]["strip15_vs_rod_no_dot"] for k, t in rd.items() if "ratio_to_duplex" in t}
+    r_polar = {k: t["ratio_to_duplex"]["polar_vs_dot_rod"] for k, t in rd.items() if "ratio_to_duplex" in t}
+    a_polar = {k: t["ratio_to_duplex"].get("polar_vs_dot_rod") for k, t in an.items() if "ratio_to_duplex" in t}
+    R["verdict"] = dict(
+        hypothesis_5_supported=False,
+        summary=("Not supported. The dot population has no narrow excess of pairs at 85-110 A (g(r) is flat at "
+                 "~1.02 from 70 to 160 A, window minus flanks ~0). Rod-stream dot_pair_thread classes hold more "
+                 "85-110 A pairs than the whole data set has excess pairs, and anchor dot_pair classes (no thread) "
+                 "put 3x more pairs in the same window. Their threads carry 0.25-0.47x (strip) / 0.29-0.64x (polar) "
+                 "of a single duplex per A, not >= 2x. Anchor dot_pair_thread classes are 42-73 A dumbbells, too "
+                 "short for an edge-on ~106 A ring."),
+        g_all_window=a["g_window"], g_all_window_ci95=a["g_window_ci95"], g_all_flanks=a["g_flanks"],
+        bump_all=a["bump_window_minus_flanks"], bump_all_ci95=a["bump_ci95"],
+        narrow_excess_pairs_upper95=narrow_ub,
+        broad_excess_pairs_window=B["excess_pairs_all_dots_window"],
+        rods_dpt_pairs_window=B["rods_dpt"]["unique_detected_pairs_window"],
+        rods_dpt_pairs_window_rotation_null=B["rods_dpt"]["rotation_null_pairs_window"],
+        anchors_dot_pair_pairs_window=B["anchors_dot_pair"]["unique_detected_pairs_window"],
+        max_fraction_rods_dpt_window_pairs_from_narrow_excess=narrow_ub / max(B["rods_dpt"]["unique_detected_pairs_window"], 1),
+        thread_over_duplex_rods_strip15=r_strip, thread_over_duplex_rods_polar=r_polar,
+        thread_over_duplex_anchors_polar=a_polar,
+        repeat_34A="not discriminating: the rod_no_dot reference shows no 34 A peak in this on-axis periodogram at "
+                   "5.68 A/px, and thread middles are only 9-43 A long")
+    with open(OUT_JSON, "w") as fh:
+        json.dump(R, fh, indent=1, default=float)
+    print(json.dumps(R["verdict"], indent=1, default=float), flush=True)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["run", "figure", "density"])
+    ap.add_argument("stage", choices=["run", "figure", "density", "verdict"])
     a = ap.parse_args()
     if a.stage == "run":
         stage_run(a)
     elif a.stage == "figure":
         make_figure()
+    elif a.stage == "verdict":
+        add_verdict()
     else:
         for sname, sd in STREAMS.items():
             labels = load_labels(sd["labels"])
