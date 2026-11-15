@@ -557,6 +557,82 @@ workflow diagram with these counts, Table S1), census with bootstrap CIs, and a 
 
 ---
 
+### 13b. 3D of the dot-on-rod particles (W4), and what 3D can and cannot say
+
+**Why.** A1 could not separate a genuinely shorter attached duplex from a full one tilted out of plane. A 3D map
+has no projection foreshortening, so you chose a 3D reconstruction of the dot-on-rod particles.
+
+**What was run** (`scripts/35_dot_rod_3d.py`, workspace W4, free lane; Fig S6 core):
+1. **Particle sets** from the A1 2D groups:
+   - target: dot-on-rod 76,607
+   - real competitor: free rods 11,995
+   - decoys: lone-dot "haze" 83,669 and ice 8,382
+2. **Ab initio, one volume per set:** J51–J54.
+3. **Hetero refinement** J55 with hard classification. It kept 54,181 particles in the dot-on-rod class, but it did
+   **not** sort particles by 2D group: every class is 25–50 % dot-on-rod and 39–56 % haze.
+4. **NU refinement** J56, validation J57, orientation diagnostics J58.
+5. **PCA class_3D** J59: 10 classes, 3 components, 12 Å, as in Fig S7.
+6. **RELION phase-randomised FSC.**
+
+| Measure | Value |
+|---|---|
+| GSFSC 0.143: tight / spherical / no mask | 7.9 / 9.75 / 11.2 Å |
+| RELION phase-randomised: CryoSPARC mask / loose | 8.0 / **10.8 Å** (strongly mask-dependent; honest whole-particle figure ~11 Å) |
+| cFAR / SCF* | **0.17 / 0.70** (anisotropic, poor sampling; the particle is nearly planar) |
+
+![dot-on-rod NU map](figures/maps/dotrod_nu_3views.png)
+![free-rod control map](figures/maps/dotrod_free_3views.png)
+
+**How the reading was reached:**
+1. A 3D length analysis (`scripts/46_dotrod_3d_length.py`), challenged by two skeptics.
+2. A split reconstruction with the NU poses (`scripts/36_split_reconstruct.py`): 27,029 dot-class particles J61
+   and 24,280 haze particles J63.
+3. A comparison with the reference-free ab initio maps.
+4. Two independent analysts given only the maps and the questions, not my reading
+   (`results/dotrod_3d_length_verified.json`, `results/abinitio_kink_independent.json`).
+
+![split reconstruct](figures/qc/W4_split_reconstruct.png)
+![ab initio vs NU](figures/qc/W4_abinitio_vs_nu.png)
+
+**Results (only what survived review):**
+- **No closed loop, and no second sfGFP–DNA contact, in any 3D map at any contour.** Robust.
+- **A rigid out-of-plane tilt does not explain the short 2D rods.** The direction the 2D rod follows is tilted only
+  ~20–32° out of plane, so foreshortening accounts for ≤ 10–20 Å.
+- **The kinked "far arm" is in the data.** It is already present in the **reference-free** dot-class ab initio
+  (J51), with the same ~85° kink. NU refinement extended the arms another ~15–20 Å beyond its own starting
+  reference.
+- **The split test is uninformative.** J61 (dot-only) and J63 (haze-only) are near-identical to J56 (CC 0.99), but
+  shared poses imprint the reference onto any subset. The haze particles' own reference-free ab initio (J53)
+  contains rods with a *different* geometry.
+- **There is too much DNA for one duplex.** The rods outside the sfGFP lobe add up to **~240 Å, about 1.4
+  duplex-equivalents**. So the map is either an average over alternative DNA positions, or **sfGFP carrying two
+  separate DNA arms**. An open double adduct (each tetrazine clicked to a different ssDNA) would look like this,
+  and it would fit the gel's > 40 kDa bands.
+- **Lengths:**
+  - lobe → kink → far tip path is **~150–178 Å** from the lobe surface, roughly a 50 bp duplex if continuous
+  - free rods are straight for only **~107–119 Å** (~32 bp), plus a weakly connected compact blob at ~60–90°
+    whose identity (partial sfGFP or hooked DNA end) cannot be decided
+- **The sfGFP lobe is much more compact than a rigid sfGFP** at 12 Å (~10× smaller half-max volume). It is
+  probably blurred or partly occupied.
+
+**What 3D cannot decide here:**
+- whether attached DNA is shorter than 50 bp (the processing chain alone moves the length by ~40 Å)
+- whether the kink is inside one duplex or where two segments meet
+- the out-of-plane geometry (planar particle, cFAR 0.17)
+
+**Withdrawn:** my first 3D figure of a "65 Å attached rod". It measured a strongly tilted side arm, not the rod seen
+in 2D.
+
+**Net conclusion of the EM.** The crude reaction mixture on this grid contains:
+- free sfGFP
+- straight DNA rods ~110–120 Å long
+- heterogeneous, nearly planar sfGFP–DNA assemblies with kinked, open DNA
+
+It contains **no closed DNA loops** (open, edge-on-filed or window-clipped forms were all tested). Whether the
+assemblies are single-end adducts, double adducts or yielded loops is not decidable from these data. The bench
+tests in §13 (TCO-PEG5k chase, S1 nuclease, 1-Tet vs 2-Tet at matched yield, plus a non-reducing gel for
+double adducts) are the efficient way to decide.
+
 ## 14. Deviations from the plan / paper workflow
 
 | Plan / paper | What was done | Why |
@@ -567,6 +643,7 @@ workflow diagram with these counts, Table S1), census with bootstrap CIs, and a 
 | Hand-labelled ground truth | Not used | DNA vs protein not separable by eye; replaced by blind multi-reviewer consensus + real-coordinate statistics |
 | Chimera 3D (ab initio → hetero/NU → PCA class_3D → Topaz) | Stopped at gate G2 (§4) | No ring classes; the agreed fallback (census + 2D + free-DNA control) was taken |
 | Topaz re-pick | Installed (0.3.20) but not used | Nothing to train on: no chimera class |
+| Chimera 3D | Replaced by a dot-on-rod 3D (W4) with the paper's decoy/hetero/NU/PCA-class_3D core | Answers the attached-DNA question; no loop class exists to refine |
 
 ---
 
