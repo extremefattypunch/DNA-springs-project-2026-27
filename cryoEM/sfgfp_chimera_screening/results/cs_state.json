@@ -754,6 +754,162 @@
    "created": "2026-11-14T15:06:51",
    "finished": "2026-11-14T20:00:09",
    "run_s": 17560.807
+  },
+  "W4_dot_particles": {
+   "uid": "J46",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 A1-2D particles in 'dot' classes",
+   "parents": [
+    "J45"
+   ],
+   "rows_in": 223536,
+   "rows_out": 76607,
+   "classes": [
+    123,
+    130,
+    31,
+    147,
+    103,
+    114,
+    92,
+    145,
+    13,
+    52,
+    54,
+    138,
+    97,
+    146,
+    87
+   ],
+   "finished": "2026-11-14T22:05:54"
+  },
+  "W4_free_particles": {
+   "uid": "J47",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 A1-2D particles in 'free' classes",
+   "parents": [
+    "J45"
+   ],
+   "rows_in": 223536,
+   "rows_out": 11995,
+   "classes": [
+    133,
+    111,
+    30,
+    110,
+    8,
+    48,
+    64,
+    99,
+    49,
+    125,
+    47,
+    76,
+    86,
+    129,
+    93,
+    28
+   ],
+   "finished": "2026-11-14T22:05:58"
+  },
+  "W4_haze_particles": {
+   "uid": "J48",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 A1-2D particles in 'haze' classes",
+   "parents": [
+    "J45"
+   ],
+   "rows_in": 223536,
+   "rows_out": 83669,
+   "classes": [
+    105,
+    12
+   ],
+   "finished": "2026-11-14T22:06:02"
+  },
+  "W4_ice_particles": {
+   "uid": "J49",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 A1-2D particles in 'ice' classes",
+   "parents": [
+    "J45"
+   ],
+   "rows_in": 223536,
+   "rows_out": 8382,
+   "classes": [
+    58,
+    56,
+    67,
+    117,
+    23,
+    25,
+    37,
+    88
+   ],
+   "finished": "2026-11-14T22:06:06"
+  },
+  "W4_pooled_particles": {
+   "uid": "J50",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 pooled dot-on-rod + free rods + decoy particles",
+   "parents": [
+    "J45"
+   ],
+   "rows_in": 223536,
+   "rows_out": 180653,
+   "finished": "2026-11-14T22:06:11"
+  },
+  "W4_abinit_dot": {
+   "uid": "J51",
+   "type": "homo_abinit",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "W4 ab initio K=1: dot",
+   "parents": [
+    "J46"
+   ],
+   "created": "2026-11-14T22:06:12"
+  },
+  "W4_abinit_free": {
+   "uid": "J52",
+   "type": "homo_abinit",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "queued",
+   "title": "W4 ab initio K=1: free",
+   "parents": [
+    "J47"
+   ],
+   "created": "2026-11-14T22:06:22"
+  },
+  "W4_abinit_haze": {
+   "uid": "J53",
+   "type": "homo_abinit",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "created",
+   "title": "W4 ab initio K=1: haze (decoy)",
+   "parents": [
+    "J48"
+   ],
+   "created": "2026-11-14T22:06:28"
   }
  },
  "paid_gpu_h": 0.0
