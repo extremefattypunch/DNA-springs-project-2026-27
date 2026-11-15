@@ -1,0 +1,22 @@
+{
+ "type": "class_3D",
+ "lane": "Cannon-test",
+ "walltime": "08:00:00",
+ "connections": {
+  "particles": [
+   "J56",
+   "particles"
+  ],
+  "mask": [
+   "J56",
+   "mask"
+  ]
+ },
+ "params": {
+  "class3D_N_K": 10,
+  "class3D_init_mode": "PCA",
+  "class3D_PCA_num_components": 3,
+  "class3D_target_res": 12,
+  "class3D_force_hard_class": 1
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "type": "nonuniform_refine_new",
+ "lane": "Cannon-test",
+ "walltime": "06:00:00",
+ "connections": {
+  "particles": [
+   "J55",
+   "particles_class_0"
+  ],
+  "volume": [
+   "J55",
+   "volume_class_0"
+  ]
+ },
+ "params": {
+  "refine_symmetry": "C1",
+  "refine_res_init": 20
+ }
+}

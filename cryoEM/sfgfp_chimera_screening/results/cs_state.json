@@ -876,12 +876,14 @@
    "lane": "Cannon-test",
    "walltime": "04:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W4 ab initio K=1: dot",
    "parents": [
     "J46"
    ],
-   "created": "2026-11-14T22:06:12"
+   "created": "2026-11-14T22:06:12",
+   "finished": "2026-11-14T22:17:44",
+   "run_s": 652.666
   },
   "W4_abinit_free": {
    "uid": "J52",
@@ -890,12 +892,14 @@
    "lane": "Cannon-test",
    "walltime": "04:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "W4 ab initio K=1: free",
    "parents": [
     "J47"
    ],
-   "created": "2026-11-14T22:06:22"
+   "created": "2026-11-14T22:06:22",
+   "finished": "2026-11-14T22:17:44",
+   "run_s": 555.194
   },
   "W4_abinit_haze": {
    "uid": "J53",
@@ -904,12 +908,120 @@
    "lane": "Cannon-test",
    "walltime": "04:00:00",
    "num_gpu": 1,
-   "status": "created",
+   "status": "completed",
    "title": "W4 ab initio K=1: haze (decoy)",
    "parents": [
     "J48"
    ],
-   "created": "2026-11-14T22:06:28"
+   "created": "2026-11-14T22:06:28",
+   "finished": "2026-11-14T22:25:25",
+   "run_s": 516.372
+  },
+  "W4_abinit_ice": {
+   "uid": "J54",
+   "type": "homo_abinit",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "04:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 ab initio K=1: ice (decoy)",
+   "parents": [
+    "J49"
+   ],
+   "created": "2026-11-14T22:16:37",
+   "finished": "2026-11-14T22:27:25",
+   "run_s": 555.22
+  },
+  "W4_hetero": {
+   "uid": "J55",
+   "type": "hetero_refine",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "08:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 hetero refine: dot-on-rod + free rod + 2 decoys",
+   "parents": [
+    "J50",
+    "J51",
+    "J52",
+    "J53",
+    "J54"
+   ],
+   "created": "2026-11-14T22:27:26",
+   "finished": "2026-11-14T22:56:57",
+   "run_s": 1745.678,
+   "class_counts": {
+    "particles_class_0": 54181,
+    "particles_class_1": 42863,
+    "particles_class_2": 40651,
+    "particles_class_3": 42958
+   }
+  },
+  "W4_nu_dotrod": {
+   "uid": "J56",
+   "type": "nonuniform_refine_new",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "06:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 NU refine: sfGFP + attached DNA (dot-on-rod)",
+   "parents": [
+    "J55"
+   ],
+   "created": "2026-11-14T22:56:58",
+   "finished": "2026-11-14T23:01:04",
+   "run_s": 229.097
+  },
+  "W4_validation": {
+   "uid": "J57",
+   "type": "validation",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 validation (GSFSC, fresh mask)",
+   "parents": [
+    "J56"
+   ],
+   "created": "2026-11-14T23:01:05",
+   "finished": "2026-11-14T23:01:30",
+   "run_s": 11.127
+  },
+  "W4_orientdiag": {
+   "uid": "J58",
+   "type": "orientation_diagnostics",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "02:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 orientation diagnostics (cFAR, SCF)",
+   "parents": [
+    "J56"
+   ],
+   "created": "2026-11-14T23:01:31",
+   "finished": "2026-11-14T23:02:41",
+   "run_s": 38.685
+  },
+  "W4_class3D_pca": {
+   "uid": "J59",
+   "type": "class_3D",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "08:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 class_3D PCA: 10 classes, 3 components, 12 A (Fig S7-style)",
+   "parents": [
+    "J56"
+   ],
+   "created": "2026-11-14T23:02:42",
+   "finished": "2026-11-14T23:07:30",
+   "run_s": 255.898
   }
  },
  "paid_gpu_h": 0.0
