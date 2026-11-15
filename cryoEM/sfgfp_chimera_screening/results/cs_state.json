@@ -1022,6 +1022,66 @@
    "created": "2026-11-14T23:02:42",
    "finished": "2026-11-14T23:07:30",
    "run_s": 255.898
+  },
+  "W4_nu_dot_only": {
+   "uid": "J60",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 NU particles from A1 'dot' 2D classes only (NU poses kept)",
+   "parents": [
+    "J56"
+   ],
+   "rows_in": 54158,
+   "rows_out": 27029,
+   "finished": "2026-11-15T00:18:28"
+  },
+  "W4_recon_dot": {
+   "uid": "J61",
+   "type": "homo_reconstruct",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "01:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 reconstruct-only with NU poses: dot particles",
+   "parents": [
+    "J56",
+    "J60"
+   ],
+   "created": "2026-11-15T00:18:28",
+   "finished": "2026-11-15T00:20:16",
+   "run_s": 32.914
+  },
+  "W4_nu_haze_only": {
+   "uid": "J62",
+   "type": "external",
+   "ws": "W4",
+   "status": "completed",
+   "title": "W4 NU particles from A1 'haze' 2D classes only (NU poses kept)",
+   "parents": [
+    "J56"
+   ],
+   "rows_in": 54158,
+   "rows_out": 24280,
+   "finished": "2026-11-15T00:20:19"
+  },
+  "W4_recon_haze": {
+   "uid": "J63",
+   "type": "homo_reconstruct",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "01:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "W4 reconstruct-only with NU poses: haze particles",
+   "parents": [
+    "J56",
+    "J62"
+   ],
+   "created": "2026-11-15T00:20:20",
+   "finished": "2026-11-15T00:22:51",
+   "run_s": 95.397
   }
  },
  "paid_gpu_h": 0.0
