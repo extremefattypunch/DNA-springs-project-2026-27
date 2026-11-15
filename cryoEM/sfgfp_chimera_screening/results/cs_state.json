@@ -729,13 +729,31 @@
    "lane": "Cannon-test",
    "walltime": "04:00:00",
    "num_gpu": 1,
-   "status": "queued",
+   "status": "completed",
    "title": "A1 extract 320 px @1.42 -> 160 (454 A box), no shift recentring",
    "parents": [
     "J17",
     "J43"
    ],
-   "created": "2026-11-14T14:22:35"
+   "created": "2026-11-14T14:22:35",
+   "finished": "2026-11-14T15:06:50",
+   "run_s": 2625.711
+  },
+  "A1_2D": {
+   "uid": "J45",
+   "type": "class_2D_new",
+   "ws": "W4",
+   "lane": "Cannon-test",
+   "walltime": "12:00:00",
+   "num_gpu": 1,
+   "status": "completed",
+   "title": "A1 window-free 2D: 150 classes, 400 A window, no recentring",
+   "parents": [
+    "J44"
+   ],
+   "created": "2026-11-14T15:06:51",
+   "finished": "2026-11-14T20:00:09",
+   "run_s": 17560.807
   }
  },
  "paid_gpu_h": 0.0
