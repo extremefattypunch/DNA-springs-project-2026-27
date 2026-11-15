@@ -1,0 +1,31 @@
+# Fig S6 workflow thumbnails: final CryoSPARC NU maps (FSC-filtered, unsharpened _volume_map.mrc of the final
+# iteration), surface at the contour enclosing 65,000 A^3 (same convention as 33_render_W3_duplex.cxc / 46_*).
+# Three orthogonal views each; 50_figS6_tableS1.py picks one.  Run offscreen on a CPU node:
+#   $CHIMERAX --nogui --offscreen --silent scripts/50_figS6_thumbs.cxc
+set bgColor white
+lighting soft
+graphics silhouettes true width 2
+open /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_volume_map.mrc
+volume #1 encloseVolume 65000 style surface color #2a78d6 step 1
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W3_v1.png width 700 height 700 supersample 2
+turn y 90
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W3_v2.png width 700 height 700 supersample 2
+turn x 90
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W3_v3.png width 700 height 700 supersample 2
+measure volume #1
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_volume_map.mrc
+volume #1 encloseVolume 65000 style surface color #1baf7a step 1
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W4_v1.png width 700 height 700 supersample 2
+turn y 90
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W4_v2.png width 700 height 700 supersample 2
+turn x 90
+view
+save /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/renders/W4_v3.png width 700 height 700 supersample 2
+measure volume #1
+exit

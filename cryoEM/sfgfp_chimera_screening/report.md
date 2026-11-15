@@ -21,6 +21,7 @@ Data locations and purge dates: `DATA.md`.*
 - [11. Why I asked for the original gel, and what it showed](#11-why-i-asked-for-the-original-gel-and-what-it-showed)
 - [12. Reconciling gel and EM (hypothesis panel)](#12-reconciling-gel-and-em-hypothesis-panel)
 - [13. What is running now and what comes next](#13-what-is-running-now-and-what-comes-next)
+- [16. Final figures (Fig S5/S6/S7, Table S1, census)](#16-final-figures-day-et-al-2025-fig-s5--s6--s7--table-s1-analogues)
 - [14. Deviations from the plan / paper workflow](#14-deviations-from-the-plan--paper-workflow)
 - [15. Mistakes I made and corrected](#15-mistakes-i-made-and-corrected)
 - [Appendix: job table, compute, files](#appendix-job-table-compute-files)
@@ -52,7 +53,7 @@ against the listing, then the raw tree was made read-only.
 | | |
 |---|---|
 | Microscope / detector | Glacios **200 kV**, Falcon 4i behind an energy filter (10 eV slit), Cs 2.7 mm |
-| Magnification / pixel | 165,000× nominal, **0.71 Å/px** |
+| Magnification / pixel | 165,000× nominal, **0.71 Å/px** used for processing (your calibration). **Open question:** the EPU xml of all 9,019 movies states **0.7175 Å/px**. If that is the correct calibration, every Å value in this report scales by ×1.0106 (e.g. 8.7 → 8.8 Å). Please confirm with the facility |
 | Movies | **9,019** in 20 grid squares, 50 fractions, 2.94 s, LZW TIFF 4096², **uint8 raw counts** |
 | Dose | 39.72 e/Å² used (your vacuum calibration); 28.2 e/Å² is what is *detected through the sample*, 71 %: consistent with ice + filter loss |
 
@@ -259,7 +260,7 @@ Results are in `results/class2d_blind_review_W2.json`, with per-class labels in 
 | Rod stream (541,047 in reviewed classes) | | Anchor stream (603,273) | |
 |---|---|---|---|
 | dot at one end of a ≥100 Å rod | 26.1 % | two separate dots, no connection | 61.9 % |
-| ice / contamination | 20.0 % | single dot (free sfGFP) | 17.8 % |
+| ice / contamination | 20.0 % | single dot (free sfGFP) | 17.7 % |
 | rod, no dot (free DNA) | 19.0 % | dot + short (<100 Å) rod | 12.3 % |
 | two dots + faint thread | 15.5 % | ice | 4.5 % |
 | two dots, unconnected | 6.9 % | two dots + thread | 3.5 % |
@@ -270,8 +271,8 @@ Results are in `results/class2d_blind_review_W2.json`, with per-class labels in 
    hole in any of 304 classes**, and none cast a closed_loop vote, so no closed-loop call needed a skeptic.
    - They did note borderline shapes. Small "bent or hooked but open" anchor classes 16, 85 and 130 and small
      hooks in anchors 6 and 116 were judged too small (< ~60 Å) and open to be a loop.
-   - Rod classes 70, 76, 107, 108 and 39 show "a dot at the edge of a diffuse ~70 Å haze" with no hole, and were
-     labelled unclear.
+   - Rod classes 70, 76, 107, 108 and 39 show "a dot at the edge of a diffuse ~70 Å haze" with no hole. Classes
+     70, 76, 107 and 108 were labelled unclear; class 39 was labelled noise_junk by majority.
 2. **The objective hole detector agrees,** with a caveat. `hole = 0` for every class, but the detector (enclosed
    background ≥ 30 Å at z > 2) has **not been validated on a positive control**, such as projected L6 rings at
    12 Å in the same window, so its sensitivity is unknown.
@@ -342,8 +343,10 @@ present. It tests whether the pipeline, data and CTF support a real 3D reconstru
 2. **Three decoy ab initios** from this dataset's own junk (as in the paper): noise J35, ice J36, unconnected dot
    pairs J37.
 3. **Hetero refinement** J38 of the pooled 283,586 particles against all four volumes (hard classification). The
-   duplex class kept 64,036; the decoys took 54,847 / 100,397 / 64,306.
-4. **NU refinement** J39.
+   duplex class kept 64,036; the decoy-seeded classes took 54,847 / 100,397 / 64,306.
+4. **NU refinement** J39: 64,013 final particles. By their round-1 2D label these are **72 % rod_no_dot and 28 %
+   from the decoy input sets** (noise 12,305; unconnected dot pairs 4,019; ice 1,358). The hetero refinement did not
+   fully clean the set, which is why "free-DNA control" is used below in quotation marks.
 5. **Validation** J40, **orientation diagnostics** J41, **local resolution** J42.
 6. **RELION 3.1 post-processing** with phase randomisation (`scripts/32_relion_postprocess.sh`).
 
@@ -633,6 +636,75 @@ assemblies are single-end adducts, double adducts or yielded loops is not decida
 tests in §13 (TCO-PEG5k chase, S1 nuclease, 1-Tet vs 2-Tet at matched yield, plus a non-reducing gel for
 double adducts) are the efficient way to decide.
 
+## 16. Final figures (Day et al. 2025 Fig S5 / S6 / S7 / Table S1 analogues)
+
+All figures were built offline from the CryoSPARC/RELION output files. Every plotted number has a source recorded in
+the JSON next to each figure. All of them went through an independent fact-check, the fixes it required, and a
+re-verification. Scripts: `scripts/50_*`–`55_*`.
+
+### Fig S6 analogue: processing workflow
+
+Every junction carries particle counts and resolutions. It shows the gate-G2 decision (no ring classes → agreed
+fallback), the W3 rod_no_dot "free DNA" control, the A1 window-free branch and the W4 dot-on-rod branch, with decoy
+inputs and hetero side exits. Hetero classes are labelled by the ab initio volume that seeded them, because their
+composition is mixed (§13b).
+
+![Fig S6](figures/final/figS6_workflow.png)
+
+### Fig S5 analogues: validation of the two maps
+
+Each figure has four panels:
+- (A) RELION local-resolution-coloured surface
+- (B) the 32 most-populated 2D classes behind the final particles, outlined by consensus label
+- (C) gold-standard FSC: CryoSPARC no-mask / spherical / tight, plus RELION phase-randomisation-corrected with two
+  masks
+- (D) viewing-direction distribution, plus a summary box
+
+The map–model FSC is omitted for both maps:
+- **W3:** a rigid B-DNA fit places the rod reproducibly, but its helical register (groove phase and polarity) is
+  undetermined at 8–9 Å, and that moves d(FSC = 0.5) by 2.1 Å.
+- **W4:** no defensible model exists for a heterogeneous average.
+
+![Fig S5 W3](figures/final/figS5_W3_duplex.png)
+![Fig S5 W4](figures/final/figS5_W4_dotrod.png)
+
+### Fig S7 analogue: 3D classification of the dot-on-rod particles
+
+The 10 PCA class_3D volumes (J59) are shown in the NU frame at one common contour. **No class shows a closed loop.**
+Several classes split into separate pieces at that contour (caption, generated from the component volumes).
+
+![Fig S7](figures/final/figS7_class3d.png)
+
+### Population census (fractions of picked objects, with 95 % bootstrap CIs over micrographs)
+
+- **Pooled CIs are narrow** (±0.1–0.7 points).
+- **Variation between grid squares is large and real:** 14–221× what micrograph sampling allows. For example,
+  rod-stream free rods range 13.4–28.2 % across squares, and anchor dot pairs 46.6–78.5 %.
+- **The composition tracks crowding.** Anchor dot pairs correlate with independently detected dots per micrograph
+  at ρ +0.95.
+- **Crowding and ice cannot be separated across squares** (median ice 1.06–1.09; ρ −0.91).
+- **These are fractions of picked objects, not molar ratios.**
+
+![census](figures/final/census.png)
+
+### Table S1 analogue
+
+`results/final/tableS1.md` (CSV and per-cell sources alongside). Key rows:
+
+| | W3 rod_no_dot ("free DNA") control, J39 | W4 dot-on-rod, J56 |
+|---|---|---|
+| Magnification / voltage / exposure | 165,000× / 200 kV / 39.72 e⁻/Å² | same |
+| Defocus (p5–p95) | 0.74–2.11 µm | same |
+| Pixel size | 0.71 Å (processing; EPU xml 0.7175 — to be confirmed) / 1.42 / 2.84 Å | same |
+| Micrographs (collected / curated / in map) | 9,019 / 8,036 / 7,866 | 9,019 / 8,036 / 7,831 |
+| Final particles | 64,013 (72 % rod_no_dot, 28 % decoy-input) | 54,158 (50 % DOT, 45 % haze) |
+| Resolution, FSC 0.143 | 7.8 Å CryoSPARC tight / **8.7 Å RELION loose** | 7.9 Å CryoSPARC tight / **10.8 Å RELION loose** |
+| Local resolution (p5–p95, tight mask) | 8.2–10.3 Å (median 9.1) | 8.7–11.6 Å (median 10.3) |
+| cFAR / SCF* | 0.27 / 0.94 | 0.17 / 0.70 |
+| Atomic model | not built (rod + lobe, no secondary structure resolved) | not built (heterogeneous anisotropic average) |
+
+---
+
 ## 14. Deviations from the plan / paper workflow
 
 | Plan / paper | What was done | Why |
@@ -681,7 +753,7 @@ double adducts) are the efficient way to decide.
 | W1 | J8 import 5.1 · J9 split · J10/J12 motion 263/270 · J15/J16 CTF 181/181 · J17 curated (External) |
 | W2 | J18/J19 pick 60/37 · J20/J21 superseded · J22/J24/J25 External filters · J23/J26 extract 46/11 · **J27 rods 2D 418 · J28 anchors 2D 245** |
 | W3 | J29–J33 External sets · J34–J37 ab initio · J38 hetero 37.5 · J39 NU 5.3 · J40 validation · J41 orientation diagnostics · J42 local res |
-| W4 | J43 A1 re-centred (External) · J44 A1 extract · (A1 2D next) |
+| W4 | J43 A1 re-centred (External) · J44 A1 extract 44 · J45 A1 2D 293 · J46–J50 External sets · J51–J54 ab initio · J55 hetero 29 · J56 NU 4 · J57 validation · J58 orientation diagnostics · J59 PCA class_3D 5 · J60/J62 split sets · J61/J63 reconstruct-only |
 
 **Compute:** 0 paid GPU-h. Free gpu_test MIG slices for all GPU work; CPU analyses on `test`. The CryoSPARC
 master is its own `shared` job (60306692, until Mon 2026-11-16 12:23).

@@ -1,0 +1,704 @@
+{
+ "columns": [
+  "W3 rod_no_dot (\u201cfree DNA\u201d) control, J39",
+  "W4 dot-on-rod (J56)"
+ ],
+ "cells": {
+  "Magnification": {
+   "W3": {
+    "numbers": {
+     "mag": {
+      "value": 165000,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_*/Data/*.xml (tally cached in /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json)",
+      "how": "<NominalMagnification>; {'165000': 9019} over 9019 xml"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "mag": {
+      "value": 165000,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_*/Data/*.xml (tally cached in /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json)",
+      "how": "<NominalMagnification>; {'165000': 9019} over 9019 xml"
+     }
+    }
+   }
+  },
+  "Voltage (kV)": {
+   "W3": {
+    "numbers": {
+     "kv": {
+      "value": 200,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "accel_kv"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "kv": {
+      "value": 200,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "accel_kv"
+     }
+    }
+   }
+  },
+  "Electron exposure (e\u2013/\u00c5\u00b2)": {
+   "W3": {
+    "numbers": {
+     "dose": {
+      "value": 39.72,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "dose_e_per_A2_used (vacuum calibration)"
+     },
+     "dose_detected": {
+      "value": 28.21,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "dose_detected_through_sample_e_per_A2"
+     },
+     "fractions": {
+      "value": 50,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "fractions"
+     },
+     "exposure_s": {
+      "value": 2.936,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "exposure_s"
+     },
+     "dose_cs": {
+      "value": 39.720001220703125,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "mscope_params__total_dose_e_per_A2"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "dose": {
+      "value": 39.72,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "dose_e_per_A2_used (vacuum calibration)"
+     },
+     "dose_detected": {
+      "value": 28.21,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "dose_detected_through_sample_e_per_A2"
+     },
+     "fractions": {
+      "value": 50,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "fractions"
+     },
+     "exposure_s": {
+      "value": 2.936,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "exposure_s"
+     },
+     "dose_cs": {
+      "value": 39.720001220703125,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "mscope_params__total_dose_e_per_A2"
+     }
+    }
+   }
+  },
+  "Defocus range (\u03bcm, underfocus)": {
+   "W3": {
+    "numbers": {
+     "df_p5": {
+      "value": 0.7441891967773437,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "p5 of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "df_p95": {
+      "value": 2.1140154785156247,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "p95 of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "df_median": {
+      "value": 1.409989794921875,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "median of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "n_curated_npz": {
+      "value": 8036,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "rows"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "df_p5": {
+      "value": 0.7441891967773437,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "p5 of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "df_p95": {
+      "value": 2.1140154785156247,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "p95 of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "df_median": {
+      "value": 1.409989794921875,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "median of (ctf__df1_A+ctf__df2_A)/2, um"
+     },
+     "n_curated_npz": {
+      "value": 8036,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "rows"
+     }
+    }
+   }
+  },
+  "Pixel size (\u00c5)": {
+   "W3": {
+    "numbers": {
+     "apix_phys": {
+      "value": 0.71,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "pixel_size_A"
+     },
+     "apix_epu": {
+      "value": 0.7175,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+      "how": "EPU <pixelSize><x> calibration; tally {'0.7175': 9019}"
+     },
+     "apix_epu_n": {
+      "value": 9019,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+      "how": "number of EPU xml files with that calibration"
+     },
+     "apix_scale": {
+      "value": 1.0105633802816902,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json + /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "apix_epu / apix_phys (0.71 used in processing)"
+     },
+     "apix_movie_cs": {
+      "value": 0.7099999785423279,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "movie_blob__psize_A (unique)"
+     },
+     "apix_mic": {
+      "value": 1.4199999570846558,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "micrograph_blob__psize_A (unique)"
+     },
+     "W3_apix": {
+      "value": 2.8399999141693115,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs",
+      "how": "blob/psize_A (unique)"
+     },
+     "W3_box": {
+      "value": 128,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs",
+      "how": "blob/shape[0]"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "apix_phys": {
+      "value": 0.71,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "pixel_size_A"
+     },
+     "apix_epu": {
+      "value": 0.7175,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+      "how": "EPU <pixelSize><x> calibration; tally {'0.7175': 9019}"
+     },
+     "apix_epu_n": {
+      "value": 9019,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+      "how": "number of EPU xml files with that calibration"
+     },
+     "apix_scale": {
+      "value": 1.0105633802816902,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json + /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "apix_epu / apix_phys (0.71 used in processing)"
+     },
+     "apix_movie_cs": {
+      "value": 0.7099999785423279,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "movie_blob__psize_A (unique)"
+     },
+     "apix_mic": {
+      "value": 1.4199999570846558,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+      "how": "micrograph_blob__psize_A (unique)"
+     },
+     "W4_apix": {
+      "value": 2.8399999141693115,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+      "how": "blob/psize_A (unique)"
+     },
+     "W4_box": {
+      "value": 160,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+      "how": "blob/shape[0]"
+     }
+    }
+   }
+  },
+  "Symmetry imposed": {
+   "W3": {
+    "numbers": {
+     "W3_sym": {
+      "value": "C1",
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/job.json",
+      "how": "spec.params.refine_symmetry"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_sym": {
+      "value": "C1",
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/job.json",
+      "how": "spec.params.refine_symmetry"
+     }
+    }
+   }
+  },
+  "Micrographs (collected / curated / contributing to map)": {
+   "W3": {
+    "numbers": {
+     "movies": {
+      "value": 9019,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "movies"
+     },
+     "curated": {
+      "value": 8036,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J17/job.json",
+      "how": "spec.outputs.exposures.num_items"
+     },
+     "W3_mics": {
+      "value": 7866,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_passthrough_particles.cs",
+      "how": "unique location/micrograph_uid of the uids in J39_003_particles.cs"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "movies": {
+      "value": 9019,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+      "how": "movies"
+     },
+     "curated": {
+      "value": 8036,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J17/job.json",
+      "how": "spec.outputs.exposures.num_items"
+     },
+     "W4_mics": {
+      "value": 7831,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_passthrough_particles.cs",
+      "how": "unique location/micrograph_uid of the uids in J56_003_particles.cs"
+     }
+    }
+   }
+  },
+  "Initial particle images (no.)": {
+   "W3": {
+    "numbers": {
+     "rod_picks": {
+      "value": 1583293,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J18/job.json",
+      "how": "spec.outputs.particles.num_items"
+     },
+     "rod_power": {
+      "value": 791644,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+      "how": "jobs.W2_power_rods.rows_out (J22)"
+     },
+     "rod_extract": {
+      "value": 606539,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J23/job.json",
+      "how": "spec.outputs.particles.num_items"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "rod_picks": {
+      "value": 1583293,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J18/job.json",
+      "how": "spec.outputs.particles.num_items"
+     },
+     "A1_recentred": {
+      "value": 224312,
+      "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+      "how": "jobs.A1_recentred.rows_out (J43)"
+     },
+     "A1_extract": {
+      "value": 224068,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J44/job.json",
+      "how": "spec.outputs.particles.num_items"
+     }
+    }
+   }
+  },
+  "Final particle images (no.)": {
+   "W3": {
+    "numbers": {
+     "W3_final_ptcl": {
+      "value": 64013,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs",
+      "how": "rows"
+     },
+     "W3_nu": {
+      "value": 64013,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/job.json",
+      "how": "spec.outputs.particles.num_items"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_final_ptcl": {
+      "value": 54158,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+      "how": "rows"
+     },
+     "W4_nu": {
+      "value": 54158,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/job.json",
+      "how": "spec.outputs.particles.num_items"
+     }
+    }
+   }
+  },
+  "Map resolution (\u00c5)": {
+   "W3": {
+    "numbers": {
+     "W3_cs_tight": {
+      "value": 7.755966988297678,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_resmask' vs 'frequency' (linear interpolation)"
+     },
+     "W3_rel_loose": {
+      "value": 8.655238,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     },
+     "W3_rel_csmask": {
+      "value": 7.902608,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     },
+     "W3_cs_nomask": {
+      "value": 9.696254483725026,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+     },
+     "W3_cs_sph": {
+      "value": 8.918678107371205,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_sphericalmask' vs 'frequency' (linear interpolation)"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_cs_tight": {
+      "value": 7.89312215634977,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_resmask' vs 'frequency' (linear interpolation)"
+     },
+     "W4_rel_loose": {
+      "value": 10.819047,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     },
+     "W4_rel_csmask": {
+      "value": 7.97193,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     },
+     "W4_cs_nomask": {
+      "value": 11.24471312659401,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+     },
+     "W4_cs_sph": {
+      "value": 9.754175218679329,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_sphericalmask' vs 'frequency' (linear interpolation)"
+     }
+    }
+   }
+  },
+  "    FSC threshold": {
+   "W3": {
+    "note": "Day et al. 2025 Table S1 convention; gold-standard half maps"
+   },
+   "W4": {
+    "note": "Day et al. 2025 Table S1 convention; gold-standard half maps"
+   }
+  },
+  "Map resolution, other masks (\u00c5)": {
+   "W3": {
+    "numbers": {
+     "W3_cs_nomask": {
+      "value": 9.696254483725026,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+     },
+     "W3_cs_sph": {
+      "value": 8.918678107371205,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_sphericalmask' vs 'frequency' (linear interpolation)"
+     },
+     "W3_rel_csmask": {
+      "value": 7.902608,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_cs_nomask": {
+      "value": 11.24471312659401,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+     },
+     "W4_cs_sph": {
+      "value": 9.754175218679329,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+      "how": "first 0.143 crossing of column 'fsc_sphericalmask' vs 'frequency' (linear interpolation)"
+     },
+     "W4_rel_csmask": {
+      "value": 7.97193,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star",
+      "how": "data_general _rlnFinalResolution"
+     }
+    }
+   }
+  },
+  "Map resolution range (\u00c5)": {
+   "W3": {
+    "numbers": {
+     "W3_locres_rel": {
+      "value": [
+       8.205896377563477,
+       9.109270095825195,
+       10.265039443969727
+      ],
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/relion_locres.mrc within /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc_mask.mrc > 0.5",
+      "how": "p5 / median / p95 of RELION 3.1 --locres values"
+     },
+     "W3_locres_cs": {
+      "value": [
+       7.416733741760254,
+       11.383713722229004,
+       14.143706321716309
+      ],
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J42/J42_map_locres.mrc within /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc_mask.mrc > 0.5",
+      "how": "p5 / median / p95 of CryoSPARC Local Resolution (J42)"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_locres_rel": {
+      "value": [
+       8.684439659118652,
+       10.318194389343262,
+       11.611451148986816
+      ],
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/relion_locres.mrc within /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc_mask.mrc > 0.5",
+      "how": "p5 / median / p95 of RELION 3.1 --locres values"
+     }
+    }
+   }
+  },
+  "Orientation: cFAR / SCF*": {
+   "W3": {
+    "numbers": {
+     "W3_cfar": {
+      "value": 0.2661,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J41/events.bson",
+      "how": "event text 'cFAR: x' (job event log)"
+     },
+     "W3_scf": {
+      "value": 0.93504,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J41/events.bson",
+      "how": "event text 'SCF*: x' (job event log)"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_cfar": {
+      "value": 0.17038,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J58/events.bson",
+      "how": "event text 'cFAR: x' (job event log)"
+     },
+     "W4_scf": {
+      "value": 0.70224,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J58/events.bson",
+      "how": "event text 'SCF*: x' (job event log)"
+     }
+    }
+   }
+  },
+  "Initial model used (PDB code)": {
+   "W3": {
+    "note": "report.md \u00a710 (map reading)"
+   },
+   "W4": {
+    "note": "report.md \u00a713b (heterogeneity, anisotropy)"
+   }
+  },
+  "Model resolution (\u00c5)": {
+   "W3": {
+    "note": "no model"
+   },
+   "W4": {
+    "note": "no model"
+   }
+  },
+  "Map sharpening B factor (\u00c5\u00b2)": {
+   "W3": {
+    "numbers": {
+     "W3_B_csmask": {
+      "value": -1048.24128,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star",
+      "how": "data_general _rlnBfactorUsedForSharpening"
+     },
+     "W3_B_loose": {
+      "value": -925.5453,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star",
+      "how": "data_general _rlnBfactorUsedForSharpening"
+     },
+     "W3_guinier_r_csmask": {
+      "value": 0.744172,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star",
+      "how": "data_general _rlnCorrelationFitGuinierPlot"
+     },
+     "W3_guinier_r_loose": {
+      "value": 0.919545,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star",
+      "how": "data_general _rlnCorrelationFitGuinierPlot"
+     }
+    }
+   },
+   "W4": {
+    "numbers": {
+     "W4_B_csmask": {
+      "value": -713.69963,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star",
+      "how": "data_general _rlnBfactorUsedForSharpening"
+     },
+     "W4_B_loose": {
+      "value": -823.32003,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star",
+      "how": "data_general _rlnBfactorUsedForSharpening"
+     },
+     "W4_guinier_r_csmask": {
+      "value": 0.796019,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star",
+      "how": "data_general _rlnCorrelationFitGuinierPlot"
+     },
+     "W4_guinier_r_loose": {
+      "value": 0.758674,
+      "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star",
+      "how": "data_general _rlnCorrelationFitGuinierPlot"
+     }
+    }
+   }
+  },
+  "Model composition: non-hydrogen atoms / residues / ligands": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "B factors (\u00c5\u00b2)": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "R.m.s. deviations: bond lengths (\u00c5) / bond angles (\u00b0)": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "MolProbity score": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "Clashscore": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "Poor rotamers (%)": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  },
+  "Ramachandran plot: favored / allowed / disallowed (%)": {
+   "W3": {
+    "note": "no atomic model; see 'Initial model used'"
+   },
+   "W4": {
+    "note": "no atomic model; see 'Initial model used'"
+   }
+  }
+ },
+ "pixel_size_note": "Pixel size: processed with 0.71 \u00c5/px (user screenshot); EPU xml calibration 0.7175 \u00c5/px (all 9,019 movies) \u2014 if 0.7175 is correct, all \u00c5 values scale by \u00d71.0106; to be confirmed with the facility.",
+ "pixel_size_note_numbers": {
+  "apix_phys": {
+   "value": 0.71,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "pixel_size_A"
+  },
+  "apix_epu": {
+   "value": 0.7175,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+   "how": "EPU <pixelSize><x> calibration; tally {'0.7175': 9019}"
+  },
+  "apix_epu_n": {
+   "value": 9019,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+   "how": "number of EPU xml files with that calibration"
+  },
+  "apix_epu_nxml": {
+   "value": 9019,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+   "how": "n_xml"
+  },
+  "apix_scale": {
+   "value": 1.0105633802816902,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json + /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "apix_epu / apix_phys (0.71 used in processing)"
+  }
+ },
+ "script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/50_figS6_tableS1.py"
+}

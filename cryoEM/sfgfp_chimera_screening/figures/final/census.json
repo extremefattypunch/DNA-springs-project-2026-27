@@ -1,0 +1,897 @@
+{
+ "script": "scripts/51_census_bootstrap.py",
+ "n_boot": 2000,
+ "seed": 20261115,
+ "exposures": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+ "n_curated": 8036,
+ "grid_square_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_*/Data/*_Fractions.tiff",
+ "n_micrographs_unmapped": 0,
+ "square_order_source": "results/raw_inventory.csv",
+ "streams": {
+  "rods": {
+   "job": "J27",
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_2D_rods__particles.npz",
+   "labels_source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv",
+   "micrographs": "all curated micrographs (J17)",
+   "picker": "J18 ellipse blob 20-180 A, top 50 % local power per defocus bin (J22), 200 A 2D window",
+   "n_particles": 546701,
+   "n_labelled": 541047,
+   "n_unreviewed_small_classes": 5654,
+   "n_micrographs": 8036,
+   "n_micrographs_with_labelled_particles": 8036,
+   "n_squares": 20,
+   "heterogeneity": {
+    "dot_long_rod": {
+     "square_min": 0.2189,
+     "square_max": 0.3156,
+     "square_min_id": "GridSquare_12363381",
+     "square_max_id": "GridSquare_12363472",
+     "between_square_sd": 0.0266,
+     "median_within_square_boot_sd": 0.0038,
+     "Q": 922.7,
+     "df": 19,
+     "Q_over_df": 48.56,
+     "p_chi2": 1.6636962417866734e-183,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.135,
+      "p": 0.5694186911507699
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.16,
+      "p": 0.5013998734910126
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.605,
+      "p": 0.004753100824093811
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.699,
+      "p": 0.0006016416290038306
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": 0.05,
+      "p": 0.8351690405914345
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.029,
+      "p": 0.9048224147367736
+     }
+    },
+    "dot_short_rod": {
+     "square_min": 0.0106,
+     "square_max": 0.0344,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363449",
+     "between_square_sd": 0.0055,
+     "median_within_square_boot_sd": 0.001,
+     "Q": 386.4,
+     "df": 19,
+     "Q_over_df": 20.34,
+     "p_chi2": 2.934969563892895e-70,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.614,
+      "p": 0.004013734729903665
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.633,
+      "p": 0.0027645492907271032
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.95,
+      "p": 1.446690176570298e-10
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.845,
+      "p": 2.7376438111929385e-06
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.351,
+      "p": 0.12927687888868283
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.122,
+      "p": 0.6089566221649011
+     }
+    },
+    "rod_no_dot": {
+     "square_min": 0.1337,
+     "square_max": 0.2816,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363472",
+     "between_square_sd": 0.0405,
+     "median_within_square_boot_sd": 0.0042,
+     "Q": 1470.2,
+     "df": 19,
+     "Q_over_df": 77.38,
+     "p_chi2": 1.1290308659567048e-300,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.505,
+      "p": 0.023059229474174218
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.534,
+      "p": 0.015325290110457216
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.86,
+      "p": 1.1567230024978784e-06
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.842,
+      "p": 3.2174929874707044e-06
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.044,
+      "p": 0.8549318446168459
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.131,
+      "p": 0.5824730901969897
+     }
+    },
+    "dot_pair_thread": {
+     "square_min": 0.0551,
+     "square_max": 0.2507,
+     "square_min_id": "GridSquare_12363449",
+     "square_max_id": "GridSquare_12363292",
+     "between_square_sd": 0.0501,
+     "median_within_square_boot_sd": 0.0043,
+     "Q": 4193.2,
+     "df": 19,
+     "Q_over_df": 220.69,
+     "p_chi2": 0.0,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": 0.68,
+      "p": 0.000978281723987189
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": 0.704,
+      "p": 0.0005306244835289322
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": 0.937,
+      "p": 1.2059368966099284e-09
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": -0.868,
+      "p": 7.239120255573907e-07
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": 0.117,
+      "p": 0.6218508093328546
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.215,
+      "p": 0.362573887024551
+     }
+    },
+    "dot_pair": {
+     "square_min": 0.0473,
+     "square_max": 0.0891,
+     "square_min_id": "GridSquare_12363449",
+     "square_max_id": "GridSquare_12363292",
+     "between_square_sd": 0.0102,
+     "median_within_square_boot_sd": 0.0018,
+     "Q": 547.9,
+     "df": 19,
+     "Q_over_df": 28.84,
+     "p_chi2": 4.8709093982129285e-104,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": 0.821,
+      "p": 9.148582181124784e-06
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": 0.828,
+      "p": 6.481521404438981e-06
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": 0.926,
+      "p": 4.644139791699125e-09
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": -0.844,
+      "p": 2.969127186415908e-06
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": 0.261,
+      "p": 0.2672337514357944
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.308,
+      "p": 0.18605556077810148
+     }
+    },
+    "ice_contaminant": {
+     "square_min": 0.1157,
+     "square_max": 0.2936,
+     "square_min_id": "GridSquare_12363472",
+     "square_max_id": "GridSquare_12363381",
+     "between_square_sd": 0.0446,
+     "median_within_square_boot_sd": 0.0052,
+     "Q": 1258.7,
+     "df": 19,
+     "Q_over_df": 66.25,
+     "p_chi2": 2.5463361041011873e-255,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": 0.101,
+      "p": 0.6725564354857819
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": 0.132,
+      "p": 0.5797129143678609
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": 0.589,
+      "p": 0.006233369103076914
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": -0.62,
+      "p": 0.003575852944413449
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.029,
+      "p": 0.9046795920610426
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.017,
+      "p": 0.9448174502147446
+     }
+    },
+    "noise_junk": {
+     "square_min": 0.0376,
+     "square_max": 0.1088,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363543",
+     "between_square_sd": 0.0191,
+     "median_within_square_boot_sd": 0.0033,
+     "Q": 521.0,
+     "df": 19,
+     "Q_over_df": 27.42,
+     "p_chi2": 2.200787075701717e-98,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.693,
+      "p": 0.0007014508585605538
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.715,
+      "p": 0.00039968854125874603
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.932,
+      "p": 2.2066972068586807e-09
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.823,
+      "p": 8.529183271703499e-06
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.355,
+      "p": 0.12408089820670001
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.206,
+      "p": 0.3835325530925867
+     }
+    },
+    "unclear": {
+     "square_min": 0.0271,
+     "square_max": 0.0597,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363449",
+     "between_square_sd": 0.0083,
+     "median_within_square_boot_sd": 0.0013,
+     "Q": 695.5,
+     "df": 19,
+     "Q_over_df": 36.61,
+     "p_chi2": 3.173418428530051e-135,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.68,
+      "p": 0.000978281723987189
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.71,
+      "p": 0.0004519661255601342
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.904,
+      "p": 4.7228178320073106e-08
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.841,
+      "p": 3.4837759296263637e-06
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.104,
+      "p": 0.6628470475230118
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.202,
+      "p": 0.39426050476127356
+     }
+    }
+   }
+  },
+  "anchors": {
+   "job": "J28",
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_2D_anchors__particles.npz",
+   "labels_source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_anchors.csv",
+   "micrographs": "random 25 % of curated micrographs (J25, seed 20261113)",
+   "picker": "J19 circle blob 30-50 A, top 50 % local power per defocus bin (J24), 220 A 2D window",
+   "n_particles": 603273,
+   "n_labelled": 603273,
+   "n_unreviewed_small_classes": 0,
+   "n_micrographs": 2009,
+   "n_micrographs_with_labelled_particles": 2009,
+   "n_squares": 20,
+   "heterogeneity": {
+    "dot_short_rod": {
+     "square_min": 0.0649,
+     "square_max": 0.1992,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363449",
+     "between_square_sd": 0.033,
+     "median_within_square_boot_sd": 0.006,
+     "Q": 732.2,
+     "df": 19,
+     "Q_over_df": 38.54,
+     "p_chi2": 5.29484566327973e-143,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.878,
+      "p": 3.5733947904134237e-07
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.497,
+      "p": 0.025792354301088075
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.862,
+      "p": 1.055524533226435e-06
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.902,
+      "p": 5.3994774799641734e-08
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.182,
+      "p": 0.4419220035800444
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.092,
+      "p": 0.7005157258604466
+     }
+    },
+    "dot_pair_thread": {
+     "square_min": 0.0244,
+     "square_max": 0.0548,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363472",
+     "between_square_sd": 0.0069,
+     "median_within_square_boot_sd": 0.0018,
+     "Q": 266.2,
+     "df": 19,
+     "Q_over_df": 14.01,
+     "p_chi2": 1.6304643780222382e-45,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.74,
+      "p": 0.00019241032720557425
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.352,
+      "p": 0.12752803435341348
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.692,
+      "p": 0.0007284845298314555
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.687,
+      "p": 0.000814936942175972
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": 0.276,
+      "p": 0.2395463056635517
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.024,
+      "p": 0.9197997451459456
+     }
+    },
+    "dot_pair": {
+     "square_min": 0.4664,
+     "square_max": 0.7849,
+     "square_min_id": "GridSquare_12363449",
+     "square_max_id": "GridSquare_12363292",
+     "between_square_sd": 0.0714,
+     "median_within_square_boot_sd": 0.0138,
+     "Q": 652.1,
+     "df": 19,
+     "Q_over_df": 34.32,
+     "p_chi2": 4.893182744741038e-126,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": 0.935,
+      "p": 1.4821142098475236e-09
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": 0.802,
+      "p": 2.1147093413030145e-05
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": 0.953,
+      "p": 8.333045726679196e-11
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": -0.868,
+      "p": 7.239120255573907e-07
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": 0.179,
+      "p": 0.44963172485789854
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.301,
+      "p": 0.19757966317255532
+     }
+    },
+    "single_dot": {
+     "square_min": 0.1178,
+     "square_max": 0.2573,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363449",
+     "between_square_sd": 0.0319,
+     "median_within_square_boot_sd": 0.0066,
+     "Q": 371.5,
+     "df": 19,
+     "Q_over_df": 19.55,
+     "p_chi2": 3.6813333279634784e-67,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.94,
+      "p": 7.860443387804441e-10
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.708,
+      "p": 0.00048021301209278544
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.917,
+      "p": 1.2700580723125721e-08
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.871,
+      "p": 5.953878226538431e-07
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.235,
+      "p": 0.3187264916459857
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": 0.352,
+      "p": 0.12814195208704127
+     }
+    },
+    "ice_contaminant": {
+     "square_min": 0.0082,
+     "square_max": 0.103,
+     "square_min_id": "GridSquare_12363292",
+     "square_max_id": "GridSquare_12363381",
+     "between_square_sd": 0.0249,
+     "median_within_square_boot_sd": 0.0062,
+     "Q": 590.3,
+     "df": 19,
+     "Q_over_df": 31.07,
+     "p_chi2": 5.516433556014965e-113,
+     "spearman_vs_labelled_particles_per_micrograph": {
+      "rho": -0.029,
+      "p": 0.9048224147367736
+     },
+     "spearman_vs_rod_stream_particles_per_micrograph": {
+      "rho": -0.395,
+      "p": 0.08448609623750519
+     },
+     "spearman_vs_detected_dots_per_micrograph": {
+      "rho": -0.156,
+      "p": 0.5102566899029022
+     },
+     "spearman_vs_median_ice_rel": {
+      "rho": 0.068,
+      "p": 0.7768207117441497
+     },
+     "spearman_vs_median_defocus_um": {
+      "rho": -0.125,
+      "p": 0.5995206467434344
+     },
+     "spearman_vs_acquisition_rank": {
+      "rho": -0.062,
+      "p": 0.7962393511384775
+     }
+    }
+   }
+  }
+ },
+ "squares_in_order": [
+  "GridSquare_12363302",
+  "GridSquare_12363300",
+  "GridSquare_12363298",
+  "GridSquare_12363296",
+  "GridSquare_12363611",
+  "GridSquare_12363634",
+  "GridSquare_12363647",
+  "GridSquare_12363385",
+  "GridSquare_12363383",
+  "GridSquare_12363381",
+  "GridSquare_12363438",
+  "GridSquare_12363638",
+  "GridSquare_12363449",
+  "GridSquare_12363472",
+  "GridSquare_12363486",
+  "GridSquare_12363597",
+  "GridSquare_12363292",
+  "GridSquare_12363543",
+  "GridSquare_12363432",
+  "GridSquare_12363290"
+ ],
+ "square_covariates": {
+  "GridSquare_12363302": {
+   "median_ice_rel": 1.0647,
+   "median_defocus_um": 1.387,
+   "n_curated_micrographs": 500,
+   "median_rod_stream_particles_per_micrograph": 79.0,
+   "median_detected_dots_per_micrograph": 355.8,
+   "n_micrographs_with_dot_detection": 500
+  },
+  "GridSquare_12363300": {
+   "median_ice_rel": 1.0727,
+   "median_defocus_um": 1.374,
+   "n_curated_micrographs": 451,
+   "median_rod_stream_particles_per_micrograph": 72.0,
+   "median_detected_dots_per_micrograph": 248.5,
+   "n_micrographs_with_dot_detection": 451
+  },
+  "GridSquare_12363298": {
+   "median_ice_rel": 1.0782,
+   "median_defocus_um": 1.381,
+   "n_curated_micrographs": 456,
+   "median_rod_stream_particles_per_micrograph": 77.0,
+   "median_detected_dots_per_micrograph": 255.0,
+   "n_micrographs_with_dot_detection": 455
+  },
+  "GridSquare_12363296": {
+   "median_ice_rel": 1.0684,
+   "median_defocus_um": 1.413,
+   "n_curated_micrographs": 499,
+   "median_rod_stream_particles_per_micrograph": 77.0,
+   "median_detected_dots_per_micrograph": 311.2,
+   "n_micrographs_with_dot_detection": 498
+  },
+  "GridSquare_12363611": {
+   "median_ice_rel": 1.0764,
+   "median_defocus_um": 1.38,
+   "n_curated_micrographs": 457,
+   "median_rod_stream_particles_per_micrograph": 68.0,
+   "median_detected_dots_per_micrograph": 249.6,
+   "n_micrographs_with_dot_detection": 456
+  },
+  "GridSquare_12363634": {
+   "median_ice_rel": 1.075,
+   "median_defocus_um": 1.421,
+   "n_curated_micrographs": 423,
+   "median_rod_stream_particles_per_micrograph": 71.0,
+   "median_detected_dots_per_micrograph": 244.3,
+   "n_micrographs_with_dot_detection": 423
+  },
+  "GridSquare_12363647": {
+   "median_ice_rel": 1.0752,
+   "median_defocus_um": 1.494,
+   "n_curated_micrographs": 453,
+   "median_rod_stream_particles_per_micrograph": 75.0,
+   "median_detected_dots_per_micrograph": 255.3,
+   "n_micrographs_with_dot_detection": 453
+  },
+  "GridSquare_12363385": {
+   "median_ice_rel": 1.0715,
+   "median_defocus_um": 1.365,
+   "n_curated_micrographs": 437,
+   "median_rod_stream_particles_per_micrograph": 69.0,
+   "median_detected_dots_per_micrograph": 268.7,
+   "n_micrographs_with_dot_detection": 437
+  },
+  "GridSquare_12363383": {
+   "median_ice_rel": 1.0711,
+   "median_defocus_um": 1.466,
+   "n_curated_micrographs": 436,
+   "median_rod_stream_particles_per_micrograph": 67.0,
+   "median_detected_dots_per_micrograph": 262.1,
+   "n_micrographs_with_dot_detection": 436
+  },
+  "GridSquare_12363381": {
+   "median_ice_rel": 1.0698,
+   "median_defocus_um": 1.407,
+   "n_curated_micrographs": 465,
+   "median_rod_stream_particles_per_micrograph": 63.0,
+   "median_detected_dots_per_micrograph": 260.3,
+   "n_micrographs_with_dot_detection": 465
+  },
+  "GridSquare_12363438": {
+   "median_ice_rel": 1.0814,
+   "median_defocus_um": 1.383,
+   "n_curated_micrographs": 368,
+   "median_rod_stream_particles_per_micrograph": 61.0,
+   "median_detected_dots_per_micrograph": 204.7,
+   "n_micrographs_with_dot_detection": 368
+  },
+  "GridSquare_12363638": {
+   "median_ice_rel": 1.0777,
+   "median_defocus_um": 1.521,
+   "n_curated_micrographs": 325,
+   "median_rod_stream_particles_per_micrograph": 61.0,
+   "median_detected_dots_per_micrograph": 253.0,
+   "n_micrographs_with_dot_detection": 325
+  },
+  "GridSquare_12363449": {
+   "median_ice_rel": 1.0864,
+   "median_defocus_um": 1.384,
+   "n_curated_micrographs": 185,
+   "median_rod_stream_particles_per_micrograph": 51.0,
+   "median_detected_dots_per_micrograph": 209.7,
+   "n_micrographs_with_dot_detection": 185
+  },
+  "GridSquare_12363472": {
+   "median_ice_rel": 1.0822,
+   "median_defocus_um": 1.453,
+   "n_curated_micrographs": 324,
+   "median_rod_stream_particles_per_micrograph": 63.0,
+   "median_detected_dots_per_micrograph": 232.8,
+   "n_micrographs_with_dot_detection": 324
+  },
+  "GridSquare_12363486": {
+   "median_ice_rel": 1.0799,
+   "median_defocus_um": 1.4,
+   "n_curated_micrographs": 387,
+   "median_rod_stream_particles_per_micrograph": 58.0,
+   "median_detected_dots_per_micrograph": 236.7,
+   "n_micrographs_with_dot_detection": 387
+  },
+  "GridSquare_12363597": {
+   "median_ice_rel": 1.0818,
+   "median_defocus_um": 1.381,
+   "n_curated_micrographs": 370,
+   "median_rod_stream_particles_per_micrograph": 65.5,
+   "median_detected_dots_per_micrograph": 247.2,
+   "n_micrographs_with_dot_detection": 368
+  },
+  "GridSquare_12363292": {
+   "median_ice_rel": 1.0654,
+   "median_defocus_um": 1.419,
+   "n_curated_micrographs": 484,
+   "median_rod_stream_particles_per_micrograph": 80.0,
+   "median_detected_dots_per_micrograph": 408.2,
+   "n_micrographs_with_dot_detection": 484
+  },
+  "GridSquare_12363543": {
+   "median_ice_rel": 1.0838,
+   "median_defocus_um": 1.293,
+   "n_curated_micrographs": 281,
+   "median_rod_stream_particles_per_micrograph": 55.0,
+   "median_detected_dots_per_micrograph": 221.8,
+   "n_micrographs_with_dot_detection": 281
+  },
+  "GridSquare_12363432": {
+   "median_ice_rel": 1.0795,
+   "median_defocus_um": 1.381,
+   "n_curated_micrographs": 348,
+   "median_rod_stream_particles_per_micrograph": 55.0,
+   "median_detected_dots_per_micrograph": 240.9,
+   "n_micrographs_with_dot_detection": 348
+  },
+  "GridSquare_12363290": {
+   "median_ice_rel": 1.0616,
+   "median_defocus_um": 1.438,
+   "n_curated_micrographs": 387,
+   "median_rod_stream_particles_per_micrograph": 64.0,
+   "median_detected_dots_per_micrograph": 348.0,
+   "n_micrographs_with_dot_detection": 387
+  }
+ },
+ "independent_crowding_covariates": {
+  "rod_stream_particles_per_micrograph": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_2D_rods__particles.npz location__micrograph_uid (all J27 particles, labelled or not), median over the square's curated micrographs",
+  "detected_dots_per_micrograph": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/rod_end_coloc/dots/task_*.npz n / (1 - frac_bad) (G0 dot detector, scripts/17_rod_end_colocalisation.py), median over the square's micrographs",
+  "n_micrographs_with_dot_detection": 8031,
+  "n_dot_micrographs_unmapped": 0
+ },
+ "covariate_notes": {
+  "labelled_particles_per_micrograph": "the stream's own labelled particles per micrograph; INCLUDES the category being correlated (e.g. anchor 'two dots' is ~62 % of anchors), so its rho is partly circular; kept for reference only",
+  "rod_stream_particles_per_micrograph": "independent of the anchor stream's labels (not of the rod stream's)",
+  "detected_dots_per_micrograph": "independent of both streams' 2D labels",
+  "ice_vs_crowding": "median ice and crowding co-vary across squares, so their effects cannot be separated"
+ },
+ "ice_vs_crowding_spearman_over_squares": {
+  "median_detected_dots_per_micrograph": {
+   "rho": -0.911,
+   "p": 2.336013177330961e-08
+  },
+  "median_rod_stream_particles_per_micrograph": {
+   "rho": -0.672,
+   "p": 0.001161369153176068
+  },
+  "rods_labelled_particles_per_micrograph": {
+   "rho": -0.669,
+   "p": 0.0012527491395978977
+  },
+  "anchors_labelled_particles_per_micrograph": {
+   "rho": -0.907,
+   "p": 3.589233262466606e-08
+  }
+ },
+ "square_median_ice_range": [
+  1.0616,
+  1.0864
+ ],
+ "cross_stream_square_spearman": {
+  "anchors:dot_short_rod vs rods:dot_long_rod": {
+   "rho": 0.818,
+   "p": 1.0505529225549338e-05
+  },
+  "anchors:dot_short_rod vs rods:dot_short_rod": {
+   "rho": 0.851,
+   "p": 1.9615293616584198e-06
+  },
+  "anchors:dot_short_rod vs rods:rod_no_dot": {
+   "rho": 0.895,
+   "p": 1.0226817406907924e-07
+  },
+  "anchors:dot_short_rod vs rods:dot_pair_thread": {
+   "rho": -0.85,
+   "p": 2.1348703463412627e-06
+  },
+  "anchors:dot_short_rod vs rods:dot_pair": {
+   "rho": -0.753,
+   "p": 0.0001256121573080167
+  },
+  "anchors:dot_short_rod vs rods:ice_contaminant": {
+   "rho": -0.8,
+   "p": 2.2928871994400038e-05
+  },
+  "anchors:dot_short_rod vs rods:noise_junk": {
+   "rho": 0.777,
+   "p": 5.488285448149742e-05
+  },
+  "anchors:dot_short_rod vs rods:unclear": {
+   "rho": 0.826,
+   "p": 7.398824271092123e-06
+  },
+  "anchors:dot_pair_thread vs rods:dot_long_rod": {
+   "rho": 0.811,
+   "p": 1.4687607586992234e-05
+  },
+  "anchors:dot_pair_thread vs rods:dot_short_rod": {
+   "rho": 0.668,
+   "p": 0.0012967923499898862
+  },
+  "anchors:dot_pair_thread vs rods:rod_no_dot": {
+   "rho": 0.812,
+   "p": 1.3751698807413044e-05
+  },
+  "anchors:dot_pair_thread vs rods:dot_pair_thread": {
+   "rho": -0.756,
+   "p": 0.00011384195119063896
+  },
+  "anchors:dot_pair_thread vs rods:dot_pair": {
+   "rho": -0.586,
+   "p": 0.006570618371105351
+  },
+  "anchors:dot_pair_thread vs rods:ice_contaminant": {
+   "rho": -0.722,
+   "p": 0.0003270659389347301
+  },
+  "anchors:dot_pair_thread vs rods:noise_junk": {
+   "rho": 0.589,
+   "p": 0.006233369103076914
+  },
+  "anchors:dot_pair_thread vs rods:unclear": {
+   "rho": 0.743,
+   "p": 0.00017540444660487067
+  },
+  "anchors:dot_pair vs rods:dot_long_rod": {
+   "rho": -0.52,
+   "p": 0.018683221143120664
+  },
+  "anchors:dot_pair vs rods:dot_short_rod": {
+   "rho": -0.931,
+   "p": 2.6744257920213994e-09
+  },
+  "anchors:dot_pair vs rods:rod_no_dot": {
+   "rho": -0.805,
+   "p": 1.900592442570447e-05
+  },
+  "anchors:dot_pair vs rods:dot_pair_thread": {
+   "rho": 0.934,
+   "p": 1.8126865423587169e-09
+  },
+  "anchors:dot_pair vs rods:dot_pair": {
+   "rho": 0.938,
+   "p": 9.762241109318062e-10
+  },
+  "anchors:dot_pair vs rods:ice_contaminant": {
+   "rho": 0.489,
+   "p": 0.0287720300549961
+  },
+  "anchors:dot_pair vs rods:noise_junk": {
+   "rho": -0.935,
+   "p": 1.4821142098475236e-09
+  },
+  "anchors:dot_pair vs rods:unclear": {
+   "rho": -0.928,
+   "p": 3.879148683992122e-09
+  },
+  "anchors:single_dot vs rods:dot_long_rod": {
+   "rho": 0.68,
+   "p": 0.000978281723987189
+  },
+  "anchors:single_dot vs rods:dot_short_rod": {
+   "rho": 0.893,
+   "p": 1.1553772694134449e-07
+  },
+  "anchors:single_dot vs rods:rod_no_dot": {
+   "rho": 0.857,
+   "p": 1.3848421203009955e-06
+  },
+  "anchors:single_dot vs rods:dot_pair_thread": {
+   "rho": -0.872,
+   "p": 5.389740442330201e-07
+  },
+  "anchors:single_dot vs rods:dot_pair": {
+   "rho": -0.832,
+   "p": 5.522372803574219e-06
+  },
+  "anchors:single_dot vs rods:ice_contaminant": {
+   "rho": -0.674,
+   "p": 0.0011280967372370514
+  },
+  "anchors:single_dot vs rods:noise_junk": {
+   "rho": 0.844,
+   "p": 2.969127186415908e-06
+  },
+  "anchors:single_dot vs rods:unclear": {
+   "rho": 0.865,
+   "p": 8.760838300464327e-07
+  },
+  "anchors:ice_contaminant vs rods:dot_long_rod": {
+   "rho": -0.46,
+   "p": 0.04120071780195445
+  },
+  "anchors:ice_contaminant vs rods:dot_short_rod": {
+   "rho": 0.117,
+   "p": 0.622378981763022
+  },
+  "anchors:ice_contaminant vs rods:rod_no_dot": {
+   "rho": -0.149,
+   "p": 0.5310434616086306
+  },
+  "anchors:ice_contaminant vs rods:dot_pair_thread": {
+   "rho": -0.167,
+   "p": 0.4818249184315468
+  },
+  "anchors:ice_contaminant vs rods:dot_pair": {
+   "rho": -0.304,
+   "p": 0.19291416827770458
+  },
+  "anchors:ice_contaminant vs rods:ice_contaminant": {
+   "rho": 0.612,
+   "p": 0.004129875210325547
+  },
+  "anchors:ice_contaminant vs rods:noise_junk": {
+   "rho": 0.251,
+   "p": 0.2855217106335981
+  },
+  "anchors:ice_contaminant vs rods:unclear": {
+   "rho": 0.18,
+   "p": 0.4464646102705484
+  }
+ },
+ "caption": "These are fractions of PICKED objects, not molar ratios: each stream's picker and 2D window biases what it sees (rods: ellipse blob 20\u2013180 \u00c5 + top-50 % local power; anchors: 30\u201350 \u00c5 circle blob + top-50 % local power, random 25 % of micrographs). Bars: pooled particle-weighted fraction, with value and 95 % percentile bootstrap CI over micrographs (2,000 resamples); grey dots: the 20 grid squares. Bottom: per-square fractions with within-square bootstrap CIs. Q/df = between-square scatter relative to within-square sampling error (chi-square, 19 df); every category varies between squares far beyond sampling (Q/df 14\u2013221), so the pooled CI understates square-to-square variation. The variation tracks ice and crowding across squares (Spearman over squares), and the two are confounded: square median relative ice spans only 1.06\u20131.09 and falls as crowding rises (\u03c1 ice vs detected dots per micrograph -0.91), so their effects cannot be separated. Anchor 'two dots' rises with detected dots per micrograph (\u03c1 +0.95; independent of the 2D labels) and with rod-stream particles per micrograph (\u03c1 +0.80), and falls with median ice (\u03c1 -0.87); free rods rise with ice (\u03c1 +0.84; vs detected dots \u03c1 -0.86). (Anchors per micrograph, \u03c1 +0.94, is not used: it includes the dot-pair category itself.) Rod-stream particles in unreviewed (<270-particle) classes (5,654) are excluded.",
+ "figure": "figures/final/census.png",
+ "tables": [
+  "results/final/census.csv",
+  "results/final/census_by_square.csv"
+ ],
+ "plotted_numbers": "bars, whiskers and per-square dots are the fraction / ci95_lo / ci95_hi columns of results/final/census.csv and results/final/census_by_square.csv"
+}

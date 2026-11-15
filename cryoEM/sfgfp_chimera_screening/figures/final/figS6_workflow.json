@@ -1,0 +1,545 @@
+{
+ "figure": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/final/figS6_workflow.png",
+ "script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/50_figS6_tableS1.py",
+ "numbers": {
+  "A1_2D": {
+   "value": 223536,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J45/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "A1_2D_K": {
+   "value": 150,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J45/job.json",
+   "how": "spec.outputs.class_averages.num_items"
+  },
+  "A1_2D_window": {
+   "value": 400.0,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J45/job.json",
+   "how": "spec.params.class2D_window_inner_A"
+  },
+  "A1_dot_top": {
+   "value": [
+    123,
+    130,
+    31,
+    147,
+    103,
+    114
+   ],
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/A1_length_vs_hinge.json",
+   "how": "selection, group DOT, six largest (shown as averages)"
+  },
+  "A1_extract": {
+   "value": 224068,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J44/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "A1_extract_mics": {
+   "value": 8018,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J44/job.json",
+   "how": "spec.outputs.micrographs.num_items"
+  },
+  "A1_in_dot_long_rod": {
+   "value": 124157,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.A1_recentred.by_label.dot_long_rod"
+  },
+  "A1_in_dot_short_rod": {
+   "value": 8771,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.A1_recentred.by_label.dot_short_rod"
+  },
+  "A1_in_rod_no_dot": {
+   "value": 91384,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.A1_recentred.by_label.rod_no_dot"
+  },
+  "A1_recentred": {
+   "value": 224312,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.A1_recentred.rows_out (J43)"
+  },
+  "P0_2D": {
+   "value": 126623,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J7/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "P0_2D_K": {
+   "value": 100,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J7/job.json",
+   "how": "spec.outputs.class_averages.num_items"
+  },
+  "P0_ctf_fit_median": {
+   "value": 3.5838098526000977,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/P0_ctf__exposures.npz",
+   "how": "median ctf__ctf_fit_to_A"
+  },
+  "P0_extract": {
+   "value": 126788,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J6/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "P0_import": {
+   "value": 412,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J2/job.json",
+   "how": "spec.outputs.imported_movies.num_items"
+  },
+  "P0_mics": {
+   "value": 300,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J3/job.json",
+   "how": "spec.outputs.micrographs.num_items"
+  },
+  "P0_picks": {
+   "value": 165638,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J5/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "W3_cfar": {
+   "value": 0.2661,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J41/events.bson",
+   "how": "event text 'cFAR: x' (job event log)"
+  },
+  "W3_cs_nomask": {
+   "value": 9.696254483725026,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+   "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+  },
+  "W3_cs_tight": {
+   "value": 7.755966988297678,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt",
+   "how": "first 0.143 crossing of column 'fsc_resmask' vs 'frequency' (linear interpolation)"
+  },
+  "W3_duplex": {
+   "value": 103028,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W3_duplex_particles.rows_out (J29)"
+  },
+  "W3_final_by_label": {
+   "value": {
+    "noise_junk": 12305,
+    "rod_no_dot": 46331,
+    "ice_contaminant": 1358,
+    "dot_pair": 4019
+   },
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/classes2d.json",
+   "how": "final_particles_by_label (final NU particles traced to their 2D class label)"
+  },
+  "W3_final_by_label_n": {
+   "value": 64013,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/classes2d.json",
+   "how": "n_final_particles"
+  },
+  "W3_het_duplex": {
+   "value": 64036,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J38/job.json",
+   "how": "spec.outputs.particles_class_0.num_items; class order duplex/junk/ice/pairs per scripts/31_duplex_control.py"
+  },
+  "W3_het_ice": {
+   "value": 100397,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J38/job.json",
+   "how": "spec.outputs.particles_class_2.num_items; class order duplex/junk/ice/pairs per scripts/31_duplex_control.py"
+  },
+  "W3_het_junk": {
+   "value": 54847,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J38/job.json",
+   "how": "spec.outputs.particles_class_1.num_items; class order duplex/junk/ice/pairs per scripts/31_duplex_control.py"
+  },
+  "W3_het_pairs": {
+   "value": 64306,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J38/job.json",
+   "how": "spec.outputs.particles_class_3.num_items; class order duplex/junk/ice/pairs per scripts/31_duplex_control.py"
+  },
+  "W3_ice": {
+   "value": 108029,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W3_ice_particles.rows_out (J31)"
+  },
+  "W3_junk": {
+   "value": 35149,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W3_junk_particles.rows_out (J30)"
+  },
+  "W3_nu": {
+   "value": 64013,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "W3_pairs": {
+   "value": 37380,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W3_pairs_particles.rows_out (J32)"
+  },
+  "W3_pool": {
+   "value": 283586,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W3_pooled_particles.rows_out (J33)"
+  },
+  "W3_rel_csmask": {
+   "value": 7.902608,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star",
+   "how": "data_general _rlnFinalResolution"
+  },
+  "W3_rel_loose": {
+   "value": 8.655238,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star",
+   "how": "data_general _rlnFinalResolution"
+  },
+  "W3_scf": {
+   "value": 0.93504,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J41/events.bson",
+   "how": "event text 'SCF*: x' (job event log)"
+  },
+  "W3_sym": {
+   "value": "C1",
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/job.json",
+   "how": "spec.params.refine_symmetry"
+  },
+  "W4_c3d": {
+   "value": 54148,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "spec.outputs.particles_all_classes.num_items"
+  },
+  "W4_c3d_K": {
+   "value": 10,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "spec.outputs.volumes_all_classes.num_items"
+  },
+  "W4_c3d_max": {
+   "value": 7457,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "max over spec.outputs.particles_class_N.num_items"
+  },
+  "W4_c3d_min": {
+   "value": 2896,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "min over spec.outputs.particles_class_N.num_items"
+  },
+  "W4_c3d_pcs": {
+   "value": 3,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "spec.params.class3D_PCA_num_components"
+  },
+  "W4_c3d_res": {
+   "value": 12.0,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/job.json",
+   "how": "spec.params.class3D_target_res"
+  },
+  "W4_cfar": {
+   "value": 0.17038,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J58/events.bson",
+   "how": "event text 'cFAR: x' (job event log)"
+  },
+  "W4_cs_nomask": {
+   "value": 11.24471312659401,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+   "how": "first 0.143 crossing of column 'fsc_nomask' vs 'frequency' (linear interpolation)"
+  },
+  "W4_cs_tight": {
+   "value": 7.89312215634977,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt",
+   "how": "first 0.143 crossing of column 'fsc_resmask' vs 'frequency' (linear interpolation)"
+  },
+  "W4_dot": {
+   "value": 76607,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W4_dot_particles.rows_out (J46)"
+  },
+  "W4_dot_classes": {
+   "value": 15,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "len(jobs.W4_dot_particles.classes)"
+  },
+  "W4_final_by_label": {
+   "value": {
+    "FREE (free rod)": 1204,
+    "haze (decoy)": 24280,
+    "DOT (dot-on-rod)": 27029,
+    "ice (decoy)": 1645
+   },
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/classes2d.json",
+   "how": "final_particles_by_label (final NU particles traced to their 2D class label)"
+  },
+  "W4_final_by_label_n": {
+   "value": 54158,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/classes2d.json",
+   "how": "n_final_particles"
+  },
+  "W4_free": {
+   "value": 11995,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W4_free_particles.rows_out (J47)"
+  },
+  "W4_free_classes": {
+   "value": 16,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "len(jobs.W4_free_particles.classes)"
+  },
+  "W4_haze": {
+   "value": 83669,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W4_haze_particles.rows_out (J48)"
+  },
+  "W4_het_dot": {
+   "value": 54181,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J55/job.json",
+   "how": "spec.outputs.particles_class_0.num_items; class order dot/free/haze/ice per scripts/35_dot_rod_3d.py"
+  },
+  "W4_het_free": {
+   "value": 42863,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J55/job.json",
+   "how": "spec.outputs.particles_class_1.num_items; class order dot/free/haze/ice per scripts/35_dot_rod_3d.py"
+  },
+  "W4_het_haze": {
+   "value": 40651,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J55/job.json",
+   "how": "spec.outputs.particles_class_2.num_items; class order dot/free/haze/ice per scripts/35_dot_rod_3d.py"
+  },
+  "W4_het_ice": {
+   "value": 42958,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J55/job.json",
+   "how": "spec.outputs.particles_class_3.num_items; class order dot/free/haze/ice per scripts/35_dot_rod_3d.py"
+  },
+  "W4_ice": {
+   "value": 8382,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W4_ice_particles.rows_out (J49)"
+  },
+  "W4_nu": {
+   "value": 54158,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "W4_pool": {
+   "value": 180653,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W4_pooled_particles.rows_out (J50)"
+  },
+  "W4_rel_csmask": {
+   "value": 7.97193,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star",
+   "how": "data_general _rlnFinalResolution"
+  },
+  "W4_rel_loose": {
+   "value": 10.819047,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star",
+   "how": "data_general _rlnFinalResolution"
+  },
+  "W4_scf": {
+   "value": 0.70224,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J58/events.bson",
+   "how": "event text 'SCF*: x' (job event log)"
+  },
+  "W4_sym": {
+   "value": "C1",
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/job.json",
+   "how": "spec.params.refine_symmetry"
+  },
+  "anc_25": {
+   "value": 791157,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W2_anchors_25pct.rows_out (J25)"
+  },
+  "anc_25_mics": {
+   "value": 2009,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W2_anchors_25pct.micrographs"
+  },
+  "anc_2D": {
+   "value": 603273,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J28/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "anc_2D_rej": {
+   "value": 57889,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J28/job.json",
+   "how": "spec.outputs.particles_rejected.num_items"
+  },
+  "anc_2D_window": {
+   "value": 220.0,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J28/job.json",
+   "how": "spec.params.class2D_window_inner_A"
+  },
+  "anc_extract": {
+   "value": 661162,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J26/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "anc_picks": {
+   "value": 6358457,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J19/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "anc_power": {
+   "value": 3179227,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W2_power_anchors.rows_out (J24)"
+  },
+  "apix_epu": {
+   "value": 0.7175,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json",
+   "how": "EPU <pixelSize><x> calibration; tally {'0.7175': 9019}"
+  },
+  "apix_mic": {
+   "value": 1.4199999570846558,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_curated__exposures.npz",
+   "how": "micrograph_blob__psize_A (unique)"
+  },
+  "apix_phys": {
+   "value": 0.71,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "pixel_size_A"
+  },
+  "closed_loop": {
+   "value": 0,
+   "source": "class2d_labels_W2_2D_{rods,anchors}.csv",
+   "how": "sum"
+  },
+  "closed_loop_checks": {
+   "value": 0,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_blind_review_W2.json",
+   "how": "len(loop_checks): closed-loop votes needing a skeptic"
+  },
+  "ctf": {
+   "value": 9013,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J15/job.json + /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J16/job.json",
+   "how": "sum of spec.outputs.exposures.num_items"
+  },
+  "ctf_incomplete": {
+   "value": 5,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J16/job.json",
+   "how": "spec.outputs.exposures_incomplete.num_items"
+  },
+  "cur_thr": {
+   "value": "CTF fit <= 6 A, astig <= 1000 A, defocus 0.5-2.8 um, rel. ice <= 1.2",
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W2_curated.thresholds"
+  },
+  "curated": {
+   "value": 8036,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J17/job.json",
+   "how": "spec.outputs.exposures.num_items"
+  },
+  "curation_rejected": {
+   "value": 977,
+   "source": "derived from keys ctf and curated",
+   "how": "ctf - curated"
+  },
+  "dose": {
+   "value": 39.72,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "dose_e_per_A2_used (vacuum calibration)"
+  },
+  "fractions": {
+   "value": 50,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "fractions"
+  },
+  "grid_squares": {
+   "value": 20,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/raw_inventory_summary.json",
+   "how": "grid_squares"
+  },
+  "import": {
+   "value": 9019,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J8/job.json",
+   "how": "spec.outputs.imported_movies.num_items"
+  },
+  "kv": {
+   "value": 200,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "accel_kv"
+  },
+  "mag": {
+   "value": 165000,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_*/Data/*.xml (tally cached in /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/epu_xml_mag.json)",
+   "how": "<NominalMagnification>; {'165000': 9019} over 9019 xml"
+  },
+  "motion": {
+   "value": 9018,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J10/job.json + /n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J12/job.json",
+   "how": "sum of spec.outputs.micrographs.num_items"
+  },
+  "movies": {
+   "value": 9019,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/g0_acquisition.json",
+   "how": "movies"
+  },
+  "n_reviewed": {
+   "value": 304,
+   "source": "class2d_labels_W2_2D_{rods,anchors}.csv",
+   "how": "sum of rows"
+  },
+  "n_reviewed_anchors": {
+   "value": 200,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_anchors.csv",
+   "how": "rows (classes with >= 270 particles)"
+  },
+  "n_reviewed_rods": {
+   "value": 104,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv",
+   "how": "rows (classes with >= 270 particles)"
+  },
+  "power_rej_rod": {
+   "value": 791649,
+   "source": "derived from keys rod_picks and rod_power",
+   "how": "rod_picks - rod_power"
+  },
+  "reviewed_ptcl_anchors": {
+   "value": 603273,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_anchors.csv",
+   "how": "sum particles"
+  },
+  "reviewed_ptcl_rods": {
+   "value": 541047,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv",
+   "how": "sum particles"
+  },
+  "rod_2D": {
+   "value": 546701,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J27/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "rod_2D_rej": {
+   "value": 59838,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J27/job.json",
+   "how": "spec.outputs.particles_rejected.num_items"
+  },
+  "rod_2D_window": {
+   "value": 200.0,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J27/job.json",
+   "how": "spec.params.class2D_window_inner_A"
+  },
+  "rod_extract": {
+   "value": 606539,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J23/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "rod_no_dot_classes": {
+   "value": 21,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv",
+   "how": "consensus_label == rod_no_dot"
+  },
+  "rod_no_dot_top": {
+   "value": [
+    57,
+    58,
+    1,
+    170,
+    74,
+    189
+   ],
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv",
+   "how": "six largest rod_no_dot classes (shown as averages)"
+  },
+  "rod_picks": {
+   "value": 1583293,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J18/job.json",
+   "how": "spec.outputs.particles.num_items"
+  },
+  "rod_power": {
+   "value": 791644,
+   "source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json",
+   "how": "jobs.W2_power_rods.rows_out (J22)"
+  }
+ }
+}
