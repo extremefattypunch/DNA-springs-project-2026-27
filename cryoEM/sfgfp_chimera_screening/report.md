@@ -493,11 +493,42 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 
 ![A7](figures/qc/A7_ice_tertiles.png)
 
+**A1: window-free attached-DNA length. Pre-registered rule outcome: mixed/inconclusive**
+(`scripts/34_A1_window_free_rods.py`, `scripts/45_A1_length_vs_hinge.py`, `results/A1_length_vs_hinge*.json`;
+measured by one agent, corrected by two skeptics):
+- **Setup:** 224,068 rods were re-centred and extracted in a 454 Å box, then classified with a **400 Å window**
+  (P6 J45; 223,536 particles, 150 classes). That window is large enough to hold a whole dot-centred ring.
+- **Still no ring or hook classes.** This closes the "window-clipped ring" loophole for the rod picks.
+- **Class 105 and 12 (37 %) are a lone dot plus haze**: rods that did not average into any shape.
+- **In-plane hinge blur is ruled out** as the reason attached DNA looks short. The sector-integrated mass-profile
+  end does not move when a rod pivots about the dot (≤ 1 Å at 25° in calibration). The measured in-plane spread is
+  only ~3–6°.
+- **On that hinge-insensitive measure** (15 dot-at-end classes, 76,607 particles = 34 % of A1), the DNA visible on
+  sfGFP projects to a **median ~75 Å past the sfGFP surface**, against **~109 Å for free rods**. The gap is
+  **33 Å (CI 19–39) with a 17 Å junction offset, or 16 Å (CI 2–21) with 0 Å**. The sign is robust; the size,
+  ~5–10 bp, is not.
+- **Not resolved:**
+  - a genuinely shorter or incomplete duplex (H1) versus a full-length duplex **tilted out of plane**
+    (foreshortening, H2/H3). My linear-density argument against tilt was refuted: it is confounded by class size.
+  - About **15–35 % of dot-class particles carry DNA at or near free-rod length**: whole classes 13, 52, 97 plus
+    subsets of 123, 130, 31.
+  - **63 % of A1 particles are unmeasured** (haze and excluded classes), which is where flexible or tilted
+    full-length adducts would land.
+- **Neither population reaches the 170 Å of a straight 50 bp duplex** by this measure. Free rods are ~109 Å in
+  projection, and the W3 map of "free" rods is itself a ~110 Å rod with a terminal lobe.
+- **What would settle it:** 3D of the dot-at-end particles (true 3D length, no projection ambiguity), a tilted
+  collection, or the bench tests below.
+
+![A1](figures/qc/A1_length_vs_hinge.png)
+
 **Net effect on §12:**
 - Edge-on rings (hypothesis 5) and air–water-interface opening (hypothesis 4) have no positive support, but
   neither is strongly excluded.
-- The leading explanations remain incomplete/yielded loops (1) and linear adducts (2), which **A1 is designed to
-  separate**.
+- The leading explanations remain incomplete/yielded loops (1) and linear adducts (2).
+- **A1 leans weakly toward 1** (attached DNA usually projects shorter than free DNA), but it cannot exclude 2 with
+  out-of-plane tilt.
+- The most direct remaining EM test is a **3D reconstruction of the dot-at-end particles**, which measures DNA
+  length in 3D.
 
 **Why these three and not the panel's other proposals** (you chose from A1, A5, A7; the others were not offered or
 were deferred):
