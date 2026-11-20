@@ -1,0 +1,14 @@
+stream,label,description,particles,labelled_particles,fraction,ci95_lo,ci95_hi,boot_sd,n_micrographs,particles_per_micrograph_mean
+rods,dot_long_rod,dot at end of ≥100 Å rod,141427,541047,0.2614,0.25956,0.26324,0.00092,8036,17.599
+rods,dot_short_rod,dot + short (<100 Å) rod,10020,541047,0.01852,0.01808,0.01898,0.00024,8036,1.247
+rods,rod_no_dot,"rod, no dot (free DNA)",103028,541047,0.19042,0.18828,0.19252,0.00111,8036,12.821
+rods,dot_pair_thread,two dots + faint thread,83949,541047,0.15516,0.15276,0.15766,0.00124,8036,10.447
+rods,dot_pair,"two dots, unconnected",37380,541047,0.06909,0.06826,0.06992,0.00043,8036,4.652
+rods,ice_contaminant,ice / contamination,108029,541047,0.19967,0.19714,0.20212,0.00129,8036,13.443
+rods,noise_junk,noise / junk,35149,541047,0.06496,0.06346,0.06655,0.00078,8036,4.374
+rods,unclear,unclear,22065,541047,0.04078,0.04016,0.04139,0.00032,8036,2.746
+anchors,dot_short_rod,dot + short (<100 Å) rod,74327,603273,0.12321,0.12015,0.12645,0.00163,2009,36.997
+anchors,dot_pair_thread,two dots + faint thread,21112,603273,0.035,0.03414,0.03584,0.00043,2009,10.509
+anchors,dot_pair,"two dots, unconnected",373386,603273,0.61893,0.61142,0.6264,0.00381,2009,185.857
+anchors,single_dot,single dot (free sfGFP),107077,603273,0.17749,0.17409,0.18088,0.00169,2009,53.299
+anchors,ice_contaminant,ice / contamination,27371,603273,0.04537,0.04226,0.04871,0.00166,2009,13.624

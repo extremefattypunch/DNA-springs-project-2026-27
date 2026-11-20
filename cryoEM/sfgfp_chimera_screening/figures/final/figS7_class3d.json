@@ -1,0 +1,448 @@
+{
+ "figure": "figures/final/figS7_class3d.png",
+ "script": "scripts/50_figS7_class3d.py",
+ "renders": "scripts/50_figS7_class3d.cxc (ChimeraX, offscreen; ortho camera via scripts/50_figS7_ortho.py)",
+ "prep": {
+  "script": "scripts/50_figS7_class3d.py",
+  "lowpass_A": 12.0,
+  "apix": 2.84,
+  "box": 160,
+  "contour_A3": 65000.0,
+  "contour_rule": "threshold at which all voxels above threshold within 205 A of the box centre of the 12 A Gaussian-low-passed, background-normalised map enclose 65,000 A^3",
+  "rotation_rows_newxyz_in_old": [
+   [
+    -0.00277,
+    0.36611,
+    0.93057
+   ],
+   [
+    -0.062,
+    -0.92884,
+    0.36525
+   ],
+   [
+    0.99807,
+    -0.05668,
+    0.02527
+   ]
+  ],
+  "rotation_centre_xyz_vox": [
+   79.723,
+   75.93,
+   72.429
+  ],
+  "pca_eigenvalues_A2": [
+   2021.7,
+   618.3,
+   40.9
+  ],
+  "n_nu_particles": 54158,
+  "n_class3d_assigned": 54148,
+  "n_class3d_rejected": 10,
+  "rejected_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_particles_rejected.cs",
+  "maps": [
+   {
+    "key": "nu",
+    "label": "NU refinement J56 (dot-on-rod)",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_volume_map.mrc",
+    "n": 54158,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+    "input_apix": 2.8399999141693115,
+    "input_box": 160,
+    "threshold_sigma": 100.615,
+    "main_component_A3": 65031,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 65031,
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_nu.mrc",
+    "display_main_component_A3_after_rotation": 65146,
+    "display_x_extent_A": 153.4
+   },
+   {
+    "key": "c0",
+    "label": "class_3D J59 class 0",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_00_00014_volume.mrc",
+    "n": 7340,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_00_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 30.882,
+    "main_component_A3": 64985,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 64985,
+    "cc_vs_nu_masked": 0.965,
+    "cc_vs_nu_zero_shift": 0.945,
+    "cc_vs_nu_best_shift": 0.945,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c0.mrc",
+    "display_main_component_A3_after_rotation": 65191,
+    "display_x_extent_A": 156.2
+   },
+   {
+    "key": "c1",
+    "label": "class_3D J59 class 1",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_01_00014_volume.mrc",
+    "n": 5528,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_01_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 34.333,
+    "main_component_A3": 65008,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 65008,
+    "cc_vs_nu_masked": 0.962,
+    "cc_vs_nu_zero_shift": 0.937,
+    "cc_vs_nu_best_shift": 0.937,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c1.mrc",
+    "display_main_component_A3_after_rotation": 64894,
+    "display_x_extent_A": 153.4
+   },
+   {
+    "key": "c2",
+    "label": "class_3D J59 class 2",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_02_00014_volume.mrc",
+    "n": 2896,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_02_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 28.628,
+    "main_component_A3": 39307,
+    "other_components_A3": [
+     24006
+    ],
+    "total_above_threshold_A3": 64939,
+    "cc_vs_nu_masked": 0.956,
+    "cc_vs_nu_zero_shift": 0.922,
+    "cc_vs_nu_best_shift": 0.922,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c2.mrc",
+    "display_main_component_A3_after_rotation": 39170,
+    "display_x_extent_A": 116.4
+   },
+   {
+    "key": "c3",
+    "label": "class_3D J59 class 3",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_03_00014_volume.mrc",
+    "n": 7457,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_03_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 32.934,
+    "main_component_A3": 64871,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 64871,
+    "cc_vs_nu_masked": 0.981,
+    "cc_vs_nu_zero_shift": 0.955,
+    "cc_vs_nu_best_shift": 0.955,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c3.mrc",
+    "display_main_component_A3_after_rotation": 64504,
+    "display_x_extent_A": 153.4
+   },
+   {
+    "key": "c4",
+    "label": "class_3D J59 class 4",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_04_00014_volume.mrc",
+    "n": 4881,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_04_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 27.706,
+    "main_component_A3": 35299,
+    "other_components_A3": [
+     29709
+    ],
+    "total_above_threshold_A3": 65008,
+    "cc_vs_nu_masked": 0.97,
+    "cc_vs_nu_zero_shift": 0.926,
+    "cc_vs_nu_best_shift": 0.926,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c4.mrc",
+    "display_main_component_A3_after_rotation": 35207,
+    "display_x_extent_A": 51.1
+   },
+   {
+    "key": "c5",
+    "label": "class_3D J59 class 5",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_05_00014_volume.mrc",
+    "n": 5527,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_05_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 31.716,
+    "main_component_A3": 62809,
+    "other_components_A3": [
+     2199
+    ],
+    "total_above_threshold_A3": 65008,
+    "cc_vs_nu_masked": 0.973,
+    "cc_vs_nu_zero_shift": 0.948,
+    "cc_vs_nu_best_shift": 0.948,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c5.mrc",
+    "display_main_component_A3_after_rotation": 63290,
+    "display_x_extent_A": 150.5
+   },
+   {
+    "key": "c6",
+    "label": "class_3D J59 class 6",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_06_00014_volume.mrc",
+    "n": 3927,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_06_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 27.17,
+    "main_component_A3": 33420,
+    "other_components_A3": [
+     29435,
+     2199
+    ],
+    "total_above_threshold_A3": 65054,
+    "cc_vs_nu_masked": 0.957,
+    "cc_vs_nu_zero_shift": 0.923,
+    "cc_vs_nu_best_shift": 0.923,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c6.mrc",
+    "display_main_component_A3_after_rotation": 33810,
+    "display_x_extent_A": 36.9
+   },
+   {
+    "key": "c7",
+    "label": "class_3D J59 class 7",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_07_00014_volume.mrc",
+    "n": 5599,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_07_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 30.569,
+    "main_component_A3": 65054,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 65054,
+    "cc_vs_nu_masked": 0.939,
+    "cc_vs_nu_zero_shift": 0.917,
+    "cc_vs_nu_best_shift": 0.917,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c7.mrc",
+    "display_main_component_A3_after_rotation": 64985,
+    "display_x_extent_A": 150.5
+   },
+   {
+    "key": "c8",
+    "label": "class_3D J59 class 8",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_08_00014_volume.mrc",
+    "n": 4713,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_08_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 25.878,
+    "main_component_A3": 53555,
+    "other_components_A3": [
+     11476
+    ],
+    "total_above_threshold_A3": 65031,
+    "cc_vs_nu_masked": 0.965,
+    "cc_vs_nu_zero_shift": 0.926,
+    "cc_vs_nu_best_shift": 0.926,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c8.mrc",
+    "display_main_component_A3_after_rotation": 53715,
+    "display_x_extent_A": 79.5
+   },
+   {
+    "key": "c9",
+    "label": "class_3D J59 class 9",
+    "path": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_09_00014_volume.mrc",
+    "n": 6280,
+    "n_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_09_00014_particles.cs",
+    "input_apix": 5.679999828338623,
+    "input_box": 160,
+    "threshold_sigma": 36.558,
+    "main_component_A3": 65077,
+    "other_components_A3": [],
+    "total_above_threshold_A3": 65077,
+    "cc_vs_nu_masked": 0.972,
+    "cc_vs_nu_zero_shift": 0.946,
+    "cc_vs_nu_best_shift": 0.946,
+    "best_shift_A": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "display_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/figS7/disp_c9.mrc",
+    "display_main_component_A3_after_rotation": 65420,
+    "display_x_extent_A": 159.0
+   }
+  ],
+  "scalebar_px_per_A": 6.5645,
+  "split_sentence": "At this common contour the density splits into separate pieces: classes 2, 4 and 8 each have a large separate piece (class 2: ~24,000 \u00c5\u00b3; class 4: ~29,700 \u00c5\u00b3; class 8: ~11,500 \u00c5\u00b3); class 5 has a separate ~2,200 \u00c5\u00b3 tip; class 6 has two extra pieces (~29,400 and ~2,200 \u00c5\u00b3) (pieces < 2,000 \u00c5\u00b3 not counted; all component volumes in figS7_class3d.json)."
+ },
+ "plotted_numbers": [
+  {
+   "panel": "nu",
+   "particles": 54158,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+   "percent_of_assigned": null,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_volume_map.mrc",
+   "threshold_sigma": 100.615,
+   "main_component_A3": 65031,
+   "other_components_A3": []
+  },
+  {
+   "panel": "c0",
+   "particles": 7340,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_00_00014_particles.cs",
+   "percent_of_assigned": 13.56,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_00_00014_volume.mrc",
+   "threshold_sigma": 30.882,
+   "main_component_A3": 64985,
+   "other_components_A3": []
+  },
+  {
+   "panel": "c1",
+   "particles": 5528,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_01_00014_particles.cs",
+   "percent_of_assigned": 10.21,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_01_00014_volume.mrc",
+   "threshold_sigma": 34.333,
+   "main_component_A3": 65008,
+   "other_components_A3": []
+  },
+  {
+   "panel": "c2",
+   "particles": 2896,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_02_00014_particles.cs",
+   "percent_of_assigned": 5.35,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_02_00014_volume.mrc",
+   "threshold_sigma": 28.628,
+   "main_component_A3": 39307,
+   "other_components_A3": [
+    24006
+   ]
+  },
+  {
+   "panel": "c3",
+   "particles": 7457,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_03_00014_particles.cs",
+   "percent_of_assigned": 13.77,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_03_00014_volume.mrc",
+   "threshold_sigma": 32.934,
+   "main_component_A3": 64871,
+   "other_components_A3": []
+  },
+  {
+   "panel": "c4",
+   "particles": 4881,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_04_00014_particles.cs",
+   "percent_of_assigned": 9.01,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_04_00014_volume.mrc",
+   "threshold_sigma": 27.706,
+   "main_component_A3": 35299,
+   "other_components_A3": [
+    29709
+   ]
+  },
+  {
+   "panel": "c5",
+   "particles": 5527,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_05_00014_particles.cs",
+   "percent_of_assigned": 10.21,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_05_00014_volume.mrc",
+   "threshold_sigma": 31.716,
+   "main_component_A3": 62809,
+   "other_components_A3": [
+    2199
+   ]
+  },
+  {
+   "panel": "c6",
+   "particles": 3927,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_06_00014_particles.cs",
+   "percent_of_assigned": 7.25,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_06_00014_volume.mrc",
+   "threshold_sigma": 27.17,
+   "main_component_A3": 33420,
+   "other_components_A3": [
+    29435,
+    2199
+   ]
+  },
+  {
+   "panel": "c7",
+   "particles": 5599,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_07_00014_particles.cs",
+   "percent_of_assigned": 10.34,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_07_00014_volume.mrc",
+   "threshold_sigma": 30.569,
+   "main_component_A3": 65054,
+   "other_components_A3": []
+  },
+  {
+   "panel": "c8",
+   "particles": 4713,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_08_00014_particles.cs",
+   "percent_of_assigned": 8.7,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_08_00014_volume.mrc",
+   "threshold_sigma": 25.878,
+   "main_component_A3": 53555,
+   "other_components_A3": [
+    11476
+   ]
+  },
+  {
+   "panel": "c9",
+   "particles": 6280,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_09_00014_particles.cs",
+   "percent_of_assigned": 11.6,
+   "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J59/J59_class_09_00014_volume.mrc",
+   "threshold_sigma": 36.558,
+   "main_component_A3": 65077,
+   "other_components_A3": []
+  }
+ ],
+ "caption": "Each tile: face view (looking down the thinnest principal axis of the NU map) above the edge view (rotated 90\u00b0 about the horizontal axis). One rotation, one orthographic camera and one crop for every map; class_3D keeps the NU poses, so all maps are in the NU frame (their correlation with the NU map peaks at zero shift for every class). All maps Gaussian low-passed to 12 \u00c5 and contoured by one rule: density within 205 \u00c5 of the box centre encloses 65,000 \u00c5\u00b3 (sfGFP + one 50 bp duplex). At this common contour the density splits into separate pieces: classes 2, 4 and 8 each have a large separate piece (class 2: ~24,000 \u00c5\u00b3; class 4: ~29,700 \u00c5\u00b3; class 8: ~11,500 \u00c5\u00b3); class 5 has a separate ~2,200 \u00c5\u00b3 tip; class 6 has two extra pieces (~29,400 and ~2,200 \u00c5\u00b3) (pieces < 2,000 \u00c5\u00b3 not counted; all component volumes in figS7_class3d.json). Class tiles are drawn at 0.5\u00d7 the NU panel scale (100 \u00c5 bars on the NU panel and on class 0). Counts: particles assigned to each class in J59 (54,148 assigned, 10 rejected); % of assigned.",
+ "split_sentence": "At this common contour the density splits into separate pieces: classes 2, 4 and 8 each have a large separate piece (class 2: ~24,000 \u00c5\u00b3; class 4: ~29,700 \u00c5\u00b3; class 8: ~11,500 \u00c5\u00b3); class 5 has a separate ~2,200 \u00c5\u00b3 tip; class 6 has two extra pieces (~29,400 and ~2,200 \u00c5\u00b3) (pieces < 2,000 \u00c5\u00b3 not counted; all component volumes in figS7_class3d.json).",
+ "scalebar": {
+  "px_per_A": 6.5645,
+  "source": "NU display map x extent (prep.json display_x_extent_A) vs NU face-render pixel width",
+  "drawn_on": [
+   "NU face view (100 A)",
+   "class 0 face view (100 A, same render px per A; tiles are 0.5x the NU panel's printed size)"
+  ]
+ }
+}

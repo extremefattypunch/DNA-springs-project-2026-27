@@ -1,0 +1,22 @@
+{
+ "type": "class_2D_new",
+ "lane": "Cannon-test",
+ "walltime": "11:00:00",
+ "connections": {
+  "particles": [
+   "J23",
+   "particles"
+  ]
+ },
+ "params": {
+  "class2D_K": 200,
+  "class2D_max_res": 12,
+  "class2D_window_inner_A": 200,
+  "class2D_recenter": 1,
+  "class2D_force_max": 0,
+  "class2D_min_dist_A": 80,
+  "class2D_num_full_iter_batch": 30,
+  "class2D_num_full_iter_batchsize_per_class": 200,
+  "compute_num_gpus": 1
+ }
+}

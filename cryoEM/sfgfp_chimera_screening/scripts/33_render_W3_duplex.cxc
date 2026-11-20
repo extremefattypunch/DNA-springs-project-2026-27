@@ -1,0 +1,20 @@
+# ChimeraX render of the W3 DNA-control map (RELION loose-mask postprocess), run offscreen:
+#   $CHIMERAX --nogui --offscreen --silent scripts/33_render_W3_duplex.cxc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.mrc
+volume #1 encloseVolume 65000 style surface color #4f9fd9 step 1
+set bgColor white
+lighting soft
+graphics silhouettes true width 2
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/W3_duplex_65k_v1.png width 900 height 700 supersample 2
+turn y 90
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/W3_duplex_65k_v2.png width 900 height 700 supersample 2
+turn x 90
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/W3_duplex_65k_v3.png width 900 height 700 supersample 2
+turn x -90
+turn y -90
+volume #1 encloseVolume 40000
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/W3_duplex_40k_v1.png width 900 height 700 supersample 2
+measure volume #1
+measure area #1
+exit

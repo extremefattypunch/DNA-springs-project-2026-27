@@ -1,0 +1,98 @@
+{
+ "W3_duplex": {
+  "map": "W3_duplex",
+  "locres_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/locres_locres.mrc",
+  "loose_mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/mask_loose.mrc",
+  "locres_command": "relion_postprocess --locres --locres_sampling 25 --locres_maskrad 30, loose mask (scripts/32_relion_postprocess.sh); RELION 3.1.4",
+  "PRIMARY_inside_cryosparc_validation_mask": {
+   "n_voxels": 29635,
+   "p5": 8.205896472930908,
+   "median": 9.109270095825195,
+   "p95": 10.265039348602295,
+   "mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc_mask.mrc",
+   "definition": "PRIMARY (used on Fig S5 summary boxes and Table S1): 5th / 50th / 95th percentile of RELION --locres values in voxels where the CryoSPARC Validation (FSC) auto-tightened mask > 0.5 (locres finite and > 0)"
+  },
+  "SECONDARY_definitions_note": "The entries below use other voxel sets and give other ranges; they are kept for reference only and are NOT quoted on the figures or in Table S1. inside_displayed_envelope also sets the Fig S5A colour-bar range.",
+  "inside_loose_mask": {
+   "n_voxels": 275190,
+   "min": 7.931811332702637,
+   "p25": 12.069946527481079,
+   "median": 15.955541610717773,
+   "p75": 23.23430824279785,
+   "max": 50.0,
+   "definition": "voxels with loose-mask value >= 0.5 and locres > 0 (0 = not sampled by RELION)",
+   "n_unsampled_zero_excluded": 24827,
+   "n_at_50A_cap": 3291
+  },
+  "inside_loose_mask_incl_unsampled": {
+   "n_voxels": 300017,
+   "min": 0.0,
+   "p25": 11.022089958190918,
+   "median": 15.182692527770996,
+   "p75": 22.35936164855957,
+   "max": 50.0,
+   "definition": "all voxels with loose-mask value >= 0.5"
+  },
+  "inside_displayed_envelope": {
+   "n_voxels": 2838,
+   "min": 7.931811332702637,
+   "p25": 8.176626205444336,
+   "median": 8.311848640441895,
+   "p75": 8.50441861152649,
+   "max": 9.813018798828125,
+   "definition": "voxels above the contour enclosing 65000 A^3 of the loose-mask postprocessed map /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess_masked.mrc (threshold 0.6558); this is what colours the Fig S5A surface"
+  },
+  "note": "The loose mask (15 A low-pass, 98.5th percentile, +6 px, 8 px soft edge) contains much solvent (W4: ~70 % of the box), so its percentiles are dominated by solvent; the envelope numbers describe the molecule."
+ },
+ "W4_dotrod": {
+  "map": "W4_dotrod",
+  "locres_map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/locres_locres.mrc",
+  "loose_mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/mask_loose.mrc",
+  "locres_command": "relion_postprocess --locres --locres_sampling 25 --locres_maskrad 30, loose mask (scripts/32_relion_postprocess.sh); RELION 3.1.4",
+  "PRIMARY_inside_cryosparc_validation_mask": {
+   "n_voxels": 37245,
+   "p5": 8.684439849853515,
+   "median": 10.318194389343262,
+   "p95": 11.611450958251952,
+   "mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc_mask.mrc",
+   "definition": "PRIMARY (used on Fig S5 summary boxes and Table S1): 5th / 50th / 95th percentile of RELION --locres values in voxels where the CryoSPARC Validation (FSC) auto-tightened mask > 0.5 (locres finite and > 0)"
+  },
+  "SECONDARY_definitions_note": "The entries below use other voxel sets and give other ranges; they are kept for reference only and are NOT quoted on the figures or in Table S1. inside_displayed_envelope also sets the Fig S5A colour-bar range.",
+  "inside_loose_mask": {
+   "n_voxels": 2051864,
+   "min": 7.796656608581543,
+   "p25": 33.73785591125488,
+   "median": 41.406564712524414,
+   "p75": 47.27474594116211,
+   "max": 50.0,
+   "definition": "voxels with loose-mask value >= 0.5 and locres > 0 (0 = not sampled by RELION)",
+   "n_unsampled_zero_excluded": 923350,
+   "n_at_50A_cap": 243883
+  },
+  "inside_loose_mask_incl_unsampled": {
+   "n_voxels": 2975214,
+   "min": 0.0,
+   "p25": 0.0,
+   "median": 34.896331787109375,
+   "p75": 44.610716819763184,
+   "max": 50.0,
+   "definition": "all voxels with loose-mask value >= 0.5"
+  },
+  "inside_displayed_envelope": {
+   "n_voxels": 2838,
+   "min": 7.796656608581543,
+   "p25": 8.321044683456421,
+   "median": 9.241997718811035,
+   "p75": 9.767695665359497,
+   "max": 11.051315307617188,
+   "definition": "voxels above the contour enclosing 65000 A^3 of the loose-mask postprocessed map /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess_masked.mrc (threshold 0.7871); this is what colours the Fig S5A surface"
+  },
+  "note": "The loose mask (15 A low-pass, 98.5th percentile, +6 px, 8 px soft edge) contains much solvent (W4: ~70 % of the box), so its percentiles are dominated by solvent; the envelope numbers describe the molecule."
+ },
+ "palette_range_A": [
+  7.5,
+  11.5
+ ],
+ "script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/50_figS5_prep.py",
+ "palette_range_note": "Fig S5A colour-bar range = min/max of inside_displayed_envelope over both maps, rounded outwards to 0.5 A (display only; not a reported resolution range)"
+}

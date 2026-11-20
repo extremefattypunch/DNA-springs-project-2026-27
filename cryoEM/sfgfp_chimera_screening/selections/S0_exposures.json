@@ -1,0 +1,8 @@
+{
+ "note": "Exposure curation for W2 (plan T0e). Pilot (P0, 300 mics): CTF fit median 3.6 A / p90 5.3 A, defocus p10-p90 0.8-2.1 um, rel. ice median 1.06.",
+ "ctf_fit_to_A_max": 6.0,
+ "astig_A_max": 1000.0,
+ "defocus_A_min": 5000.0,
+ "defocus_A_max": 28000.0,
+ "ice_thickness_rel_max": 1.20
+}

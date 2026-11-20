@@ -1,0 +1,26 @@
+section,row,"W3 rod_no_dot (“free DNA”) control, J39",W4 dot-on-rod (J56)
+Data collection and processing,Magnification,"165,000× (nominal)","165,000× (nominal)"
+Data collection and processing,Voltage (kV),200,200
+Data collection and processing,Electron exposure (e–/Å²),"39.72 (vacuum calibration; 28.2 detected through sample); 50 fractions, 2.94 s","39.72 (vacuum calibration; 28.2 detected through sample); 50 fractions, 2.94 s"
+Data collection and processing,"Defocus range (μm, underfocus)","0.74–2.11 (p5–p95 of 8,036 curated micrographs; median 1.41)","0.74–2.11 (p5–p95 of 8,036 curated micrographs; median 1.41)"
+Data collection and processing,Pixel size (Å),"0.71 physical, as used in processing (EPU xml calibration 0.7175) / 1.42 processed (motion-corrected, F-crop ½) / 2.84 refined (128 px box); if 0.7175 is correct, all Å values ×1.0106 (see pixel-size note)","0.71 physical, as used in processing (EPU xml calibration 0.7175) / 1.42 processed (motion-corrected, F-crop ½) / 2.84 refined (160 px box); if 0.7175 is correct, all Å values ×1.0106 (see pixel-size note)"
+Data collection and processing,Symmetry imposed,C1,C1
+Data collection and processing,Micrographs (collected / curated / contributing to map),"9,019 / 8,036 / 7,866","9,019 / 8,036 / 7,831"
+Data collection and processing,Initial particle images (no.),"1,583,293 rod-stream blob picks (J18); 606,539 extracted after power filter","1,583,293 rod-stream blob picks (J18); 224,068 re-centred and re-extracted (J44)"
+Data collection and processing,Final particle images (no.),"64,013","54,158"
+Data collection and processing,Map resolution (Å),"7.8 (CryoSPARC GSFSC, tight mask) / 8.7 (RELION 3.1, loose mask, phase-randomised)","7.9 (CryoSPARC GSFSC, tight mask) / 10.8 (RELION 3.1, loose mask, phase-randomised)"
+Data collection and processing,    FSC threshold,0.143,0.143
+Data collection and processing,"Map resolution, other masks (Å)",no mask 9.7 / spherical 8.9 (CryoSPARC); RELION with CryoSPARC mask 7.9,no mask 11.2 / spherical 9.8 (CryoSPARC); RELION with CryoSPARC mask 8.0
+Data collection and processing,Map resolution range (Å),"8.2–10.3 (RELION locres, p5–p95 in tight mask; median 9.1); 7.4–14.1 (CryoSPARC J42; median 11.4)","8.7–11.6 (RELION locres, p5–p95 in tight mask; median 10.3); no CryoSPARC local-resolution job"
+Data collection and processing,Orientation: cFAR / SCF*,0.27 / 0.94,0.17 / 0.70
+Refinement,Initial model used (PDB code),"not built: ~8–9 Å map of a rod with a terminal lobe, no secondary structure resolved, so an atomic model would be unconstrained",not built: ~11 Å anisotropic average (cFAR 0.17) over heterogeneous sfGFP–DNA assemblies; nothing to refine a model against
+Refinement,Model resolution (Å),not built (no model),not built (no model)
+Refinement,Map sharpening B factor (Å²),"-1048 (RELION auto-B, CryoSPARC mask) / -926 (loose mask); Guinier fit from 10 Å only, r = 0.74 / 0.92","-714 (RELION auto-B, CryoSPARC mask) / -823 (loose mask); Guinier fit from 10 Å only, r = 0.80 / 0.76"
+Refinement,Model composition: non-hydrogen atoms / residues / ligands,not built (no model),not built (no model)
+Refinement,B factors (Å²),not built (no model),not built (no model)
+Refinement,R.m.s. deviations: bond lengths (Å) / bond angles (°),not built (no model),not built (no model)
+Validation,MolProbity score,not built (no model),not built (no model)
+Validation,Clashscore,not built (no model),not built (no model)
+Validation,Poor rotamers (%),not built (no model),not built (no model)
+Validation,Ramachandran plot: favored / allowed / disallowed (%),not built (no model),not built (no model)
+notes,pixel size,"Pixel size: processed with 0.71 Å/px (user screenshot); EPU xml calibration 0.7175 Å/px (all 9,019 movies) — if 0.7175 is correct, all Å values scale by ×1.0106; to be confirmed with the facility.","Pixel size: processed with 0.71 Å/px (user screenshot); EPU xml calibration 0.7175 Å/px (all 9,019 movies) — if 0.7175 is correct, all Å values scale by ×1.0106; to be confirmed with the facility."

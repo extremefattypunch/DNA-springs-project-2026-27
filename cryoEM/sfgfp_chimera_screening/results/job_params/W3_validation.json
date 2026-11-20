@@ -1,0 +1,14 @@
+{
+ "type": "validation",
+ "lane": "Cannon-test",
+ "walltime": "02:00:00",
+ "connections": {
+  "volume": [
+   "J39",
+   "volume"
+  ]
+ },
+ "params": {
+  "validate_generate_new_mask": 1
+ }
+}

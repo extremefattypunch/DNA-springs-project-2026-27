@@ -1,0 +1,14 @@
+{
+ "type": "patch_ctf_estimation_multi",
+ "lane": "Cannon-test",
+ "walltime": "06:00:00",
+ "connections": {
+  "exposures": [
+   "J12",
+   "micrographs"
+  ]
+ },
+ "params": {
+  "compute_num_gpus": 1
+ }
+}

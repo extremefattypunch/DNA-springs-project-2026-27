@@ -1,0 +1,17 @@
+{
+ "type": "homo_abinit",
+ "lane": "Cannon-test",
+ "walltime": "04:00:00",
+ "connections": {
+  "particles": [
+   "J32",
+   "particles"
+  ]
+ },
+ "params": {
+  "abinit_K": 1,
+  "abinit_max_res": 12.0,
+  "abinit_init_res": 35.0,
+  "abinit_num_particles": 20000
+ }
+}

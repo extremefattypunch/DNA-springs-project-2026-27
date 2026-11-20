@@ -1,0 +1,262 @@
+# W4 dot-on-rod 3D length: renders (scripts/46_dotrod_3d_length.py writes the inputs).
+# Run offscreen as a CPU job:  $CHIMERAX --nogui --offscreen --silent scripts/46_dotrod_render_fit.cxc
+# Display maps are the 12 A low-passed maps, principal-axis aligned (x = longest, z = thinnest axis), scaled so
+# level 1.0 = the primary contour (main component encloses 65,000 A^3). Green = compact lobe segment, blue = rod,
+# orange/magenta/... markers = medial skeleton branches. v1 looks down z (widest view), v2 down x, v3 down y.
+log clear
+set bgColor white
+lighting soft
+graphics silhouettes true width 1.5
+# ---- nu
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_nu_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_nu_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_nu_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_nu_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_nu_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_nu_v3.png width 800 height 650 supersample 2
+# ---- het0
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het0_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het0_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het0_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het0_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het0_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het0_v3.png width 800 height 650 supersample 2
+# ---- het1
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het1_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het1_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_het1_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het1_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het1_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_het1_v3.png width 800 height 650 supersample 2
+# ---- free
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_free_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_free_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_free_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_free_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_free_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_free_v3.png width 800 height 650 supersample 2
+# ---- c3d_0
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_0_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_0_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_0_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_0_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_0_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_0_v3.png width 800 height 650 supersample 2
+# ---- c3d_1
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_1_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_1_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_1_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_1_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_1_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_1_v3.png width 800 height 650 supersample 2
+# ---- c3d_2
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_2_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_2_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_2_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_2_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_2_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_2_v3.png width 800 height 650 supersample 2
+# ---- c3d_3
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_3_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_3_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_3_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_3_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_3_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_3_v3.png width 800 height 650 supersample 2
+# ---- c3d_4
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_4_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_4_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_4_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_4_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_4_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_4_v3.png width 800 height 650 supersample 2
+# ---- c3d_5
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_5_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_5_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_5_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_5_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_5_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_5_v3.png width 800 height 650 supersample 2
+# ---- c3d_6
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_6_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_6_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_6_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_6_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_6_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_6_v3.png width 800 height 650 supersample 2
+# ---- c3d_7
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_7_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_7_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_7_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_7_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_7_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_7_v3.png width 800 height 650 supersample 2
+# ---- c3d_8
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_8_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_8_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_8_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_8_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_8_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_8_v3.png width 800 height 650 supersample 2
+# ---- c3d_9
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_9_lobe.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_9_rod.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/disp_c3d_9_skel.cmm
+volume #1 level 1.0 style surface color #3cb44b step 1
+volume #2 level 1.0 style surface color #5b8fd9 step 1
+transparency #1,2 30
+view orient
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_9_v1.png width 800 height 650 supersample 2
+turn y 90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_9_v2.png width 800 height 650 supersample 2
+view orient
+turn x -90
+view
+save /n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/maps/dotrod_c3d_9_v3.png width 800 height 650 supersample 2
+exit

@@ -1,0 +1,5 @@
+# solvated tleap output (~40 MB), regenerable with ../../build_L6_loop50.sh system
+system.prmtop
+system.inpcrd
+system.pdb
+leap.log

@@ -1,0 +1,15 @@
+{
+ "field": "pick_stats/power",
+ "rule": "keep pick if power > p75 of P0 noise-class picks in its 0.25 um defocus bin (P0 J7 classes not in two-dot/rod/ice lists)",
+ "fallback_global": 492.0,
+ "bins": {
+  "0.50-0.75": 388.6,
+  "0.75-1.00": 435.8,
+  "1.00-1.25": 465.7,
+  "1.25-1.50": 490.7,
+  "1.50-1.75": 517.0,
+  "1.75-2.00": 539.8,
+  "2.00-2.25": 559.7,
+  "2.25-2.50": 556.8
+ }
+}

@@ -1,0 +1,86 @@
+# W4 dot-on-rod: rigid-body fit of sfGFP (L6_protein.pdb) into the NU-map lobe and control positions.
+# VALIDATION ONLY: maps are never modified. Inputs written by scripts/46_dotrod_3d_length.py (sfGFP pre-placed at the
+# lobe centre / distal end / rod midpoint). Run WITHOUT --silent so the log goes to stdout:
+#   $CHIMERAX --nogui --offscreen scripts/46_dotrod_fit_sfgfp.cxc > $OUTD/chimerax_fit_log.txt
+# ---- fit sfGFP (nu, start at lobe); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_sfgfp_lobe.pdb
+volume #1 encloseVolume 65000
+echo FIT nu_lobe start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (nu, start at distal); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_sfgfp_distal.pdb
+volume #1 encloseVolume 65000
+echo FIT nu_distal start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (nu, start at rodmid); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_nu_sfgfp_rodmid.pdb
+volume #1 encloseVolume 65000
+echo FIT nu_rodmid start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (free, start at lobe); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_sfgfp_lobe.pdb
+volume #1 encloseVolume 65000
+echo FIT free_lobe start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (free, start at distal); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_sfgfp_distal.pdb
+volume #1 encloseVolume 65000
+echo FIT free_distal start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (free, start at rodmid); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_free_sfgfp_rodmid.pdb
+volume #1 encloseVolume 65000
+echo FIT free_rodmid start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (het1, start at lobe); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_sfgfp_lobe.pdb
+volume #1 encloseVolume 65000
+echo FIT het1_lobe start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (het1, start at distal); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_sfgfp_distal.pdb
+volume #1 encloseVolume 65000
+echo FIT het1_distal start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+# ---- fit sfGFP (het1, start at rodmid); validation only, maps unchanged
+close
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_map.mrc
+open /n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/dotrod_3d_length/fit_het1_sfgfp_rodmid.pdb
+volume #1 encloseVolume 65000
+echo FIT het1_rodmid start
+fitmap #2 inMap #1 resolution 10 search 60 radius 12
+fitmap #2 inMap #1 resolution 10
+echo ENDFIT
+exit

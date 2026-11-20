@@ -1,0 +1,324 @@
+{
+ "figure": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/final/figS5_W3_duplex.png",
+ "script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/55_figS5_assemble.py",
+ "prep_script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/50_figS5_prep.py",
+ "style": "Day et al. 2025 Structure Fig S5 layout; house style vizstyle.py (pp2a_day2025_reproduction/scripts)",
+ "title": "W3 rod_no_dot (\u201cfree DNA\u201d) control: rod + terminal lobe; NU J39\nfinal particles 72% rod_no_dot, 28% decoy-input (noise 12,305 / dot pairs 4,019 / ice 1,358)",
+ "A": {
+  "caption": "Contour: 65,000 \u00c5\u00b3 enclosed, the same enclosed volume as W4 for comparability (not tuned for a single rod); level 0.656 (7.4 SD) on the RELION loose-mask postprocessed map, B\u00a0=\u00a0-926\u00a0\u00c5\u00b2; surface coloured by RELION local resolution (colour-bar range = display only; reported range in the summary box).",
+  "sharpening_B_A2": -925.5453,
+  "sharpening_B_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star _rlnBfactorUsedForSharpening",
+  "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess_masked.mrc",
+  "colouring": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/relion_locres.mrc",
+  "contour": {
+   "threshold": 0.6557979583740234,
+   "threshold_sd": 7.399385929107666,
+   "definition": "voxel-count threshold: the top N voxels, N = 65,000 A^3 / apix^3 (65,000 A^3 = project primary contour, results/dotrod_3d_length.json parameters.primary_A3)",
+   "surface_level_in_chimerax": 0.6558,
+   "dust_hidden_below_A": 15.0
+  },
+  "palette": "7.50,#d7191c:8.50,#fdae61:9.50,#ffffbf:10.50,#abdda4:11.50,#2b83ba",
+  "palette_range_A": [
+   7.5,
+   11.5
+  ],
+  "palette_range_source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/final/local_resolution_stats.json palette_range_A",
+  "scale": {
+   "A_per_px": 0.15714285714285714,
+   "field_width_A": 220.0,
+   "scale_bar_A": 50,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/W3_duplex_render_log.json"
+  },
+  "renders": [
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/W3_duplex_v1.png",
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/W3_duplex_v2.png",
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W3_duplex/W3_duplex_v3.png"
+  ],
+  "render_script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/51_figS5_render_W3_duplex.py",
+  "views": "camera set on the principal axes of the contoured map (render.json axes); v2 = turn x 90, v3 = turn y 90 from v1; 'view' re-frames after every turn, then the orthographic field width is fixed so all three views share one scale"
+ },
+ "B": {
+  "stack": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_2D_rods/J27_030_class_averages.mrc",
+  "apix_2d": 5.679999828338623,
+  "box_px": 64,
+  "box_A": 363.5,
+  "n_final_particles": 64013,
+  "n_contributing_classes": 58,
+  "top_fraction_of_final": 0.9076906253417275,
+  "final_particles_by_label": {
+   "noise_junk": 12305,
+   "rod_no_dot": 46331,
+   "ice_contaminant": 1358,
+   "dot_pair": 4019
+  },
+  "sources": {
+   "final_particles": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs (uid)",
+   "class_of_particle": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/W2_2D_rods__particles.npz (uid, alignments2D__class)",
+   "labels": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/class2d_labels_W2_2D_rods.csv (blind 3-reviewer consensus label)"
+  },
+  "tiles": [
+   {
+    "class": 58,
+    "n_final": 8717,
+    "n_in_2d_class": 16882,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 57,
+    "n_final": 8397,
+    "n_in_2d_class": 20917,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 1,
+    "n_final": 5389,
+    "n_in_2d_class": 10340,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 170,
+    "n_final": 3229,
+    "n_in_2d_class": 6284,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 199,
+    "n_final": 2914,
+    "n_in_2d_class": 19387,
+    "label": "dot_pair"
+   },
+   {
+    "class": 74,
+    "n_final": 2824,
+    "n_in_2d_class": 5747,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 189,
+    "n_final": 2070,
+    "n_in_2d_class": 3990,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 66,
+    "n_final": 1823,
+    "n_in_2d_class": 4637,
+    "label": "noise_junk"
+   },
+   {
+    "class": 81,
+    "n_final": 1655,
+    "n_in_2d_class": 3719,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 23,
+    "n_final": 1653,
+    "n_in_2d_class": 5117,
+    "label": "noise_junk"
+   },
+   {
+    "class": 90,
+    "n_final": 1412,
+    "n_in_2d_class": 2853,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 88,
+    "n_final": 1349,
+    "n_in_2d_class": 3219,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 154,
+    "n_final": 1307,
+    "n_in_2d_class": 3587,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 11,
+    "n_final": 1226,
+    "n_in_2d_class": 2741,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 105,
+    "n_final": 1105,
+    "n_in_2d_class": 17993,
+    "label": "dot_pair"
+   },
+   {
+    "class": 104,
+    "n_final": 1091,
+    "n_in_2d_class": 2619,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 63,
+    "n_final": 1028,
+    "n_in_2d_class": 2138,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 46,
+    "n_final": 962,
+    "n_in_2d_class": 2163,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 173,
+    "n_final": 926,
+    "n_in_2d_class": 1903,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 62,
+    "n_final": 907,
+    "n_in_2d_class": 1901,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 75,
+    "n_final": 873,
+    "n_in_2d_class": 2725,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 117,
+    "n_final": 871,
+    "n_in_2d_class": 2010,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 68,
+    "n_final": 849,
+    "n_in_2d_class": 1940,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 141,
+    "n_final": 847,
+    "n_in_2d_class": 2987,
+    "label": "rod_no_dot"
+   },
+   {
+    "class": 162,
+    "n_final": 678,
+    "n_in_2d_class": 1827,
+    "label": "noise_junk"
+   },
+   {
+    "class": 10,
+    "n_final": 640,
+    "n_in_2d_class": 1575,
+    "label": "noise_junk"
+   },
+   {
+    "class": 15,
+    "n_final": 607,
+    "n_in_2d_class": 1595,
+    "label": "noise_junk"
+   },
+   {
+    "class": 44,
+    "n_final": 588,
+    "n_in_2d_class": 74108,
+    "label": "ice_contaminant"
+   },
+   {
+    "class": 39,
+    "n_final": 579,
+    "n_in_2d_class": 1714,
+    "label": "noise_junk"
+   },
+   {
+    "class": 153,
+    "n_final": 557,
+    "n_in_2d_class": 1482,
+    "label": "noise_junk"
+   },
+   {
+    "class": 97,
+    "n_final": 533,
+    "n_in_2d_class": 1377,
+    "label": "noise_junk"
+   },
+   {
+    "class": 30,
+    "n_final": 498,
+    "n_in_2d_class": 1323,
+    "label": "noise_junk"
+   }
+  ],
+  "display": "per-tile grey scale 1st-99.5th percentile; 100 A scale bar on the first tile"
+ },
+ "C": {
+  "curves": {
+   "fsc_nomask": {
+    "label": "CryoSPARC GSFSC no mask  9.7 \u00c5",
+    "res_at_0.143_A_annotated": 9.696254483725026,
+    "res_0143_interpolated_A": 9.696254483725026,
+    "res_05_interpolated_A": 12.831025375553093,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt columns 'frequency', 'fsc_nomask' (read by header name)"
+   },
+   "fsc_sphericalmask": {
+    "label": "CryoSPARC GSFSC spherical mask  8.9 \u00c5",
+    "res_at_0.143_A_annotated": 8.918678107371205,
+    "res_0143_interpolated_A": 8.918678107371205,
+    "res_05_interpolated_A": 12.313834204267696,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt columns 'frequency', 'fsc_sphericalmask' (read by header name)"
+   },
+   "fsc_resmask": {
+    "label": "CryoSPARC GSFSC tight (auto-tightened) mask  7.8 \u00c5",
+    "res_at_0.143_A_annotated": 7.755966988297678,
+    "res_0143_interpolated_A": 7.755966988297678,
+    "res_05_interpolated_A": 9.498526933500168,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc.txt columns 'frequency', 'fsc_resmask' (read by header name)"
+   },
+   "relion_pp_csmask": {
+    "label": "RELION 3.1, CryoSPARC tight mask, phase-rand. corrected  7.9 \u00c5",
+    "res_at_0.143_A_annotated": 7.902608,
+    "res_0143_interpolated_A": 7.866202355793861,
+    "res_05_interpolated_A": 9.679909307034,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_csmask/postprocess.star data_fsc _rlnResolution, _rlnFourierShellCorrelationCorrected; data_general _rlnFinalResolution"
+   },
+   "relion_pp_loose": {
+    "label": "RELION 3.1, loose mask, phase-rand. corrected  8.7 \u00c5",
+    "res_at_0.143_A_annotated": 8.655238,
+    "res_0143_interpolated_A": 8.565847124704922,
+    "res_05_interpolated_A": 11.596319993153056,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W3_duplex/pp_loose/postprocess.star data_fsc _rlnResolution, _rlnFourierShellCorrelationCorrected; data_general _rlnFinalResolution"
+   }
+  },
+  "note": "RELION's own _rlnFinalResolution is the last shell above 0.143 (no interpolation); res_0143_A is the interpolated crossing used for the plot annotation",
+  "map_model": null,
+  "map_model_omitted_because": "Omitted: d(FSC=0.5) changes by 2.1 A between register variants, so the value depends on the helical register (groove phase/polarity), which the 8-9 A map does not determine."
+ },
+ "D": {
+  "particles": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs",
+  "n_particles": 64013,
+  "n_rejected_by_refinement": 23,
+  "convention": "R = Rodrigues(alignments3D/pose) (scipy Rotation.from_rotvec); viewing direction d = R @ z_hat; azimuth = atan2(d_y, d_x), elevation = arcsin(d_z); counts per 5x5 deg bin, not area-normalised; white = empty bin. Checked against CryoSPARC's own viewing-direction plot of the same job (iteration 3, from the job's gridfs_data): same peaks; the transpose convention does not match.",
+  "bins": [
+   72,
+   36
+  ],
+  "max_bin_count": 118.0,
+  "empty_bin_fraction": 0.03935185185185185,
+  "cFAR": 0.2661,
+  "SCF_star": 0.93504,
+  "cFAR_SCF_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J41/events.bson (event-log lines 'cFAR: ...' and 'SCF*: ...')"
+ },
+ "summary_box": {
+  "local_resolution": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/final/local_resolution_stats.json W3_duplex.PRIMARY_inside_cryosparc_validation_mask (same definition as Table S1)",
+  "local_resolution_values": {
+   "p5": 8.205896472930908,
+   "median": 9.109270095825195,
+   "p95": 10.265039348602295,
+   "n_voxels": 29635,
+   "mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J40/J40_fsc_mask.mrc"
+  },
+  "pixel_box": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J39/J39_003_particles.cs fields blob/psize_A, blob/shape",
+  "other_rows": "same sources as panels C and D"
+ }
+}

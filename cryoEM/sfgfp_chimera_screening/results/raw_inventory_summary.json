@@ -1,0 +1,53 @@
+{
+ "listing": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw_inventory/listing.txt",
+ "files": 37389,
+ "total_TB": 1.4184,
+ "by_kind": {
+  "data_jpg": {
+   "files": 9019,
+   "GB": 1.23
+  },
+  "data_micrograph_preview": {
+   "files": 9019,
+   "GB": 310.84
+  },
+  "data_xml": {
+   "files": 9019,
+   "GB": 0.12
+  },
+  "foilhole_image": {
+   "files": 696,
+   "GB": 8.03
+  },
+  "gain": {
+   "files": 1,
+   "GB": 0.04
+  },
+  "gridsquare_image": {
+   "files": 615,
+   "GB": 0.81
+  },
+  "movie_tiff": {
+   "files": 9019,
+   "GB": 1097.35
+  },
+  "other": {
+   "files": 1,
+   "GB": 0.0
+  }
+ },
+ "grid_squares": 20,
+ "movies": 9019,
+ "session_level_files": [
+  {
+   "path": "20260624_135522_EER_GainReference.gain",
+   "bytes": 36678582,
+   "mtime": "2026/06/24 14:45:56"
+  },
+  {
+   "path": "EpuSession.dm",
+   "bytes": 275107,
+   "mtime": "2026/11/12 17:22:33"
+  }
+ ]
+}

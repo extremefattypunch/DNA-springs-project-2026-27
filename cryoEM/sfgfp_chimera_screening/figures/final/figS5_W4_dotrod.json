@@ -1,0 +1,324 @@
+{
+ "figure": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/figures/final/figS5_W4_dotrod.png",
+ "script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/55_figS5_assemble.py",
+ "prep_script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/50_figS5_prep.py",
+ "style": "Day et al. 2025 Structure Fig S5 layout; house style vizstyle.py (pp2a_day2025_reproduction/scripts)",
+ "title": "W4 dot-on-rod map (sfGFP-associated DNA; final particles 50% DOT / 45% haze; NU J56)",
+ "A": {
+  "caption": "Contour: 65,000 \u00c5\u00b3 enclosed (sfGFP 33,000 + one 50 bp duplex 32,000 \u00c5\u00b3); level 0.787 (9.7 SD) on the RELION loose-mask postprocessed map, B\u00a0=\u00a0-823\u00a0\u00c5\u00b2; surface coloured by RELION local resolution (colour-bar range = display only; reported range in the summary box).",
+  "sharpening_B_A2": -823.32003,
+  "sharpening_B_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star _rlnBfactorUsedForSharpening",
+  "map": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess_masked.mrc",
+  "colouring": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/relion_locres.mrc",
+  "contour": {
+   "threshold": 0.7870520353317261,
+   "threshold_sd": 9.743165969848633,
+   "definition": "voxel-count threshold: the top N voxels, N = 65,000 A^3 / apix^3 (65,000 A^3 = project primary contour, results/dotrod_3d_length.json parameters.primary_A3)",
+   "surface_level_in_chimerax": 0.78705,
+   "dust_hidden_below_A": 15.0
+  },
+  "palette": "7.50,#d7191c:8.50,#fdae61:9.50,#ffffbf:10.50,#abdda4:11.50,#2b83ba",
+  "palette_range_A": [
+   7.5,
+   11.5
+  ],
+  "palette_range_source": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/final/local_resolution_stats.json palette_range_A",
+  "scale": {
+   "A_per_px": 0.15714285714285714,
+   "field_width_A": 220.0,
+   "scale_bar_A": 50,
+   "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/W4_dotrod_render_log.json"
+  },
+  "renders": [
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/W4_dotrod_v1.png",
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/W4_dotrod_v2.png",
+   "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/figures_scratch/W4_dotrod/W4_dotrod_v3.png"
+  ],
+  "render_script": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/scripts/51_figS5_render_W4_dotrod.py",
+  "views": "camera set on the principal axes of the contoured map (render.json axes); v2 = turn x 90, v3 = turn y 90 from v1; 'view' re-frames after every turn, then the orthographic field width is fixed so all three views share one scale"
+ },
+ "B": {
+  "stack": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/A1_2D/J45_030_class_averages.mrc",
+  "apix_2d": 3.549999952316284,
+  "box_px": 128,
+  "box_A": 454.4,
+  "n_final_particles": 54158,
+  "n_contributing_classes": 41,
+  "top_fraction_of_final": 0.9928173123084308,
+  "final_particles_by_label": {
+   "FREE (free rod)": 1204,
+   "haze (decoy)": 24280,
+   "DOT (dot-on-rod)": 27029,
+   "ice (decoy)": 1645
+  },
+  "sources": {
+   "final_particles": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs (uid)",
+   "class_of_particle": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/exports/A1_2D__particles.npz (uid, alignments2D__class)",
+   "labels": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/cs_state.json jobs W4_{dot,free,haze,ice}_particles.classes (A1 groups)"
+  },
+  "tiles": [
+   {
+    "class": 105,
+    "n_final": 15783,
+    "n_in_2d_class": 45901,
+    "label": "haze (decoy)"
+   },
+   {
+    "class": 12,
+    "n_final": 8497,
+    "n_in_2d_class": 37768,
+    "label": "haze (decoy)"
+   },
+   {
+    "class": 123,
+    "n_final": 7862,
+    "n_in_2d_class": 14371,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 130,
+    "n_final": 3636,
+    "n_in_2d_class": 13498,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 31,
+    "n_final": 3519,
+    "n_in_2d_class": 8099,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 147,
+    "n_final": 2418,
+    "n_in_2d_class": 6851,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 103,
+    "n_final": 1372,
+    "n_in_2d_class": 5225,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 114,
+    "n_final": 1313,
+    "n_in_2d_class": 4274,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 13,
+    "n_final": 1241,
+    "n_in_2d_class": 3506,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 92,
+    "n_final": 1098,
+    "n_in_2d_class": 3727,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 145,
+    "n_final": 1098,
+    "n_in_2d_class": 3714,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 52,
+    "n_final": 1013,
+    "n_in_2d_class": 3298,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 58,
+    "n_final": 976,
+    "n_in_2d_class": 4302,
+    "label": "ice (decoy)"
+   },
+   {
+    "class": 54,
+    "n_final": 918,
+    "n_in_2d_class": 2211,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 97,
+    "n_final": 509,
+    "n_in_2d_class": 2040,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 138,
+    "n_final": 457,
+    "n_in_2d_class": 2182,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 117,
+    "n_final": 393,
+    "n_in_2d_class": 1710,
+    "label": "ice (decoy)"
+   },
+   {
+    "class": 146,
+    "n_final": 327,
+    "n_in_2d_class": 1827,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 87,
+    "n_final": 248,
+    "n_in_2d_class": 1784,
+    "label": "DOT (dot-on-rod)"
+   },
+   {
+    "class": 133,
+    "n_final": 138,
+    "n_in_2d_class": 1268,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 111,
+    "n_final": 113,
+    "n_in_2d_class": 1248,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 56,
+    "n_final": 104,
+    "n_in_2d_class": 810,
+    "label": "ice (decoy)"
+   },
+   {
+    "class": 110,
+    "n_final": 99,
+    "n_in_2d_class": 814,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 99,
+    "n_final": 82,
+    "n_in_2d_class": 718,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 48,
+    "n_final": 75,
+    "n_in_2d_class": 789,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 8,
+    "n_final": 74,
+    "n_in_2d_class": 810,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 28,
+    "n_final": 72,
+    "n_in_2d_class": 507,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 64,
+    "n_final": 72,
+    "n_in_2d_class": 765,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 30,
+    "n_final": 71,
+    "n_in_2d_class": 963,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 23,
+    "n_final": 68,
+    "n_in_2d_class": 494,
+    "label": "ice (decoy)"
+   },
+   {
+    "class": 86,
+    "n_final": 63,
+    "n_in_2d_class": 559,
+    "label": "FREE (free rod)"
+   },
+   {
+    "class": 76,
+    "n_final": 60,
+    "n_in_2d_class": 580,
+    "label": "FREE (free rod)"
+   }
+  ],
+  "display": "per-tile grey scale 1st-99.5th percentile; 100 A scale bar on the first tile"
+ },
+ "C": {
+  "curves": {
+   "fsc_nomask": {
+    "label": "CryoSPARC GSFSC no mask  11.2 \u00c5",
+    "res_at_0.143_A_annotated": 11.24471312659401,
+    "res_0143_interpolated_A": 11.24471312659401,
+    "res_05_interpolated_A": 14.348098313232931,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt columns 'frequency', 'fsc_nomask' (read by header name)"
+   },
+   "fsc_sphericalmask": {
+    "label": "CryoSPARC GSFSC spherical mask  9.8 \u00c5",
+    "res_at_0.143_A_annotated": 9.754175218679329,
+    "res_0143_interpolated_A": 9.754175218679329,
+    "res_05_interpolated_A": 13.612898973028216,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt columns 'frequency', 'fsc_sphericalmask' (read by header name)"
+   },
+   "fsc_resmask": {
+    "label": "CryoSPARC GSFSC tight (auto-tightened) mask  7.9 \u00c5",
+    "res_at_0.143_A_annotated": 7.89312215634977,
+    "res_0143_interpolated_A": 7.89312215634977,
+    "res_05_interpolated_A": 9.002325727991115,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc.txt columns 'frequency', 'fsc_resmask' (read by header name)"
+   },
+   "relion_pp_csmask": {
+    "label": "RELION 3.1, CryoSPARC tight mask, phase-rand. corrected  8.0 \u00c5",
+    "res_at_0.143_A_annotated": 7.97193,
+    "res_0143_interpolated_A": 7.947038785485089,
+    "res_05_interpolated_A": 9.074238919973736,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_csmask/postprocess.star data_fsc _rlnResolution, _rlnFourierShellCorrelationCorrected; data_general _rlnFinalResolution"
+   },
+   "relion_pp_loose": {
+    "label": "RELION 3.1, loose mask, phase-rand. corrected  10.8 \u00c5",
+    "res_at_0.143_A_annotated": 10.819047,
+    "res_0143_interpolated_A": 10.680375589721027,
+    "res_05_interpolated_A": 14.023986892575076,
+    "source": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/relion/W4_dotrod/pp_loose/postprocess.star data_fsc _rlnResolution, _rlnFourierShellCorrelationCorrected; data_general _rlnFinalResolution"
+   }
+  },
+  "note": "RELION's own _rlnFinalResolution is the last shell above 0.143 (no interpolation); res_0143_A is the interpolated crossing used for the plot annotation",
+  "map_model": null,
+  "map_model_omitted_because": "No defensible rigid model: the W4 map is an average of heterogeneous, nearly planar sfGFP-DNA assemblies (report.md section 13b): the DNA outside the sfGFP lobe adds up to ~1.4 duplex-equivalents with an ~85 deg kink, the lobe is ~10x smaller than rigid sfGFP at 12 A (blurred or partly occupied), and the kink/attachment geometry is not decidable (cFAR 0.17). Any sfGFP + B-DNA placement would encode an unproven connectivity, so a map-model FSC would measure the model choice, not the map."
+ },
+ "D": {
+  "particles": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs",
+  "n_particles": 54158,
+  "n_rejected_by_refinement": 23,
+  "convention": "R = Rodrigues(alignments3D/pose) (scipy Rotation.from_rotvec); viewing direction d = R @ z_hat; azimuth = atan2(d_y, d_x), elevation = arcsin(d_z); counts per 5x5 deg bin, not area-normalised; white = empty bin. Checked against CryoSPARC's own viewing-direction plot of the same job (iteration 3, from the job's gridfs_data): same peaks; the transpose convention does not match.",
+  "bins": [
+   72,
+   36
+  ],
+  "max_bin_count": 222.0,
+  "empty_bin_fraction": 0.1284722222222222,
+  "cFAR": 0.17038,
+  "SCF_star": 0.70224,
+  "cFAR_SCF_source": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J58/events.bson (event-log lines 'cFAR: ...' and 'SCF*: ...')"
+ },
+ "summary_box": {
+  "local_resolution": "/n/home05/ianpoon/DNA-springs-project-2026-27/cryoEM/sfgfp_chimera_screening/results/final/local_resolution_stats.json W4_dotrod.PRIMARY_inside_cryosparc_validation_mask (same definition as Table S1)",
+  "local_resolution_values": {
+   "p5": 8.684439849853515,
+   "median": 10.318194389343262,
+   "p95": 11.611450958251952,
+   "n_voxels": 37245,
+   "mask": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J57/J57_fsc_mask.mrc"
+  },
+  "pixel_box": "/n/netscratch/hekstra_lab/Lab/ian_poon/cryosparc_projects/CS-cs-sfgfp-chimera-screening/J56/J56_003_particles.cs fields blob/psize_A, blob/shape",
+  "other_rows": "same sources as panels C and D"
+ }
+}

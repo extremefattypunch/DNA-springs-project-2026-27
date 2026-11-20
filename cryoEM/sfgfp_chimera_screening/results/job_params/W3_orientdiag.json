@@ -1,0 +1,20 @@
+{
+ "type": "orientation_diagnostics",
+ "lane": "Cannon-test",
+ "walltime": "02:00:00",
+ "connections": {
+  "volume": [
+   "J39",
+   "volume"
+  ],
+  "particles": [
+   "J39",
+   "particles"
+  ],
+  "mask": [
+   "J39",
+   "mask"
+  ]
+ },
+ "params": {}
+}

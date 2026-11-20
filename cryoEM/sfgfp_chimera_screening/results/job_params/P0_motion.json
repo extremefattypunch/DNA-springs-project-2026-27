@@ -1,0 +1,17 @@
+{
+ "type": "patch_motion_correction_multi",
+ "lane": "Cannon-test",
+ "walltime": "04:00:00",
+ "connections": {
+  "movies": [
+   "J2",
+   "imported_movies"
+  ]
+ },
+ "params": {
+  "random_num": 300,
+  "output_fcrop_factor": 0.5,
+  "output_f16": 1,
+  "compute_num_gpus": 1
+ }
+}

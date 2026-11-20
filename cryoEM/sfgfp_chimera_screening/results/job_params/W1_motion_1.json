@@ -1,0 +1,16 @@
+{
+ "type": "patch_motion_correction_multi",
+ "lane": "Cannon-test",
+ "walltime": "09:00:00",
+ "connections": {
+  "movies": [
+   "J9",
+   "split_1"
+  ]
+ },
+ "params": {
+  "output_fcrop_factor": 0.5,
+  "output_f16": 1,
+  "compute_num_gpus": 1
+ }
+}

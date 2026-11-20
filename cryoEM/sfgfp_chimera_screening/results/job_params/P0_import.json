@@ -1,0 +1,22 @@
+{
+ "type": "import_movies",
+ "lane": "Cannon-test",
+ "walltime": "01:00:00",
+ "connections": {},
+ "params": {
+  "blob_paths": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_12363290/Data/*_Fractions.tiff",
+  "gainref_path": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/20260624_135522_EER_GainReference.gain",
+  "gainref_flip_x": 0,
+  "gainref_flip_y": 0,
+  "gainref_rotate_num": 0,
+  "parse_xml_files": 1,
+  "skip_header_check": 0,
+  "psize_A": 0.71,
+  "accel_kv": 200.0,
+  "cs_mm": 2.7,
+  "total_dose_e_per_A2": 39.72,
+  "xml_paths": "/n/netscratch/hekstra_lab/Lab/ian_poon/sfgfp_chimera_screening_20261112/raw/Images-Disc1/GridSquare_12363290/Data/FoilHole_*.xml",
+  "mov_cut_suffix_xml": 15,
+  "xml_cut_suffix_xml": 4
+ }
+}

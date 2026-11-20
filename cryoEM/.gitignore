@@ -1,0 +1,3 @@
+# Facility data-download instructions carry credentials; keep them out of git.
+*_data_instructions.md
+*.pass

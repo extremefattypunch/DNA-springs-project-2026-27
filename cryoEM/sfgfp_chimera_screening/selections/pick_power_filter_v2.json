@@ -1,0 +1,6 @@
+{
+ "rule": "per stream, keep picks whose local power (pick_stats/power) is in the top keep_frac within their 0.25 um defocus bin, computed on that stream's own picks",
+ "why": "v1 (pick_power_filter.json, absolute pilot thresholds from 80-140 A circular blobs) kept only 19,937/1,583,293 rod picks: the 20-180 A ellipse picker's power scale is ~2.5x lower (median 212 vs 547). Pilot: noise-class picks were ~34% of 80-140 A blob picks.",
+ "keep_frac": {"rods": 0.5, "anchors": 0.5},
+ "stream_power_quantiles_q05_25_50_75_95": {"rods_J18": [142, 178, 212, 256, 367], "anchors_J19": [206, 265, 325, 435, 736], "pilot_J5": [341, 441, 547, 757, 1226]}
+}

@@ -1,0 +1,21 @@
+{
+ "session": "EPU 12-11-2026 sfGFP chimera screening (EpuSession.dm), Images-Disc1, 20 grid squares",
+ "movies": 9019,
+ "microscope": "Thermo Fisher Glacios (InstrumentModel GLACIOS-9963578), FEG",
+ "accel_kv": 200,
+ "cs_mm": 2.7,
+ "cs_source": "Glacios standard objective (not written in the EPU xml)",
+ "detector": "Falcon 4i, counting, CameraLocation=EnergyFilter, binning 1, full readout",
+ "movie_format": "LZW-compressed TIFF, 50 fractions x 4096x4096 uint8 raw counts (NOT gain-corrected)",
+ "gain_reference": "20260624_135522_EER_GainReference.gain (float32 4096^2, mean 1.00); orientation as-is (no flip/rotation): flat-field correlation r=+0.070 vs <=+0.030 for the other 7 orientations, 12 movies",
+ "pixel_size_A": 0.71,
+ "exposure_s": 2.936,
+ "fractions": 50,
+ "dose_e_per_A2_used": 39.72,
+ "dose_source": "Ian's calibration (6.81 e/px/s vacuum, 0.71 A/px, 2.94 s) = 0.794 e/A^2/fraction",
+ "dose_detected_through_sample_e_per_A2": 28.21,
+ "dose_detected_note": "14.22 counts/px summed over 50 fractions on the first movie = 71% of the vacuum dose (ice + energy-filter loss); EPU xml DoseOnCamera field reads 17.04",
+ "defocus_target_example_um": -1.0,
+ "beam_shift": "read from EPU xml (parse_xml_files, mov_cut_suffix_xml=15); 1 exposure group at import",
+ "facility_server_route": "login nodes only (compute nodes firewalled)"
+}

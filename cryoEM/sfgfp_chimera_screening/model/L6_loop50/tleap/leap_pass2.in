@@ -1,0 +1,24 @@
+source leaprc.protein.ff14SB
+source leaprc.DNA.OL15
+source leaprc.water.tip3p
+source leaprc.xFPchromophores
+loadamberparams frcmod.ions234lm_126_tip3p
+loadamberparams gaff2.dat
+loadamberparams TDP.frcmod
+loadamberparams DNL.frcmod
+loadamberparams DNP.frcmod
+loadamberparams junction.frcmod
+loadamberprep TDP.prepin
+loadamberprep DNL.prepin
+loadamberprep DNP.prepin
+mol = loadpdb chimera_loop50.pdb
+bond mol.131@CN mol.232@N
+bond mol.147@CN mol.283@N
+
+solvateoct mol TIP3PBOX 12.0
+addionsrand mol Na+ 0
+addionsrand mol MG 4 Cl- 8
+addionsrand mol Na+ 121 Cl- 121
+savepdb mol system.pdb
+saveamberparm mol system.prmtop system.inpcrd
+quit
