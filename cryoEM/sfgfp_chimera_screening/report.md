@@ -7,6 +7,7 @@ UIDs are given so each step can be opened in the CryoSPARC GUI. Plan: `~/.claude
 Data locations and purge dates: `DATA.md`.*
 
 ## Contents
+
 - [0. Bottom line so far](#0-bottom-line-so-far)
 - [1. Data, acquisition parameters and gain (G0)](#1-data-acquisition-parameters-and-gain-g0)
 - [2. Pilot on one grid square (P0)](#2-pilot-on-one-grid-square-p0)
@@ -79,6 +80,7 @@ patch motion J3 (300 movies, Fourier-crop ½ → **1.42 Å/px**) → patch CTF J
 circles + ellipses) → extract J6 (256 px → 128 px, 2.84 Å/px) → 2D J7 (100 classes, 12 Å, marginalised poses).
 
 **Results.**
+
 - **Speed:** patch motion **3.7 s/movie** on a MIG slice. This set the lane choice for the full set (§6).
 - **Micrograph quality is good:** CTF fit median **3.6 Å** (p90 5.3 Å), defocus 0.8–2.1 µm (p10–p90),
   relative ice thickness 1.06 (thin).
@@ -90,6 +92,7 @@ circles + ellipses) → extract J6 (256 px → 128 px, 2.84 Å/px) → 2D J7 (10
 limit (5.68 Å/px here); the particles themselves are 128 px at 2.84 Å/px.)*
 
 The pilot 2D looked unlike the expected chimera:
+
 - **38 %: "two sharp dots ~120 Å apart"** (classes 97/30/72)
 - **27 %: short rods or a dot with a tail**
 - the rest featureless noise
@@ -106,6 +109,7 @@ were made of. I coloured picks by 2D population on a low-pass micrograph and pul
 ![pick examples](figures/qc/pilot_pick_examples.png)
 
 At 12 Å low-pass the ice holds two populations:
+
 - **many compact, very dark ~3 nm dots with bright Fresnel halos**
 - **thin wormlike ~2 nm threads 10–20 nm long**
 
@@ -118,6 +122,7 @@ like, and the threads are DNA. The "two dots" classes were picks landing *betwee
 
 **Spatial statistics** (`scripts/12_dot_spatial_stats.py`, `results/G0_spatial.json`; CPU only; nulls built only
 from real coordinates):
+
 - **Dot density:** 94,870 dots in 300 micrographs, median **331 per micrograph (~4,500/µm²)**. Median
   nearest-neighbour distance is 65 Å, which is very crowded.
 - **No preferred 120 Å pairing:** pairs at 110–130 Å occur at **0.985×** the local-density (jitter) null. The
@@ -143,6 +148,7 @@ independent planners for different strategies (paper-faithful / target-the-chime
 judge score them.
 
 **Decision taken: "anchor-and-gate".**
+
 - **Two pick streams.** sfGFP-sized dots ("anchors", one per chimera, and the census denominator) and DNA-sized
   elongated objects ("rods").
 - **The paper's Fig S6 core is kept:** 2× 2D, ab initio + 3 decoys from this dataset's junk, hetero/NU cycles,
@@ -169,6 +175,7 @@ Real crops of the detector's candidates are alongside.
 ![label guide](figures/qc/label_guide.png)
 
 The guide shows:
+
 - rings and 170 Å DNA bars **should be obvious** in this ice
 - the real micrographs mostly show compact dots and fainter, shorter, wavier threads
 
@@ -181,6 +188,7 @@ micrograph is 291 nm wide, "defocus setting" is in micrometres; lower defocus is
 ## 6. Full-dataset preprocessing (W1)
 
 **What was run.**
+
 - **Import:** J8, all 9,019 movies, headers read.
 - **Split:** J9, two halves.
 - **Patch motion:** J10 + J12, one per free MIG slice, 263 and 270 min. 9,018 micrographs; 1 movie produced no
@@ -193,6 +201,7 @@ quoted a **~13 h queue** (fairshare 0.24). Free was faster *and* cheaper, so I d
 GPU-hours used to date: 0.**
 
 **Curation** (`selections/S0_exposures.json`; scripted instead of the interactive job):
+
 - CTF fit ≤ 6 Å
 - astigmatism ≤ 1000 Å
 - defocus 0.5–2.8 µm
@@ -212,6 +221,7 @@ This kept **8,036 of 9,013** micrographs (89 %), as External J17.
 | anchors | J19 circle 30–50 Å | 6,358,457 | 3,179,227 (J24) | random 25 % of micrographs (2,009): 791,157 (J25) → J26: 192 → 96 px, **661,162** extracted | **J28**: 603,273 particles |
 
 Losses between steps are by design:
+
 - **At extraction:** picks whose box would cross the micrograph edge are dropped. A 256 px box at 1.42 Å/px is
   large relative to a 2048 px micrograph.
 - **In 2D:** `class2D_remove_duplicate_particles` removes picks closer than the minimum distance (80 Å for rods,
@@ -243,6 +253,7 @@ largest pages:
 whole project, and I could be anchored on my own hypothesis.
 
 **How the consensus was reached.**
+
 1. **Objective shape numbers per class** (`scripts/41_class2d_morphology.py`, `results/class2d_morph_*.csv`):
    length, width, dot brightness, number of blobs, and **whether the density encloses a hole ≥ 30 Å**.
 2. **Blind review.** Three independent reviewers labelled **all 304 classes** (104 rod + 200 anchor; every class
@@ -267,6 +278,7 @@ Results are in `results/class2d_blind_review_W2.json`, with per-class labels in 
 | noise / unclear / dot + short rod | 12.4 % | | |
 
 **Why I conclude there are no intact, open circular chimeras on the grid (and what is not yet excluded):**
+
 1. **No closed loops by anyone.** All three blind reviewers, working independently, found **no ring or enclosed
    hole in any of 304 classes**, and none cast a closed_loop vote, so no closed-loop call needed a skeptic.
    - They did note borderline shapes. Small "bent or hooked but open" anchor classes 16, 85 and 130 and small
@@ -305,6 +317,7 @@ lollipop reading 3/3. They pointed out that chance neighbours already make **sha
 62 % dot pairs), and that the power filter favours overlaps.
 
 **What was run** (`scripts/17_rod_end_colocalisation.py`, `results/rod_end_coloc.json`; CPU only):
+
 1. **Conventions.** The 2D pose/shift convention and micrograph orientation were determined **without using dots**,
    by correlating particles with their class averages: r = 0.215 vs 0.084 for the runner-up, no axis flips,
    extracted images contrast-inverted.
@@ -317,6 +330,7 @@ lollipop reading 3/3. They pointed out that chance neighbours already make **sha
 ![coloc](figures/qc/rod_end_coloc.png)
 
 **Results and how they were read.**
+
 - **The end enrichment is a selection artefact.** Overall it looks strong: **1.3–4.9×** for a dot at either end
   (d = 25–50 Å, rotation and shift nulls), and up to ~9× for the near end alone. But it comes entirely from the end
   the picker and 2D aligned on, which was selected *because* a dot was there.
@@ -339,6 +353,7 @@ lollipop reading 3/3. They pointed out that chance neighbours already make **sha
 present. It tests whether the pipeline, data and CTF support a real 3D reconstruction.
 
 **What was run** (`scripts/31_duplex_control.py`, workspace W3, all free lane):
+
 1. **Target ab initio:** 103,028 "rod, no dot" particles → J34.
 2. **Three decoy ab initios** from this dataset's own junk (as in the paper): noise J35, ice J36, unconnected dot
    pairs J37.
@@ -363,6 +378,7 @@ present. It tests whether the pipeline, data and CTF support a real 3D reconstru
 lobe bent off one end.
 
 The lengths in the figures mean different things:
+
 - **~142 Å** in the NU check figure is the *total* projected length including the lobe. Its "dominant period
   142 Å" is just that extent: no 34 Å repeat stands out.
 - **212 Å** in the ab-initio figure is the extent of the top-0.7 % voxels of an unmasked ab-initio volume, which
@@ -382,6 +398,7 @@ grid".
 ![click reaction gel](figures/gel/click_reaction_gel.png)
 
 **What the gel is.** A fluorescent (in-gel GFP) 10–20 % Tris-glycine SDS-PAGE. All lanes have 10 µM 2-Tet sfGFP:
+
 - **Lane 1:** sfGFP alone.
 - **Lane 2:** + 10 µM 2-TEG-**BCN** ssDNA. (The chemistry is BCN, not the sTCO used in the MD builds.)
 - **Lane 3:** + ssDNA + 10 µM cDNA.
@@ -403,6 +420,7 @@ bands (13–18 %). A second estimate with local background subtraction (expert 2
 `results/gel_em_reconciliation.json`) gives lane 3 as 31 % (~30 kDa), 33 % (~26 kDa) and 11 % (free).
 
 **What I learnt.**
+
 1. **The reaction did not fail.** Measured as depletion of the free-sfGFP band relative to lane 1
    (68 % → 26 % → 17 %), **about 60–75 % of sfGFP is conjugated** (lane 2 ≈ 62 %, lane 3 ≈ 75 %).
 2. **Adding cDNA creates a distinct new ~30 kDa species**, about 20–28 % of sfGFP net of the lane-1 baseline.
@@ -433,6 +451,7 @@ hypotheses (`results/gel_em_reconciliation.json`).
 | 8 | Intact face-on/tilted rings present but missed by picking and 2D | 0.02 |
 
 **What the panel ruled out:**
+
 - intact open rings at gel-level abundance
 - "the picker missed them"
 - my own "shorter attached DNA" argument (those lengths were clipped by the 200 Å window, so the length is not
@@ -448,6 +467,7 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 ## 13. What is running now and what comes next
 
 **Running now (the three EM analyses you chose):**
+
 - **A1: window-free attached-DNA length** (`scripts/34_A1_window_free_rods.py`). 224,312 rods were re-centred
   (90 Å from the dot along the axis for dot-rods; midpoint for free rods; External J43), extracted at a 454 Å
   box without re-applying the 2D shifts (J44), then 2D with a 400 Å window.
@@ -463,6 +483,7 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 
 **A5: edge-on ring test. Hypothesis 5 not supported** (`scripts/43_A5_edge_on_ring_test.py`,
 `results/A5_edge_on.json`):
+
 - **No ring-specific pair spacing.** Across 1.50 M eligible dot centres (2.16 M detected), the shift-null pair
   correlation is flat at ~1.015–1.026 from 75 to 160 Å, with **no excess at 85–110 Å** (window minus flanks
   −0.001 [−0.004, +0.002]). A ring signal spread over 75–135 Å is limited to **≤ ~5–5.6k pairs**.
@@ -480,6 +501,7 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 
 **A7: ice-thickness split. Hypothesis 4 not supported, but the test has little leverage**
 (`scripts/44_A7_ice_tertiles.py`, `results/A7_ice_tertiles.json`):
+
 - **No rings in any tertile.** No per-tertile class average in either stream shows a strict hole; three lenient hits
   are 23–32 Å gaps in junk/ice classes.
 - **No extra attachment in thick ice.** Dots at rod ends that 2D did not select on stay below chance in every
@@ -499,6 +521,7 @@ My reading of the ranking is now roughly **1 > 2 ≈ 3 > 4**. The panel has not 
 **A1: window-free attached-DNA length. Pre-registered rule outcome: mixed/inconclusive**
 (`scripts/34_A1_window_free_rods.py`, `scripts/45_A1_length_vs_hinge.py`, `results/A1_length_vs_hinge*.json`;
 measured by one agent, corrected by two skeptics):
+
 - **Setup:** 224,068 rods were re-centred and extracted in a 454 Å box, then classified with a **400 Å window**
   (P6 J45; 223,536 particles, 150 classes). That window is large enough to hold a whole dot-centred ring.
 - **Still no ring or hook classes.** This closes the "window-clipped ring" loophole for the rod picks.
@@ -525,6 +548,7 @@ measured by one agent, corrected by two skeptics):
 ![A1](figures/qc/A1_length_vs_hinge.png)
 
 **Net effect on §12:**
+
 - Edge-on rings (hypothesis 5) and air–water-interface opening (hypothesis 4) have no positive support, but
   neither is strongly excluded.
 - The leading explanations remain incomplete/yielded loops (1) and linear adducts (2).
@@ -546,6 +570,7 @@ were deferred):
 | Anchor hook classes (§8 point 3) | Added | Re-classify the anchor hook and haze classes with a wider window, as in A1 |
 
 **Cheapest decisive bench tests** (from the panel; one gel):
+
 1. 1-Tet vs 2-Tet at matched conjugation yield × {no DNA, ssDNA, cDNA after click, all premixed}; post-stain
    with SYBR Gold or use Cy5-cDNA.
 2. **TCO-PEG5k chase before cDNA:** open adducts gain ~5 kDa, closed loops do not.
@@ -554,6 +579,7 @@ were deferred):
 
 **Then:** final figures (S5-style FSC / local resolution / viewing directions for the control map, an S6-style
 workflow diagram with these counts, Table S1), census with bootstrap CIs, and a sample-prep recommendation:
+
 - purify the conjugate (SEC/gel)
 - 3–5× more dilute grids (current ice is ~20× bulk concentration)
 - optionally graphene-oxide support or a tilted collection to test hypotheses 4/5
@@ -566,6 +592,7 @@ workflow diagram with these counts, Table S1), census with bootstrap CIs, and a 
 has no projection foreshortening, so you chose a 3D reconstruction of the dot-on-rod particles.
 
 **What was run** (`scripts/35_dot_rod_3d.py`, workspace W4, free lane; Fig S6 core):
+
 1. **Particle sets** from the A1 2D groups:
    - target: dot-on-rod 76,607
    - real competitor: free rods 11,995
@@ -587,6 +614,7 @@ has no projection foreshortening, so you chose a 3D reconstruction of the dot-on
 ![free-rod control map](figures/maps/dotrod_free_3views.png)
 
 **How the reading was reached:**
+
 1. A 3D length analysis (`scripts/46_dotrod_3d_length.py`), challenged by two skeptics.
 2. A split reconstruction with the NU poses (`scripts/36_split_reconstruct.py`): 27,029 dot-class particles J61
    and 24,280 haze particles J63.
@@ -598,6 +626,7 @@ has no projection foreshortening, so you chose a 3D reconstruction of the dot-on
 ![ab initio vs NU](figures/qc/W4_abinitio_vs_nu.png)
 
 **Results (only what survived review):**
+
 - **No closed loop, and no second sfGFP–DNA contact, in any 3D map at any contour.** Robust.
 - **A rigid out-of-plane tilt does not explain the short 2D rods.** The direction the 2D rod follows is tilted only
   ~20–32° out of plane, so foreshortening accounts for ≤ 10–20 Å.
@@ -619,6 +648,7 @@ has no projection foreshortening, so you chose a 3D reconstruction of the dot-on
   probably blurred or partly occupied.
 
 **What 3D cannot decide here:**
+
 - whether attached DNA is shorter than 50 bp (the processing chain alone moves the length by ~40 Å)
 - whether the kink is inside one duplex or where two segments meet
 - the out-of-plane geometry (planar particle, cFAR 0.17)
@@ -627,6 +657,7 @@ has no projection foreshortening, so you chose a 3D reconstruction of the dot-on
 in 2D.
 
 **Net conclusion of the EM.** The crude reaction mixture on this grid contains:
+
 - free sfGFP
 - straight DNA rods ~110–120 Å long
 - heterogeneous, nearly planar sfGFP–DNA assemblies with kinked, open DNA
@@ -654,6 +685,7 @@ composition is mixed (§13b).
 ### Fig S5 analogues: validation of the two maps
 
 Each figure has four panels:
+
 - (A) RELION local-resolution-coloured surface
 - (B) the 32 most-populated 2D classes behind the final particles, outlined by consensus label
 - (C) gold-standard FSC: CryoSPARC no-mask / spherical / tight, plus RELION phase-randomisation-corrected with two
@@ -661,6 +693,7 @@ Each figure has four panels:
 - (D) viewing-direction distribution, plus a summary box
 
 The map–model FSC is omitted for both maps:
+
 - **W3:** a rigid B-DNA fit places the rod reproducibly, but its helical register (groove phase and polarity) is
   undetermined at 8–9 Å, and that moves d(FSC = 0.5) by 2.1 Å.
 - **W4:** no defensible model exists for a heterogeneous average.
@@ -759,6 +792,7 @@ Several classes split into separate pieces at that contour (caption, generated f
 master is its own `shared` job (60306692, until Mon 2026-11-16 12:23).
 
 **Key files:**
+
 - Scripts: `scripts/` (numbered by stage).
 - Thresholds and selections: `selections/`.
 - Numbers: `results/` (cs_state.json, g0_acquisition.json, G0_spatial.json, class2d_*, rod_end_coloc*.json,
